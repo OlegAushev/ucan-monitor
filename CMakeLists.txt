@@ -38,8 +38,6 @@ set(app_incdirs
 )
 
 file(GLOB_RECURSE app_sources CONFIGURE_DEPENDS
-    ${PROJECT_SOURCE_DIR}/include/*.c
-    ${PROJECT_SOURCE_DIR}/include/*.cpp
     ${PROJECT_SOURCE_DIR}/src/*.c
     ${PROJECT_SOURCE_DIR}/src/*.cpp
 )
@@ -85,28 +83,38 @@ file(GLOB_RECURSE app_sources CONFIGURE_DEPENDS
 #message("valac output: " ${vala_c})
 
 ################################################################################
+# Dear ImGUI
+file(GLOB imgui_sources CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/imgui/*.cpp)
+file(GLOB imgui_backend_sources CONFIGURE_DEPENDS
+    ${PROJECT_SOURCE_DIR}/include/imgui/backends/*glfw*.cpp
+    ${PROJECT_SOURCE_DIR}/include/imgui/backends/*opengl3*.cpp
+)
+
+set(imgui_incdirs ${PROJECT_SOURCE_DIR}/include/imgui)
+
+################################################################################
 # Executable
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 set(executable ${CMAKE_PROJECT_NAME})
 
 add_executable(${executable}
     ${app_sources}
-    # ${gresource_c}
-    # ${vala_c}
+    ${imgui_sources}
+    ${imgui_backend_sources}
 )
 
 target_compile_definitions(${executable} PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
-    #${GTK4_CFLAGS_OTHER}
 )
 
 target_include_directories(${executable} PRIVATE
     ${app_incdirs}
+    ${imgui_incdirs}
 )
 
 target_link_libraries(${executable}
-    ${GTK4_LIBRARIES}
     Threads::Threads
+    glfw
 )
 
 target_link_libraries(${executable}
