@@ -84,6 +84,9 @@ file(GLOB_RECURSE app_sources CONFIGURE_DEPENDS
 
 ################################################################################
 # Dear ImGUI
+find_package(glfw3 REQUIRED)
+find_package(OpenGL REQUIRED)
+
 file(GLOB imgui_sources CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/imgui/*.cpp)
 file(GLOB imgui_backend_sources CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/include/imgui/backends/*glfw*.cpp
@@ -115,6 +118,7 @@ target_include_directories(${executable} PRIVATE
 target_link_libraries(${executable}
     Threads::Threads
     glfw
+    ${OPENGL_LIBRARIES}
 )
 
 target_link_libraries(${executable}
