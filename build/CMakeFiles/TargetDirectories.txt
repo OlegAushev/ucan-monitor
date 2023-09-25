@@ -1,9 +1,0 @@
-/home/oleg/dev/pc/ucan-monitor-imgui/build/CMakeFiles/AlwaysCheckGitInfo.dir
-/home/oleg/dev/pc/ucan-monitor-imgui/build/CMakeFiles/git-info.dir
-/home/oleg/dev/pc/ucan-monitor-imgui/build/CMakeFiles/ucan-monitor.dir
-/home/oleg/dev/pc/ucan-monitor-imgui/build/CMakeFiles/edit_cache.dir
-/home/oleg/dev/pc/ucan-monitor-imgui/build/CMakeFiles/rebuild_cache.dir
-/home/oleg/dev/pc/ucan-monitor-imgui/build/CMakeFiles/list_install_components.dir
-/home/oleg/dev/pc/ucan-monitor-imgui/build/CMakeFiles/install.dir
-/home/oleg/dev/pc/ucan-monitor-imgui/build/CMakeFiles/install/local.dir
-/home/oleg/dev/pc/ucan-monitor-imgui/build/CMakeFiles/install/strip.dir
