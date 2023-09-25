@@ -95,8 +95,6 @@ add_executable(${executable}
     # ${vala_c}
 )
 
-add_dependencies(${executable} gresource-target)
-
 target_compile_definitions(${executable} PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
     #${GTK4_CFLAGS_OTHER}
