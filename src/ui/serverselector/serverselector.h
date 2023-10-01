@@ -11,11 +11,17 @@ namespace ui {
 
 class ServerSelector {
 private:
-    static inline int _server_selected_id = 0;
-    static inline bool _is_selected = false;
+    ServerSelector() = default;
+    int _server_selected_id = 0;
+    bool _server_is_selected = false;
 public:
-    static void show_server_selector_window(const std::vector<std::string>& server_names);
-    static bool is_selected() { return _is_selected; }
+    static ServerSelector& instance() {
+        static ServerSelector s;
+        return s;
+    }
+
+    void show(const std::vector<std::string>& server_names);
+    bool server_is_selected() { return _server_is_selected; }
 };
 
 

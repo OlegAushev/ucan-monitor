@@ -1,18 +1,25 @@
 #include "mainwindow.h"
 #include <GLFW/glfw3.h>
+#include "../canbussetup/canbussetup.h"
 
 
 namespace ui {
 
 
-void MainWindow::show(int width, int height) {
+void MainWindow::show() {
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
     ImGui::SetNextWindowPos(ImVec2{0, 0});
-    ImGui::SetNextWindowSize(ImVec2{width, height});
+    ImGui::SetNextWindowSize(viewport->WorkSize);
         
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
     ImGui::Begin("uCAN-Monitor", nullptr, window_flags);
 
     _show_menubar();
+
+    if (_should_show_can_bus_setup) {
+        CanBusSetup::instance().show(&_should_show_can_bus_setup);
+    }
 
     ImGui::End();
 }

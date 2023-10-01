@@ -4,7 +4,7 @@
 namespace ui {
 
 
-void ServerSelector::show_server_selector_window(const std::vector<std::string>& server_names) {
+void ServerSelector::show(const std::vector<std::string>& server_names) {
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
     
     ImGui::SetNextWindowPos(ImVec2{0, 0});
@@ -18,7 +18,7 @@ void ServerSelector::show_server_selector_window(const std::vector<std::string>&
     ImGui::NewLine();
 
     if (ImGui::Button("Ok", ImVec2{50, 0})) {
-        _is_selected = true;
+        _server_is_selected = true;
     }
     
 

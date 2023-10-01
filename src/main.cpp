@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     bool show_another_window = false;
 
     // Server Selection Loop
-    while (!glfwWindowShouldClose(window) && !ui::ServerSelector::is_selected()) {
+    while (!glfwWindowShouldClose(window) && !ui::ServerSelector::instance().server_is_selected()) {
         // Poll and handle events (inputs, window resize, etc.)
         glfwPollEvents();
 
@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ui::ServerSelector::show_server_selector_window({"SRM-Drive-80", "ATV-VCU"});
+        ui::ServerSelector::instance().show({"SRM-Drive-80", "ATV-VCU"});
 
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)
@@ -89,7 +89,7 @@ int main(int argc, char** argv) {
     // Server Creation
     // TODO
 
-    while (!glfwWindowShouldClose(window) && !ui::MainWindow::closed()) {
+    while (!glfwWindowShouldClose(window) && !ui::MainWindow::instance().closed()) {
         // Poll and handle events (inputs, window resize, etc.)
         glfwPollEvents();
 
@@ -101,9 +101,9 @@ int main(int argc, char** argv) {
         ImGui::ShowDemoWindow(); // Show demo window! :)
         // TODO
 
-        int width, height;
-        glfwGetWindowSize(window, &width, &height);
-        ui::MainWindow::show(width, height);
+        //int width, height;
+        //glfwGetWindowSize(window, &width, &height);
+        ui::MainWindow::instance().show();
 
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)
