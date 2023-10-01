@@ -23,6 +23,8 @@ static void glfw_error_callback(int error, const char* description)
 
 
 int main(int argc, char** argv) {
+    bsclog::add_sink(std::cout);    
+
     glfwSetErrorCallback(glfw_error_callback);
     if(!glfwInit()){
         return 1;
