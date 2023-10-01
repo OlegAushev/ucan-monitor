@@ -59,6 +59,36 @@ int main(int argc, char** argv) {
     bool show_demo_window = true;
     bool show_another_window = false;
 
+    // Server Selection Loop
+    while (!glfwWindowShouldClose(window) && !ui::ServerSelector::is_selected()) {
+        // Poll and handle events (inputs, window resize, etc.)
+        glfwPollEvents();
+
+        // Start the Dear ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ui::ServerSelector::show_server_selector_window({"SRM-Drive-80", "ATV-VCU"});
+
+        // Rendering
+        // (Your code clears your framebuffer, renders your other stuff etc.)
+        ImGui::Render();
+
+
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glViewport(0, 0, display_w, display_h);
+        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glfwSwapBuffers(window);
+    }
+
+    // Server Creation
+    // TODO
+
     while (!glfwWindowShouldClose(window) && !ui::MainWindow::closed()) {
         // Poll and handle events (inputs, window resize, etc.)
         glfwPollEvents();
@@ -71,48 +101,9 @@ int main(int argc, char** argv) {
         ImGui::ShowDemoWindow(); // Show demo window! :)
         // TODO
 
-        if (!ui::ServerSelector::is_selected()) {
-            ui::ServerSelector::show_server_selector_window({"SRM-Drive-80", "ATV-VCU"});
-        }
-
-
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::End();
-        }
-
-        ui::MainWindow::show();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        int width, height;
+        glfwGetWindowSize(window, &width, &height);
+        ui::MainWindow::show(width, height);
 
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)

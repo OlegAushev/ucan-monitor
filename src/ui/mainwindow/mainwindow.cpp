@@ -1,10 +1,14 @@
 #include "mainwindow.h"
+#include <GLFW/glfw3.h>
 
 
 namespace ui {
 
 
-void MainWindow::show() {
+void MainWindow::show(int width, int height) {
+    ImGui::SetNextWindowPos(ImVec2{0, 0});
+    ImGui::SetNextWindowSize(ImVec2{width, height});
+        
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
     ImGui::Begin("uCAN-Monitor", nullptr, window_flags);
 
