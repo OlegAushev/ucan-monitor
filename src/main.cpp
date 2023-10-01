@@ -87,6 +87,8 @@ int main(int argc, char** argv) {
     }
 
     // Server Creation
+    auto can_socket = std::make_shared<can::Socket>();
+    ui::CanBusSetup::instance().init(can_socket);
     // TODO
 
     while (!glfwWindowShouldClose(window) && !ui::MainWindow::instance().closed()) {

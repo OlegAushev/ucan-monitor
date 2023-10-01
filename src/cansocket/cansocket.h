@@ -18,6 +18,7 @@
 #include <string>
 #include <thread>
 #include <utility>
+#include <vector>
 
 #include <log/log.h>
 
@@ -44,8 +45,8 @@ enum class Error {
 
 namespace detail {
 
-const std::set<std::string> interface_list = {"can0", "can1"};
-const std::set<int> bitrate_list = {125'000, 250'000, 500'000, 1'000'000};
+const std::vector<std::string> interface_list = {"can0", "can1"};
+const std::vector<std::string> bitrate_list = {"125000", "250000", "500000", "1000000"};
 const std::set<std::filesystem::path> scripts_location_list = {
     "",
     "scripts",
@@ -74,7 +75,7 @@ public:
     Socket(const Socket& other) = delete;
     Socket& operator=(const Socket& other) = delete;
 
-    Error connect(const std::string& interface, int bitrate);
+    Error connect(const std::string& interface, const std::string& bitrate);
     Error disconnect();
 
     Error send(const can_frame& frame);

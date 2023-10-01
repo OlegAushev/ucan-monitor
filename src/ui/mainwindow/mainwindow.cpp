@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include <GLFW/glfw3.h>
-#include "../canbussetup/canbussetup.h"
 
 
 namespace ui {

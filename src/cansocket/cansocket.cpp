@@ -69,11 +69,11 @@ Error Socket::_create_socket(const std::string& interface) {
 }
 
 
-Error Socket::connect(const std::string& interface, int bitrate) {
+Error Socket::connect(const std::string& interface, const std::string& bitrate) {
     _socket = -1;
 
-    if (!detail::interface_list.contains(interface)
-            || !detail::bitrate_list.contains(bitrate)) {
+    if (std::find(detail::interface_list.begin(), detail::interface_list.end(), interface) == detail::interface_list.end()
+            || std::find(detail::bitrate_list.begin(), detail::bitrate_list.end(), bitrate) == detail::bitrate_list.end()) {
         return Error::invalid_argument;
     }
 
@@ -90,7 +90,7 @@ Error Socket::connect(const std::string& interface, int bitrate) {
     Log() << "Found SocketCAN enabling script: " << script_path << '\n' << LogPrefix::ok;
 
     /* RUN SCRIPT */
-    std::string cmd = "pkexec sh " + script_path.string() + " " + interface + " " + std::to_string(bitrate);
+    std::string cmd = "pkexec sh " + script_path.string() + " " + interface + " " + bitrate;
     Log() << "Enabling SocketCAN interface " << interface << ", executing system command: \"" << cmd << "\"\n" << LogPrefix::align;
 
     int pkexec_retval = system(cmd.c_str());
@@ -125,7 +125,7 @@ Error Socket::connect(const std::string& interface, int bitrate) {
 Error Socket::disconnect() {
     if (_socket < 0) {
         Log() << "Failed to close CAN socket: no socket.\n" << LogPrefix::failed;
-        return Error::none;
+        return Error::socket_closed;
     }
 
     std::lock_guard<std::mutex> lock1(_send_mtx);
