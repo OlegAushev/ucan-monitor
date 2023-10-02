@@ -7,6 +7,8 @@
 #include <ui/mainwindow/mainwindow.h>
 
 
+#include <fstream>
+
 
 #include <ucanopen/client/client.h>
 #include <ucanopen_devices/srmdrive/server/srmdrive_server.h>
@@ -23,8 +25,12 @@ static void glfw_error_callback(int error, const char* description)
 
 
 int main(int argc, char** argv) {
-    bsclog::add_sink(std::cout);
-    bsclog::success("Initialized bsclog.");  
+    bsclog::add_sink(std::shared_ptr<std::ostream>(&std::cout, [](void*){}));
+    auto logfile = std::make_shared<std::ofstream>("logfile.txt");
+    bsclog::add_sink(logfile);
+    auto logsstream = std::make_shared<std::stringstream>();
+    bsclog::add_sink(logsstream);
+    bsclog::success("Initialized bsclog. Sink count: {}", bsclog::sink_count());  
 
     glfwSetErrorCallback(glfw_error_callback);
     if(!glfwInit()){

@@ -11,7 +11,7 @@ void MainWindow::show() {
     ImGui::SetNextWindowPos(ImVec2{0, 0});
     ImGui::SetNextWindowSize(viewport->WorkSize);
         
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus;
     ImGui::Begin("uCAN-Monitor", nullptr, window_flags);
 
     _show_menubar();

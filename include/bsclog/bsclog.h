@@ -40,15 +40,17 @@ const std::vector<std::string> level_name = {
 class logger {
 private:
     logger() = default;
-    std::set<std::ostream*> _sinks;
+    std::set<std::shared_ptr<std::ostream>> _sinks;
 public:
     static logger& instance() {
         static logger _logger;
         return _logger;
     }
 
-    void add_sink(std::ostream& sink) {
-        _sinks.insert(&sink);
+    auto sink_count() const { return _sinks.size(); }
+
+    void add_sink(std::shared_ptr<std::ostream> sink) {
+        _sinks.insert(sink);
     }
 
     template <typename... Args>
@@ -97,15 +99,14 @@ private:
         // auto now = std::chrono::system_clock::now();
         // auto now_time_t = std::chrono::system_clock::to_time_t(now);
         // std::stringstream timestamp;
-        // timestamp << std::put_time(std::localtime(&now_time_t), "%F %T");
+        // timestamp << '[' << std::put_time(std::localtime(&now_time_t), "%F %T") << '] ';
+ 
         std::string prefix;
         if (lvl != level::off) {
             prefix = std::format("[{}] ",
-                                //timestamp.str(),
                                 level_name[std::to_underlying(lvl)]);
         } else {
             prefix = std::format(" {}  ",
-                                //timestamp.str(),
                                 level_name[std::to_underlying(lvl)]);
         }
 
@@ -125,8 +126,13 @@ private:
 };
 
 
-inline void add_sink(std::ostream& sink) {
+inline void add_sink(std::shared_ptr<std::ostream> sink) {
     logger::instance().add_sink(sink);
+}
+
+
+inline auto sink_count() {
+    return logger::instance().sink_count();
 }
 
 
