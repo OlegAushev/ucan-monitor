@@ -21,6 +21,7 @@
 #include <vector>
 
 #include <bsclog/bsclog.h>
+#include <cmdexec/cmdexec.h>
 
 
 namespace can {

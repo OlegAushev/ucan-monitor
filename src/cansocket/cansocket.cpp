@@ -20,8 +20,14 @@ Socket::Socket() {
     std::string cmd = "sh " + script_path.string() + " " + "can0";
     bsclog::info("Checking SocketCAN interface can0, executing system command: {}", cmd);
     
-    int script_retval = system(cmd.c_str());
-    if (script_retval == 0) {
+    auto script_result = cmdexec::run(cmd);
+    std::stringstream log_sstr(script_result.output);
+    std::string log_str;
+    while (std::getline(log_sstr, log_str, '\n')) {
+        bsclog::log("{}", log_str);
+    }
+
+    if (script_result.exitcode == 0) {
         if (_create_socket("can0") != Error::none) {
             _socket = -1;
         }
@@ -94,12 +100,18 @@ Error Socket::connect(const std::string& interface, const std::string& bitrate) 
     bsclog::success("Found SocketCAN enabling script: {}", script_path.string());
 
     /* RUN SCRIPT */
-    std::string cmd = "pkexec sh " + script_path.string() + " " + interface + " " + bitrate;
+    std::string cmd = "pkexec sh " + script_path.string() + " " + interface + " " + bitrate + " 2>&1";
     bsclog::info("Enabling SocketCAN interface {}, executing system command: {}", interface, cmd);
 
-    int pkexec_retval = system(cmd.c_str());
+    auto pkexec_result = cmdexec::run(cmd);
+    std::stringstream log_sstr(pkexec_result.output);
+    std::string log_str;
+    while (std::getline(log_sstr, log_str, '\n')) {
+        bsclog::log("{}", log_str);
+    }
+
     Error error;
-    switch (pkexec_retval) {
+    switch (pkexec_result.exitcode) {
     case 0:
         error = Error::none;
         break;

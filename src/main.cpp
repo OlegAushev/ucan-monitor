@@ -24,7 +24,7 @@ static void glfw_error_callback(int error, const char* description)
 
 int main(int argc, char** argv) {
     bsclog::add_sink(std::cout);
-    bsclog::success("initialized bsclog, value: {}.\n", 42);  
+    bsclog::success("Initialized bsclog.");  
 
     glfwSetErrorCallback(glfw_error_callback);
     if(!glfwInit()){

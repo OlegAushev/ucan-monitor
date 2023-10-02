@@ -41,4 +41,4 @@ inline result run(const std::string& cmd) {
 }
 
 
-}
+} // namespace cmdexec

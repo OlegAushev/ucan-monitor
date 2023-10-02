@@ -20,7 +20,8 @@ enum class level {
     success,
     warning,
     error,
-    critical
+    critical,
+    off
 };
 
 
@@ -31,7 +32,8 @@ const std::vector<std::string> level_name = {
     "  ok  ",
     " warn ",
     " fail ",
-    " crit "
+    " crit ",
+    "      "
 };
 
 
@@ -51,52 +53,64 @@ public:
 
     template <typename... Args>
     void trace(std::format_string<Args...> fmt, Args&&... args) {
-        log(level::trace, fmt, std::forward<Args>(args)...);
+        _log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void debug(std::format_string<Args...> fmt, Args&&... args) {
-        log(level::debug, fmt, std::forward<Args>(args)...);
+        _log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void info(std::format_string<Args...> fmt, Args&&... args) {
-        log(level::info, fmt, std::forward<Args>(args)...);
+        _log(level::info, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void success(std::format_string<Args...> fmt, Args&&... args) {
-        log(level::success, fmt, std::forward<Args>(args)...);
+        _log(level::success, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void warning(std::format_string<Args...> fmt, Args&&... args) {
-        log(level::warning, fmt, std::forward<Args>(args)...);
+        _log(level::warning, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void error(std::format_string<Args...> fmt, Args&&... args) {
-        log(level::error, fmt, std::forward<Args>(args)...);
+        _log(level::error, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void critical(std::format_string<Args...> fmt, Args&&... args) {
-        log(level::critical, fmt, std::forward<Args>(args)...);
+        _log(level::critical, fmt, std::forward<Args>(args)...);
+    }
+
+    template <typename... Args>
+    void log(std::format_string<Args...> fmt, Args&&... args) {
+        _log(level::off, fmt, std::forward<Args>(args)...);
     }
 
 private:
     template <typename... Args>
-    void log(level lvl, std::format_string<Args...> fmt, Args&&... args) {
-        auto now = std::chrono::system_clock::now();
-        auto now_time_t = std::chrono::system_clock::to_time_t(now);
-        std::stringstream timestamp;
-        timestamp << std::put_time(std::localtime(&now_time_t), "%F %T");
+    void _log(level lvl, std::format_string<Args...> fmt, Args&&... args) {
+        // auto now = std::chrono::system_clock::now();
+        // auto now_time_t = std::chrono::system_clock::to_time_t(now);
+        // std::stringstream timestamp;
+        // timestamp << std::put_time(std::localtime(&now_time_t), "%F %T");
+        std::string prefix;
+        if (lvl != level::off) {
+            prefix = std::format("[{}] ",
+                                //timestamp.str(),
+                                level_name[std::to_underlying(lvl)]);
+        } else {
+            prefix = std::format(" {}  ",
+                                //timestamp.str(),
+                                level_name[std::to_underlying(lvl)]);
+        }
 
-        std::string prefix = std::format("[{}] [{}] ",
-                                         timestamp.str(),
-                                         level_name[std::to_underlying(lvl)]);
         std::string payload = std::format(fmt, std::forward<Args>(args)...);
-
+        
         for (auto sink : _sinks) {
             *sink << (prefix + payload) << '\n';
         }
@@ -155,6 +169,12 @@ inline void error(std::format_string<Args...> fmt, Args&&... args) {
 template <typename... Args>
 inline void critical(std::format_string<Args...> fmt, Args&&... args) {
     logger::instance().critical(fmt, std::forward<Args>(args)...);
+}
+
+
+template <typename... Args>
+inline void log(std::format_string<Args...> fmt, Args&&... args) {
+    logger::instance().log(fmt, std::forward<Args>(args)...);
 }
 
 
