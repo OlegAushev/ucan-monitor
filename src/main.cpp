@@ -97,7 +97,16 @@ int main(int argc, char** argv) {
 
     // Server Creation
     auto can_socket = std::make_shared<can::Socket>();
+    auto ucanopen_client = std::make_shared<ucanopen::Client>(ucanopen::NodeId(127), can_socket);
     ui::CanBusSetup::instance().init(can_socket);
+
+    // ucanopen_client->enable_sync();
+    // ucanopen_client->disable_sync();
+    // ucanopen_client->set_sync_period(std::chrono::milliseconds(50));
+    // ucanopen_client->set_heartbeat_period(std::chrono::milliseconds(100));
+    // ucanopen_client->enable_tpdo();
+    // ucanopen_client->disable_tpdo();
+    
     // TODO
 
     while (!glfwWindowShouldClose(window) && !ui::MainWindow::instance().closed()) {

@@ -17,7 +17,7 @@ Socket::Socket() {
     bsclog::success("Found SocketCAN checking script: {}", script_path.string());
 
     /* RUN SCRIPT */
-    std::string cmd = "sh " + script_path.string() + " " + "can0";
+    std::string cmd = "sh " + script_path.string() + " " + "can0" + " 2>&1";
     bsclog::info("Checking SocketCAN interface can0, executing system command: {}", cmd);
     
     auto script_result = cmdexec::run(cmd);

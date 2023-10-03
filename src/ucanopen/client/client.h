@@ -13,10 +13,11 @@
 #include <chrono>
 #include <map>
 
-#include <log/log.h>
+#include <bsclog/bsclog.h>
 
 
 namespace ucanopen {
+
 
 class Client {
 private:
@@ -78,22 +79,22 @@ public:
 
     void enable_sync() {
         _sync_info.is_enabled = true;
-        Log() << "Enabled uCANopen client SYNC messages (period = " << _sync_info.period << ").\n" << LogPrefix::ok;
+        bsclog::info("Enabled uCANopen client SYNC messages, period = {}.", _sync_info.period);
     }
 
     void disable_sync() {
         _sync_info.is_enabled = false;
-        Log() << "Disabled uCANopen client SYNC messages.\n" << LogPrefix::ok;
+        bsclog::info("Disabled uCANopen client SYNC messages.");
     }
 
     void set_sync_period(std::chrono::milliseconds period) {
         _sync_info.period = period;
-        Log() << "Set uCANopen client SYNC messages period = " << period << ".\n" << LogPrefix::ok;
+        bsclog::info("Set uCANopen client SYNC messages period = {}.", period);
     }
 
     void set_heartbeat_period(std::chrono::milliseconds period) {
         _heartbeat_info.period = period;
-        Log() << "Set uCANopen client HEARTBEAT messages period = " << period << ".\n" << LogPrefix::ok;
+        bsclog::info("Set uCANopen client HEARTBEAT messages period = {}.", period);
     }
 
     void register_tpdo(TpdoType tpdo_type, std::chrono::milliseconds period, std::function<can_payload(void)> creator) {
@@ -102,12 +103,12 @@ public:
 
     void enable_tpdo() {
         _is_tpdo_enabled = true;
-        Log() << "Enabled uCANopen client TPDO messages.\n" << LogPrefix::ok;
+        bsclog::info("Enabled uCANopen client TPDO messages.");
     }
 
     void disable_tpdo() {
         _is_tpdo_enabled = false;
-        Log() << "Disabled uCANopen client TPDO messages.\n" << LogPrefix::ok;
+        bsclog::info("Disabled uCANopen client TPDO messages.");
     }
 
     void enable_server_rpdo() {
@@ -145,5 +146,5 @@ protected:
     bool _is_free(NodeId nodeId) const;
 };
 
-} // namespace ucanopen
 
+} // namespace ucanopen
