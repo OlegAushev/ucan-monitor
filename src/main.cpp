@@ -106,6 +106,8 @@ int main(int argc, char** argv) {
     // ucanopen_client->set_heartbeat_period(std::chrono::milliseconds(100));
     // ucanopen_client->enable_tpdo();
     // ucanopen_client->disable_tpdo();
+    ucanopen_client->set_node_id(ucanopen::NodeId(0xFA));
+    ucanopen_client->set_node_id(ucanopen::NodeId(0x20));
     
     // TODO
 

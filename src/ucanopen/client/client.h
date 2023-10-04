@@ -111,39 +111,79 @@ public:
         bsclog::info("Disabled uCANopen client TPDO messages.");
     }
 
-    void enable_server_rpdo() {
+    void enable_rpdo_on_server(std::string_view name) {
+        auto server = _get_server(name);
+        if (server == nullptr) {
+            
+            return;
+        }
+
         for (auto& server : _servers) {
             server->rpdo_service.enable();
         }
     }
 
-    void disable_server_rpdo() {
+    void disable_rpdo_on_server(std::string_view name) {
+        auto server = _get_server(name);
+        if (server == nullptr) {
+
+            return;
+        }
+
         for (auto& server : _servers) {
             server->rpdo_service.disable();
         }
     }
 
-    void enable_server_watch() {
+    void enable_watch_on_server(std::string_view name) {
+        auto server = _get_server(name);
+        if (server == nullptr) {
+
+            return;
+        }
+
         for (auto& server : _servers) {
             server->watch_service.enable();
         }
     }
 
-    void disable_server_watch() {
+    void disable_watch_on_server(std::string_view name) {
+        auto server = _get_server(name);
+        if (server == nullptr) {
+
+            return;
+        }
+
         for (auto& server : _servers) {
             server->watch_service.disable();
         }
     }
 
-    void set_server_watch_period(std::chrono::milliseconds period) {
+    void set_watch_period_on_server(std::string_view name, std::chrono::milliseconds period) {
+        auto server = _get_server(name);
+        if (server == nullptr) {
+
+            return;
+        }
+
         for (auto& server : _servers) {
             server->watch_service.set_period(period);
         }
     }
 
 protected:
-    void _calculate_recvid(std::shared_ptr<Server> server);
+    void _register_rx_messages(std::shared_ptr<Server> server);
+    void _unregister_rx_messages(std::shared_ptr<Server> server);
     bool _is_free(NodeId nodeId) const;
+
+    std::shared_ptr<Server> _get_server(std::string_view name) {
+        auto server_iter = std::find_if(_servers.begin(), _servers.end(),
+                [name](const auto& s) { return s->name() == name; });
+        if (server_iter == _servers.end()) {
+            return std::shared_ptr<Server>(nullptr);
+        }
+        return *server_iter;
+    }
 };
 
 
