@@ -14,7 +14,6 @@
 #include <ucanopen_devices/srmdrive/server/srmdrive_server.h>
 #include <ucanopen_devices/crd600/server/crd600_server.h>
 #include <ucanopen_devices/launchpad/server/launchpad_server.h>
-#include <ucanopen_devices/bmsmain/server/bmsmain_server.h>
 #include <ucanopen_devices/atvvcu/server/atvvcu_server.h>
 
 
@@ -108,6 +107,8 @@ int main(int argc, char** argv) {
     // ucanopen_client->disable_tpdo();
     ucanopen_client->set_node_id(ucanopen::NodeId(0xFA));
     ucanopen_client->set_node_id(ucanopen::NodeId(0x20));
+
+    ucanopen_client->enable_rpdo_on_server("srmdrive");
     
     // TODO
 

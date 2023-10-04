@@ -58,17 +58,14 @@ public:
 
     void enable() {
         _is_enabled = true;
-        Log() << "Enabled uCANopen server {" << _server.name() << "} watch requests (period = " << _period << ").\n" << LogPrefix::ok;
     }
 
     void disable() {
         _is_enabled = false;
-        Log() << "Disabled uCANopen server {" << _server.name() << "} watch requests.\n" << LogPrefix::ok;
     }
 
     void set_period(std::chrono::milliseconds period) {
         _period = period;
-        Log() << "Set uCANopen server {" << _server.name() << "} watch requests period = " << period << ".\n" << LogPrefix::ok;
     }
 
     std::vector<std::pair<std::string_view, std::string_view>> object_list() const {

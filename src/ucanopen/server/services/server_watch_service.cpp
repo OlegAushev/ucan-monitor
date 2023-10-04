@@ -19,4 +19,4 @@ ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher&
 }
 
 
-}
+} // namespace ucanopen

@@ -3,6 +3,7 @@
 
 namespace ucanopen {
 
+
 Client::Client(NodeId node_id, std::shared_ptr<can::Socket> socket)
         : _node_id(node_id)
         , _socket(socket)
@@ -51,47 +52,47 @@ void Client::register_server(std::shared_ptr<Server> server) {
     auto server_same_name = std::find_if(_servers.begin(), _servers.end(), 
             [server](const auto& s) { return server->name() == s->name(); });
     if (server_same_name != _servers.end()) {
-        bsclog::error("Failed to register uCANopen server {} ID {}(0x{:X}): occupied name.", server->name(), server->node_id().get(), server->node_id().get());
+        bsclog::error("Failed to register uCANopen {} server ID {}(0x{:X}): occupied name.", server->name(), server->node_id().get(), server->node_id().get());
         return;
     }
 
     auto server_same_id = std::find_if(_servers.begin(), _servers.end(), 
             [server](const auto& s) { return server->node_id() == s->node_id(); });
     if (server_same_id != _servers.end()) {
-        bsclog::error("Failed to register uCANopen server {} ID {}(0x{:X}): occupied ID.", server->name(), server->node_id().get(), server->node_id().get());
+        bsclog::error("Failed to register uCANopen {} server ID {}(0x{:X}): occupied ID.", server->name(), server->node_id().get(), server->node_id().get());
         return;
     }
 
     if (server->node_id() == _node_id) {
-        bsclog::error("Failed to register uCANopen server {} ID {}(0x{:X}): occupied ID.", server->name(), server->node_id().get(), server->node_id().get());
+        bsclog::error("Failed to register uCANopen {} server ID {}(0x{:X}): occupied ID.", server->name(), server->node_id().get(), server->node_id().get());
         return;
     }
 
     _servers.insert(server);
     _register_rx_messages(server);
-    bsclog::success("Registered uCANopen server {} ID {}(0x{:X})", server->name(), server->node_id().get(), server->node_id().get());
+    bsclog::success("Registered uCANopen {} server ID {}(0x{:X})", server->name(), server->node_id().get(), server->node_id().get());
 }
 
 
 void Client::set_server_node_id(std::string_view name, NodeId node_id) {
     auto server = _get_server(name);
     if (server == nullptr) {
-        bsclog::error("Failed to set uCANopen server {} ID to {}(0x{:X}): server not found.", name, node_id.get(), node_id.get());
+        bsclog::error("Failed to set uCANopen {} server ID to {}(0x{:X}): server not found.", name, node_id.get(), node_id.get());
         return;
     }
 
     if (node_id == server->node_id()) {
-        bsclog::info("Refused to set uCANopen server {} ID to {}(0x{:X}): already set.", name, node_id.get(), node_id.get());
+        bsclog::info("Refused to set uCANopen {} server ID to {}(0x{:X}): already set.", name, node_id.get(), node_id.get());
         return;
     }
     
     if (!node_id.valid()) {
-        bsclog::error("Failed to set uCANopen server {} ID to {}(0x{:X}): invalid ID.", name, node_id.get(), node_id.get());
+        bsclog::error("Failed to set uCANopen {} server ID to {}(0x{:X}): invalid ID.", name, node_id.get(), node_id.get());
         return;
     }
 
     if (!_is_free(node_id)) {
-        bsclog::error("Failed to set uCANopen server {} ID to {}(0x{:X}): occupied ID.", name, node_id.get(), node_id.get());
+        bsclog::error("Failed to set uCANopen {} server ID to {}(0x{:X}): occupied ID.", name, node_id.get(), node_id.get());
         return;
     }
 
@@ -106,7 +107,7 @@ void Client::set_server_node_id(std::string_view name, NodeId node_id) {
     //     }
     // }
     _register_rx_messages(server);
-    bsclog::success("Set uCANopen server {} ID to {}(0x{:X}).", name, node_id.get(), node_id.get());
+    bsclog::success("Set uCANopen {} server ID to {}(0x{:X}).", name, node_id.get(), node_id.get());
 }
 
 
@@ -205,5 +206,5 @@ bool Client::_is_free(NodeId node_id) const {
             [node_id](const auto& server){ return server->node_id() == node_id; });
 }
 
-} // namespace ucanopen
 
+} // namespace ucanopen

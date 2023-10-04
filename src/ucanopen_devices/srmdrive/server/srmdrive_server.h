@@ -3,7 +3,7 @@
 
 #include "srmdrive_def.h"
 #include "ucanopen/server/server.h"
-#include "log/log.h"
+#include "bsclog/bsclog.h"
 #include <algorithm>
 
 

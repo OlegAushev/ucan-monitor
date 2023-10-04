@@ -114,61 +114,51 @@ public:
     void enable_rpdo_on_server(std::string_view name) {
         auto server = _get_server(name);
         if (server == nullptr) {
-            
+            bsclog::error("Failed to enable RPDO messages on {} server: server not found.", name);
             return;
         }
-
-        for (auto& server : _servers) {
-            server->rpdo_service.enable();
-        }
+        server->rpdo_service.enable();
+        bsclog::info("Enabled {} server RPDO messages.", name);
     }
 
     void disable_rpdo_on_server(std::string_view name) {
         auto server = _get_server(name);
         if (server == nullptr) {
-
+            bsclog::error("Failed to disable RPDO messages on {} server: server not found.", name);
             return;
         }
-
-        for (auto& server : _servers) {
-            server->rpdo_service.disable();
-        }
+        server->rpdo_service.disable();
+        bsclog::info("Disabled {} server RPDO messages.", name);
     }
 
     void enable_watch_on_server(std::string_view name) {
         auto server = _get_server(name);
         if (server == nullptr) {
-
+            bsclog::error("Failed to enable watch messages on {} server: server not found.", name);
             return;
         }
-
-        for (auto& server : _servers) {
-            server->watch_service.enable();
-        }
+        server->watch_service.enable();
+        bsclog::info("Enabled {} server watch messages.", name);
     }
 
     void disable_watch_on_server(std::string_view name) {
         auto server = _get_server(name);
         if (server == nullptr) {
-
+            bsclog::error("Failed to disable watch messages on {} server: server not found.", name);
             return;
         }
-
-        for (auto& server : _servers) {
-            server->watch_service.disable();
-        }
+        server->watch_service.disable();
+        bsclog::info("Disabled {} server watch messages.", name);
     }
 
     void set_watch_period_on_server(std::string_view name, std::chrono::milliseconds period) {
         auto server = _get_server(name);
         if (server == nullptr) {
-
+            bsclog::error("Failed to set watch messages period on {} server: server not found.", name);
             return;
         }
-
-        for (auto& server : _servers) {
-            server->watch_service.set_period(period);
-        }
+        server->watch_service.set_period(period);
+        bsclog::info("Set {} server watch messages to {}.", name, period);
     }
 
 protected:

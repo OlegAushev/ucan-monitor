@@ -26,12 +26,10 @@ public:
 
     void enable() {
         _is_enabled = true;
-        Log() << "Enabled uCANopen server {" << _server.name() << "} RPDO messages.\n" << LogPrefix::ok;
     }
 
     void disable() {
         _is_enabled = false;
-        Log() << "Disabled uCANopen server {" << _server.name() << "} RPDO messages.\n" << LogPrefix::ok;
     }
 
     void send() {
@@ -50,5 +48,5 @@ public:
     }
 };
 
-} // namespace ucanopen
 
+} // namespace ucanopen

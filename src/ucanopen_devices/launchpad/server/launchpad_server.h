@@ -3,7 +3,7 @@
 
 #include "ucanopen/server/server.h"
 #include "launchpad_def.h"
-#include "log/log.h"
+#include "bsclog/bsclog.h"
 
 
 namespace launchpad {

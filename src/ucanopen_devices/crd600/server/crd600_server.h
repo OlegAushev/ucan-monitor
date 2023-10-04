@@ -3,7 +3,7 @@
 
 #include <ucanopen/server/server.h>
 #include "crd600_def.h"
-#include <log/log.h>
+#include <bsclog/bsclog.h>
 
 
 namespace crd600 {

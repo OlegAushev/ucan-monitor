@@ -3,6 +3,7 @@
 
 namespace ucanopen {
 
+
 impl::Server::Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary)
         : _name(name)
         , _node_id(node_id)
@@ -33,6 +34,7 @@ ODAccessStatus impl::Server::read(std::string_view category, std::string_view su
 
     _socket->send(create_frame(CobType::rsdo, _node_id, message.to_payload()));
     if (object.category != _dictionary.config.watch_category) {
+
         Log() << "Sending request to read {" << _name << "::"
               << object.category << "::" << object.subcategory << "::" << object.name
               << "}...\n" << LogPrefix::align;
@@ -157,14 +159,10 @@ ODAccessStatus impl::Server::find_od_entry(std::string_view category, std::strin
                                            traits::check_read_perm) {
     ret_entry = find_od_entry(category, subcategory, name);
     if (ret_entry == _dictionary.entries.end()) {
-        Log() << "Cannot read {" << _name << "::"
-              << category << "::" << subcategory << "::" << name 
-              << "}: no such OD entry.\n" << LogPrefix::failed;
+        bsclog::error("Cannot read {}::{}::{}::{}: no such OD entry.", _name, category, subcategory, name);
         return ODAccessStatus::not_found;
     } else if (ret_entry->second.has_read_permission() == false) {
-        Log() << "Cannot read {" << _name << "::"
-              << category << "::" << subcategory << "::" << name 
-              << "}: access denied.\n" << LogPrefix::failed;
+        bsclog::error("Cannot read {}::{}::{}::{}: access denied.", _name, category, subcategory, name);
         return ODAccessStatus::access_denied;
     }
     return ODAccessStatus::success;
@@ -176,14 +174,10 @@ ODAccessStatus impl::Server::find_od_entry(std::string_view category, std::strin
                                            traits::check_write_perm) {
     ret_entry = find_od_entry(category, subcategory, name);
     if (ret_entry == _dictionary.entries.end()) {
-        Log() << "Cannot write {" << _name << "::"
-              << category << "::" << subcategory << "::" << name 
-              << "}: no such OD entry.\n" << LogPrefix::failed;
+        bsclog::error("Cannot write {}::{}::{}::{}: no such OD entry.", _name, category, subcategory, name);
         return ODAccessStatus::not_found;;
     } else if (ret_entry->second.has_write_permission() == false) {
-        Log() << "Cannot write {" << _name << "::"
-              << category << "::" << subcategory << "::" << name 
-              << "}: access denied.\n" << LogPrefix::failed;
+        bsclog::error("Cannot write {}::{}::{}::{}: access denied.", _name, category, subcategory, name);
         return ODAccessStatus::access_denied;
     }
     return ODAccessStatus::success;
@@ -195,18 +189,14 @@ ODAccessStatus impl::Server::find_od_entry(std::string_view category, std::strin
                                            traits::check_exec_perm) {
     ret_entry = find_od_entry(category, subcategory, name);
     if (ret_entry == _dictionary.entries.end()) {
-        Log() << "Cannot execute {" << _name << "::"
-              << category << "::" << subcategory << "::" << name 
-              << "}: no such OD entry.\n" << LogPrefix::failed;
+        bsclog::error("Cannot execute {}::{}::{}::{}: no such OD entry.", _name, category, subcategory, name);
         return ODAccessStatus::not_found;
     } else if ((ret_entry->second.type != ODObjectType::OD_EXEC) || (ret_entry->second.has_write_permission() == false)) {
-        Log() << "Cannot execute {" << _name << "::"
-              << category << "::" << subcategory << "::" << name 
-              << "}: not executable OD entry.\n" << LogPrefix::failed;
+        bsclog::error("Cannot execute {}::{}::{}::{}: not executable OD entry.", _name, category, subcategory, name);
         return ODAccessStatus::access_denied;
     }
     return ODAccessStatus::success;
 }
 
-} // namespace ucanopen
 
+} // namespace ucanopen

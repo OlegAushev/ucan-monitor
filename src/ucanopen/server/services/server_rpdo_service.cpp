@@ -20,5 +20,5 @@ void ServerRpdoService::update_node_id() {
     }
 }
 
-} // namespace ucanopen
 
+} // namespace ucanopen

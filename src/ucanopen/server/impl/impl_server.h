@@ -4,10 +4,12 @@
 #include "../../ucanopen_def.h" 
 #include <cansocket/cansocket.h>
 #include <log/log.h>
+#include <bsclog/bsclog.h>
 #include <list>
 
 
 namespace ucanopen {
+
 
 enum class ODAccessStatus {
     success,
@@ -38,6 +40,7 @@ class ServerTpdoService;
 class ServerRpdoService;
 class ServerSdoService;
 class SdoSubscriber;
+
 
 namespace impl {
 
@@ -104,6 +107,7 @@ protected:
     std::list<SdoSubscriber*> _subscriber_list;
 };
 
+
 } // namespace impl
 
 
@@ -122,5 +126,5 @@ public:
     void unsubscribe() { _publisher.unregister_subscriber(*this); }
 };
 
-} // namespace ucanopen
 
+} // namespace ucanopen
