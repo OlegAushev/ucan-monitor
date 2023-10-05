@@ -31,7 +31,7 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
     if (entry->second.name == "syslog_message") {
         auto message_id = data.u32();
         if ((message_id != 0) && (message_id < syslog_messages.size())) {
-            Log() << syslog_messages[message_id] << '\n';
+            bsclog::info("{}", syslog_messages[message_id]);
         }
     } else if (entry->second.category == _dictionary.config.watch_category && entry->second.type == ucanopen::OD_ENUM16) {
         

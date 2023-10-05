@@ -36,7 +36,9 @@ Socket::Socket() {
 
 
 Socket::~Socket() {
-    disconnect();
+    if (_socket >= 1) {
+        disconnect();
+    }
 }
 
 

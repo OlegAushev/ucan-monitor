@@ -7,6 +7,7 @@
 #include <ui/mainwindow/mainwindow.h>
 
 
+#include <iostream>
 #include <fstream>
 
 

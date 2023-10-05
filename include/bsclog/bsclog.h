@@ -25,15 +25,15 @@ enum class level {
 };
 
 
-const std::vector<std::string> level_name = {
-    " trace ",
-    " debug ",
-    " info ",
-    "  ok  ",
-    " warn ",
-    " fail ",
-    " crit ",
-    "      "
+const std::vector<std::string> level_prefix = {
+    "[ trace ]",
+    "[ debug ]",
+    "        ",
+    "[  ok  ]",
+    "[ warn ]",
+    "[ fail ]",
+    "[ crit ]",
+    "        "
 };
 
 
@@ -100,20 +100,12 @@ private:
         // auto now_time_t = std::chrono::system_clock::to_time_t(now);
         // std::stringstream timestamp;
         // timestamp << '[' << std::put_time(std::localtime(&now_time_t), "%F %T") << '] ';
- 
-        std::string prefix;
-        if (lvl != level::off) {
-            prefix = std::format("[{}] ",
-                                level_name[std::to_underlying(lvl)]);
-        } else {
-            prefix = std::format(" {}  ",
-                                level_name[std::to_underlying(lvl)]);
-        }
 
         std::string payload = std::format(fmt, std::forward<Args>(args)...);
-        
+        std::string message = std::format("{} {}", level_prefix[std::to_underlying(lvl)], payload); 
+
         for (auto sink : _sinks) {
-            *sink << (prefix + payload) << '\n';
+            *sink << message << '\n';
         }
     }
 

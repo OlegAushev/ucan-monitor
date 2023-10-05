@@ -184,9 +184,4 @@ enum class ControlLoopType {
 };
 
 
-inline uint8_t calc_crc8(uint8_t* buf, int len) {
-
-}
-
-
 }

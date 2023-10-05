@@ -3,7 +3,6 @@
 
 #include "../../ucanopen_def.h" 
 #include <cansocket/cansocket.h>
-#include <log/log.h>
 #include <bsclog/bsclog.h>
 #include <list>
 
