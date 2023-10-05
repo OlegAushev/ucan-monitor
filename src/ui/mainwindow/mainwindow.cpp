@@ -20,6 +20,8 @@ void MainWindow::show() {
         CanBusSetup::instance().show(&_should_show_can_bus_setup);
     }
 
+    ui::Console::instance().draw();
+
     ImGui::End();
 }
 

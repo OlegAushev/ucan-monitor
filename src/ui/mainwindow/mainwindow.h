@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 #include "../canbussetup/canbussetup.h"
+#include "../console/console.h"
 
 
 namespace ui {

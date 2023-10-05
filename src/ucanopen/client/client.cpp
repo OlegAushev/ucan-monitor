@@ -27,24 +27,25 @@ Client::~Client() {
 }
 
 
-void Client::set_node_id(NodeId node_id) {
+SetupStatus Client::set_node_id(NodeId node_id) {
     if (node_id == _node_id) {
         bsclog::info("Refused to set uCANopen client ID to {}(0x{:X}): already set.", node_id.get(), node_id.get());        
-        return;
+        return SetupStatus::success;
     }
 
     if (!node_id.valid()) {
         bsclog::error("Failed to set uCANopen client ID to {}(0x{:X}): invalid ID.", node_id.get(), node_id.get());
-        return;
+        return SetupStatus::invalid_argument;
     }
 
     if (!_is_free(node_id)) {
         bsclog::error("Failed to set uCANopen client ID to {}(0x{:X}): occupied ID.", node_id.get(), node_id.get());
-        return;
+        return SetupStatus::invalid_argument;
     }
     
     _node_id = node_id;
     bsclog::success("Set uCANopen client ID to {}(0x{:X})", node_id.get(), node_id.get());
+    return SetupStatus::success;
 }
 
 
@@ -74,26 +75,26 @@ void Client::register_server(std::shared_ptr<Server> server) {
 }
 
 
-void Client::set_server_node_id(std::string_view name, NodeId node_id) {
+SetupStatus Client::set_server_node_id(std::string_view name, NodeId node_id) {
     auto server = _get_server(name);
     if (server == nullptr) {
         bsclog::error("Failed to set uCANopen {} server ID to {}(0x{:X}): server not found.", name, node_id.get(), node_id.get());
-        return;
+        return SetupStatus::invalid_argument;
     }
 
     if (node_id == server->node_id()) {
         bsclog::info("Refused to set uCANopen {} server ID to {}(0x{:X}): already set.", name, node_id.get(), node_id.get());
-        return;
+        return SetupStatus::success;
     }
     
     if (!node_id.valid()) {
         bsclog::error("Failed to set uCANopen {} server ID to {}(0x{:X}): invalid ID.", name, node_id.get(), node_id.get());
-        return;
+        return SetupStatus::invalid_argument;
     }
 
     if (!_is_free(node_id)) {
         bsclog::error("Failed to set uCANopen {} server ID to {}(0x{:X}): occupied ID.", name, node_id.get(), node_id.get());
-        return;
+        return SetupStatus::invalid_argument;
     }
 
     _unregister_rx_messages(server);
@@ -108,6 +109,7 @@ void Client::set_server_node_id(std::string_view name, NodeId node_id) {
     // }
     _register_rx_messages(server);
     bsclog::success("Set uCANopen {} server ID to {}(0x{:X}).", name, node_id.get(), node_id.get());
+    return SetupStatus::success;
 }
 
 

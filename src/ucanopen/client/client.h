@@ -63,8 +63,16 @@ public:
     Client(NodeId node_id, std::shared_ptr<can::Socket> socket);
     ~Client();
     NodeId node_id() const { return _node_id; }
-    void set_node_id(NodeId nodeId);
+    SetupStatus set_node_id(NodeId nodeId);
     void register_server(std::shared_ptr<Server> server);
+
+    std::vector<std::string> server_names() const {
+        std::vector<std::string> names;//(_servers.size());
+        for (const auto& server : _servers) {
+            names.push_back(server->name());
+        }
+        return names;
+    }
 
     std::shared_ptr<Server> server(std::string_view name) {
         auto server_iter = std::find_if(_servers.begin(), _servers.end(),
@@ -75,7 +83,7 @@ public:
         return *server_iter;
     }
 
-    void set_server_node_id(std::string_view name, NodeId node_id);
+    SetupStatus set_server_node_id(std::string_view name, NodeId node_id);
 
     void enable_sync() {
         _sync_info.is_enabled = true;

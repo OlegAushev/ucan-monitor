@@ -27,6 +27,12 @@ enum class FrameHandlingStatus {
 };
 
 
+enum class SetupStatus {
+    success,
+    invalid_argument
+};
+
+
 namespace traits {
 struct check_read_perm{};
 struct check_write_perm{};
@@ -61,7 +67,7 @@ protected:
 public:
     Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary);
     
-    std::string_view name() const { return _name; }
+    std::string name() const { return _name; }
     NodeId node_id() const { return _node_id; }
     NmtState nmt_state() const { return _nmt_state; }
     const ObjectDictionary& dictionary() const { return _dictionary; }

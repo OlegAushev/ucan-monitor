@@ -18,6 +18,9 @@
 #include <ucanopen_devices/atvvcu/server/atvvcu_server.h>
 
 
+const std::vector<std::string> server_names = {"srmdrive", "atv-vcu"};
+
+
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -28,8 +31,7 @@ int main(int argc, char** argv) {
     bsclog::add_sink(std::shared_ptr<std::ostream>(&std::cout, [](void*){}));
     auto logfile = std::make_shared<std::ofstream>("logfile.txt");
     bsclog::add_sink(logfile);
-    auto logsstream = std::make_shared<std::stringstream>();
-    bsclog::add_sink(logsstream);
+    bsclog::add_sink(ui::Console::instance().stream());
     bsclog::success("Initialized bsclog. Sink count: {}", bsclog::sink_count());  
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -78,7 +80,7 @@ int main(int argc, char** argv) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ui::ServerSelector::instance().show({"SRM-Drive-80", "ATV-VCU"});
+        ui::ServerSelector::instance().show(server_names);
 
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)
@@ -98,18 +100,19 @@ int main(int argc, char** argv) {
     // Server Creation
     auto can_socket = std::make_shared<can::Socket>();
     auto ucanopen_client = std::make_shared<ucanopen::Client>(ucanopen::NodeId(127), can_socket);
-    ui::CanBusSetup::instance().init(can_socket);
 
-    // ucanopen_client->enable_sync();
-    // ucanopen_client->disable_sync();
-    // ucanopen_client->set_sync_period(std::chrono::milliseconds(50));
-    // ucanopen_client->set_heartbeat_period(std::chrono::milliseconds(100));
-    // ucanopen_client->enable_tpdo();
-    // ucanopen_client->disable_tpdo();
-    ucanopen_client->set_node_id(ucanopen::NodeId(0xFA));
-    ucanopen_client->set_node_id(ucanopen::NodeId(0x20));
+    auto server_name = ui::ServerSelector::instance().selected_server();
+    if (server_name == "srmdrive") {
+        auto srmdrive_server = std::make_shared<srmdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
+        ucanopen_client->register_server(srmdrive_server);
+    } else if (server_name == "atv-vcu") {
+        auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
+        ucanopen_client->register_server(atvvcu_server);
+    } else {
+        goto cleanup;
+    }
 
-    ucanopen_client->enable_rpdo_on_server("srmdrive");
+    ui::CanBusSetup::instance().init(can_socket, ucanopen_client);
     
     // TODO
 
@@ -144,6 +147,7 @@ int main(int argc, char** argv) {
         glfwSwapBuffers(window);
     }
 
+cleanup:
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -173,11 +177,9 @@ std::promise<void> signal_exit_main;
 // int backend_main_loop(std::future<void> signal_exit) {
 //     Log() << "Started backend main loop thread. Thread id: " << std::this_thread::get_id() << ".\n" << LogPrefix::ok;
 
-//     auto can_socket = std::make_shared<can::Socket>();
-//     api::register_can_socket(can_socket);
 
-//     auto ucanopen_client = std::make_shared<ucanopen::Client>(ucanopen::NodeId(0x14), can_socket);
-//     api::register_ucanopen_client(ucanopen_client);
+
+
 
 //     std::shared_ptr<srmdrive::Server> srmdrive_server;
 //     std::shared_ptr<crd600::Server> crd600_server;

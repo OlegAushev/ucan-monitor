@@ -46,6 +46,7 @@ public:
     explicit NodeId(unsigned int id) : _id(id) {}
     unsigned int get() const { return _id; }
     bool valid() const { return (_id >= 1) && (_id <= 127); }
+    static bool is_valid(unsigned int id) { return (id >= 1) && (id <= 127); }
 };
 
 
