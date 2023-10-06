@@ -1,14 +1,14 @@
-#include "console.h"
+#include "log.h"
 
 
 namespace ui {
 
 
-void Console::draw() {
-    ImGui::Begin("Console");
+void Log::draw() {
+    ImGui::Begin("Log");
 
 
-    if (ImGui::BeginChild("Console Scrolling Region", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
+    if (ImGui::BeginChild("Log Scrolling Region", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
         //ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
         std::string newline;
         if (std::getline(*_stream, newline)) {

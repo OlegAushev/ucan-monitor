@@ -1,5 +1,6 @@
 #include "mainview.h"
-#include "../optionswindow/optionswindow.h"
+#include "../log/log.h"
+#include "../options/options.h"
 #include "../components/togglebutton.h"
 #include <icons_font_awesome/IconsFontAwesome6.h>
 
@@ -32,18 +33,19 @@ void MainView::draw() {
     ImGui::PopStyleVar();
 
     // Submit the DockSpace
-    ImGuiIO& io = ImGui::GetIO();
     ImGuiID dockspace_id = ImGui::GetID("DockSpace");
     ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
     if (ImGui::BeginMenuBar()) {
         ToggleButton(ICON_FA_GEAR " Options", _show_options);
+        ToggleButton(ICON_FA_MESSAGE " Log    ", _show_log);
+        ToggleButton(ICON_FA_INFO " Example", _show_demo);
         ImGui::EndMenuBar();
     }
 
-    if (_show_options) {
-        OptionsWindow::instance().draw(_show_options);
-    }
+    if (_show_options) { ui::Options::instance().draw(_show_options); }
+    if (_show_log) { ui::Log::instance().draw(); }
+    if (_show_demo) { ImGui::ShowDemoWindow();     }
 
     ImGui::End();
 }

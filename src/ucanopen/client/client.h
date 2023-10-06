@@ -97,12 +97,12 @@ public:
 
     void set_sync_period(std::chrono::milliseconds period) {
         _sync_info.period = period;
-        bsclog::info("Set uCANopen client SYNC messages period = {}.", period);
+        bsclog::info("Set uCANopen client SYNC messages period to {}.", period);
     }
 
     void set_heartbeat_period(std::chrono::milliseconds period) {
         _heartbeat_info.period = period;
-        bsclog::info("Set uCANopen client HEARTBEAT messages period = {}.", period);
+        bsclog::info("Set uCANopen client HEARTBEAT messages period to {}.", period);
     }
 
     void register_tpdo(TpdoType tpdo_type, std::chrono::milliseconds period, std::function<can_payload(void)> creator) {
@@ -166,7 +166,7 @@ public:
             return;
         }
         server->watch_service.set_period(period);
-        bsclog::info("Set {} server watch messages to {}.", name, period);
+        bsclog::info("Set {} server watch messages period to {}.", name, period);
     }
 
 protected:

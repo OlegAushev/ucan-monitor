@@ -5,9 +5,10 @@
 
 #include <icons_font_awesome/IconsFontAwesome6.h>
 
+#include <ui/log/log.h>
 #include <ui/mainview/mainview.h>
+#include <ui/options/options.h>
 #include <ui/serverselector/serverselector.h>
-#include <ui/mainwindow/mainwindow.h>
 
 
 #include <iostream>
@@ -34,7 +35,7 @@ int main(int argc, char** argv) {
     bsclog::add_sink(std::shared_ptr<std::ostream>(&std::cout, [](void*){}));
     auto logfile = std::make_shared<std::ofstream>("logfile.txt");
     bsclog::add_sink(logfile);
-    bsclog::add_sink(ui::Console::instance().stream());
+    bsclog::add_sink(ui::Log::instance().stream());
     bsclog::success("Initialized bsclog. Sink count: {}", bsclog::sink_count());  
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -47,7 +48,7 @@ int main(int argc, char** argv) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "uCAN Monitor", nullptr, nullptr);
     if (window == nullptr) {
         return 1;
     }
@@ -126,11 +127,11 @@ int main(int argc, char** argv) {
         goto cleanup;
     }
 
-    ui::OptionsWindow::instance().init(can_socket, ucanopen_client);
+    ui::Options::instance().init(can_socket, ucanopen_client);
     
     // TODO
 
-    while (!glfwWindowShouldClose(window) && !ui::MainWindow::instance().closed()) {
+    while (!glfwWindowShouldClose(window)) {// && !ui::MainWindow::instance().closed()) {
         // Poll and handle events (inputs, window resize, etc.)
         glfwPollEvents();
 
@@ -139,13 +140,7 @@ int main(int argc, char** argv) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::ShowDemoWindow(); // Show demo window! :)
-        // TODO
-
-        //int width, height;
-        //glfwGetWindowSize(window, &width, &height);
         ui::MainView::instance().draw();
-        //ui::MainWindow::instance().show();
 
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)

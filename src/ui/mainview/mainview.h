@@ -12,6 +12,8 @@ private:
     MainView() = default;
 
     bool _show_options = false;
+    bool _show_log = true;
+    bool _show_demo = false;
 
     //bool _closed = false;
     //bool _should_show_can_bus_setup = false;

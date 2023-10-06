@@ -9,9 +9,9 @@
 namespace ui {
 
 
-class OptionsWindow {
+class Options {
 private:
-    OptionsWindow() = default;
+    Options() = default;
     std::shared_ptr<can::Socket> _socket;
     std::shared_ptr<ucanopen::Client> _client;
 
@@ -19,8 +19,8 @@ private:
     int _selected_bitrate_idx = 0;
     can::Error _error = can::Error::none;
 public:
-    static OptionsWindow& instance() {
-        static OptionsWindow s;
+    static Options& instance() {
+        static Options s;
         return s;
     }
 

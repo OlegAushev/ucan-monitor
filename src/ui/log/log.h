@@ -9,16 +9,16 @@
 namespace ui {
 
 
-class Console {
+class Log {
 private:
-    Console() {
+    Log() {
         _stream = std::make_shared<std::stringstream>();
     }
     std::shared_ptr<std::stringstream> _stream;
     std::vector<std::string> _lines;
 public:
-    static Console& instance() {
-        static Console s;
+    static Log& instance() {
+        static Log s;
         return s;
     }
 

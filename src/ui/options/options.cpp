@@ -1,10 +1,10 @@
-#include "optionswindow.h"
+#include "options.h"
 
 
 namespace ui {
 
 
-void OptionsWindow::init(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::Client> ucanopen_client) {
+void Options::init(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::Client> ucanopen_client) {
     _socket = socket;
     _client = ucanopen_client;
 
@@ -19,8 +19,8 @@ void OptionsWindow::init(std::shared_ptr<can::Socket> socket, std::shared_ptr<uc
 }
 
 
-void OptionsWindow::draw(bool& open) {
-    if (!ImGui::Begin("CAN Bus Setup", &open))
+void Options::draw(bool& open) {
+    if (!ImGui::Begin("Options", &open))
     {
         ImGui::End();
         return;
@@ -47,7 +47,7 @@ void OptionsWindow::draw(bool& open) {
 }
 
 
-void OptionsWindow::_draw_socketcan_tab() {
+void Options::_draw_socketcan_tab() {
     auto interface_preview = can::detail::interface_list[_selected_interface_idx].c_str();
     if (ImGui::BeginCombo("Interface", interface_preview)) {
         for (auto i = 0; i < can::detail::interface_list.size(); ++i) {
@@ -106,7 +106,7 @@ void OptionsWindow::_draw_socketcan_tab() {
 }
 
 
-void OptionsWindow::_draw_ucanopen_tab() {
+void Options::_draw_ucanopen_tab() {
     ImGui::SeparatorText("Client");
 
     static int client_id = _client->node_id().get();
@@ -156,7 +156,7 @@ void OptionsWindow::_draw_ucanopen_tab() {
 }
     
 
-void OptionsWindow::_draw_server_settings(const std::string& server) {
+void Options::_draw_server_settings(const std::string& server) {
     ImGui::NewLine();
     std::string separator_text = "Server: " + server;
     ImGui::SeparatorText(separator_text.c_str());
