@@ -2,6 +2,8 @@
 
 
 #include <imgui.h>
+#include "../components/drawable.h"
+#include <memory>
 
 
 namespace ui {
@@ -21,6 +23,9 @@ private:
     bool _show_charts = false;
 
     bool _show_demo = false;
+
+    std::shared_ptr<ui::DrawableWindow> _data_window;
+    std::shared_ptr<ui::DrawableWindow> _ctl_window;
 public:
     static MainView& instance() {
         static MainView s;

@@ -4,6 +4,8 @@
 #include "../components/togglebutton.h"
 #include <icons_font_awesome/IconsFontAwesome6.h>
 
+#include "../devices/srmdrive/data/srmdrive_data.h"
+
 
 namespace ui {
 
@@ -36,6 +38,7 @@ void MainView::draw() {
     if (_show_options) { ui::Options::instance().draw(_show_options); }
     if (_show_log) { ui::Log::instance().draw(_show_log); }
     if (_show_demo) { ImGui::ShowDemoWindow(); }
+    if (_show_data) { }
 
     ImGui::End();
 }
@@ -50,14 +53,14 @@ void MainView::_draw_menubar() {
         if(ImGui::Button(ICON_FA_POWER_OFF)) { _should_close = true; }
         ImGui::PopStyleColor(3);
 
-        ToggleButton(ICON_FA_GEAR " Options", _show_options);
-        ToggleButton(ICON_FA_MESSAGE " Log    ", _show_log);
-        ToggleButton(ICON_FA_PLAY " Control", _show_control);
-        ToggleButton(ICON_FA_TABLE " Data   ", _show_data);
-        ToggleButton(ICON_FA_MESSAGE " Setup  ", _show_setup);
-        ToggleButton(ICON_FA_CHART_AREA " Charts ", _show_charts);
-        ToggleButton(ICON_FA_MESSAGE " Log    ", _show_log);
-        ToggleButton(ICON_FA_INFO " Example", _show_demo);
+        ToggleButton(ICON_FA_GEAR           " Options", _show_options);
+        ToggleButton(ICON_FA_MESSAGE        " Log    ", _show_log);
+        ToggleButton(ICON_FA_PLAY           " Control", _show_control);
+        ToggleButton(ICON_FA_TABLE          " Data   ", _show_data);
+        ToggleButton(ICON_FA_MESSAGE        " Setup  ", _show_setup);
+        ToggleButton(ICON_FA_CHART_AREA     " Charts ", _show_charts);
+        ToggleButton(ICON_FA_MESSAGE        " Log    ", _show_log);
+        ToggleButton(ICON_FA_INFO           " Example", _show_demo);
         ImGui::EndMenuBar();
     }
 }

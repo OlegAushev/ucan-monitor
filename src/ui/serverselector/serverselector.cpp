@@ -5,9 +5,17 @@ namespace ui {
 
 
 void ServerSelector::show(const std::vector<std::string>& server_names) {
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
-    
-    ImGui::SetNextWindowPos(ImVec2{0, 0});
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking
+                                  | ImGuiWindowFlags_NoResize
+                                  | ImGuiWindowFlags_NoMove
+                                  | ImGuiWindowFlags_NoTitleBar
+                                  | ImGuiWindowFlags_NoCollapse
+                                  | ImGuiWindowFlags_NoBringToFrontOnFocus
+                                  | ImGuiWindowFlags_NoNavFocus;
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
     
     ImGui::Begin("Select Server", nullptr, window_flags);
 
