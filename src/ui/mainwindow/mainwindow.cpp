@@ -8,16 +8,16 @@ namespace ui {
 void MainWindow::show() {
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-    ImGui::SetNextWindowPos(ImVec2{0, 0});
-    ImGui::SetNextWindowSize(viewport->WorkSize);
+    //ImGui::SetNextWindowPos(ImVec2{0, 0});
+    //ImGui::SetNextWindowSize(viewport->WorkSize);
         
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus;
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
     ImGui::Begin("uCAN-Monitor", nullptr, window_flags);
 
     _show_menubar();
 
     if (_should_show_can_bus_setup) {
-        CanBusSetup::instance().show(&_should_show_can_bus_setup);
+        OptionsWindow::instance().draw(_should_show_can_bus_setup);
     }
 
     ui::Console::instance().draw();

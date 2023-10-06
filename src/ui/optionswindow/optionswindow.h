@@ -9,9 +9,9 @@
 namespace ui {
 
 
-class CanBusSetup {
+class OptionsWindow {
 private:
-    CanBusSetup() = default;
+    OptionsWindow() = default;
     std::shared_ptr<can::Socket> _socket;
     std::shared_ptr<ucanopen::Client> _client;
 
@@ -19,18 +19,18 @@ private:
     int _selected_bitrate_idx = 0;
     can::Error _error = can::Error::none;
 public:
-    static CanBusSetup& instance() {
-        static CanBusSetup s;
+    static OptionsWindow& instance() {
+        static OptionsWindow s;
         return s;
     }
 
     void init(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::Client> ucanopen_client);
 
-    void show(bool* p_open);
+    void draw(bool& open);
 private:
-    void _show_socketcan_tab();
-    void _show_ucanopen_tab();
-    void _show_server_settings(const std::string& server);
+    void _draw_socketcan_tab();
+    void _draw_ucanopen_tab();
+    void _draw_server_settings(const std::string& server);
 };
 
 

@@ -1,8 +1,11 @@
-#include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_opengl3.h"
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 #include <GLFW/glfw3.h>
 
+#include <icons_font_awesome/IconsFontAwesome6.h>
+
+#include <ui/mainview/mainview.h>
 #include <ui/serverselector/serverselector.h>
 #include <ui/mainwindow/mainwindow.h>
 
@@ -55,11 +58,22 @@ int main(int argc, char** argv) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;   // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;    // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;       // Enable Docking
 
-    // TODO Font
-    io.Fonts->AddFontFromFileTTF("../SourceCodePro-Regular.otf", 18.0f, NULL, io.Fonts->GetGlyphRangesDefault());
+    // Fonts
+    float base_fontsize = 18.0f;
+    float icon_fontsize = base_fontsize;// * 2.0f / 3.0f;
+    io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf", base_fontsize, NULL, io.Fonts->GetGlyphRangesDefault());
+
+        // merge in icons from Font Awesome
+    static const ImWchar icons_ranges[] = {ICON_MIN_FA, ICON_MAX_16_FA, 0};
+    ImFontConfig icons_config; 
+    icons_config.MergeMode = true; 
+    icons_config.PixelSnapH = true; 
+    icons_config.GlyphMinAdvanceX = icon_fontsize;
+    io.Fonts->AddFontFromFileTTF("../assets/fonts/FontAwesome.otf", icon_fontsize, &icons_config, icons_ranges);
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -112,7 +126,7 @@ int main(int argc, char** argv) {
         goto cleanup;
     }
 
-    ui::CanBusSetup::instance().init(can_socket, ucanopen_client);
+    ui::OptionsWindow::instance().init(can_socket, ucanopen_client);
     
     // TODO
 
@@ -130,7 +144,8 @@ int main(int argc, char** argv) {
 
         //int width, height;
         //glfwGetWindowSize(window, &width, &height);
-        ui::MainWindow::instance().show();
+        ui::MainView::instance().draw();
+        //ui::MainWindow::instance().show();
 
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)

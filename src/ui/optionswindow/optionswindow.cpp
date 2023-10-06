@@ -1,10 +1,10 @@
-#include "canbussetup.h"
+#include "optionswindow.h"
 
 
 namespace ui {
 
 
-void CanBusSetup::init(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::Client> ucanopen_client) {
+void OptionsWindow::init(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::Client> ucanopen_client) {
     _socket = socket;
     _client = ucanopen_client;
 
@@ -19,8 +19,8 @@ void CanBusSetup::init(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucan
 }
 
 
-void CanBusSetup::show(bool* p_open) {
-    if (!ImGui::Begin("CAN Bus Setup", p_open))
+void OptionsWindow::draw(bool& open) {
+    if (!ImGui::Begin("CAN Bus Setup", &open))
     {
         ImGui::End();
         return;
@@ -33,12 +33,12 @@ void CanBusSetup::show(bool* p_open) {
 
     if (ImGui::BeginTabBar("##TabBar")) {
         if (ImGui::BeginTabItem("SocketCAN")) {
-            _show_socketcan_tab();
+            _draw_socketcan_tab();
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("CANopen")) {
-            _show_ucanopen_tab();
+            _draw_ucanopen_tab();
             ImGui::EndTabItem();
         }
         ImGui::EndTabBar();
@@ -47,7 +47,7 @@ void CanBusSetup::show(bool* p_open) {
 }
 
 
-void CanBusSetup::_show_socketcan_tab() {
+void OptionsWindow::_draw_socketcan_tab() {
     auto interface_preview = can::detail::interface_list[_selected_interface_idx].c_str();
     if (ImGui::BeginCombo("Interface", interface_preview)) {
         for (auto i = 0; i < can::detail::interface_list.size(); ++i) {
@@ -106,7 +106,7 @@ void CanBusSetup::_show_socketcan_tab() {
 }
 
 
-void CanBusSetup::_show_ucanopen_tab() {
+void OptionsWindow::_draw_ucanopen_tab() {
     ImGui::SeparatorText("Client");
 
     static int client_id = _client->node_id().get();
@@ -151,12 +151,12 @@ void CanBusSetup::_show_ucanopen_tab() {
     }
 
     for (const auto& server : _client->server_names()) {
-        _show_server_settings(server);
+        _draw_server_settings(server);
     }
 }
     
 
-void CanBusSetup::_show_server_settings(const std::string& server) {
+void OptionsWindow::_draw_server_settings(const std::string& server) {
     ImGui::NewLine();
     std::string separator_text = "Server: " + server;
     ImGui::SeparatorText(separator_text.c_str());
