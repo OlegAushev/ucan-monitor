@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
     
     // TODO
 
-    while (!glfwWindowShouldClose(window)) {// && !ui::MainWindow::instance().closed()) {
+    while (!glfwWindowShouldClose(window) && !ui::MainView::instance().should_close()) {
         // Poll and handle events (inputs, window resize, etc.)
         glfwPollEvents();
 

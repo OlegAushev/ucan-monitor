@@ -11,12 +11,16 @@ class MainView {
 private:
     MainView() = default;
 
+    bool _should_close = false;
     bool _show_options = false;
     bool _show_log = true;
-    bool _show_demo = false;
 
-    //bool _closed = false;
-    //bool _should_show_can_bus_setup = false;
+    bool _show_control = false;
+    bool _show_data = false;
+    bool _show_setup = false;
+    bool _show_charts = false;
+
+    bool _show_demo = false;
 public:
     static MainView& instance() {
         static MainView s;
@@ -24,9 +28,9 @@ public:
     }
 
     void draw();
-    //bool closed() { return _closed; }
+    bool should_close() { return _should_close; }
 private:
-    //void _show_menubar(); 
+    void _draw_menubar(); 
 };
 
 

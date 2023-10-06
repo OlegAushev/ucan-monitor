@@ -9,11 +9,6 @@ namespace ui {
 
 
 void MainView::draw() {
-    // ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar
-    //                               | ImGuiWindowFlags_NoDocking
-    //                               | ImGuiWindowFlags_NoCollapse
-    //                               | ImGuiWindowFlags_NoBringToFrontOnFocus
-    //                               | ImGuiWindowFlags_MenuBar;
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar
                                   | ImGuiWindowFlags_NoDocking
                                   | ImGuiWindowFlags_NoResize
@@ -36,18 +31,35 @@ void MainView::draw() {
     ImGuiID dockspace_id = ImGui::GetID("DockSpace");
     ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
+    _draw_menubar();
+
+    if (_show_options) { ui::Options::instance().draw(_show_options); }
+    if (_show_log) { ui::Log::instance().draw(_show_log); }
+    if (_show_demo) { ImGui::ShowDemoWindow(); }
+
+    ImGui::End();
+}
+
+
+void MainView::_draw_menubar() {
     if (ImGui::BeginMenuBar()) {
+
+        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV( 0.f, 0.6f, 0.6f) );
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV( 0.f, 0.7f, 0.7f) );
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV( 0.f, 0.8f, 0.8f) );
+        if(ImGui::Button(ICON_FA_POWER_OFF)) { _should_close = true; }
+        ImGui::PopStyleColor(3);
+
         ToggleButton(ICON_FA_GEAR " Options", _show_options);
+        ToggleButton(ICON_FA_MESSAGE " Log    ", _show_log);
+        ToggleButton(ICON_FA_PLAY " Control", _show_control);
+        ToggleButton(ICON_FA_TABLE " Data   ", _show_data);
+        ToggleButton(ICON_FA_MESSAGE " Setup  ", _show_setup);
+        ToggleButton(ICON_FA_CHART_AREA " Charts ", _show_charts);
         ToggleButton(ICON_FA_MESSAGE " Log    ", _show_log);
         ToggleButton(ICON_FA_INFO " Example", _show_demo);
         ImGui::EndMenuBar();
     }
-
-    if (_show_options) { ui::Options::instance().draw(_show_options); }
-    if (_show_log) { ui::Log::instance().draw(); }
-    if (_show_demo) { ImGui::ShowDemoWindow();     }
-
-    ImGui::End();
 }
 
 

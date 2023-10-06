@@ -22,7 +22,7 @@ public:
         return s;
     }
 
-    void draw();
+    void draw(bool& open);
     std::shared_ptr<std::stringstream> stream() { return _stream; }
 };
 
