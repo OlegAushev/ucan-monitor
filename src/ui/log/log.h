@@ -11,17 +11,10 @@ namespace ui {
 
 class Log {
 private:
-    Log() {
-        _stream = std::make_shared<std::stringstream>();
-    }
     std::shared_ptr<std::stringstream> _stream;
     std::vector<std::string> _lines;
 public:
-    static Log& instance() {
-        static Log s;
-        return s;
-    }
-
+    Log();
     void draw(bool& open);
     std::shared_ptr<std::stringstream> stream() { return _stream; }
 };

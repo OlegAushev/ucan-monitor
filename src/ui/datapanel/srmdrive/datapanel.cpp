@@ -1,11 +1,11 @@
-#include "srmdrive_data.h"
+#include "datapanel.h"
 
 
 namespace ui {
 namespace srmdrive {
 
 
-void Data::draw(bool& open) {
+void DataPanel::draw(bool& open) {
     
 }
 

@@ -7,10 +7,10 @@
 namespace ui {
 
 
-class DrawableWindow {
+class DataPanelInterface {
 public:
     virtual void draw(bool& open) = 0;
 };
 
 
-} // namespace ui
+}

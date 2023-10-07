@@ -4,7 +4,7 @@
 namespace ui {
 
 
-void Options::init(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::Client> ucanopen_client) {
+Options::Options(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::Client> ucanopen_client) {
     _socket = socket;
     _client = ucanopen_client;
 

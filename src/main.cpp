@@ -5,21 +5,18 @@
 
 #include <icons_font_awesome/IconsFontAwesome6.h>
 
-#include <ui/log/log.h>
 #include <ui/mainview/mainview.h>
-#include <ui/options/options.h>
 #include <ui/serverselector/serverselector.h>
-
+#include <ui/datapanel/srmdrive/datapanel.h>
 
 #include <iostream>
 #include <fstream>
 
-
 #include <ucanopen/client/client.h>
-#include <ucanopen_devices/srmdrive/server/srmdrive_server.h>
-#include <ucanopen_devices/crd600/server/crd600_server.h>
-#include <ucanopen_devices/launchpad/server/launchpad_server.h>
-#include <ucanopen_devices/atvvcu/server/atvvcu_server.h>
+#include <ucanopen_servers/srmdrive/srmdrive_server.h>
+#include <ucanopen_servers/crd600/crd600_server.h>
+#include <ucanopen_servers/launchpad/launchpad_server.h>
+#include <ucanopen_servers/atvvcu/atvvcu_server.h>
 
 
 const std::vector<std::string> server_names = {"srmdrive", "atv-vcu"};
@@ -35,7 +32,8 @@ int main(int argc, char** argv) {
     bsclog::add_sink(std::shared_ptr<std::ostream>(&std::cout, [](void*){}));
     auto logfile = std::make_shared<std::ofstream>("logfile.txt");
     bsclog::add_sink(logfile);
-    bsclog::add_sink(ui::Log::instance().stream());
+    auto gui_log = std::make_shared<ui::Log>(); 
+    bsclog::add_sink(gui_log->stream());
     bsclog::success("Initialized bsclog. Sink count: {}", bsclog::sink_count());  
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -112,26 +110,32 @@ int main(int argc, char** argv) {
         glfwSwapBuffers(window);
     }
 
+ 
     // Server Creation
     auto can_socket = std::make_shared<can::Socket>();
     auto ucanopen_client = std::make_shared<ucanopen::Client>(ucanopen::NodeId(127), can_socket);
+
+    std::shared_ptr<ui::DataPanelInterface> datapanel;
 
     auto server_name = ui::ServerSelector::instance().selected_server();
     if (server_name == "srmdrive") {
         auto srmdrive_server = std::make_shared<srmdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
         ucanopen_client->register_server(srmdrive_server);
+        datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server);
     } else if (server_name == "atv-vcu") {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
     } else {
-        goto cleanup;
+        // TODO Error
     }
 
-    ui::Options::instance().init(can_socket, ucanopen_client);
-    
-    // TODO
 
-    while (!glfwWindowShouldClose(window) && !ui::MainView::instance().should_close()) {
+    // GUI Creation
+    auto options = std::make_shared<ui::Options>(can_socket, ucanopen_client);
+    auto mainview = std::make_shared<ui::MainView>(options, gui_log, datapanel);
+
+
+    while (!glfwWindowShouldClose(window) && !mainview->should_close()) {
         // Poll and handle events (inputs, window resize, etc.)
         glfwPollEvents();
 
@@ -140,7 +144,7 @@ int main(int argc, char** argv) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ui::MainView::instance().draw();
+        mainview->draw();
 
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)

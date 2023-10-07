@@ -4,6 +4,11 @@
 namespace ui {
 
 
+Log::Log() {
+    _stream = std::make_shared<std::stringstream>();
+}
+
+
 void Log::draw(bool& open) {
     ImGui::Begin("Log", &open);
 

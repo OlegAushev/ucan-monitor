@@ -1,13 +1,16 @@
 #include "mainview.h"
-#include "../log/log.h"
-#include "../options/options.h"
 #include "../components/togglebutton.h"
 #include <icons_font_awesome/IconsFontAwesome6.h>
 
-#include "../devices/srmdrive/data/srmdrive_data.h"
-
 
 namespace ui {
+
+
+MainView::MainView(std::shared_ptr<ui::Options> options, std::shared_ptr<ui::Log> log, std::shared_ptr<ui::DataPanelInterface> datapanel)
+        : _options(options)
+        , _log(log)
+        , _datapanel(datapanel)
+{}
 
 
 void MainView::draw() {
@@ -35,10 +38,10 @@ void MainView::draw() {
 
     _draw_menubar();
 
-    if (_show_options) { ui::Options::instance().draw(_show_options); }
-    if (_show_log) { ui::Log::instance().draw(_show_log); }
+    if (_show_options) { _options->draw(_show_options); }
+    if (_show_log) { _log->draw(_show_log); }
     if (_show_demo) { ImGui::ShowDemoWindow(); }
-    if (_show_data) { }
+    if (_show_data) { _datapanel->draw(_show_data); }
 
     ImGui::End();
 }
@@ -55,11 +58,10 @@ void MainView::_draw_menubar() {
 
         ToggleButton(ICON_FA_GEAR           " Options", _show_options);
         ToggleButton(ICON_FA_MESSAGE        " Log    ", _show_log);
-        ToggleButton(ICON_FA_PLAY           " Control", _show_control);
+        ToggleButton(ICON_FA_GAMEPAD        " Control", _show_control);
         ToggleButton(ICON_FA_TABLE          " Data   ", _show_data);
-        ToggleButton(ICON_FA_MESSAGE        " Setup  ", _show_setup);
+        ToggleButton(ICON_FA_TTY            " Setup  ", _show_setup);
         ToggleButton(ICON_FA_CHART_AREA     " Charts ", _show_charts);
-        ToggleButton(ICON_FA_MESSAGE        " Log    ", _show_log);
         ToggleButton(ICON_FA_INFO           " Example", _show_demo);
         ImGui::EndMenuBar();
     }
