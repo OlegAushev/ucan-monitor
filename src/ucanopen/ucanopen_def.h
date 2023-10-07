@@ -359,7 +359,7 @@ enum class SdoAbortCode : uint32_t {
 };
 
 
-const std::map<SdoAbortCode, std::string_view> sdo_abort_messages = {
+const std::map<SdoAbortCode, std::string> sdo_abort_messages = {
     {SdoAbortCode::no_error, "no error"},
     {SdoAbortCode::invalid_cs, "client/server command specifier not valid or unknown"},
     {SdoAbortCode::unsupported_access, "unsupported access to an object"},
@@ -405,10 +405,10 @@ inline bool operator<(const ODObjectKey& lhs, const ODObjectKey& rhs) {
 
 
 struct ODObject {
-    std::string_view category;
-    std::string_view subcategory;
-    std::string_view name;
-    std::string_view unit;
+    std::string category;
+    std::string subcategory;
+    std::string name;
+    std::string unit;
     ODObjectType type;
     ODObjectAccessPermission access_permission;
 
@@ -432,8 +432,8 @@ inline bool operator<(const ODObjectAux& lhs, const ODObjectAux& rhs) {
 
 
 struct ObjectDictionaryConfig {
-    std::string_view watch_category;
-    std::string_view config_category;
+    std::string watch_category;
+    std::string config_category;
 };
 
 

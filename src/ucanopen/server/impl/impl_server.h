@@ -74,7 +74,7 @@ public:
 
     ODAccessStatus read(std::string_view category, std::string_view subcategory, std::string_view name);
     ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, ExpeditedSdoData sdo_data);
-    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, std::string value);
+    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, const std::string& value);
     ODAccessStatus exec(std::string_view category, std::string_view subcategory, std::string_view name);
 public:
     ODEntryIter find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name) {

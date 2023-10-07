@@ -16,7 +16,7 @@ private:
     bool _is_enabled = false;
     std::chrono::milliseconds _period = std::chrono::milliseconds(1000);
     std::chrono::time_point<std::chrono::steady_clock> _timepoint;
-    std::vector<std::pair<std::string_view, std::string_view>> _objects;
+    std::vector<const ODObject*> _objects;
 
     struct WatchData {
         ExpeditedSdoData raw;
@@ -34,8 +34,8 @@ public:
             if (now - _timepoint >= _period) {
                 static int i = 0;
                 _server.read(_server.dictionary().config.watch_category,
-                              _objects[i].first,
-                              _objects[i].second);
+                              _objects[i]->subcategory,
+                              _objects[i]->name);
                 _timepoint = now;
                 i = (i + 1) % _objects.size();
             }
@@ -68,7 +68,7 @@ public:
         _period = period;
     }
 
-    const std::vector<std::pair<std::string_view, std::string_view>>& objects() const {
+    const std::vector<const ODObject*>& objects() const {
         return _objects;
     }
 

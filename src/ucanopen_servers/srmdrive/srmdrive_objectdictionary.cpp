@@ -43,11 +43,11 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_FLOAT32, OD_ACCESS_RO}},
 {{0x5000, 0x02}, {"watch", "sys", "syslog_message", "", OD_UINT32, OD_ACCESS_RO}},
-{{0x5000, 0x03}, {"watch", "drive", "voltage_dc", "", OD_FLOAT32, OD_ACCESS_RO}},
-{{0x5000, 0x04}, {"watch", "drive", "current_pha", "", OD_FLOAT32, OD_ACCESS_RO}},
-{{0x5000, 0x05}, {"watch", "drive", "current_phb", "", OD_FLOAT32, OD_ACCESS_RO}},
-{{0x5000, 0x06}, {"watch", "drive", "current_phc", "", OD_FLOAT32, OD_ACCESS_RO}},
-{{0x5000, 0x07}, {"watch", "drive", "current_f", "", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0x03}, {"watch", "drive", "voltage_dc", "V", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0x04}, {"watch", "drive", "current_pha", "A", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0x05}, {"watch", "drive", "current_phb", "A", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0x06}, {"watch", "drive", "current_phc", "A", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0x07}, {"watch", "drive", "current_f", "A", OD_FLOAT32, OD_ACCESS_RO}},
 
 
 {{0x3000, 0x01}, {"config", "ucanopen", "node_id", "", OD_UINT32, OD_ACCESS_RW}},

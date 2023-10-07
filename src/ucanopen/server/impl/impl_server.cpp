@@ -67,7 +67,7 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
 
 
 ODAccessStatus impl::Server::write(std::string_view category, std::string_view subcategory, std::string_view name,
-                                   std::string value) {
+                                   const std::string& value) {
     ODEntryIter entry;
     auto status = find_od_entry(category, subcategory, name, entry, traits::check_write_perm{});
     if (status != ODAccessStatus::success) {
