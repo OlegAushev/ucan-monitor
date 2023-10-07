@@ -9,22 +9,22 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
     _client_values.fill(0);
     _server_values.fill(0);
 
-    tpdo_service.register_tpdo(ucanopen::TpdoType::tpdo1, std::chrono::milliseconds(1100),
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo1, std::chrono::milliseconds(1100),
             [this](ucanopen::can_payload payload) { this->_handle_tpdo1(payload); });
-    tpdo_service.register_tpdo(ucanopen::TpdoType::tpdo2, std::chrono::milliseconds(1100),
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1100),
             [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
-    tpdo_service.register_tpdo(ucanopen::TpdoType::tpdo3, std::chrono::milliseconds(1100),
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1100),
             [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
-    tpdo_service.register_tpdo(ucanopen::TpdoType::tpdo4, std::chrono::milliseconds(1100),
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1100),
             [this](ucanopen::can_payload payload) { this->_handle_tpdo4(payload); });
 
-    // rpdo_service.register_rpdo(ucanopen::RpdoType::rpdo1, std::chrono::milliseconds(25),
+    // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1, std::chrono::milliseconds(25),
     //         [this](){ return this->_create_rpdo1(); });
-    // rpdo_service.register_rpdo(ucanopen::RpdoType::rpdo2, std::chrono::milliseconds(50),
+    // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2, std::chrono::milliseconds(50),
     //         [this](){ return this->_create_rpdo2(); });
-    // rpdo_service.register_rpdo(ucanopen::RpdoType::rpdo3, std::chrono::milliseconds(100),
+    // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3, std::chrono::milliseconds(100),
     //         [this](){ return this->_create_rpdo3(); });
-    // rpdo_service.register_rpdo(ucanopen::RpdoType::rpdo4, std::chrono::milliseconds(500),
+    // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo4, std::chrono::milliseconds(500),
     //         [this](){ return this->_create_rpdo4(); });
 }
 

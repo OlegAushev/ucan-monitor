@@ -59,8 +59,8 @@ protected:
 public:
     Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, const std::string& name);
 
-    void set_client_value(ucanopen::TpdoType tpdo_type, double value) { _client_values[static_cast<size_t>(tpdo_type)] = value; }
-    void set_server_value(ucanopen::RpdoType rpdo_type, double value) { _server_values[static_cast<size_t>(rpdo_type)] = value; }
+    void set_client_value(ucanopen::CobTpdo tpdo_type, double value) { _client_values[static_cast<size_t>(tpdo_type)] = value; }
+    void set_server_value(ucanopen::CobRpdo rpdo_type, double value) { _server_values[static_cast<size_t>(rpdo_type)] = value; }
 
     uint32_t errors() const { return _errors; }
     uint16_t warnings() const { return _warnings; }

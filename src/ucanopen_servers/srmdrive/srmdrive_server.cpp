@@ -7,18 +7,18 @@ namespace srmdrive {
 Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, const std::string& name)
         : ucanopen::Server(socket, node_id, name, object_dictionary)
         , ucanopen::SdoSubscriber(sdo_service) {
-    tpdo_service.register_tpdo(ucanopen::TpdoType::tpdo1, std::chrono::milliseconds(1000),
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo1, std::chrono::milliseconds(1000),
                                [this](ucanopen::can_payload payload) { this->_handle_tpdo1(payload); });
-    tpdo_service.register_tpdo(ucanopen::TpdoType::tpdo2, std::chrono::milliseconds(1000),
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1000),
                                [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
-    tpdo_service.register_tpdo(ucanopen::TpdoType::tpdo3, std::chrono::milliseconds(1000),
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1000),
                                [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
-    tpdo_service.register_tpdo(ucanopen::TpdoType::tpdo4, std::chrono::milliseconds(1000),
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1000),
                                [this](ucanopen::can_payload payload) { this->_handle_tpdo4(payload); });
 
-    rpdo_service.register_rpdo(ucanopen::RpdoType::rpdo1, std::chrono::milliseconds(100),
+    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1, std::chrono::milliseconds(100),
                                [this](){ return this->_create_rpdo1(); });
-    rpdo_service.register_rpdo(ucanopen::RpdoType::rpdo2, std::chrono::milliseconds(100),
+    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2, std::chrono::milliseconds(100),
                                [this](){ return this->_create_rpdo2(); });
 }
 

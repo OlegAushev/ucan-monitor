@@ -219,10 +219,10 @@ std::promise<void> signal_exit_main;
 //         auto callback_create_tpdo3 = [launchpad_server](){ return launchpad_server->create_client_tpdo3(); };
 //         auto callback_create_tpdo4 = [launchpad_server](){ return launchpad_server->create_client_tpdo4(); };
 
-//         ucanopen_client->register_tpdo(ucanopen::TpdoType::tpdo1, std::chrono::milliseconds(50), callback_create_tpdo1);
-//         ucanopen_client->register_tpdo(ucanopen::TpdoType::tpdo2, std::chrono::milliseconds(100), callback_create_tpdo2);
-//         ucanopen_client->register_tpdo(ucanopen::TpdoType::tpdo3, std::chrono::milliseconds(250), callback_create_tpdo3);
-//         ucanopen_client->register_tpdo(ucanopen::TpdoType::tpdo4, std::chrono::milliseconds(1000), callback_create_tpdo4);
+//         ucanopen_client->register_tpdo(ucanopen::CobTpdo::tpdo1, std::chrono::milliseconds(50), callback_create_tpdo1);
+//         ucanopen_client->register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(100), callback_create_tpdo2);
+//         ucanopen_client->register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(250), callback_create_tpdo3);
+//         ucanopen_client->register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1000), callback_create_tpdo4);
 
 //         api::register_launchpad_server(launchpad_server);
 //     } else if (server_name == "BMS-Main") {

@@ -35,7 +35,7 @@ ODAccessStatus impl::Server::read(std::string_view category, std::string_view su
     if (object.category != _dictionary.config.watch_category) {
         bsclog::info("Sending request to read {}::{}::{}::{}...", _name, object.category, object.subcategory, object.name);
     }
-    _socket->send(create_frame(CobType::rsdo, _node_id, message.to_payload()));   
+    _socket->send(create_frame(Cob::rsdo, _node_id, message.to_payload()));   
     return ODAccessStatus::success;
 }
 
@@ -61,7 +61,7 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
 
     bsclog::info("Sending request to write {}::{}::{}::{} = {}...",
                     _name, object.category, object.subcategory, object.name, sdo_data.to_string(object.type));
-    _socket->send(create_frame(CobType::rsdo, _node_id, message.to_payload()));
+    _socket->send(create_frame(Cob::rsdo, _node_id, message.to_payload()));
     return ODAccessStatus::success;
 }
 
@@ -119,7 +119,7 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
 
     bsclog::info("Sending request to write {}::{}::{}::{} = {}...",
                     _name, object.category, object.subcategory, object.name, value);
-    _socket->send(create_frame(CobType::rsdo, _node_id, message.to_payload()));
+    _socket->send(create_frame(Cob::rsdo, _node_id, message.to_payload()));
     return ODAccessStatus::success;
 }
 
@@ -143,7 +143,7 @@ ODAccessStatus impl::Server::exec(std::string_view category, std::string_view su
 
     bsclog::info("Sending request to execute {}::{}::{}::{}...",
                     _name, object.category, object.subcategory, object.name);
-    _socket->send(create_frame(CobType::rsdo, _node_id, message.to_payload()));
+    _socket->send(create_frame(Cob::rsdo, _node_id, message.to_payload()));
     return ODAccessStatus::success;
 }
 

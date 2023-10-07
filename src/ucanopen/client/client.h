@@ -29,28 +29,28 @@ private:
     std::map<canid_t, std::shared_ptr<Server>> _rxid_to_server;
 
     /* SYNC */
-    struct SyncInfo {
+    struct SyncMessage {
         bool is_enabled = false;
         std::chrono::milliseconds period = std::chrono::milliseconds(1000);
         std::chrono::time_point<std::chrono::steady_clock> timepoint;		
     };
-    SyncInfo _sync_info;
+    SyncMessage _sync_msg;
 
     /* HEARTBEAT */
-    struct HeartbeatInfo {
+    struct HeartbeatMessage {
         std::chrono::milliseconds period = std::chrono::milliseconds(1000);
         std::chrono::time_point<std::chrono::steady_clock> timepoint;
     };
-    HeartbeatInfo _heartbeat_info;
+    HeartbeatMessage _heartbeat_msg;
             
     /* TPDO client --> server */
     bool _is_tpdo_enabled = false;
-    struct TpdoInfo {
+    struct TpdoMessage {
         std::chrono::milliseconds period;
         std::chrono::time_point<std::chrono::steady_clock> timepoint;
         std::function<can_payload(void)> creator;
     };
-    std::map<TpdoType, TpdoInfo> _tpdo_list;
+    std::map<CobTpdo, TpdoMessage> _tpdo_msgs;
 
     /* THREADS */
     std::thread _thread_run;
@@ -86,27 +86,27 @@ public:
     SetupStatus set_server_node_id(std::string_view name, NodeId node_id);
 
     void enable_sync() {
-        _sync_info.is_enabled = true;
-        bsclog::info("Enabled uCANopen client SYNC messages, period = {}.", _sync_info.period);
+        _sync_msg.is_enabled = true;
+        bsclog::info("Enabled uCANopen client SYNC messages, period = {}.", _sync_msg.period);
     }
 
     void disable_sync() {
-        _sync_info.is_enabled = false;
+        _sync_msg.is_enabled = false;
         bsclog::info("Disabled uCANopen client SYNC messages.");
     }
 
     void set_sync_period(std::chrono::milliseconds period) {
-        _sync_info.period = period;
+        _sync_msg.period = period;
         bsclog::info("Set uCANopen client SYNC messages period to {}.", period);
     }
 
     void set_heartbeat_period(std::chrono::milliseconds period) {
-        _heartbeat_info.period = period;
+        _heartbeat_msg.period = period;
         bsclog::info("Set uCANopen client HEARTBEAT messages period to {}.", period);
     }
 
-    void register_tpdo(TpdoType tpdo_type, std::chrono::milliseconds period, std::function<can_payload(void)> creator) {
-        _tpdo_list.insert({tpdo_type, {period, std::chrono::steady_clock::now(), creator}});
+    void register_tpdo(CobTpdo tpdo_type, std::chrono::milliseconds period, std::function<can_payload(void)> creator) {
+        _tpdo_msgs.insert({tpdo_type, {period, std::chrono::steady_clock::now(), creator}});
     }
 
     void enable_tpdo() {

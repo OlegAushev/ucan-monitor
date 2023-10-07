@@ -18,10 +18,10 @@ private:
         std::chrono::time_point<std::chrono::steady_clock> timepoint;
         std::function<can_payload(void)> creator;
     };
-    std::map<RpdoType, Message> _rpdo_list;
+    std::map<CobRpdo, Message> _rpdo_msgs;
 public:
     ServerRpdoService(impl::Server& server);
-    void register_rpdo(RpdoType rpdo_type, std::chrono::milliseconds period, std::function<can_payload(void)> creator);
+    void register_rpdo(CobRpdo rpdo, std::chrono::milliseconds period, std::function<can_payload(void)> creator);
     void update_node_id();
 
     void enable() {
@@ -34,7 +34,7 @@ public:
 
     void send() {
         if (_is_enabled) {
-            for (auto& [rpdo_type, message] : _rpdo_list) {
+            for (auto& [rpdo, message] : _rpdo_msgs) {
                 if (message.period == std::chrono::milliseconds(0)) { continue; }
                 
                 auto now = std::chrono::steady_clock::now();

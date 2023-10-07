@@ -5,12 +5,12 @@ namespace ucanopen {
 
 ServerSdoService::ServerSdoService(impl::Server& server)
         : _server(server) {
-    _id = calculate_cob_id(CobType::tsdo, _server.node_id());
+    _id = calculate_cob_id(Cob::tsdo, _server.node_id());
 }
 
 
 void ServerSdoService::update_node_id() {
-    _id = calculate_cob_id(CobType::tsdo, _server.node_id());
+    _id = calculate_cob_id(Cob::tsdo, _server.node_id());
 }
 
 

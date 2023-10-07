@@ -51,7 +51,7 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Connection");
         ImGui::TableSetColumnIndex(1);
-        _server->tpdo_service.is_ok(ucanopen::TpdoType::tpdo1) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
+        _server->tpdo_service.is_ok(ucanopen::CobTpdo::tpdo1) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
 
 
         ImGui::EndTable();

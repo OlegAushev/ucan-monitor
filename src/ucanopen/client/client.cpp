@@ -8,8 +8,8 @@ Client::Client(NodeId node_id, std::shared_ptr<can::Socket> socket)
         : _node_id(node_id)
         , _socket(socket)
         , _nmt_state(NmtState::initialization) {
-    _sync_info.timepoint = std::chrono::steady_clock::now();
-    _heartbeat_info.timepoint = std::chrono::steady_clock::now();
+    _sync_msg.timepoint = std::chrono::steady_clock::now();
+    _heartbeat_msg.timepoint = std::chrono::steady_clock::now();
 
     bsclog::info("Starting aux uCANopen thread...");
 
@@ -120,25 +120,25 @@ void Client::_run(std::future<void> signal_exit) {
         auto now = std::chrono::steady_clock::now();
 
         /* SYNC */
-        if (_sync_info.is_enabled) {
-            if (now - _sync_info.timepoint >= _sync_info.period) {
-                _socket->send(create_frame(CobType::sync, _node_id, {}));
-                _sync_info.timepoint = now;
+        if (_sync_msg.is_enabled) {
+            if (now - _sync_msg.timepoint >= _sync_msg.period) {
+                _socket->send(create_frame(Cob::sync, _node_id, {}));
+                _sync_msg.timepoint = now;
             }
         }
 
         /* HEARTBEAT */
-        if (now - _heartbeat_info.timepoint >= _heartbeat_info.period) {
-            _socket->send(create_frame(CobType::heartbeat, _node_id, {static_cast<uint8_t>(_nmt_state)}));
-            _heartbeat_info.timepoint = now;
+        if (now - _heartbeat_msg.timepoint >= _heartbeat_msg.period) {
+            _socket->send(create_frame(Cob::heartbeat, _node_id, {static_cast<uint8_t>(_nmt_state)}));
+            _heartbeat_msg.timepoint = now;
         }
 
         /* TPDO */
         if (_is_tpdo_enabled) {
-            for (auto& [tpdo_type, message] : _tpdo_list) {
+            for (auto& [tpdo_type, message] : _tpdo_msgs) {
                 if (!message.creator) { continue; }
                 if (now - message.timepoint >= message.period) {
-                    _socket->send(create_frame(to_cob_type(tpdo_type), _node_id, message.creator()));
+                    _socket->send(create_frame(to_cob(tpdo_type), _node_id, message.creator()));
                     message.timepoint = now;
                 }
             }
@@ -172,12 +172,12 @@ void Client::_on_frame_received(const can_frame& frame) {
 
 
 void Client::_register_rx_messages(std::shared_ptr<Server> server) {
-    canid_t tpdo1 = calculate_cob_id(CobType::tpdo1, server->node_id());
-    canid_t tpdo2 = calculate_cob_id(CobType::tpdo2, server->node_id());
-    canid_t tpdo3 = calculate_cob_id(CobType::tpdo3, server->node_id());
-    canid_t tpdo4 = calculate_cob_id(CobType::tpdo4, server->node_id());
-    canid_t tsdo = calculate_cob_id(CobType::tsdo, server->node_id());
-    canid_t heartbeat = calculate_cob_id(CobType::heartbeat, server->node_id());
+    canid_t tpdo1 = calculate_cob_id(Cob::tpdo1, server->node_id());
+    canid_t tpdo2 = calculate_cob_id(Cob::tpdo2, server->node_id());
+    canid_t tpdo3 = calculate_cob_id(Cob::tpdo3, server->node_id());
+    canid_t tpdo4 = calculate_cob_id(Cob::tpdo4, server->node_id());
+    canid_t tsdo = calculate_cob_id(Cob::tsdo, server->node_id());
+    canid_t heartbeat = calculate_cob_id(Cob::heartbeat, server->node_id());
 
     _rxid_to_server.insert({tpdo1, server});
     _rxid_to_server.insert({tpdo2, server});

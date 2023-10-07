@@ -61,7 +61,7 @@ enum class NmtState {
 };
 
 
-enum class CobType {
+enum class Cob {
     nmt,
     sync,
     emcy,
@@ -80,10 +80,10 @@ enum class CobType {
 };
 
 
-constexpr int cob_type_count = 15;
+constexpr int cob_count = 15;
 
 
-constexpr std::array<canid_t, cob_type_count> cob_function_codes = {
+constexpr std::array<canid_t, cob_count> cob_function_codes = {
     0x000,  // NMT
     0x080,  // SYNC
     0x080,  // EMCY
@@ -102,15 +102,15 @@ constexpr std::array<canid_t, cob_type_count> cob_function_codes = {
 };
 
 
-inline canid_t calculate_cob_id(CobType cob_type, NodeId node_id) {
-    if ((cob_type == CobType::nmt) || (cob_type == CobType::sync) || (cob_type == CobType::time)) {
-        return cob_function_codes[static_cast<int>(cob_type)];
+inline canid_t calculate_cob_id(Cob cob, NodeId node_id) {
+    if ((cob == Cob::nmt) || (cob == Cob::sync) || (cob == Cob::time)) {
+        return cob_function_codes[static_cast<int>(cob)];
     }
-    return cob_function_codes[static_cast<int>(cob_type)] + node_id.get();
+    return cob_function_codes[static_cast<int>(cob)] + node_id.get();
 }
 
 
-constexpr std::array<int, cob_type_count> cob_sizes = {
+constexpr std::array<int, cob_count> cob_sizes = {
     2,  // NMT
     0,  // SYNC
     2,  // EMCY
@@ -129,7 +129,7 @@ constexpr std::array<int, cob_type_count> cob_sizes = {
 };
 
 
-enum class TpdoType {
+enum class CobTpdo {
     tpdo1,
     tpdo2,
     tpdo3,
@@ -137,14 +137,14 @@ enum class TpdoType {
 };
 
 
-inline CobType to_cob_type(TpdoType tpdo_type) {
-    return static_cast<CobType>(
-        static_cast<unsigned int>(CobType::tpdo1) + 2 * static_cast<unsigned int>(tpdo_type)
+inline Cob to_cob(CobTpdo tpdo) {
+    return static_cast<Cob>(
+        static_cast<unsigned int>(Cob::tpdo1) + 2 * static_cast<unsigned int>(tpdo)
     );
 }
 
 
-enum class RpdoType {
+enum class CobRpdo {
     rpdo1,
     rpdo2,
     rpdo3,
@@ -152,20 +152,20 @@ enum class RpdoType {
 };
 
 
-inline CobType to_cob_type(RpdoType rpdo_type) {
-    return static_cast<CobType>(
-        static_cast<unsigned int>(CobType::rpdo1) + 2 * static_cast<unsigned int>(rpdo_type)
+inline Cob to_cob(CobRpdo rpdo) {
+    return static_cast<Cob>(
+        static_cast<unsigned int>(Cob::rpdo1) + 2 * static_cast<unsigned int>(rpdo)
     );
 }
 
 
-inline RpdoType opposite_pdo(TpdoType type) {
-    return static_cast<RpdoType>(type);
+inline CobRpdo opposite_pdo(CobTpdo tpdo) {
+    return static_cast<CobRpdo>(tpdo);
 }
 
 
-inline TpdoType opposite_pdo(RpdoType type) {
-    return static_cast<TpdoType>(type);
+inline CobTpdo opposite_pdo(CobRpdo rpdo) {
+    return static_cast<CobTpdo>(rpdo);
 }
 
 
@@ -448,10 +448,10 @@ struct ObjectDictionary {
 };
 
 
-inline can_frame create_frame(CobType cob_type, NodeId node_id, const can_payload& payload) {
+inline can_frame create_frame(Cob cob, NodeId node_id, const can_payload& payload) {
     can_frame frame = {};
-    frame.can_id = calculate_cob_id(cob_type, node_id);
-    frame.len = cob_sizes[static_cast<int>(cob_type)];
+    frame.can_id = calculate_cob_id(cob, node_id);
+    frame.len = cob_sizes[static_cast<int>(cob)];
     std::copy(payload.begin(), std::next(payload.begin(), frame.len), frame.data);
     return frame;
 }
