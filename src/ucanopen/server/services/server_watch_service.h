@@ -16,7 +16,7 @@ private:
     bool _is_enabled = false;
     std::chrono::milliseconds _period = std::chrono::milliseconds(1000);
     std::chrono::time_point<std::chrono::steady_clock> _timepoint;
-    std::vector<std::pair<std::string_view, std::string_view>> _object_list;
+    std::vector<std::pair<std::string_view, std::string_view>> _objects;
 
     struct WatchData {
         ExpeditedSdoData raw;
@@ -29,15 +29,15 @@ public:
     ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher);
 
     void send() {
-        if (_is_enabled && !_object_list.empty()) {
+        if (_is_enabled && !_objects.empty()) {
             auto now = std::chrono::steady_clock::now();
             if (now - _timepoint >= _period) {
                 static int i = 0;
                 _server.read(_server.dictionary().config.watch_category,
-                              _object_list[i].first,
-                              _object_list[i].second);
+                              _objects[i].first,
+                              _objects[i].second);
                 _timepoint = now;
-                i = (i + 1) % _object_list.size();
+                i = (i + 1) % _objects.size();
             }
         }
     }
@@ -68,8 +68,8 @@ public:
         _period = period;
     }
 
-    std::vector<std::pair<std::string_view, std::string_view>> object_list() const {
-        return _object_list;
+    const std::vector<std::pair<std::string_view, std::string_view>>& objects() const {
+        return _objects;
     }
 
     std::string value_str(std::string_view watch_subcategory, std::string_view watch_name) const {

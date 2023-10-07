@@ -12,7 +12,7 @@ ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher&
     for (const auto& [key, object] : _server.dictionary().entries) {
         // create watch entries list and data map
         if (object.category == _server.dictionary().config.watch_category) {
-            _object_list.push_back(std::make_pair(object.subcategory, object.name));
+            _objects.push_back(std::make_pair(object.subcategory, object.name));
             _data.insert({{object.subcategory, object.name}, {ExpeditedSdoData{}, "..."}});
         }
     }

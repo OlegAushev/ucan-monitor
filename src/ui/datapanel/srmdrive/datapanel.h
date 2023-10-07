@@ -16,6 +16,8 @@ private:
 public:
     DataPanel(std::shared_ptr<::srmdrive::Server> server) : _server(server) {}
     virtual void draw(bool& open) override;
+private:
+    void _draw_watch_table();
 };
 
 
