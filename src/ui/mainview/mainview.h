@@ -5,6 +5,7 @@
 #include "../log/log.h"
 #include "../options/options.h"
 #include "../datapanel/interface.h"
+#include "../controlpanel/interface.h"
 #include <memory>
 
 
@@ -17,8 +18,8 @@ private:
     bool _show_options = false;
     bool _show_log = true;
 
-    bool _show_control = false;
-    bool _show_data = false;
+    bool _show_control = true;
+    bool _show_data = true;
     bool _show_setup = false;
     bool _show_charts = false;
 
@@ -27,8 +28,10 @@ private:
     std::shared_ptr<ui::Options> _options;
     std::shared_ptr<ui::Log> _log;
     std::shared_ptr<ui::DataPanelInterface> _datapanel;
+    std::shared_ptr<ui::ControlPanelInterface> _controlpanel;
 public:
-    MainView(std::shared_ptr<ui::Options> options, std::shared_ptr<ui::Log> log, std::shared_ptr<ui::DataPanelInterface> datapanel);
+    MainView(std::shared_ptr<ui::Options> options, std::shared_ptr<ui::Log> log,
+             std::shared_ptr<ui::DataPanelInterface> datapanel, std::shared_ptr<ui::ControlPanelInterface> controlpanel);
     void draw();
     bool should_close() { return _should_close; }
 private:

@@ -6,10 +6,12 @@
 namespace ui {
 
 
-MainView::MainView(std::shared_ptr<ui::Options> options, std::shared_ptr<ui::Log> log, std::shared_ptr<ui::DataPanelInterface> datapanel)
+MainView::MainView(std::shared_ptr<ui::Options> options, std::shared_ptr<ui::Log> log,
+                   std::shared_ptr<ui::DataPanelInterface> datapanel, std::shared_ptr<ui::ControlPanelInterface> controlpanel)
         : _options(options)
         , _log(log)
         , _datapanel(datapanel)
+        , _controlpanel(controlpanel)
 {}
 
 
@@ -40,8 +42,9 @@ void MainView::draw() {
 
     if (_show_options) { _options->draw(_show_options); }
     if (_show_log) { _log->draw(_show_log); }
-    if (_show_demo) { ImGui::ShowDemoWindow(); }
+    if (_show_control) { _controlpanel->draw(_show_control); }
     if (_show_data) { _datapanel->draw(_show_data); }
+    if (_show_demo) { ImGui::ShowDemoWindow(); }
 
     ImGui::End();
 }

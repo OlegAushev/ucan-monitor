@@ -28,13 +28,13 @@ private:
     bool _run_enabled = false;
     ControlMode _ctlmode = ControlMode::torque;
     bool _emergency_enabled = false;
-    double _torque_perunit_ref = 0;
-    double _speed_rpm_ref = 0;
+    float _torque_perunit_ref = 0;
+    float _speed_rpm_ref = 0;
 
     bool _manual_fieldctl = false;
     ControlLoopType _ctlloop = ControlLoopType::closed;
-    double _field_current_ref = 0;
-    double _stator_current_perunit_ref = 0;
+    float _field_current_ref = 0;
+    float _stator_current_perunit_ref = 0;
 
 public:
     uint32_t errors() const { return _errors; }
@@ -44,13 +44,13 @@ public:
     void set_run_enabled(bool enabled) { _run_enabled = enabled; }
     void set_ctlmode(ControlMode mode) { _ctlmode = mode; }
     void set_emergency_enabled(bool enabled) { _emergency_enabled = enabled; }
-    void set_torque(double value_perunit) { _torque_perunit_ref = std::clamp(value_perunit, -1.0, 1.0); }
-    void set_speed(double value_rpm) { _speed_rpm_ref = value_rpm; }
+    void set_torque(float value_perunit) { _torque_perunit_ref = std::clamp(value_perunit, -1.0f, 1.0f); }
+    void set_speed(float value_rpm) { _speed_rpm_ref = value_rpm; }
 
     void set_manual_fieldctl_enabled(bool enabled) { _manual_fieldctl = enabled; }
     void set_ctlloop(ControlLoopType ctlloop) { _ctlloop = ctlloop; }
-    void set_field_current(double val) { _field_current_ref = std::clamp(val, 0.0, 100.0); }
-    void set_stator_current(double val_perunit) { _stator_current_perunit_ref = std::clamp(val_perunit, 0.0, 1.0); }
+    void set_field_current(float val) { _field_current_ref = std::clamp(val, 0.0f, 100.0f); }
+    void set_stator_current(float val_perunit) { _stator_current_perunit_ref = std::clamp(val_perunit, 0.0f, 1.0f); }
 private:
     void _handle_tpdo1(const ucanopen::can_payload& payload);
     void _handle_tpdo2(const ucanopen::can_payload& payload);

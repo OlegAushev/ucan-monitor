@@ -8,6 +8,7 @@
 #include <ui/mainview/mainview.h>
 #include <ui/serverselector/serverselector.h>
 #include <ui/datapanel/srmdrive/datapanel.h>
+#include <ui/controlpanel/srmdrive/controlpanel.h>
 
 #include <iostream>
 #include <fstream>
@@ -61,6 +62,13 @@ int main(int argc, char** argv) {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;    // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;       // Enable Docking
 
+    // Style
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.WindowRounding = 0.0f;
+    style.WindowBorderSize = 1.0f;
+    style.FrameRounding = 7.0f;
+    style.FrameBorderSize = 1.0f;
+
     // Fonts
     float base_fontsize = 18.0f;
     float icon_fontsize = base_fontsize;// * 2.0f / 3.0f;
@@ -72,7 +80,7 @@ int main(int argc, char** argv) {
     icons_config.MergeMode = true; 
     icons_config.PixelSnapH = true; 
     icons_config.GlyphMinAdvanceX = icon_fontsize;
-    io.Fonts->AddFontFromFileTTF("../assets/fonts/FontAwesome.otf", icon_fontsize, &icons_config, icons_ranges);
+    io.Fonts->AddFontFromFileTTF("../assets/fonts/" FONT_ICON_FILE_NAME_FAS, icon_fontsize, &icons_config, icons_ranges);
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -116,12 +124,14 @@ int main(int argc, char** argv) {
     auto ucanopen_client = std::make_shared<ucanopen::Client>(ucanopen::NodeId(127), can_socket);
 
     std::shared_ptr<ui::DataPanelInterface> datapanel;
+    std::shared_ptr<ui::ControlPanelInterface> controlpanel;
 
     auto server_name = ui::ServerSelector::instance().selected_server();
     if (server_name == "srmdrive") {
         auto srmdrive_server = std::make_shared<srmdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
         ucanopen_client->register_server(srmdrive_server);
         datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server);
+        controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server);
     } else if (server_name == "atv-vcu") {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
@@ -132,7 +142,7 @@ int main(int argc, char** argv) {
 
     // GUI Creation
     auto options = std::make_shared<ui::Options>(can_socket, ucanopen_client);
-    auto mainview = std::make_shared<ui::MainView>(options, gui_log, datapanel);
+    auto mainview = std::make_shared<ui::MainView>(options, gui_log, datapanel, controlpanel);
 
 
     while (!glfwWindowShouldClose(window) && !mainview->should_close()) {

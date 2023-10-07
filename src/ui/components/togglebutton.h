@@ -15,12 +15,24 @@ inline void SetButtonHighlightColor()
 }
 
 
-inline void ToggleButton( const char* label, bool& toggle )
+inline bool ToggleButton( const char* label, bool& toggle )
 {
+    bool pressed = false;
     const auto active = toggle;
-    if(active) SetButtonHighlightColor();
-    if(ImGui::Button(label)) toggle = !toggle;
-    if(active) ImGui::PopStyleColor(3);
+    if(active) {
+        SetButtonHighlightColor();
+    }
+
+    if(ImGui::Button(label)) {
+        toggle = !toggle;
+        pressed = true;
+    }
+    
+    if(active) {
+        ImGui::PopStyleColor(3);
+    }
+
+    return pressed;
 }
 
 

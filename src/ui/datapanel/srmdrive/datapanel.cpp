@@ -11,7 +11,6 @@ void DataPanel::draw(bool& open) {
     ImGui::NewLine();
     _draw_tpdo1_table();
     ImGui::End();
-    
 }
 
 
