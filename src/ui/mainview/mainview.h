@@ -2,6 +2,7 @@
 
 
 #include <imgui.h>
+#include <implot.h>
 #include "../log/log.h"
 #include "../options/options.h"
 #include "../datapanel/interface.h"

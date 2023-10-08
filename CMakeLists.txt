@@ -87,13 +87,19 @@ file(GLOB_RECURSE app_sources CONFIGURE_DEPENDS
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-file(GLOB imgui_sources CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/include/imgui/*.cpp)
+file(GLOB imgui_sources CONFIGURE_DEPENDS
+    ${PROJECT_SOURCE_DIR}/include/imgui/*.cpp
+    ${PROJECT_SOURCE_DIR}/include/implot/*.cpp    
+)
 file(GLOB imgui_backend_sources CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/include/imgui/backends/*glfw*.cpp
     ${PROJECT_SOURCE_DIR}/include/imgui/backends/*opengl3*.cpp
 )
 
-set(imgui_incdirs ${PROJECT_SOURCE_DIR}/include/imgui)
+set(imgui_incdirs 
+    ${PROJECT_SOURCE_DIR}/include/imgui
+    ${PROJECT_SOURCE_DIR}/include/implot
+)
 
 ################################################################################
 # Executable

@@ -52,7 +52,7 @@ void MainView::draw() {
     if (_show_data)         { _datapanel->draw(_show_data); }
     if (_show_status)       { _statuspanel->draw(_show_status); }
     if (_show_setup)        { _serversetup->draw(_show_setup); }
-    if (_show_demo)         { ImGui::ShowDemoWindow(); }
+    if (_show_demo)         { ImGui::ShowDemoWindow(); ImPlot::ShowDemoWindow(); }
 
     ImGui::End();
 }
