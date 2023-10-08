@@ -13,6 +13,7 @@ namespace srmdrive {
 class ControlPanel : public ControlPanelInterface {
 private:
     std::shared_ptr<::srmdrive::Server> _server;
+    bool _emergency = false;
     bool _power_enabled = false;
     bool _run_enabled = false;
     int _ctlmode = std::to_underlying(::srmdrive::ControlMode::torque);

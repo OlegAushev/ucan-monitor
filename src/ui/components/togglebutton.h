@@ -15,7 +15,7 @@ inline void SetButtonHighlightColor()
 }
 
 
-inline bool ToggleButton( const char* label, bool& toggle )
+inline bool ToggleButton(const char* label, bool& toggle)
 {
     bool pressed = false;
     const auto active = toggle;

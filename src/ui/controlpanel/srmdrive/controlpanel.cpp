@@ -10,6 +10,10 @@ namespace srmdrive {
 void ControlPanel::draw(bool& open) {
     ImGui::Begin("Control", &open);
 
+    // emergency
+    ToggleButton(ICON_FA_TRIANGLE_EXCLAMATION " Emergency   ", _emergency);
+    _server->set_emergency_enabled(_emergency);
+
     // power switch
     ToggleButton(ICON_FA_POWER_OFF " Power On/Off", _power_enabled);
     _server->set_power_enabled(_power_enabled);
