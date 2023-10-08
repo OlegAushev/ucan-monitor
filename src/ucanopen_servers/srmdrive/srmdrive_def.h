@@ -24,6 +24,7 @@ struct CobTpdo1 {
     uint16_t counter : 2;
     uint16_t _reserved2 : 6;
     uint16_t checksum : 8;
+    CobTpdo1() { memset(this, 0, sizeof(CobTpdo1)); static_assert(sizeof(CobTpdo1) == 8); }
 };
 
 
@@ -36,6 +37,7 @@ struct CobTpdo2 {
     uint16_t manual_field_current : 1;
     uint16_t _reserved : 5;
     uint16_t checksum : 8;
+    CobTpdo2() { memset(this, 0, sizeof(CobTpdo2)); static_assert(sizeof(CobTpdo2) == 8); }
 };
 
 
@@ -49,6 +51,7 @@ struct CobTpdo3 {
     uint16_t counter : 2;
     uint16_t _reserved2 : 6;
     uint16_t checksum : 8;
+    CobTpdo3() { memset(this, 0, sizeof(CobTpdo3)); static_assert(sizeof(CobTpdo3) == 8); }
 };
 
 
@@ -58,34 +61,37 @@ struct CobTpdo4 {
     uint16_t counter : 2;
     uint16_t _reserved : 6;
     uint16_t checksum : 8;
+    CobTpdo4() { memset(this, 0, sizeof(CobTpdo4)); static_assert(sizeof(CobTpdo4) == 8); }
 };
 
 
 //----------------------------------------------------------------------------------------------------------------------
 struct CobRpdo1 {
-    uint32_t power : 1;
-    uint32_t run : 1;
-    uint32_t ctlmode : 1;
-    uint32_t disable_isotest : 1;
-    uint32_t emergency_stop : 1;
-    uint32_t _reserved1 : 11;
+    uint16_t power : 1;
+    uint16_t run : 1;
+    uint16_t ctlmode : 1;
+    uint16_t disable_isotest : 1;
+    uint16_t emergency_stop : 1;
+    uint16_t _reserved1 : 11;
     int16_t torque_ref;
     int16_t speed_ref;
-    uint32_t counter : 2;
-    uint32_t _reserved2 : 6;
-    uint32_t checksum : 8;
+    uint16_t counter : 2;
+    uint16_t _reserved2 : 6;
+    uint16_t checksum : 8;
+    CobRpdo1() { memset(this, 0, sizeof(CobTpdo1)); static_assert(sizeof(CobRpdo1) == 8); }
 };
 
 
 struct CobRpdo2 {
-    uint32_t manual_fieldctl : 1;
-    uint32_t ctlloop : 1;
-    uint32_t _reserved1 : 14;
+    uint16_t manual_fieldctl : 1;
+    uint16_t ctlloop : 1;
+    uint16_t _reserved1 : 14;
     uint16_t field_current_ref;
     uint16_t stator_current_ref;
-    uint32_t counter : 2;
-    uint32_t _reserved2 : 6;
-    uint32_t checksum : 8;
+    uint16_t counter : 2;
+    uint16_t _reserved2 : 6;
+    uint16_t checksum : 8;
+    CobRpdo2() { memset(this, 0, sizeof(CobTpdo2)); static_assert(sizeof(CobRpdo2) == 8); }
 };
 
 
