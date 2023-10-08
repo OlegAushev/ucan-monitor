@@ -20,7 +20,9 @@ Options::Options(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::
 
 
 void Options::draw(bool& open) {
-    if (!ImGui::Begin("Options", &open))
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+
+    if (!ImGui::Begin("Options", &open, window_flags))
     {
         ImGui::End();
         return;
