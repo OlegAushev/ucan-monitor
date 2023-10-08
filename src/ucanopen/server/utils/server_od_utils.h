@@ -2,13 +2,14 @@
 
 
 #include "../impl/impl_server.h"
-#include <vector>
 #include <future>
+#include <optional>
+#include <vector>
 
 
 namespace ucanopen {
-
 namespace utils {
+
 
 class SerialNumberReader : public SdoSubscriber {
 private:
@@ -54,7 +55,21 @@ public:
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
 };
 
-}
 
+class ExpeditedSdoDataReader : public SdoSubscriber {
+private:
+    impl::Server& _server;
+    ODEntryIter _entry;
+
+    std::optional<ExpeditedSdoData> _result;
+    bool _ready = false;
+public:
+    ExpeditedSdoDataReader(impl::Server& server, impl::SdoPublisher& publisher,
+                           std::string_view category, std::string_view subcategory, std::string_view name);
+    std::optional<ExpeditedSdoData> get(std::future<void> signal_terminate) const;
+    virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
+};
+
+
+} // namespace utils
 } // namespace ucanopen 
-

@@ -41,6 +41,8 @@ public:
                             std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
     std::string read_numval(std::string_view category, std::string_view subcategory, std::string_view name,
                             std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
+    std::optional<ExpeditedSdoData> read_expdata(std::string_view category, std::string_view subcategory, std::string_view name,
+                                                 std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
 };
 
 } // namespace ucanopen

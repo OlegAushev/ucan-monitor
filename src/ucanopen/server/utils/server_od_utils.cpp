@@ -2,9 +2,10 @@
 
 
 namespace ucanopen {
-
 namespace utils {
 
+
+//----------------------------------------------------------------------------------------------------------------------
 uint32_t SerialNumberReader::get(std::future<void> signal_terminate) const {
     _server.read("sys", "info", "serial_number");
     while (signal_terminate.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout
@@ -27,6 +28,7 @@ FrameHandlingStatus SerialNumberReader::handle_sdo(ODEntryIter entry, SdoType sd
 }
 
 
+//----------------------------------------------------------------------------------------------------------------------
 StringReader::StringReader(impl::Server& server, impl::SdoPublisher& publisher,
                            std::string_view category, std::string_view subcategory, std::string_view name)
         : SdoSubscriber(publisher)
@@ -82,6 +84,7 @@ FrameHandlingStatus StringReader::handle_sdo(ODEntryIter entry, SdoType sdo_type
 }
 
 
+//----------------------------------------------------------------------------------------------------------------------
 NumvalReader::NumvalReader(impl::Server& server, impl::SdoPublisher& publisher,
                            std::string_view category, std::string_view subcategory, std::string_view name)
         : SdoSubscriber(publisher)
@@ -123,7 +126,49 @@ FrameHandlingStatus NumvalReader::handle_sdo(ODEntryIter entry, SdoType sdo_type
     return FrameHandlingStatus::irrelevant_frame;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------------
+ExpeditedSdoDataReader::ExpeditedSdoDataReader(impl::Server& server, impl::SdoPublisher& publisher,
+                                               std::string_view category, std::string_view subcategory, std::string_view name)
+        : SdoSubscriber(publisher)
+        , _server(server) {
+    if (_server.find_od_entry(category, subcategory, name, _entry, traits::check_read_perm{}) != ODAccessStatus::success) {
+        _ready = true;
+        return;
+    }
+
+    const auto& [key, object] = *_entry;
+
+    if (object.type == OD_EXEC || object.type == OD_STRING) {
+        _ready = true;
+        return;
+    }
+
+    if (_server.read(category, subcategory, name) != ODAccessStatus::success) {
+        _ready = true;
+        return;
+    }	
+}
+
+
+std::optional<ExpeditedSdoData> ExpeditedSdoDataReader::get(std::future<void> signal_terminate) const {
+    while (signal_terminate.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout
+       && !_ready) {
+        /*WAIT*/
+    }
+    return _result;
+}
+
+
+FrameHandlingStatus ExpeditedSdoDataReader::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
+    if (sdo_type == SdoType::response_to_read && entry == _entry) {
+        _result = sdo_data;
+        _ready = true;
+        return FrameHandlingStatus::success;
+    }
+    return FrameHandlingStatus::irrelevant_frame;
+}
+
+
 } // namespace utils
-
 } // namespace ucanopen
-

@@ -80,5 +80,17 @@ uint32_t Server::read_serial_number() {
     return sn_future.get();
 }
 
+
+std::optional<ExpeditedSdoData> Server::read_expdata(std::string_view category, std::string_view subcategory, std::string_view name,
+                                                     std::chrono::milliseconds timeout) {
+    std::promise<void> signal_terminate;
+    utils::ExpeditedSdoDataReader reader(*this, sdo_service, category, subcategory, name);
+    std::future<std::optional<ExpeditedSdoData>> future_result = std::async(&utils::ExpeditedSdoDataReader::get, &reader, signal_terminate.get_future());
+    if (future_result.wait_for(timeout) != std::future_status::ready) {
+        signal_terminate.set_value();
+    }
+    return future_result.get();
+}
+
 } // namespace ucanopen
 

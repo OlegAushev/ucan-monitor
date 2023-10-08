@@ -46,7 +46,7 @@ void ControlPanel::draw(bool& open) {
         }
 
         if (ImGui::Button("Reset Driver Fault", ImVec2(300, 0))) {
-            _server->exec("ctl", "sys", "reset_driver_fault");
+            _server->exec("ctl", "drive", "reset_driver_fault");
         }
 
         if (ImGui::Button("Clear Errors", ImVec2(300, 0))) {

@@ -10,12 +10,14 @@ MainView::MainView(std::shared_ptr<ui::Options> options,
                    std::shared_ptr<ui::Log> log,
                    std::shared_ptr<ui::DataPanelInterface> datapanel,
                    std::shared_ptr<ui::ControlPanelInterface> controlpanel,
-                   std::shared_ptr<ui::StatusPanelInterface> statuspanel)
+                   std::shared_ptr<ui::StatusPanelInterface> statuspanel,
+                   std::shared_ptr<ui::ServerSetup> serversetup)
         : _options(options)
         , _log(log)
         , _datapanel(datapanel)
         , _controlpanel(controlpanel)
         , _statuspanel(statuspanel)
+        , _serversetup(serversetup)
 {}
 
 
@@ -49,6 +51,7 @@ void MainView::draw() {
     if (_show_control)      { _controlpanel->draw(_show_control); }
     if (_show_data)         { _datapanel->draw(_show_data); }
     if (_show_status)       { _statuspanel->draw(_show_status); }
+    if (_show_setup)        { _serversetup->draw(_show_setup); }
     if (_show_demo)         { ImGui::ShowDemoWindow(); }
 
     ImGui::End();
@@ -64,14 +67,14 @@ void MainView::_draw_menubar() {
         if(ImGui::Button(ICON_FA_POWER_OFF)) { _should_close = true; }
         ImGui::PopStyleColor(3);
 
-        ToggleButton(ICON_FA_GEAR           " Options", _show_options);
-        ToggleButton(ICON_FA_MESSAGE        " Log    ", _show_log);
-        ToggleButton(ICON_FA_GAMEPAD        " Control", _show_control);
-        ToggleButton(ICON_FA_TABLE          " Data   ", _show_data);
-        ToggleButton(ICON_FA_INFO           " Status ", _show_status);
-        ToggleButton(ICON_FA_TTY            " Setup  ", _show_setup);
-        ToggleButton(ICON_FA_CHART_AREA     " Charts ", _show_charts);
-        ToggleButton(ICON_FA_INFO           " Example", _show_demo);
+        ToggleButton(ICON_FA_GEAR                   " Options", _show_options);
+        ToggleButton(ICON_FA_MESSAGE                " Log    ", _show_log);
+        ToggleButton(ICON_FA_GAMEPAD                " Control", _show_control);
+        ToggleButton(ICON_FA_TABLE                  " Data   ", _show_data);
+        ToggleButton(ICON_FA_CIRCLE_INFO            " Status ", _show_status);
+        ToggleButton(ICON_FA_SCREWDRIVER_WRENCH     " Setup  ", _show_setup);
+        ToggleButton(ICON_FA_CHART_LINE             " Charts ", _show_charts);
+        ToggleButton(ICON_FA_INFO                   " Example", _show_demo);
         ImGui::EndMenuBar();
     }
 }
