@@ -19,6 +19,9 @@ public:
 private:
     void _draw_watch_table();
     void _draw_tpdo1_table();
+    void _draw_tpdo2_table();
+    void _draw_tpdo3_table();
+    void _draw_tpdo4_table();
 };
 
 
