@@ -7,7 +7,7 @@
 namespace ui {
 
 
-class DataPanelInterface {
+class StatusPanelInterface {
 public:
     virtual void draw(bool& open) = 0;
 };

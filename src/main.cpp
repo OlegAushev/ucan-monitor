@@ -5,26 +5,25 @@
 
 #include <icons_font_awesome/IconsFontAwesome6.h>
 
+#include <ucanopen/client/client.h>
+
 #include <ui/mainview/mainview.h>
 #include <ui/serverselector/serverselector.h>
+
 #include <ui/datapanel/srmdrive/datapanel.h>
 #include <ui/controlpanel/srmdrive/controlpanel.h>
+#include <ui/statuspanel/srmdrive/statuspanel.h>
+
+#include <ucanopen_servers/atvvcu/atvvcu_server.h>
 
 #include <iostream>
 #include <fstream>
-
-#include <ucanopen/client/client.h>
-#include <ucanopen_servers/srmdrive/srmdrive_server.h>
-#include <ucanopen_servers/crd600/crd600_server.h>
-#include <ucanopen_servers/launchpad/launchpad_server.h>
-#include <ucanopen_servers/atvvcu/atvvcu_server.h>
 
 
 const std::vector<std::string> server_names = {"srmdrive", "atv-vcu"};
 
 
-static void glfw_error_callback(int error, const char* description)
-{
+static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
@@ -70,7 +69,7 @@ int main(int argc, char** argv) {
     style.FrameBorderSize = 1.0f;
 
     // Fonts
-    float base_fontsize = 18.0f;
+    float base_fontsize = 20.0f;
     float icon_fontsize = base_fontsize;// * 2.0f / 3.0f;
     io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf", base_fontsize, NULL, io.Fonts->GetGlyphRangesDefault());
 
@@ -125,6 +124,7 @@ int main(int argc, char** argv) {
 
     std::shared_ptr<ui::DataPanelInterface> datapanel;
     std::shared_ptr<ui::ControlPanelInterface> controlpanel;
+    std::shared_ptr<ui::StatusPanelInterface> statuspanel;
 
     auto server_name = ui::ServerSelector::instance().selected_server();
     if (server_name == "srmdrive") {
@@ -132,6 +132,7 @@ int main(int argc, char** argv) {
         ucanopen_client->register_server(srmdrive_server);
         datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server);
         controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server);
+        statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server);
     } else if (server_name == "atv-vcu") {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
@@ -142,7 +143,7 @@ int main(int argc, char** argv) {
 
     // GUI Creation
     auto options = std::make_shared<ui::Options>(can_socket, ucanopen_client);
-    auto mainview = std::make_shared<ui::MainView>(options, gui_log, datapanel, controlpanel);
+    auto mainview = std::make_shared<ui::MainView>(options, gui_log, datapanel, controlpanel, statuspanel);
 
 
     while (!glfwWindowShouldClose(window) && !mainview->should_close()) {

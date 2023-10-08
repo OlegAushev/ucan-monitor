@@ -6,12 +6,16 @@
 namespace ui {
 
 
-MainView::MainView(std::shared_ptr<ui::Options> options, std::shared_ptr<ui::Log> log,
-                   std::shared_ptr<ui::DataPanelInterface> datapanel, std::shared_ptr<ui::ControlPanelInterface> controlpanel)
+MainView::MainView(std::shared_ptr<ui::Options> options,
+                   std::shared_ptr<ui::Log> log,
+                   std::shared_ptr<ui::DataPanelInterface> datapanel,
+                   std::shared_ptr<ui::ControlPanelInterface> controlpanel,
+                   std::shared_ptr<ui::StatusPanelInterface> statuspanel)
         : _options(options)
         , _log(log)
         , _datapanel(datapanel)
         , _controlpanel(controlpanel)
+        , _statuspanel(statuspanel)
 {}
 
 
@@ -40,11 +44,12 @@ void MainView::draw() {
 
     _draw_menubar();
 
-    if (_show_options) { _options->draw(_show_options); }
-    if (_show_log) { _log->draw(_show_log); }
-    if (_show_control) { _controlpanel->draw(_show_control); }
-    if (_show_data) { _datapanel->draw(_show_data); }
-    if (_show_demo) { ImGui::ShowDemoWindow(); }
+    if (_show_options)      { _options->draw(_show_options); }
+    if (_show_log)          { _log->draw(_show_log); }
+    if (_show_control)      { _controlpanel->draw(_show_control); }
+    if (_show_data)         { _datapanel->draw(_show_data); }
+    if (_show_status)       { _statuspanel->draw(_show_status); }
+    if (_show_demo)         { ImGui::ShowDemoWindow(); }
 
     ImGui::End();
 }
@@ -63,6 +68,7 @@ void MainView::_draw_menubar() {
         ToggleButton(ICON_FA_MESSAGE        " Log    ", _show_log);
         ToggleButton(ICON_FA_GAMEPAD        " Control", _show_control);
         ToggleButton(ICON_FA_TABLE          " Data   ", _show_data);
+        ToggleButton(ICON_FA_INFO           " Status ", _show_status);
         ToggleButton(ICON_FA_TTY            " Setup  ", _show_setup);
         ToggleButton(ICON_FA_CHART_AREA     " Charts ", _show_charts);
         ToggleButton(ICON_FA_INFO           " Example", _show_demo);

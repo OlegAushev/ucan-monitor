@@ -40,6 +40,9 @@ public:
     uint32_t errors() const { return _errors; }
     uint16_t warnings() const { return _warnings; }
 
+    const auto& error_list() const { return ::srmdrive::error_list; }
+    const auto& warning_list() const { return ::srmdrive::warning_list; }
+
     void set_power_enabled(bool enabled) { _power_enabled = enabled; }
     void set_run_enabled(bool enabled) { _run_enabled = enabled; }
     void set_ctlmode(ControlMode mode) { _ctlmode = mode; }

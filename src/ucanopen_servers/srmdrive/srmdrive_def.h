@@ -140,7 +140,7 @@ inline const std::vector<std::string> drive_states = {
 };
 
 
-inline const std::vector<std::string_view> error_list = {
+inline const std::vector<std::string> error_list = {
     "emergency_stop",
     "can_bus_connection_lost",
     "dclink_charge_failure",
@@ -162,7 +162,7 @@ inline const std::vector<std::string_view> error_list = {
 };
 
 
-inline const std::vector<std::string_view> warning_list = {
+inline const std::vector<std::string> warning_list = {
     "can_bus_error",
     "can_bus_overrun",
     "can_bus_connection_lost",
