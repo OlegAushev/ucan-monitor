@@ -17,6 +17,7 @@ private:
     std::chrono::milliseconds _period = std::chrono::milliseconds(1000);
     std::chrono::time_point<std::chrono::steady_clock> _timepoint;
     std::vector<const ODObject*> _objects;
+    std::vector<bool> _object_acq_enabled;
 
     struct WatchData {
         ExpeditedSdoData raw;
@@ -33,10 +34,12 @@ public:
             auto now = std::chrono::steady_clock::now();
             if (now - _timepoint >= _period) {
                 static int i = 0;
-                _server.read(_server.dictionary().config.watch_category,
-                              _objects[i]->subcategory,
-                              _objects[i]->name);
-                _timepoint = now;
+                if (_object_acq_enabled[i]) {
+                    _server.read(_server.dictionary().config.watch_category,
+                                _objects[i]->subcategory,
+                                _objects[i]->name);
+                    _timepoint = now;
+                }
                 i = (i + 1) % _objects.size();
             }
         }
@@ -70,6 +73,20 @@ public:
 
     const std::vector<const ODObject*>& objects() const {
         return _objects;
+    }
+
+    std::vector<bool>& object_acq_enabled() {
+        return _object_acq_enabled;
+    }
+
+    bool acq_enabled(int idx) {
+        if (idx >= _object_acq_enabled.size()) { return false; }
+        return _object_acq_enabled[idx];
+    }
+
+    void enable_acq(int idx, bool value) {
+        if (idx >= _object_acq_enabled.size()) { return;}
+        _object_acq_enabled[idx] = value;
     }
 
     std::string value_str(std::string_view watch_subcategory, std::string_view watch_name) const {

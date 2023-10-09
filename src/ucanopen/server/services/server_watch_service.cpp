@@ -13,6 +13,7 @@ ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher&
         // create watch entries list and data map
         if (object.category == _server.dictionary().config.watch_category) {
             _objects.push_back(&object);
+            _object_acq_enabled.push_back(true);
             _data.insert({{object.subcategory, object.name}, {ExpeditedSdoData{}, "..."}});
         }
     }
