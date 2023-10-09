@@ -20,7 +20,7 @@ void StatusPanel::_draw_error_table() {
         const auto& error_list = _server->error_list();
         auto errors = _server->errors();
 
-        for (int row = 0; row < error_list.size(); ++row) {
+        for (size_t row = 0; row < error_list.size(); ++row) {
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("%s", error_list[row].c_str());
@@ -42,7 +42,7 @@ void StatusPanel::_draw_warning_table() {
         const auto& warning_list = _server->warning_list();
         auto warnings = _server->warnings();
 
-        for (int row = 0; row < warning_list.size(); ++row) {
+        for (size_t row = 0; row < warning_list.size(); ++row) {
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::Text("%s", warning_list[row].c_str());

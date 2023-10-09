@@ -39,7 +39,7 @@ void DataPanel::_draw_watch_table() {
             if (col == 0) {
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
                 if (ui::CheckBoxTristate("##select_all", all_acq_enabled)) {
-                    for (auto i = 0; i < watch_objects.size(); ++i) {
+                    for (size_t i = 0; i < watch_objects.size(); ++i) {
                         _server->watch_service.enable_acq(i, all_acq_enabled);
                     }
                 }
@@ -49,7 +49,7 @@ void DataPanel::_draw_watch_table() {
             ImGui::TableHeader(ImGui::TableGetColumnName(col));
         }
 
-        for (int row = 0; row < watch_objects.size(); ++row) {
+        for (size_t row = 0; row < watch_objects.size(); ++row) {
             ImGui::TableNextRow();
 
             ImGui::TableSetColumnIndex(0);

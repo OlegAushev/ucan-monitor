@@ -52,7 +52,7 @@ void Options::draw(bool& open) {
 void Options::_draw_socketcan_tab() {
     auto interface_preview = can::detail::interface_list[_selected_interface_idx].c_str();
     if (ImGui::BeginCombo("Interface", interface_preview)) {
-        for (auto i = 0; i < can::detail::interface_list.size(); ++i) {
+        for (size_t i = 0; i < can::detail::interface_list.size(); ++i) {
             auto is_selected = (i == _selected_interface_idx);
             if (ImGui::Selectable(can::detail::interface_list[i].c_str(), is_selected)) {
                 _selected_interface_idx = i;
@@ -63,7 +63,7 @@ void Options::_draw_socketcan_tab() {
 
     auto bitrate_preview = can::detail::bitrate_list[_selected_bitrate_idx].c_str();
     if (ImGui::BeginCombo("Bitrate", bitrate_preview)) {
-        for (auto i = 0; i < can::detail::bitrate_list.size(); ++i) {
+        for (size_t i = 0; i < can::detail::bitrate_list.size(); ++i) {
             auto is_selected = (i == _selected_bitrate_idx);
             if (ImGui::Selectable(can::detail::bitrate_list[i].c_str(), is_selected)) {
                 _selected_bitrate_idx = i;

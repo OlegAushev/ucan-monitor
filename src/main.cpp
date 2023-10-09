@@ -30,7 +30,7 @@ static void glfw_error_callback(int error, const char* description) {
 }
 
 
-int main(int argc, char** argv) {
+int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     bsclog::add_sink(std::shared_ptr<std::ostream>(&std::cout, [](void*){}));
     auto logfile = std::make_shared<std::ofstream>("logfile.txt");
     bsclog::add_sink(logfile);
@@ -90,8 +90,6 @@ int main(int argc, char** argv) {
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    bool show_demo_window = true;
-    bool show_another_window = false;
 
     // Server Selection Loop
     while (!glfwWindowShouldClose(window) && !ui::ServerSelector::instance().server_is_selected()) {
@@ -177,7 +175,6 @@ int main(int argc, char** argv) {
         glfwSwapBuffers(window);
     }
 
-cleanup:
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

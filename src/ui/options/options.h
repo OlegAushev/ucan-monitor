@@ -14,8 +14,8 @@ private:
     std::shared_ptr<can::Socket> _socket;
     std::shared_ptr<ucanopen::Client> _client;
 
-    int _selected_interface_idx = 0;
-    int _selected_bitrate_idx = 0;
+    size_t _selected_interface_idx = 0;
+    size_t _selected_bitrate_idx = 0;
     can::Error _error = can::Error::none;
 public:
     Options(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::Client> ucanopen_client);

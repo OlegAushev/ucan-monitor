@@ -61,7 +61,7 @@ void ServerSetup::_draw_setup() {
     if (objects.empty()) { return; }
 
     static auto selected_category_iter = objects.begin();
-    static auto selected_object_idx = 0;
+    static size_t selected_object_idx = 0;
     static bool should_read = true;
 
     if (ImGui::Button(ICON_FA_REPEAT " Refresh##setup")) {
@@ -85,7 +85,7 @@ void ServerSetup::_draw_setup() {
     auto object_preview = selected_category_iter->second[selected_object_idx]->name;
 
     if (ImGui::BeginCombo("Object", object_preview.c_str())) {
-        for (auto i = 0; i < selected_category_iter->second.size(); ++i) {
+        for (size_t i = 0; i < selected_category_iter->second.size(); ++i) {
             auto is_selected = (i == selected_object_idx);
             if (ImGui::Selectable(selected_category_iter->second[i]->name.c_str(), is_selected)) {
                 selected_object_idx = i;
@@ -105,8 +105,8 @@ void ServerSetup::_draw_setup() {
     }
 
     if (!parameter_value.has_value()) {
-        char* str = "n/a";
-        ImGui::InputText("Value", str, 3, ImGuiInputTextFlags_ReadOnly);
+        std::string str = "n/a";
+        ImGui::InputText("Value", str.data(), 3, ImGuiInputTextFlags_ReadOnly);
     } else {
 
         switch (selected_category_iter->second[selected_object_idx]->type) {
@@ -166,6 +166,8 @@ void ServerSetup::_draw_setup() {
             }
             break;
         }
+        default:
+            break;
         }
     }
 }

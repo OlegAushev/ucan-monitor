@@ -37,7 +37,7 @@ void Server::_handle_tpdo4(const ucanopen::can_payload& payload) {
 
 
 ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
-                                                 ucanopen::SdoType sdo_type,
+                                                 [[maybe_unused]] ucanopen::SdoType sdo_type,
                                                  ucanopen::ExpeditedSdoData data) {
     if (entry->second.name == "syslog_message") {
         auto message_id = data.u32();

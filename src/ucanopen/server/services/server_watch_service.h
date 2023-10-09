@@ -75,16 +75,12 @@ public:
         return _objects;
     }
 
-    std::vector<bool>& object_acq_enabled() {
-        return _object_acq_enabled;
-    }
-
-    bool acq_enabled(int idx) {
+    bool acq_enabled(size_t idx) {
         if (idx >= _object_acq_enabled.size()) { return false; }
         return _object_acq_enabled[idx];
     }
 
-    void enable_acq(int idx, bool value) {
+    void enable_acq(size_t idx, bool value) {
         if (idx >= _object_acq_enabled.size()) { return;}
         _object_acq_enabled[idx] = value;
     }
@@ -98,18 +94,6 @@ public:
         return it->second.str;
     }
 
-    void value_cstr(std::string_view watch_subcategory, std::string_view watch_name, char* retbuf, int bufsize) const {
-        std::lock_guard<std::mutex> lock(_data_mtx);
-        retbuf[0] = '\0';
-        auto it = _data.find(std::make_pair(watch_subcategory, watch_name));
-        if (it == _data.end()) {
-            const char* str = "n/a";
-            std::strncat(retbuf, str, bufsize-1);
-            return;
-        }
-        std::strncat(retbuf, it->second.str.c_str(), bufsize-1);
-    }
-
     ExpeditedSdoData value(std::string_view watch_subcategory, std::string_view watch_name) {
         std::lock_guard<std::mutex> lock(_data_mtx);
         auto it = _data.find(std::make_pair(watch_subcategory, watch_name));
@@ -117,15 +101,6 @@ public:
             return 0;
         }
         return it->second.raw;
-    }
-
-    void set_value_str(std::string_view watch_subcategory, std::string_view watch_name, std::string value_str) {
-        std::lock_guard<std::mutex> lock(_data_mtx);
-        auto it = _data.find(std::make_pair(watch_subcategory, watch_name));
-        if (it == _data.end()) {
-            return;
-        }
-        it->second.str = value_str;
     }
 };
 
