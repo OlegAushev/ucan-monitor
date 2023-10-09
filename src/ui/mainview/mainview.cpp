@@ -11,13 +11,15 @@ MainView::MainView(std::shared_ptr<ui::Options> options,
                    std::shared_ptr<ui::DataPanelInterface> datapanel,
                    std::shared_ptr<ui::ControlPanelInterface> controlpanel,
                    std::shared_ptr<ui::StatusPanelInterface> statuspanel,
-                   std::shared_ptr<ui::ServerSetup> serversetup)
+                   std::shared_ptr<ui::ServerSetup> serversetup,
+                   std::shared_ptr<ui::WatchCharts> watchcharts)
         : _options(options)
         , _log(log)
         , _datapanel(datapanel)
         , _controlpanel(controlpanel)
         , _statuspanel(statuspanel)
         , _serversetup(serversetup)
+        , _watchcharts(watchcharts)
 {}
 
 
@@ -52,8 +54,9 @@ void MainView::draw() {
     if (_show_data)         { _datapanel->draw(_show_data); }
     if (_show_status)       { _statuspanel->draw(_show_status); }
     if (_show_setup)        { _serversetup->draw(_show_setup); }
+    if (_show_charts)       { _watchcharts->draw(_show_charts); }
     if (_show_demo)         { ImGui::ShowDemoWindow(); ImPlot::ShowDemoWindow(); }
-
+    
     ImGui::End();
 }
 

@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <mutex>
+#include <boost/circular_buffer.hpp>
 
 
 namespace ucanopen {
@@ -13,67 +14,41 @@ namespace ucanopen {
 class ServerWatchService : public SdoSubscriber {
 private:
     impl::Server& _server;
-    bool _is_enabled = false;
+    bool _enabled = false;
     std::chrono::milliseconds _period = std::chrono::milliseconds(1000);
-    std::chrono::time_point<std::chrono::steady_clock> _timepoint;
+    std::chrono::time_point<std::chrono::steady_clock> _acq_timepoint;
     std::vector<const ODObject*> _objects;
     std::vector<bool> _object_acq_enabled;
 
-    struct WatchData {
+    using WatchKey = std::pair<std::string_view, std::string_view>;
+
+    struct WatchCurrentData {
         ExpeditedSdoData raw;
         std::string str;
     };
 
-    std::map<std::pair<std::string_view, std::string_view>, WatchData> _data;
-    mutable std::mutex _data_mtx;
+    std::map<WatchKey, WatchCurrentData> _current_data;
+    mutable std::mutex _current_data_mtx;
+
+    std::chrono::time_point<std::chrono::steady_clock> _history_start;
+public:
+    struct WatchHistory {
+        boost::circular_buffer<float> time;
+        boost::circular_buffer<float> value;
+        WatchHistory() : time(100), value(100) {}
+    };
+private:
+    std::map<WatchKey, WatchHistory> _history;
+    mutable std::mutex _history_mtx;
 public:
     ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher);
+    void send();
+    virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
 
-    void send() {
-        if (_is_enabled && !_objects.empty()) {
-            auto now = std::chrono::steady_clock::now();
-            if (now - _timepoint >= _period) {
-                static int i = 0;
-                if (_object_acq_enabled[i]) {
-                    _server.read(_server.dictionary().config.watch_category,
-                                _objects[i]->subcategory,
-                                _objects[i]->name);
-                    _timepoint = now;
-                }
-                i = (i + 1) % _objects.size();
-            }
-        }
-    }
-
-    virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override {
-        std::lock_guard<std::mutex> lock(_data_mtx);
-        const auto& [key, object] = *entry;
-
-        if ((object.category == _server.dictionary().config.watch_category) && (sdo_type == SdoType::response_to_read)) {
-            _data[std::make_pair(object.subcategory, object.name)].raw = sdo_data;
-            if (object.type != OD_ENUM16) {
-                _data[std::make_pair(object.subcategory, object.name)].str = sdo_data.to_string(object.type, 2);
-            }
-            return FrameHandlingStatus::success;
-        }
-        return FrameHandlingStatus::irrelevant_frame;
-    }
-
-    void enable() {
-        _is_enabled = true;
-    }
-
-    void disable() {
-        _is_enabled = false;
-    }
-
-    void set_period(std::chrono::milliseconds period) {
-        _period = period;
-    }
-
-    const std::vector<const ODObject*>& objects() const {
-        return _objects;
-    }
+    void enable() { _enabled = true; }
+    void disable() { _enabled = false; }
+    void set_period(std::chrono::milliseconds period) { _period = period; }
+    const std::vector<const ODObject*>& objects() const { return _objects; }
 
     bool acq_enabled(size_t idx) {
         if (idx >= _object_acq_enabled.size()) { return false; }
@@ -85,22 +60,31 @@ public:
         _object_acq_enabled[idx] = value;
     }
 
-    std::string value_str(std::string_view watch_subcategory, std::string_view watch_name) const {
-        std::lock_guard<std::mutex> lock(_data_mtx);
-        auto it = _data.find(std::make_pair(watch_subcategory, watch_name));
-        if (it == _data.end()) {
+    std::string string_value(std::string_view watch_subcategory, std::string_view watch_name) const {
+        std::lock_guard<std::mutex> lock(_current_data_mtx);
+        auto it = _current_data.find(std::make_pair(watch_subcategory, watch_name));
+        if (it == _current_data.end()) {
             return "n/a";
         }
         return it->second.str;
     }
 
     ExpeditedSdoData value(std::string_view watch_subcategory, std::string_view watch_name) {
-        std::lock_guard<std::mutex> lock(_data_mtx);
-        auto it = _data.find(std::make_pair(watch_subcategory, watch_name));
-        if (it == _data.end()) {
+        std::lock_guard<std::mutex> lock(_current_data_mtx);
+        auto it = _current_data.find(std::make_pair(watch_subcategory, watch_name));
+        if (it == _current_data.end()) {
             return 0;
         }
         return it->second.raw;
+    }
+
+    WatchHistory* history(std::string_view watch_subcategory, std::string_view watch_name) {
+        std::lock_guard<std::mutex> lock(_history_mtx);
+        auto iter = _history.find(std::make_pair(watch_subcategory, watch_name));
+        if (iter == _history.end()) {
+            return nullptr;
+        }
+        return &iter->second;
     }
 };
 

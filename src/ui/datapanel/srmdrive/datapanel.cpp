@@ -66,7 +66,7 @@ void DataPanel::_draw_watch_table() {
             ImGui::TableSetColumnIndex(1);
             ImGui::Text("%s [%s]", watch_objects[row]->name.c_str(), watch_objects[row]->unit.c_str());
             ImGui::TableSetColumnIndex(2);
-            ImGui::TextUnformatted(_server->watch_service.value_str(watch_objects[row]->subcategory, watch_objects[row]->name).c_str());
+            ImGui::TextUnformatted(_server->watch_service.string_value(watch_objects[row]->subcategory, watch_objects[row]->name).c_str());
         }
         ImGui::EndTable();
     }

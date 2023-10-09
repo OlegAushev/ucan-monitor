@@ -9,6 +9,7 @@
 #include "../controlpanel/interface.h"
 #include "../statuspanel/interface.h"
 #include "../serversetup/serversetup.h"
+#include "../watchcharts/watchcharts.h"
 #include <memory>
 
 
@@ -35,13 +36,15 @@ private:
     std::shared_ptr<ui::ControlPanelInterface> _controlpanel;
     std::shared_ptr<ui::StatusPanelInterface> _statuspanel;
     std::shared_ptr<ui::ServerSetup> _serversetup;
+    std::shared_ptr<ui::WatchCharts> _watchcharts;
 public:
     MainView(std::shared_ptr<ui::Options> options,
              std::shared_ptr<ui::Log> log,
              std::shared_ptr<ui::DataPanelInterface> datapanel,
              std::shared_ptr<ui::ControlPanelInterface> controlpanel,
              std::shared_ptr<ui::StatusPanelInterface> statuspanel,
-             std::shared_ptr<ui::ServerSetup> serversetup);
+             std::shared_ptr<ui::ServerSetup> serversetup,
+             std::shared_ptr<ui::WatchCharts> watchcharts);
     void draw();
     bool should_close() { return _should_close; }
 private:
