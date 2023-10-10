@@ -169,6 +169,16 @@ public:
         bsclog::info("Set {} server watch messages period to {}.", name, period);
     }
 
+    void set_watch_history_size_on_server(std::string_view name, size_t size) {
+        auto server = _get_server(name);
+        if (server == nullptr) {
+            bsclog::error("Failed to set watch history size on {} server: server not found.", name);
+            return;
+        }
+        server->watch_service.set_history_size(size);
+        bsclog::info("Set {} server watch history size to {}.", name, size);
+    }
+
 protected:
     void _register_rx_messages(std::shared_ptr<Server> server);
     void _unregister_rx_messages(std::shared_ptr<Server> server);

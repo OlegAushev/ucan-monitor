@@ -82,9 +82,9 @@ void MainView::_draw_menubar() {
         ImGui::PushItemWidth(100);
         if (ImGui::InputInt("", &_watchplot_count)) {
             _watchplot_count = std::clamp(_watchplot_count, 1, 4);
-            if (_watchplot_count > _watchplots.size()) {
+            if (size_t(_watchplot_count) > _watchplots.size()) {
                 _watchplots.push_back(std::make_shared<WatchPlot>(_watchplots.front()->server()));
-            } else if (_watchplot_count < _watchplots.size()) {
+            } else if (size_t(_watchplot_count) < _watchplots.size()) {
                 _watchplots.pop_back();
             }
         }

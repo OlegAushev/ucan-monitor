@@ -17,6 +17,20 @@ void WatchPlot::draw() {
 void WatchPlot::_draw_plot() {
     // child window to serve as initial source for our DND items
     ImGui::BeginChild("dnd_srea_left", ImVec2(200, -1));
+
+    ImGui::PushItemWidth(50);
+    if (ImGui::InputFloat("Depth [s]", &_time_depth, 0, 0, "%.0f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _time_depth = std::clamp(_time_depth, 1.0f, 600.0f);
+    }
+    ImGui::PopItemWidth();
+
+    if (ImGui::Button("Reset")) {
+        for (auto& chart : _charts) {
+            chart.on_plot = false;
+            chart.y_axis = ImAxis_Y1;
+        }           
+    }
+
     for (size_t i = 0; i < _charts.size(); ++i) {
         if (_charts[i].on_plot) {
             continue;
@@ -55,24 +69,24 @@ void WatchPlot::_draw_plot() {
         ImPlot::SetupAxis(ImAxis_Y3, nullptr, y3flags | ImPlotAxisFlags_Opposite);
 
         float now = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - _server->watch_service.history_start()).count()/1000000.0f;
-        ImPlot::SetupAxisLimits(ImAxis_X1, now - 60, now, ImGuiCond_Always);
+        ImPlot::SetupAxisLimits(ImAxis_X1, now - _time_depth, now, ImGuiCond_Always);
 
         // draw lines
         for (size_t i = 0; i < _charts.size(); ++i) {
             const auto& chart = _charts[i];
             const auto* history = _server->watch_service.history(chart.subcategory, chart.name);
-            const auto size = history->size();
-            float now = history->back().x();
+            const float* p_time = &(history->array_two().first->x());
+            const float* p_value = &(history->array_two().first->y());
+            auto size = history->size();
             size_t offset = history->array_one().first - history->array_two().first;
 
             if (chart.on_plot && size > 0) {
                 ImPlot::SetAxis(chart.y_axis);
-                // TODO ImPlot::SetNextLineStyle(dnd[k].Color);
-                ImPlot::PlotLine(chart.label.c_str(), chart.p_time, chart.p_value, size, 0, offset, sizeof(boost::geometry::model::d2::point_xy<float>));
+                //ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
+                ImPlot::PlotLine(chart.label.c_str(), p_time, p_value, size, 0, offset, sizeof(boost::geometry::model::d2::point_xy<float>));
                 // // allow legend item labels to be DND sources
                 if (ImPlot::BeginDragDropSourceItem(chart.label.c_str())) {
                     ImGui::SetDragDropPayload("dnd_area", &i, sizeof(int));
-                    //ImPlot::ItemIcon(dnd[k].Color); ImGui::SameLine();
                     ImGui::TextUnformatted(chart.label.c_str());
                     ImPlot::EndDragDropSource();
                 }

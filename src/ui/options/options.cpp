@@ -9,12 +9,12 @@ Options::Options(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::
     _client = ucanopen_client;
 
     _client->enable_sync();
-    _client->set_sync_period(std::chrono::milliseconds(200));
+    _client->set_sync_period(std::chrono::milliseconds(_client_sync_period));
     _client->enable_tpdo();
     for (const auto& server : _client->server_names()) {
         _client->enable_rpdo_on_server(server);
         _client->enable_watch_on_server(server);
-        _client->set_watch_period_on_server(server, std::chrono::milliseconds(10));
+        _client->set_watch_period_on_server(server, std::chrono::milliseconds(_server_watch_period));
     }
 }
 
@@ -128,10 +128,9 @@ void Options::_draw_ucanopen_tab() {
         }
     }
 
-    static int client_sync_period = 200;
-    if (ImGui::InputInt("SYNC Period", &client_sync_period, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-        client_sync_period = std::clamp(client_sync_period, 1, 10000);
-        _client->set_sync_period(std::chrono::milliseconds(client_sync_period));
+    if (ImGui::InputInt("SYNC Period", &_client_sync_period, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _client_sync_period = std::clamp(_client_sync_period, 1, 10000);
+        _client->set_sync_period(std::chrono::milliseconds(_client_sync_period));
     }
 
     static bool client_tpdo_enabled = true;
@@ -180,10 +179,14 @@ void Options::_draw_server_settings(const std::string& server) {
         }
     }
 
-    static int server_watch_period = 10;
-    if (ImGui::InputInt("Watch Period", &server_watch_period, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-        server_watch_period = std::clamp(server_watch_period, 1, 10000);
-        _client->set_watch_period_on_server(server, std::chrono::milliseconds(server_watch_period));
+    if (ImGui::InputInt("Watch Period", &_server_watch_period, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _server_watch_period = std::clamp(_server_watch_period, 1, 10000);
+        _client->set_watch_period_on_server(server, std::chrono::milliseconds(_server_watch_period));
+    }
+
+    if (ImGui::InputInt("Watch History", &_server_watch_history_size, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _server_watch_history_size = std::clamp(_server_watch_history_size, 10, 1000000);
+        _client->set_watch_history_size_on_server(server, _server_watch_history_size);
     }
 }
 

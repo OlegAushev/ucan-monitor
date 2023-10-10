@@ -15,6 +15,7 @@ private:
     static inline int _plotid_count = 0;
     int _plotid;
     std::shared_ptr<::ucanopen::Server> _server;
+    float _time_depth = 60;
 public:
     WatchPlot(std::shared_ptr<::ucanopen::Server> server) : _server(server) {
         _plotid = ++_plotid_count;
@@ -30,8 +31,6 @@ private:
         std::string_view name;
         std::string label;
         bool on_plot;
-        const float* p_time;
-        const float* p_value;
         ImAxis y_axis;
 
     };
@@ -44,8 +43,6 @@ private:
             chart.name = obj->name;
             chart.label = std::string(obj->subcategory) + "::" + std::string(obj->name);    
             chart.on_plot = false;            
-            chart.p_time = &(_server->watch_service.history(chart.subcategory, chart.name)->array_two().first->x());
-            chart.p_value = &(_server->watch_service.history(chart.subcategory, chart.name)->array_two().first->y());
             chart.y_axis = ImAxis_Y1;
             _charts.push_back(chart);
         }
