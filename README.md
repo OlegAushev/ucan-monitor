@@ -5,5 +5,5 @@ ImGUI version of uCAN Monitor
 * **Fedora:**
 
 ```bash
-glfw-deve
+glfw-devel
 ```
