@@ -2,6 +2,7 @@
 
 
 #include <imgui.h>
+#include <implot.h>
 #include <cansocket/cansocket.h>
 #include <ucanopen/client/client.h>
 
@@ -27,6 +28,7 @@ public:
 private:
     void _draw_socketcan_tab();
     void _draw_ucanopen_tab();
+    void _draw_appearance_tab();
     void _draw_server_settings(const std::string& server);
 };
 

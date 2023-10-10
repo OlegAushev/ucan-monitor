@@ -74,7 +74,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
     // Fonts
     float base_fontsize = 20.0f;
-    float icon_fontsize = base_fontsize;// * 2.0f / 3.0f;
+    float icon_fontsize = base_fontsize * 2.0f / 3.0f;
     io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf", base_fontsize, NULL, io.Fonts->GetGlyphRangesDefault());
 
         // merge in icons from Font Awesome

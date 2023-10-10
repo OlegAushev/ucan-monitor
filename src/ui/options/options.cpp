@@ -43,6 +43,12 @@ void Options::draw(bool& open) {
             _draw_ucanopen_tab();
             ImGui::EndTabItem();
         }
+
+        if (ImGui::BeginTabItem("Appearance")) {
+            _draw_appearance_tab();
+            ImGui::EndTabItem();
+        }
+
         ImGui::EndTabBar();
     }
     ImGui::End();
@@ -188,6 +194,13 @@ void Options::_draw_server_settings(const std::string& server) {
         _server_watch_history_size = std::clamp(_server_watch_history_size, 10, 1000000);
         _client->set_watch_history_size_on_server(server, _server_watch_history_size);
     }
+}
+
+
+void Options::_draw_appearance_tab() {
+    ImGui::ShowStyleSelector("ImGui Style");
+    ImPlot::ShowStyleSelector("ImPlot Style");
+    ImPlot::ShowColormapSelector("ImPlot Colormap");
 }
 
 

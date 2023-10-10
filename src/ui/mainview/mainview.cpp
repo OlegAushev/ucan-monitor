@@ -65,32 +65,44 @@ void MainView::draw() {
 void MainView::_draw_menubar() {
     if (ImGui::BeginMenuBar()) {
 
-        ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV( 0.f, 0.6f, 0.6f) );
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV( 0.f, 0.7f, 0.7f) );
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV( 0.f, 0.8f, 0.8f) );
-        if(ImGui::Button(ICON_FA_POWER_OFF)) { _should_close = true; }
-        ImGui::PopStyleColor(3);
-
-        ToggleButton(ICON_FA_GEAR                   " Options", _show_options);
-        ToggleButton(ICON_FA_MESSAGE                " Log    ", _show_log);
-        ToggleButton(ICON_FA_GAMEPAD                " Control", _show_control);
-        ToggleButton(ICON_FA_TABLE                  " Data   ", _show_data);
-        ToggleButton(ICON_FA_CIRCLE_INFO            " Status ", _show_status);
-        ToggleButton(ICON_FA_SCREWDRIVER_WRENCH     " Setup  ", _show_setup);
-        ToggleButton(ICON_FA_CHART_LINE             " Charts ", _show_watchplots);
-
-        ImGui::PushItemWidth(100);
-        if (ImGui::InputInt("", &_watchplot_count)) {
-            _watchplot_count = std::clamp(_watchplot_count, 1, 4);
-            if (size_t(_watchplot_count) > _watchplots.size()) {
-                _watchplots.push_back(std::make_shared<WatchPlot>(_watchplots.front()->server()));
-            } else if (size_t(_watchplot_count) < _watchplots.size()) {
-                _watchplots.pop_back();
-            }
+        if (ImGui::BeginMenu("Menu")) {
+            ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2( 2, 2 ) );
+            if (ImGui::MenuItem(ICON_FA_GEAR " Options")) { _show_options = true; }
+            ImGui::PopStyleVar();
+            ImGui::Separator();
+            if (ImGui::MenuItem("Quit", "Alt+F4")) { _should_close = true; }
+            ImGui::EndMenu();
         }
-        ImGui::PopItemWidth();
 
-        ToggleButton(ICON_FA_INFO                   " Example", _show_demo);
+        if (ImGui::BeginMenu("View")) {
+            ImGui::MenuItem(ICON_FA_MESSAGE" Log", nullptr, &_show_log);
+            ImGui::MenuItem(ICON_FA_GAMEPAD" Control", nullptr, &_show_control);
+            ImGui::MenuItem(ICON_FA_TABLE" Data", nullptr, &_show_data);
+            ImGui::MenuItem(ICON_FA_CIRCLE_INFO" Status", nullptr, &_show_status);
+            ImGui::MenuItem(ICON_FA_SCREWDRIVER_WRENCH" Setup", nullptr, &_show_setup);
+            
+            if (ImGui::BeginMenu(ICON_FA_CHART_LINE" Charts")) {
+                ImGui::Checkbox("Enabled##", &_show_watchplots);
+                ImGui::PushItemWidth(80);
+                if (ImGui::InputInt("Number Of Plots##", &_watchplot_count)) {
+                    _watchplot_count = std::clamp(_watchplot_count, 1, 4);
+                    if (size_t(_watchplot_count) > _watchplots.size()) {
+                        _watchplots.push_back(std::make_shared<WatchPlot>(_watchplots.front()->server()));
+                    } else if (size_t(_watchplot_count) < _watchplots.size()) {
+                        _watchplots.pop_back();
+                    }
+                }
+                ImGui::PopItemWidth();
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Tools")) {
+            ImGui::MenuItem(ICON_FA_INFO" Example", nullptr, &_show_demo);
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMenuBar();
     }
 }
