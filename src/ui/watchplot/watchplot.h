@@ -16,15 +16,30 @@ private:
     int _plotid;
     std::shared_ptr<::ucanopen::Server> _server;
     float _time_depth = 60;
+
+    enum class Mode {
+        y_t,
+        y_x
+    };
+    int _mode = std::to_underlying(Mode::y_t);
+
+    std::string _header_id;
+    std::string _dndleft_id;
+    std::string _dnd_id;
 public:
     WatchPlot(std::shared_ptr<::ucanopen::Server> server) : _server(server) {
         _plotid = ++_plotid_count;
         _init_charts();
+        _header_id = std::format("Watch Plot##{}", _plotid);
+        _dndleft_id = std::format("dndleft##{}", _plotid);
+        _dnd_id = std::format("dnd##{}", _plotid);
     }
     void draw();
     std::shared_ptr<::ucanopen::Server> server() const { return _server; };
 private:
-    void _draw_plot();
+    void _draw_panel();
+    void _draw_plot_yt();
+    void _reset();
 private:
     struct Chart {
         std::string_view subcategory;
