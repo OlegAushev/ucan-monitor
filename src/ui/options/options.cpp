@@ -113,12 +113,7 @@ void Options::_draw_ucanopen_tab() {
 
     static int client_id = _client->node_id().get();
     if (ImGui::InputInt("Client ID", &client_id, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-        if (client_id < 1) {
-            client_id = 1;
-        } else if (client_id > 127) {
-            client_id = 127;
-        }
-
+        client_id = std::clamp(client_id, 1, 127);
         if (_client->set_node_id(ucanopen::NodeId(client_id)) != ucanopen::SetupStatus::success) {
             client_id = _client->node_id().get();
         }
@@ -135,11 +130,7 @@ void Options::_draw_ucanopen_tab() {
 
     static int client_sync_period = 200;
     if (ImGui::InputInt("SYNC Period", &client_sync_period, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-        if (client_sync_period < 1) {
-            client_sync_period = 1;
-        } else if (client_sync_period > 10000) {
-            client_sync_period = 10000;
-        }
+        client_sync_period = std::clamp(client_sync_period, 1, 10000);
         _client->set_sync_period(std::chrono::milliseconds(client_sync_period));
     }
 
@@ -165,19 +156,14 @@ void Options::_draw_server_settings(const std::string& server) {
 
     static int server_id = _client->server(server)->node_id().get();
     if (ImGui::InputInt("Server ID", &server_id, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-        if (server_id < 1) {
-            server_id = 1;
-        } else if (server_id > 127) {
-            server_id = 127;
-        }
-
+        server_id = std::clamp(server_id, 1, 127);
         if (_client->set_server_node_id(server, ucanopen::NodeId(server_id)) != ucanopen::SetupStatus::success) {
             server_id = _client->server(server)->node_id().get();
         }
     }
 
     static bool server_rpdo_enabled = true;
-    if (ImGui::Checkbox("RPDO messages", &server_rpdo_enabled)) {
+    if (ImGui::Checkbox("RPDO Messages", &server_rpdo_enabled)) {
         if (server_rpdo_enabled) {
             _client->enable_rpdo_on_server(server);
         } else {
@@ -186,7 +172,7 @@ void Options::_draw_server_settings(const std::string& server) {
     }
 
     static bool server_watch_enabled = true;
-    if (ImGui::Checkbox("Watch messages", &server_watch_enabled)) {
+    if (ImGui::Checkbox("Watch Messages", &server_watch_enabled)) {
         if (server_watch_enabled) {
             _client->enable_watch_on_server(server);
         } else {
@@ -196,11 +182,7 @@ void Options::_draw_server_settings(const std::string& server) {
 
     static int server_watch_period = 10;
     if (ImGui::InputInt("Watch Period", &server_watch_period, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-        if (server_watch_period < 1) {
-            server_watch_period = 1;
-        } else if (server_watch_period > 10000) {
-            server_watch_period = 10000;
-        }
+        server_watch_period = std::clamp(server_watch_period, 1, 10000);
         _client->set_watch_period_on_server(server, std::chrono::milliseconds(server_watch_period));
     }
 }
