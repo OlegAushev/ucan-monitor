@@ -57,7 +57,7 @@ void ServerSetup::_draw_about() {
 void ServerSetup::_draw_setup() {
     ImGui::SeparatorText("Setup");
 
-        const auto& objects = _server->config_service.objects();
+    const auto& objects = _server->config_service.objects();
     if (objects.empty()) { return; }
 
     static auto selected_category_iter = objects.begin();

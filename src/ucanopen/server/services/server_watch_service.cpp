@@ -1,4 +1,5 @@
 #include "server_watch_service.h"
+#include <bsclog/bsclog.h>
 
 
 namespace ucanopen {
@@ -16,7 +17,7 @@ ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher&
             _objects.push_back(&object);
             _object_acq_enabled.push_back(true);
             _current_data.insert({WatchKey{object.subcategory, object.name}, {ExpeditedSdoData{}, "..."}});
-            _history.insert({WatchKey{object.subcategory, object.name}, WatchHistory{}});
+            _history.insert({WatchKey{object.subcategory, object.name}, WatchBuf(_history_size)});
         }
     }
 }
@@ -53,8 +54,9 @@ FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry, SdoType sd
         
         std::lock_guard<std::mutex> history_lock(_history_mtx);
         auto item = _history.find(watch_key);
-        item->second.time.push_back(std::chrono::duration_cast<std::chrono::microseconds>(now - _history_start).count()/1000000.0f);
-        item->second.value.push_back(sdo_data.f32());
+        float time = std::chrono::duration_cast<std::chrono::microseconds>(now - _history_start).count()/1000000.0f;
+        float value = sdo_data.f32();
+        item->second.push_back({time, value});
 
         return FrameHandlingStatus::success;
     }

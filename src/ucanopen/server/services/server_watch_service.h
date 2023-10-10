@@ -6,6 +6,7 @@
 #include <map>
 #include <mutex>
 #include <boost/circular_buffer.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
 
 
 namespace ucanopen {
@@ -21,6 +22,7 @@ private:
     std::vector<bool> _object_acq_enabled;
 
     using WatchKey = std::pair<std::string_view, std::string_view>;
+    using WatchBuf = boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>;
 
     struct WatchCurrentData {
         ExpeditedSdoData raw;
@@ -31,15 +33,9 @@ private:
     mutable std::mutex _current_data_mtx;
 
     std::chrono::time_point<std::chrono::steady_clock> _history_start;
-public:
-    struct WatchHistory {
-        boost::circular_buffer<float> time;
-        boost::circular_buffer<float> value;
-        WatchHistory() : time(100), value(100) {}
-    };
-private:
-    std::map<WatchKey, WatchHistory> _history;
+    std::map<WatchKey, WatchBuf> _history;
     mutable std::mutex _history_mtx;
+    static constexpr size_t _history_size = 1000;
 public:
     ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher);
     void send();
@@ -78,7 +74,7 @@ public:
         return it->second.raw;
     }
 
-    WatchHistory* history(std::string_view watch_subcategory, std::string_view watch_name) {
+    boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>* history(std::string_view watch_subcategory, std::string_view watch_name) {
         std::lock_guard<std::mutex> lock(_history_mtx);
         auto iter = _history.find(std::make_pair(watch_subcategory, watch_name));
         if (iter == _history.end()) {
@@ -86,6 +82,8 @@ public:
         }
         return &iter->second;
     }
+
+    auto history_start() const { return _history_start; }
 };
 
 
