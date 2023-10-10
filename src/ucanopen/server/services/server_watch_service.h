@@ -91,6 +91,8 @@ public:
             item.second.set_capacity(size);
         }
     }
+
+    std::mutex& history_mtx() { return _history_mtx; }
 };
 
 

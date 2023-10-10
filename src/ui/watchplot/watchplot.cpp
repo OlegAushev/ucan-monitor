@@ -97,7 +97,10 @@ void WatchPlot::_draw_plot_yt() {
         // draw lines
         for (size_t i = 0; i < _charts.size(); ++i) {
             const auto& chart = _charts[i];
+
             const auto* history = _server->watch_service.history(chart.subcategory, chart.name);
+            auto& mtx = _server->watch_service.history_mtx();
+            std::lock_guard<std::mutex> lock(mtx);
             auto size = history->size();
 
             if (chart.on_plot && size > 0) {
@@ -168,6 +171,9 @@ void WatchPlot::_draw_plot_yx() {
         if (p_xchart != nullptr && p_ychart != nullptr) {
             const auto* xhistory = _server->watch_service.history(p_xchart->subcategory, p_xchart->name);
             const auto* yhistory = _server->watch_service.history(p_ychart->subcategory, p_ychart->name);
+
+            auto& mtx = _server->watch_service.history_mtx();
+            std::lock_guard<std::mutex> lock(mtx);
 
             auto xsize = xhistory->size();
             auto ysize = yhistory->size();
