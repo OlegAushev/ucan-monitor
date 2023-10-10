@@ -15,7 +15,7 @@ void WatchPlot::draw() {
         _draw_plot_yt();
         break;
     case std::to_underlying(Mode::y_x):
-
+        _draw_plot_yx();
         break;
     default:
         break;
@@ -78,6 +78,7 @@ void WatchPlot::_draw_panel() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------------
 void WatchPlot::_draw_plot_yt() {
     ImPlotAxisFlags xflags = ImPlotAxisFlags_None;
     ImPlotAxisFlags y1flags = ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit;
@@ -97,12 +98,13 @@ void WatchPlot::_draw_plot_yt() {
         for (size_t i = 0; i < _charts.size(); ++i) {
             const auto& chart = _charts[i];
             const auto* history = _server->watch_service.history(chart.subcategory, chart.name);
-            const float* p_time = &(history->array_two().first->x());
-            const float* p_value = &(history->array_two().first->y());
             auto size = history->size();
-            size_t offset = history->array_one().first - history->array_two().first;
 
             if (chart.on_plot && size > 0) {
+                const float* p_time = &(history->array_two().first->x());
+                const float* p_value = &(history->array_two().first->y());
+                size_t offset = history->array_one().first - history->array_two().first;
+
                 ImPlot::SetAxis(chart.y_axis);
                 //ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
                 ImPlot::PlotLine(chart.label.c_str(), p_time, p_value, size, 0, offset, sizeof(boost::geometry::model::d2::point_xy<float>));
@@ -145,6 +147,77 @@ void WatchPlot::_draw_plot_yt() {
                 _charts[i].y_axis = ImAxis_Y1;
             }
             ImPlot::EndDragDropTarget();
+        }
+
+        ImPlot::EndPlot();
+    }
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+void WatchPlot::_draw_plot_yx() {
+    static Chart* p_xchart = nullptr;
+    static Chart* p_ychart = nullptr;
+    ImPlotAxisFlags xflags = ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit;
+    ImPlotAxisFlags yflags = ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit;
+
+    if (ImPlot::BeginPlot("##", ImVec2(-1, -1))) {
+        ImPlot::SetupAxis(ImAxis_X1, p_xchart == nullptr ? "[drop here]" : p_xchart->label.c_str(), xflags);
+        ImPlot::SetupAxis(ImAxis_Y1, p_ychart == nullptr ? "[drop here]" : p_ychart->label.c_str(), yflags);
+
+        if (p_xchart != nullptr && p_ychart != nullptr) {
+            const auto* xhistory = _server->watch_service.history(p_xchart->subcategory, p_xchart->name);
+            const auto* yhistory = _server->watch_service.history(p_ychart->subcategory, p_ychart->name);
+
+            auto xsize = xhistory->size();
+            auto ysize = yhistory->size();
+            
+            size_t xoffset = xhistory->array_one().first - xhistory->array_two().first;
+            size_t yoffset = yhistory->array_one().first - yhistory->array_two().first;
+
+            if (xsize == ysize && xoffset == yoffset) {
+                const float* p_xvalues = &(xhistory->array_two().first->y());
+                const float* p_yvalues = &(yhistory->array_two().first->y());
+                ImPlot::PlotLine("##xy", p_xvalues, p_yvalues, xsize, 0, xoffset, sizeof(boost::geometry::model::d2::point_xy<float>));
+            }
+        }
+
+        // allow the x-axis to be a DND target
+        if (ImPlot::BeginDragDropTargetAxis(ImAxis_X1)) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(_dnd_id.c_str())) {
+                int i = *(int*)payload->Data; p_xchart = &_charts[i];
+            }
+            ImPlot::EndDragDropTarget();
+        }
+        // allow the x-axis to be a DND source
+        if (p_xchart != nullptr && ImPlot::BeginDragDropSourceAxis(ImAxis_X1)) {
+            ImGui::SetDragDropPayload(_dnd_id.c_str(), &p_xchart->idx, sizeof(int));
+            ImGui::TextUnformatted(p_xchart->label.c_str());
+            ImPlot::EndDragDropSource();
+        }
+        // allow the y-axis to be a DND target
+        if (ImPlot::BeginDragDropTargetAxis(ImAxis_Y1)) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(_dnd_id.c_str())) {
+                int i = *(int*)payload->Data; p_ychart = &_charts[i];
+            }
+            ImPlot::EndDragDropTarget();
+        }
+        // allow the y-axis to be a DND source
+        if (p_ychart != nullptr && ImPlot::BeginDragDropSourceAxis(ImAxis_Y1)) {
+            ImGui::SetDragDropPayload(_dnd_id.c_str(), &p_ychart->idx, sizeof(int));
+            ImGui::TextUnformatted(p_ychart->label.c_str());
+            ImPlot::EndDragDropSource();
+        }
+        // allow the plot area to be a DND target
+        if (ImPlot::BeginDragDropTargetPlot()) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(_dnd_id.c_str())) {
+                int i = *(int*)payload->Data; p_xchart = p_ychart = &_charts[i];
+            }
+        }
+        // allow the plot area to be a DND source
+        if (ImPlot::BeginDragDropSourcePlot()) {
+            ImGui::TextUnformatted("Yes, you can\ndrag this!");
+            ImPlot::EndDragDropSource();
         }
 
         ImPlot::EndPlot();

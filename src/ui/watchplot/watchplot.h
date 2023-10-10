@@ -39,6 +39,7 @@ public:
 private:
     void _draw_panel();
     void _draw_plot_yt();
+    void _draw_plot_yx();
     void _reset();
 private:
     struct Chart {
@@ -47,9 +48,11 @@ private:
         std::string label;
         bool on_plot;
         ImAxis y_axis;
-
+        int idx;
     };
     std::vector<Chart> _charts;
+
+    int _chart_idx = 0; // for dnd purpose
 
     void _init_charts() {
         for (const auto& obj : _server->watch_service.objects()) {
@@ -59,6 +62,7 @@ private:
             chart.label = std::string(obj->subcategory) + "::" + std::string(obj->name);    
             chart.on_plot = false;            
             chart.y_axis = ImAxis_Y1;
+            chart.idx = _chart_idx++;
             _charts.push_back(chart);
         }
     }
