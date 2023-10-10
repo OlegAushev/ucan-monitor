@@ -49,6 +49,10 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x06}, {"watch", "drive", "current_phc", "A", OD_FLOAT32, OD_ACCESS_RO}},
 {{0x5000, 0x07}, {"watch", "drive", "current_f", "A", OD_FLOAT32, OD_ACCESS_RO}},
 
+{{0x5000, 0xF0}, {"watch", "sys", "sine", "", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0xF1}, {"watch", "sys", "cosine", "", OD_FLOAT32, OD_ACCESS_RO}},
+
+
 
 {{0x3000, 0x01}, {"config", "ucanopen", "node_id", "", OD_UINT32, OD_ACCESS_RW}},
 {{0x3000, 0x02}, {"config", "ucanopen", "heartbeat_period", "ms", OD_UINT32, OD_ACCESS_RW}},
