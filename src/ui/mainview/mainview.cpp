@@ -12,15 +12,16 @@ MainView::MainView(std::shared_ptr<ui::Options> options,
                    std::shared_ptr<ui::ControlPanelInterface> controlpanel,
                    std::shared_ptr<ui::StatusPanelInterface> statuspanel,
                    std::shared_ptr<ui::ServerSetup> serversetup,
-                   std::shared_ptr<ui::WatchCharts> watchcharts)
+                   std::shared_ptr<ui::WatchPlot> watchplot)
         : _options(options)
         , _log(log)
         , _datapanel(datapanel)
         , _controlpanel(controlpanel)
         , _statuspanel(statuspanel)
         , _serversetup(serversetup)
-        , _watchcharts(watchcharts)
-{}
+{
+    _watchplots.push_back(watchplot);
+}
 
 
 void MainView::draw() {
@@ -54,7 +55,7 @@ void MainView::draw() {
     if (_show_data)         { _datapanel->draw(_show_data); }
     if (_show_status)       { _statuspanel->draw(_show_status); }
     if (_show_setup)        { _serversetup->draw(_show_setup); }
-    if (_show_charts)       { _watchcharts->draw(_show_charts); }
+    if (_show_watchplots)   { for (auto& plot : _watchplots) { plot->draw(); } }
     if (_show_demo)         { ImGui::ShowDemoWindow(); ImPlot::ShowDemoWindow(); }
     
     ImGui::End();
@@ -76,7 +77,19 @@ void MainView::_draw_menubar() {
         ToggleButton(ICON_FA_TABLE                  " Data   ", _show_data);
         ToggleButton(ICON_FA_CIRCLE_INFO            " Status ", _show_status);
         ToggleButton(ICON_FA_SCREWDRIVER_WRENCH     " Setup  ", _show_setup);
-        ToggleButton(ICON_FA_CHART_LINE             " Charts ", _show_charts);
+        ToggleButton(ICON_FA_CHART_LINE             " Charts ", _show_watchplots);
+
+        ImGui::PushItemWidth(100);
+        if (ImGui::InputInt("", &_watchplot_count)) {
+            _watchplot_count = std::clamp(_watchplot_count, 1, 4);
+            if (_watchplot_count > _watchplots.size()) {
+                _watchplots.push_back(std::make_shared<WatchPlot>(_watchplots.front()->server()));
+            } else if (_watchplot_count < _watchplots.size()) {
+                _watchplots.pop_back();
+            }
+        }
+        ImGui::PopItemWidth();
+
         ToggleButton(ICON_FA_INFO                   " Example", _show_demo);
         ImGui::EndMenuBar();
     }

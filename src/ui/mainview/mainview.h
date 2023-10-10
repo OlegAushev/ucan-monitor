@@ -9,8 +9,9 @@
 #include "../controlpanel/interface.h"
 #include "../statuspanel/interface.h"
 #include "../serversetup/serversetup.h"
-#include "../watchcharts/watchcharts.h"
+#include "../watchplot/watchplot.h"
 #include <memory>
+#include <list>
 
 
 namespace ui {
@@ -26,7 +27,7 @@ private:
     bool _show_data = true;
     bool _show_status = false;
     bool _show_setup = false;
-    bool _show_charts = false;
+    bool _show_watchplots = false;
 
     bool _show_demo = false;
 
@@ -36,7 +37,9 @@ private:
     std::shared_ptr<ui::ControlPanelInterface> _controlpanel;
     std::shared_ptr<ui::StatusPanelInterface> _statuspanel;
     std::shared_ptr<ui::ServerSetup> _serversetup;
-    std::shared_ptr<ui::WatchCharts> _watchcharts;
+    
+    std::list<std::shared_ptr<ui::WatchPlot>> _watchplots;
+    int _watchplot_count = 1;
 public:
     MainView(std::shared_ptr<ui::Options> options,
              std::shared_ptr<ui::Log> log,
@@ -44,7 +47,7 @@ public:
              std::shared_ptr<ui::ControlPanelInterface> controlpanel,
              std::shared_ptr<ui::StatusPanelInterface> statuspanel,
              std::shared_ptr<ui::ServerSetup> serversetup,
-             std::shared_ptr<ui::WatchCharts> watchcharts);
+             std::shared_ptr<ui::WatchPlot> watchplot);
     void draw();
     bool should_close() { return _should_close; }
 private:

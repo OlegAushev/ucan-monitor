@@ -10,14 +10,18 @@
 namespace ui {
 
 
-class WatchCharts {
+class WatchPlot {
 private:
+    static inline int _plotid_count = 0;
+    int _plotid;
     std::shared_ptr<::ucanopen::Server> _server;
 public:
-    WatchCharts(std::shared_ptr<::ucanopen::Server> server) : _server(server) {
+    WatchPlot(std::shared_ptr<::ucanopen::Server> server) : _server(server) {
+        _plotid = ++_plotid_count;
         _init_charts();
     }
-    void draw(bool& open);
+    void draw();
+    std::shared_ptr<::ucanopen::Server> server() const { return _server; };
 private:
     void _draw_plot();
 private:

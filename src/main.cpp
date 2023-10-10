@@ -11,7 +11,7 @@
 #include <ui/mainview/mainview.h>
 #include <ui/serverselector/serverselector.h>
 #include <ui/serversetup/serversetup.h>
-#include <ui/watchcharts/watchcharts.h>
+#include <ui/watchplot/watchplot.h>
 
 #include <ui/datapanel/srmdrive/datapanel.h>
 #include <ui/controlpanel/srmdrive/controlpanel.h>
@@ -128,7 +128,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     std::shared_ptr<ui::ControlPanelInterface> controlpanel;
     std::shared_ptr<ui::StatusPanelInterface> statuspanel;
     std::shared_ptr<ui::ServerSetup> serversetup;
-    std::shared_ptr<ui::WatchCharts> watchcharts;
+    std::shared_ptr<ui::WatchPlot> watchplot;
 
     auto server_name = ui::ServerSelector::instance().selected_server();
     if (server_name == "srmdrive") {
@@ -138,7 +138,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server);
         statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server);
         serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server);
-        watchcharts = std::make_shared<ui::WatchCharts>(srmdrive_server);
+        watchplot = std::make_shared<ui::WatchPlot>(srmdrive_server);
     } else if (server_name == "atv-vcu") {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
@@ -155,7 +155,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                    controlpanel,
                                                    statuspanel,
                                                    serversetup,
-                                                   watchcharts);
+                                                   watchplot);
 
     while (!glfwWindowShouldClose(window) && !mainview->should_close()) {
         // Poll and handle events (inputs, window resize, etc.)

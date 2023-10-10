@@ -1,38 +1,20 @@
-#include "watchcharts.h"
+#include "watchplot.h"
 
 
 namespace ui {
 
 
-void WatchCharts::draw(bool& open) {
-    ImGui::Begin("Watch Charts##", &open);
+void WatchPlot::draw() {
+    std::string header = std::format("Watch Plot##{}", _plotid);
+    ImGui::Begin(header.c_str());
 
-    // static ImPlotAxisFlags xflags = ImPlotAxisFlags_None;
-    // static ImPlotAxisFlags yflags = ImPlotAxisFlags_AutoFit|ImPlotAxisFlags_RangeFit;
-
-    // const auto* history = _server->watch_service.history("sys", "uptime");
-
-    // const float* time = &(history->array_two().first->x());
-    // const float* value = &(history->array_two().first->y());
-    // const auto size = history->size();
-    // float now = history->back().x();
-    // size_t offset = history->array_one().first - history->array_two().first;
-    
-    // if (ImPlot::BeginPlot("##Scrolling", ImVec2(-1,150))) {
-    //     ImPlot::SetupAxes(nullptr, nullptr, xflags, yflags);
-    //     ImPlot::SetupAxisLimits(ImAxis_X1,now - 60, now, ImGuiCond_Always);
-    //     ImPlot::SetupAxisLimits(ImAxis_Y1,0,1);
-    //     ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL,0.5f);
-    //     ImPlot::PlotLine("uptime", time, value, size, 0, offset, sizeof(boost::geometry::model::d2::point_xy<float>));
-    //     ImPlot::EndPlot();
-    // }
     _draw_plot();
 
     ImGui::End();
 }
 
 
-void WatchCharts::_draw_plot() {
+void WatchPlot::_draw_plot() {
     // child window to serve as initial source for our DND items
     ImGui::BeginChild("dnd_srea_left", ImVec2(200, -1));
     for (size_t i = 0; i < _charts.size(); ++i) {
