@@ -22,12 +22,16 @@ void ControlPanel::draw(bool& open) {
     ToggleButton(ICON_FA_CIRCLE_PLAY " Run On/Off  ", _run_enabled);
     _server->set_run_enabled(_run_enabled);
     
-    // torque slider
-    ImGui::SliderFloat("Torque [%]", &_torque_percent_ref, -100.0f, 100.0f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+    // torque input
+    if (ImGui::InputFloat("Torque [%]", &_torque_percent_ref, 1, 100, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _torque_percent_ref = std::clamp(_torque_percent_ref, -100.0f, 100.0f);
+    }
     _server->set_torque(_torque_percent_ref / 100.0f);
-    
-    // speed slider
-    ImGui::SliderFloat("Speed [rpm]", &_speed_ref, -8000.0f, 8000.0f, "%.f", ImGuiSliderFlags_AlwaysClamp);
+
+    // speed input
+    if (ImGui::InputFloat("Speed [rpm]", &_speed_ref, 1, 100, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _speed_ref = std::clamp(_speed_ref, -8000.0f, 8000.0f);
+    }
     _server->set_speed(_speed_ref);
 
     // ctlmode
