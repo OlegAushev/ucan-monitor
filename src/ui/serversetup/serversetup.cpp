@@ -10,6 +10,7 @@ void ServerSetup::draw(bool& open) {
 
     _draw_about();
     _draw_setup();
+    _draw_popups();
 
     ImGui::End();
 }
@@ -169,6 +170,61 @@ void ServerSetup::_draw_setup() {
         default:
             break;
         }
+    }
+
+    ImGui::NewLine();
+
+    if (ImGui::Button("Restore", ImVec2(120, 0))) {
+        ImGui::OpenPopup("Warning!##restore");
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Apply", ImVec2(120, 0))) {
+        ImGui::OpenPopup("Warning!##apply");
+    }
+}
+
+
+void ServerSetup::_draw_popups() {
+    // Always center this window when appearing
+    ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+    if (ImGui::BeginPopupModal("Warning!##restore", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::Text("Default configuration parameters will be restored.");
+        ImGui::Separator();
+
+        if (ImGui::Button("Cancel", ImVec2(120, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        if (ImGui::Button("Ok", ImVec2(120, 0))) {
+            _server->exec("ctl", "sys", "restore_all_default_parameters");
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::BeginPopupModal("Warning!##apply", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::Text("All configuration parameters will be applied.");
+        ImGui::Separator();
+
+        if (ImGui::Button("Cancel", ImVec2(120, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        if (ImGui::Button("Ok", ImVec2(120, 0))) {
+            _server->exec("ctl", "sys", "save_all_parameters");
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
     }
 }
 

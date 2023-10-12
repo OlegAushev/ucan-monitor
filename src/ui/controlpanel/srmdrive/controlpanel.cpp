@@ -46,11 +46,11 @@ void ControlPanel::draw(bool& open) {
     // actions
     if (ImGui::TreeNode("Actions")) {
         if (ImGui::Button("Calibrate Position Sensor", ImVec2(300, 0))) {
-            ImGui::OpenPopup("Warning: calibration");
+            ImGui::OpenPopup("Warning!##calibration");
         }
 
         if (ImGui::Button("Invert Default Direction", ImVec2(300, 0))) {
-            ImGui::OpenPopup("Warning: direction inverting");
+            ImGui::OpenPopup("Warning!##direction");
         }
 
         if (ImGui::Button("Reset Driver Fault", ImVec2(300, 0))) {
@@ -62,7 +62,7 @@ void ControlPanel::draw(bool& open) {
         }
 
         if (ImGui::Button("Reset Device", ImVec2(300, 0))) {
-            ImGui::OpenPopup("Warning: device reset");
+            ImGui::OpenPopup("Warning!##device_reset");
         }
 
         _draw_popups();
@@ -106,9 +106,9 @@ void ControlPanel::_draw_popups() {
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-    if (ImGui::BeginPopupModal("Warning: calibration", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::BeginPopupModal("Warning!##calibration", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::Text("Warning! Calibration procedure is about to begin.");
+        ImGui::Text("Calibration procedure is about to begin.");
         ImGui::Separator();
 
         if (ImGui::Button("Cancel", ImVec2(120, 0)))
@@ -124,9 +124,9 @@ void ControlPanel::_draw_popups() {
         ImGui::EndPopup();
     }
 
-    if (ImGui::BeginPopupModal("Warning: direction inverting", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::BeginPopupModal("Warning!##direction", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::Text("Warning! Default rotation direction will be changed.");
+        ImGui::Text("Default rotation direction will be changed.");
         ImGui::Separator();
 
         if (ImGui::Button("Cancel", ImVec2(120, 0)))
@@ -142,9 +142,9 @@ void ControlPanel::_draw_popups() {
         ImGui::EndPopup();
     }
 
-    if (ImGui::BeginPopupModal("Warning: device reset", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::BeginPopupModal("Warning!##device_reset", NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        ImGui::Text("Warning! Device will be reset.");
+        ImGui::Text("Device will be reset.");
         ImGui::Separator();
 
         if (ImGui::Button("Cancel", ImVec2(120, 0)))

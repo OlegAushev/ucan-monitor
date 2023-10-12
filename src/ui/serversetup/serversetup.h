@@ -22,6 +22,7 @@ public:
 private:
     void _draw_about();
     void _draw_setup();
+    void _draw_popups();
 };
 
 
