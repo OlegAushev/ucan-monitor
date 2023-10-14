@@ -87,8 +87,8 @@ public:
     void set_history_size(size_t size) {
         std::lock_guard<std::mutex> lock(_history_mtx);
         for (auto& item : _history) {
-            item.second.clear();
             item.second.set_capacity(size);
+            item.second.clear();
         }
     }
 
