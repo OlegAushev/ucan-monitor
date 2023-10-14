@@ -52,6 +52,14 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x09}, {"watch", "drive", "current_q", "", OD_FLOAT32, OD_ACCESS_RO}},
 {{0x5000, 0x0A}, {"watch", "drive", "speed", "", OD_FLOAT32, OD_ACCESS_RO}},
 
+{{0x5000, 0xE0}, {"watch", "resolver", "sinmax", "", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0xE1}, {"watch", "resolver", "sinoff", "", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0xE2}, {"watch", "resolver", "sinmin", "", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0xE3}, {"watch", "resolver", "cosmax", "", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0xE4}, {"watch", "resolver", "cosoff", "", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x5000, 0xE5}, {"watch", "resolver", "cosmin", "", OD_FLOAT32, OD_ACCESS_RO}},
+
+
 {{0x5000, 0xF0}, {"watch", "sys", "sine", "", OD_FLOAT32, OD_ACCESS_RO}},
 {{0x5000, 0xF1}, {"watch", "sys", "cosine", "", OD_FLOAT32, OD_ACCESS_RO}},
 
