@@ -15,8 +15,8 @@ namespace ucanopen {
 class ServerWatchService : public SdoSubscriber {
 private:
     impl::Server& _server;
-    bool _enabled = false;
-    std::chrono::milliseconds _period = std::chrono::milliseconds(1000);
+    bool _enabled{false};
+    std::chrono::milliseconds _period{1000};
     std::chrono::time_point<std::chrono::steady_clock> _acq_timepoint;
     std::vector<const ODObject*> _objects;
     std::vector<bool> _object_acq_enabled;

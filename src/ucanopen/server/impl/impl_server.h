@@ -56,14 +56,14 @@ class Server {
     friend class ucanopen::ServerRpdoService;
     friend class ucanopen::ServerSdoService;
 protected:
-    std::string _name = "unnamed";
+    std::string _name{"unnamed"};
     NodeId _node_id;
     std::shared_ptr<can::Socket> _socket;
 
     const ObjectDictionary& _dictionary;
     ObjectDictionaryAux _dictionary_aux;
 
-    NmtState _nmt_state = NmtState::stopped;
+    NmtState _nmt_state{NmtState::stopped};
 public:
     Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary);
     

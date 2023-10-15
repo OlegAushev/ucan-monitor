@@ -12,16 +12,16 @@ namespace ui {
 
 class WatchPlot {
 private:
-    static inline int _plotid_count = 0;
+    static inline int _plotid_count{0};
     int _plotid;
     std::shared_ptr<::ucanopen::Server> _server;
-    float _time_depth = 60;
+    float _time_depth{60.0f};
 
     enum class Mode {
         y_t,
         y_x
     };
-    int _mode = std::to_underlying(Mode::y_t);
+    int _mode{std::to_underlying(Mode::y_t)};
 
     std::string _header_id;
     std::string _dndleft_id;

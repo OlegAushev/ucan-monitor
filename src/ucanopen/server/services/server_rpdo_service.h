@@ -10,7 +10,7 @@ namespace ucanopen {
 class ServerRpdoService {
 private:
     impl::Server& _server;
-    bool _is_enabled = false;
+    bool _is_enabled{false};
 
     struct Message {
         canid_t id;

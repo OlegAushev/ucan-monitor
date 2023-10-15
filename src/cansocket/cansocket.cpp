@@ -3,6 +3,7 @@
 
 namespace can {
 
+
 Socket::Socket() {
     // check can0: may be interface is already enabled
     /* FIND SCRIPT */
@@ -214,5 +215,5 @@ Error Socket::recv(can_frame& frame) {
     }
 }
 
-} // namespace can
 
+} // namespace can

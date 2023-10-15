@@ -26,6 +26,7 @@
 
 namespace can {
 
+
 enum class Error {
     none,
     invalid_argument,
@@ -46,26 +47,23 @@ enum class Error {
 
 namespace detail {
 
+
 const std::vector<std::string> interface_list = {"can0", "can1"};
 const std::vector<std::string> bitrate_list = {"125000", "250000", "500000", "1000000"};
-const std::set<std::filesystem::path> scripts_location_list = {
-    "",
-    "scripts",
-    "..",
-    "../scripts"
-};
+const std::set<std::filesystem::path> scripts_location_list = {"", "scripts", "..", "../scripts"};
+
 
 } // namespace detail
 
 
 class Socket {
 private:
-    int _socket = -1;
+    int _socket{-1};
     ifreq _ifr;
     sockaddr_can _addr;
 
     pollfd _recv_fd;
-    static constexpr std::chrono::milliseconds _recv_timeout = std::chrono::milliseconds(1);
+    static constexpr std::chrono::milliseconds _recv_timeout{1};
 
     std::mutex _send_mtx;
     std::mutex _recv_mtx;
@@ -100,5 +98,5 @@ private:
     }
 };
 
-} // namespace can
 
+} // namespace can

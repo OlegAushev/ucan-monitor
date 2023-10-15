@@ -31,14 +31,14 @@ private:
     /* SYNC */
     struct SyncMessage {
         bool is_enabled = false;
-        std::chrono::milliseconds period = std::chrono::milliseconds(1000);
+        std::chrono::milliseconds period{1000};
         std::chrono::time_point<std::chrono::steady_clock> timepoint;		
     };
     SyncMessage _sync_msg;
 
     /* HEARTBEAT */
     struct HeartbeatMessage {
-        std::chrono::milliseconds period = std::chrono::milliseconds(1000);
+        std::chrono::milliseconds period{1000};
         std::chrono::time_point<std::chrono::steady_clock> timepoint;
     };
     HeartbeatMessage _heartbeat_msg;
