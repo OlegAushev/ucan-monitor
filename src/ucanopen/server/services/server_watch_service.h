@@ -58,7 +58,7 @@ public:
 
     std::string string_value(std::string_view watch_subcategory, std::string_view watch_name) const {
         std::lock_guard<std::mutex> lock(_current_data_mtx);
-        auto it = _current_data.find(std::make_pair(watch_subcategory, watch_name));
+        auto it = _current_data.find({watch_subcategory, watch_name});
         if (it == _current_data.end()) {
             return "n/a";
         }
@@ -67,7 +67,7 @@ public:
 
     ExpeditedSdoData value(std::string_view watch_subcategory, std::string_view watch_name) {
         std::lock_guard<std::mutex> lock(_current_data_mtx);
-        auto it = _current_data.find(std::make_pair(watch_subcategory, watch_name));
+        auto it = _current_data.find({watch_subcategory, watch_name});
         if (it == _current_data.end()) {
             return 0;
         }
@@ -76,7 +76,7 @@ public:
 
     boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>* history(std::string_view watch_subcategory, std::string_view watch_name) {
         std::lock_guard<std::mutex> lock(_history_mtx);
-        auto iter = _history.find(std::make_pair(watch_subcategory, watch_name));
+        auto iter = _history.find({watch_subcategory, watch_name});
         if (iter == _history.end()) {
             return nullptr;
         }

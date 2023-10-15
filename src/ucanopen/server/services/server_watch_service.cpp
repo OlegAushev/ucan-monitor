@@ -46,7 +46,7 @@ FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry, SdoType sd
     const auto& [key, object] = *entry;
 
     if ((object.category == _server.dictionary().config.watch_category) && (sdo_type == SdoType::response_to_read)) {
-        WatchKey watch_key = std::make_pair(object.subcategory, object.name);
+        WatchKey watch_key = {object.subcategory, object.name};
         _current_data[watch_key].raw = sdo_data;
         if (object.type != OD_ENUM16) {
             _current_data[watch_key].str = sdo_data.to_string(object.type, 2);
