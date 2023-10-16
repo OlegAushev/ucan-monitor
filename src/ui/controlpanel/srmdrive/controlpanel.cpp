@@ -21,27 +21,40 @@ void ControlPanel::draw(bool& open) {
     // run switch
     ToggleButton(ICON_FA_CIRCLE_PLAY " Run On/Off  ", _run_enabled);
     _server->set_run_enabled(_run_enabled);
+
+    ImGui::Separator();
     
     // torque input
+    ImGui::RadioButton("##torque_ctlmode", &_ctlmode, std::to_underlying(::srmdrive::ControlMode::torque));
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+        ImGui::SetTooltip("Torque Mode");
+    }
+    ImGui::SameLine();
+
+    ImGui::PushItemWidth(200);
     if (ImGui::InputFloat("Torque [%]", &_torque_percent_ref, 1, 100, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
         _torque_percent_ref = std::clamp(_torque_percent_ref, -100.0f, 100.0f);
     }
+    ImGui::PopItemWidth();
     _server->set_torque(_torque_percent_ref / 100.0f);
 
     // speed input
+    ImGui::RadioButton("##speed_ctlmode", &_ctlmode, std::to_underlying(::srmdrive::ControlMode::speed));
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+        ImGui::SetTooltip("Speed Mode");
+    }
+    ImGui::SameLine();
+
+    ImGui::PushItemWidth(200);
     if (ImGui::InputFloat("Speed [rpm]", &_speed_ref, 1, 100, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
         _speed_ref = std::clamp(_speed_ref, -8000.0f, 8000.0f);
     }
+    ImGui::PopItemWidth();
     _server->set_speed(_speed_ref);
 
-    // ctlmode
-    if (ImGui::TreeNode("Control Mode")) {
-        ImGui::RadioButton("Torque", &_ctlmode, std::to_underlying(::srmdrive::ControlMode::torque));
-        ImGui::SameLine();
-        ImGui::RadioButton("Speed", &_ctlmode, std::to_underlying(::srmdrive::ControlMode::speed));
-        ImGui::TreePop();
-    }
     _server->set_ctlmode(::srmdrive::ControlMode(_ctlmode));
+
+    ImGui::Separator();
    
     // actions
     if (ImGui::TreeNode("Actions")) {
@@ -72,7 +85,11 @@ void ControlPanel::draw(bool& open) {
     // field current
     if (ImGui::TreeNode("Field Current")) {
         ImGui::Checkbox("Enable Manual Control", &_fieldctl_enabled);
-        ImGui::SliderFloat("Field Current [A]", &_fieldcurr_ref, 0.0f, 50.0f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
+        ImGui::PushItemWidth(200);
+        if (ImGui::InputFloat("Field Current [A]", &_fieldcurr_ref, 1, 100, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _fieldcurr_ref = std::clamp(_fieldcurr_ref, 0.0f, 50.0f);
+        }
+        ImGui::PopItemWidth();
         ImGui::TreePop();
     }
     _server->set_manual_fieldctl_enabled(_fieldctl_enabled);
@@ -83,7 +100,11 @@ void ControlPanel::draw(bool& open) {
         ImGui::RadioButton("Closed Loop", &_ctlloop, std::to_underlying(::srmdrive::ControlLoopType::closed));
         ImGui::SameLine();
         ImGui::RadioButton("Open Loop", &_ctlloop, std::to_underlying(::srmdrive::ControlLoopType::open));
-        ImGui::SliderFloat("Stator Current [%]", &_statorcurr_ref, 0.0f, 100.0f, "%.1f", ImGuiSliderFlags_AlwaysClamp);
+        ImGui::PushItemWidth(200);
+        if (ImGui::InputFloat("Stator Current [%]", &_statorcurr_ref, 1, 100, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _statorcurr_ref = std::clamp(_statorcurr_ref, 0.0f, 100.0f);
+        }
+        ImGui::PopItemWidth();
         ImGui::TreePop();
     }
     _server->set_ctlloop(::srmdrive::ControlLoopType(_ctlloop));
@@ -91,9 +112,12 @@ void ControlPanel::draw(bool& open) {
 
     // gamma correction
     if (ImGui::TreeNode("Gamma Correction")) {
-        if (ImGui::SliderFloat("Gamma Correction [deg]", &_gamma_correction, -180.0f, 180.0f, "%.f", ImGuiSliderFlags_AlwaysClamp)) {
+        ImGui::PushItemWidth(200);
+        if (ImGui::InputFloat("Gamma Correction [deg]", &_gamma_correction, 1, 100, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _gamma_correction = std::clamp(_gamma_correction, -180.0f, 180.0f);
             _server->write("ctl", "drive", "set_gamma_correction", std::to_string(_gamma_correction));
         }
+        ImGui::PopItemWidth();
         ImGui::TreePop();
     }
 
