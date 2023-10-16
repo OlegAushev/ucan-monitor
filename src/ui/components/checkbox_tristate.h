@@ -10,7 +10,7 @@ namespace ui {
 
 bool CheckBoxTristate(const char* label, int& v_tristate)
 {
-    bool ret;
+    bool ret = false;
     if (v_tristate == -1) {
         ImGui::PushItemFlag(ImGuiItemFlags_MixedValue, true);
         bool b = false;

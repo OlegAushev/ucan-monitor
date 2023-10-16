@@ -12,8 +12,8 @@ namespace ui {
 class ServerSelector {
 private:
     ServerSelector() = default;
-    int _selected_server_idx = 0;
-    bool _server_is_selected = false;
+    int _selected_server_idx{0};
+    bool _server_is_selected{false};
     std::string _selected_server;
 public:
     static ServerSelector& instance() {

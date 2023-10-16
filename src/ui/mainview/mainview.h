@@ -19,17 +19,17 @@ namespace ui {
 
 class MainView {
 private:
-    bool _should_close = false;
-    bool _show_options = false;
-    bool _show_log = true;
+    bool _should_close{false};
+    bool _show_options{false};
+    bool _show_log{true};
 
-    bool _show_control = true;
-    bool _show_data = true;
-    bool _show_status = false;
-    bool _show_setup = false;
-    bool _show_watchplots = false;
+    bool _show_control{true};
+    bool _show_data{true};
+    bool _show_status{false};
+    bool _show_setup{false};
+    bool _show_watchplots{false};
 
-    bool _show_demo = false;
+    bool _show_demo{false};
 
     std::shared_ptr<ui::Options> _options;
     std::shared_ptr<ui::Log> _log;
