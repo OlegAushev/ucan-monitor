@@ -104,24 +104,40 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TextUnformatted("Run [bool]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%d", _server->tpdo1().run);
+        if (_server->tpdo1().run != 0) {
+            ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.65f));
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+        }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Error [bool]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%d", _server->tpdo1().error);
+        if (_server->tpdo1().error) {
+            ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.65f));
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+        }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Warning [bool]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%d", _server->tpdo1().warning);
+        if (_server->tpdo1().warning) {
+            ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.3f, 0.65f));
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+        }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Overheat [bool]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%d", _server->tpdo1().overheat);
+        if (_server->tpdo1().overheat) {
+            ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.3f, 0.65f));
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+        }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);

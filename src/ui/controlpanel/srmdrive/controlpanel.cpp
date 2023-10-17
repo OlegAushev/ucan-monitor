@@ -32,7 +32,7 @@ void ControlPanel::draw(bool& open) {
     ImGui::SameLine();
 
     ImGui::PushItemWidth(200);
-    if (ImGui::InputFloat("Torque [%]", &_torque_percent_ref, 1, 100, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+    if (ImGui::InputFloat("Torque [%]", &_torque_percent_ref, 1.0f, 100.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
         _torque_percent_ref = std::clamp(_torque_percent_ref, -100.0f, 100.0f);
     }
     ImGui::PopItemWidth();
@@ -46,7 +46,7 @@ void ControlPanel::draw(bool& open) {
     ImGui::SameLine();
 
     ImGui::PushItemWidth(200);
-    if (ImGui::InputFloat("Speed [rpm]", &_speed_ref, 1, 100, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+    if (ImGui::InputFloat("Speed [rpm]", &_speed_ref, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
         _speed_ref = std::clamp(_speed_ref, -8000.0f, 8000.0f);
     }
     ImGui::PopItemWidth();
@@ -86,7 +86,7 @@ void ControlPanel::draw(bool& open) {
     if (ImGui::TreeNode("Field Current")) {
         ImGui::Checkbox("Enable Manual Control", &_fieldctl_enabled);
         ImGui::PushItemWidth(200);
-        if (ImGui::InputFloat("Field Current [A]", &_fieldcurr_ref, 1, 100, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        if (ImGui::InputFloat("Field Current [A]", &_fieldcurr_ref, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
             _fieldcurr_ref = std::clamp(_fieldcurr_ref, 0.0f, 50.0f);
         }
         ImGui::PopItemWidth();
@@ -101,7 +101,7 @@ void ControlPanel::draw(bool& open) {
         ImGui::SameLine();
         ImGui::RadioButton("Open Loop", &_ctlloop, std::to_underlying(::srmdrive::ControlLoopType::open));
         ImGui::PushItemWidth(200);
-        if (ImGui::InputFloat("Stator Current [%]", &_statorcurr_ref, 1, 100, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        if (ImGui::InputFloat("Stator Current [%]", &_statorcurr_ref, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
             _statorcurr_ref = std::clamp(_statorcurr_ref, 0.0f, 100.0f);
         }
         ImGui::PopItemWidth();
@@ -113,7 +113,7 @@ void ControlPanel::draw(bool& open) {
     // gamma correction
     if (ImGui::TreeNode("Gamma Correction")) {
         ImGui::PushItemWidth(200);
-        if (ImGui::InputFloat("Gamma Correction [deg]", &_gamma_correction, 1, 100, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        if (ImGui::InputFloat("Gamma Correction [deg]", &_gamma_correction, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
             _gamma_correction = std::clamp(_gamma_correction, -180.0f, 180.0f);
             _server->write("ctl", "drive", "set_gamma_correction", std::to_string(_gamma_correction));
         }
