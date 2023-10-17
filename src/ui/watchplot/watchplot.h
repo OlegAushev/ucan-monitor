@@ -37,7 +37,8 @@ public:
     void draw();
     std::shared_ptr<::ucanopen::Server> server() const { return _server; };
 private:
-    void _draw_panel();
+    void _draw_menubar();
+    //void _draw_panel();
     void _draw_plot_yt();
     void _draw_plot_yx();
     void _reset();
@@ -53,6 +54,10 @@ private:
     std::vector<Chart> _charts;
 
     int _chart_idx = 0; // for dnd purpose
+
+    // pointers for XY-plot
+    Chart* _p_xchart{nullptr};
+    Chart* _p_ychart{nullptr};
 
     void _init_charts() {
         for (const auto& obj : _server->watch_service.objects()) {

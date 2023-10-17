@@ -5,9 +5,10 @@ namespace ui {
 
 
 void WatchPlot::draw() {
-    ImGui::Begin(_header_id.c_str());
+    ImGui::Begin(_header_id.c_str(), nullptr, ImGuiWindowFlags_MenuBar);
 
-    _draw_panel();
+    _draw_menubar();
+    //_draw_panel();
     ImGui::SameLine();
 
     switch (_mode) {
@@ -29,53 +30,113 @@ void WatchPlot::_reset() {
     for (auto& chart : _charts) {
         chart.on_plot = false;
         chart.y_axis = ImAxis_Y1;
-    }  
+    }
+    _p_xchart = nullptr;
+    _p_ychart = nullptr;
 }
 
 
-void WatchPlot::_draw_panel() {
-    // child window to serve as initial source for our DND items
-    ImGui::BeginChild(_dndleft_id.c_str(), ImVec2(200, -1));
+void WatchPlot::_draw_menubar() {
+    if (ImGui::BeginMenuBar()) {
+        if (ImGui::BeginMenu("Options")) {
+            if (ImGui::BeginMenu("Mode")) {
+                if (ImGui::RadioButton("y(t)", &_mode, std::to_underlying(Mode::y_t))) { _reset(); }
+                if (ImGui::RadioButton("y(x)", &_mode, std::to_underlying(Mode::y_x))) { _reset(); }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Depth [s]")) {
+                //ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.6f, 0.6f));
+                ImGui::PushItemWidth(120);
+                if (ImGui::InputFloat("##depth", &_time_depth, 1, 100, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _time_depth = std::clamp(_time_depth, 0.1f, 600.0f);
+                }
+                ImGui::PopItemWidth();
+                //ImGui::PopStyleVar();
+                ImGui::EndMenu();
+            }
 
-    if (ImGui::RadioButton("y(t)", &_mode, std::to_underlying(Mode::y_t))) { _reset(); }
-    ImGui::SameLine();
-    if (ImGui::RadioButton("y(x)", &_mode, std::to_underlying(Mode::y_x))) { _reset(); }
+            if (ImGui::MenuItem("Reset")) {
+                _reset();        
+            }
 
-    ImGui::PushItemWidth(50);
-    if (ImGui::InputFloat("Depth [s]", &_time_depth, 0, 0, "%.0f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-        _time_depth = std::clamp(_time_depth, 1.0f, 600.0f);
-    }
-    ImGui::PopItemWidth();
-
-    if (ImGui::Button("Reset")) {
-        _reset();         
-    }
-
-    for (size_t i = 0; i < _charts.size(); ++i) {
-        if (_charts[i].on_plot) {
-            continue;
+            ImGui::EndMenu();
         }
 
-        ImGui::Selectable(_charts[i].label.c_str(), false, 0, ImVec2(200, 0));
-        if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-            ImGui::SetDragDropPayload(_dnd_id.c_str(), &i, sizeof(int));
-            ImGui::TextUnformatted(_charts[i].label.c_str());
-            ImGui::EndDragDropSource();
+        if (ImGui::BeginMenu("Charts")) {
+            for (size_t i = 0; i < _charts.size(); ++i) {
+                if (_charts[i].on_plot) {
+                    continue;
+                }
+
+                ImGui::Selectable(_charts[i].label.c_str(), false, 0, ImVec2(200, 0));
+                if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                    ImGui::SetDragDropPayload(_dnd_id.c_str(), &i, sizeof(int));
+                    ImGui::TextUnformatted(_charts[i].label.c_str());
+                    ImGui::EndDragDropSource();
+                }
+            }
+
+            ImGui::EndMenu();
         }
-    }
 
-    ImGui::EndChild();
+        if (ImGui::BeginDragDropTarget()) {
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(_dnd_id.c_str())) {
+                int i = *(int*)payload->Data;
+                _charts[i].on_plot = false;
+                _charts[i].y_axis = ImAxis_Y1;
 
-    if (ImGui::BeginDragDropTarget()) {
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(_dnd_id.c_str())) {
-            int i = *(int*)payload->Data;
-            _charts[i].on_plot = false;
-            _charts[i].y_axis = ImAxis_Y1;
-
+            }
+            ImGui::EndDragDropTarget();
         }
-        ImGui::EndDragDropTarget();
+
+        ImGui::EndMenuBar();
     }
 }
+
+
+// void WatchPlot::_draw_panel() {
+//     // child window to serve as initial source for our DND items
+//     ImGui::BeginChild(_dndleft_id.c_str(), ImVec2(200, -1));
+
+//     if (ImGui::RadioButton("y(t)", &_mode, std::to_underlying(Mode::y_t))) { _reset(); }
+//     ImGui::SameLine();
+//     if (ImGui::RadioButton("y(x)", &_mode, std::to_underlying(Mode::y_x))) { _reset(); }
+
+//     ImGui::PushItemWidth(50);
+//     if (ImGui::InputFloat("Depth [s]", &_time_depth, 0, 0, "%.0f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+//         _time_depth = std::clamp(_time_depth, 1.0f, 600.0f);
+//     }
+//     ImGui::PopItemWidth();
+
+//     if (ImGui::Button("Reset")) {
+//         _reset();         
+//     }
+
+//     for (size_t i = 0; i < _charts.size(); ++i) {
+//         if (_charts[i].on_plot) {
+//             continue;
+//         }
+
+//         ImGui::Selectable(_charts[i].label.c_str(), false, 0, ImVec2(200, 0));
+//         if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+//             ImGui::SetDragDropPayload(_dnd_id.c_str(), &i, sizeof(int));
+//             ImGui::TextUnformatted(_charts[i].label.c_str());
+//             ImGui::EndDragDropSource();
+//         }
+//     }
+
+//     ImGui::EndChild();
+
+//     if (ImGui::BeginDragDropTarget()) {
+//         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(_dnd_id.c_str())) {
+//             int i = *(int*)payload->Data;
+//             _charts[i].on_plot = false;
+//             _charts[i].y_axis = ImAxis_Y1;
+
+//         }
+//         ImGui::EndDragDropTarget();
+//     }
+// }
 
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -159,18 +220,16 @@ void WatchPlot::_draw_plot_yt() {
 
 //----------------------------------------------------------------------------------------------------------------------
 void WatchPlot::_draw_plot_yx() {
-    static Chart* p_xchart = nullptr;
-    static Chart* p_ychart = nullptr;
     ImPlotAxisFlags xflags = ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit;
     ImPlotAxisFlags yflags = ImPlotAxisFlags_AutoFit | ImPlotAxisFlags_RangeFit;
 
     if (ImPlot::BeginPlot("##", ImVec2(-1, -1))) {
-        ImPlot::SetupAxis(ImAxis_X1, p_xchart == nullptr ? "[drop here]" : p_xchart->label.c_str(), xflags);
-        ImPlot::SetupAxis(ImAxis_Y1, p_ychart == nullptr ? "[drop here]" : p_ychart->label.c_str(), yflags);
+        ImPlot::SetupAxis(ImAxis_X1, _p_xchart == nullptr ? "[drop here]" : _p_xchart->label.c_str(), xflags);
+        ImPlot::SetupAxis(ImAxis_Y1, _p_ychart == nullptr ? "[drop here]" : _p_ychart->label.c_str(), yflags);
 
-        if (p_xchart != nullptr && p_ychart != nullptr) {
-            const auto* xhistory = _server->watch_service.history(p_xchart->subcategory, p_xchart->name);
-            const auto* yhistory = _server->watch_service.history(p_ychart->subcategory, p_ychart->name);
+        if (_p_xchart != nullptr && _p_ychart != nullptr) {
+            const auto* xhistory = _server->watch_service.history(_p_xchart->subcategory, _p_xchart->name);
+            const auto* yhistory = _server->watch_service.history(_p_ychart->subcategory, _p_ychart->name);
 
             auto& mtx = _server->watch_service.history_mtx();
             std::lock_guard<std::mutex> lock(mtx);
@@ -191,33 +250,33 @@ void WatchPlot::_draw_plot_yx() {
         // allow the x-axis to be a DND target
         if (ImPlot::BeginDragDropTargetAxis(ImAxis_X1)) {
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(_dnd_id.c_str())) {
-                int i = *(int*)payload->Data; p_xchart = &_charts[i];
+                int i = *(int*)payload->Data; _p_xchart = &_charts[i];
             }
             ImPlot::EndDragDropTarget();
         }
         // allow the x-axis to be a DND source
-        if (p_xchart != nullptr && ImPlot::BeginDragDropSourceAxis(ImAxis_X1)) {
-            ImGui::SetDragDropPayload(_dnd_id.c_str(), &p_xchart->idx, sizeof(int));
-            ImGui::TextUnformatted(p_xchart->label.c_str());
+        if (_p_xchart != nullptr && ImPlot::BeginDragDropSourceAxis(ImAxis_X1)) {
+            ImGui::SetDragDropPayload(_dnd_id.c_str(), &_p_xchart->idx, sizeof(int));
+            ImGui::TextUnformatted(_p_xchart->label.c_str());
             ImPlot::EndDragDropSource();
         }
         // allow the y-axis to be a DND target
         if (ImPlot::BeginDragDropTargetAxis(ImAxis_Y1)) {
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(_dnd_id.c_str())) {
-                int i = *(int*)payload->Data; p_ychart = &_charts[i];
+                int i = *(int*)payload->Data; _p_ychart = &_charts[i];
             }
             ImPlot::EndDragDropTarget();
         }
         // allow the y-axis to be a DND source
-        if (p_ychart != nullptr && ImPlot::BeginDragDropSourceAxis(ImAxis_Y1)) {
-            ImGui::SetDragDropPayload(_dnd_id.c_str(), &p_ychart->idx, sizeof(int));
-            ImGui::TextUnformatted(p_ychart->label.c_str());
+        if (_p_ychart != nullptr && ImPlot::BeginDragDropSourceAxis(ImAxis_Y1)) {
+            ImGui::SetDragDropPayload(_dnd_id.c_str(), &_p_ychart->idx, sizeof(int));
+            ImGui::TextUnformatted(_p_ychart->label.c_str());
             ImPlot::EndDragDropSource();
         }
         // allow the plot area to be a DND target
         if (ImPlot::BeginDragDropTargetPlot()) {
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(_dnd_id.c_str())) {
-                int i = *(int*)payload->Data; p_xchart = p_ychart = &_charts[i];
+                int i = *(int*)payload->Data; _p_xchart = _p_ychart = &_charts[i];
             }
         }
         // allow the plot area to be a DND source

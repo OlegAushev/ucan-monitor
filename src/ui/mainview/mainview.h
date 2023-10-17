@@ -27,7 +27,7 @@ private:
     bool _show_data{true};
     bool _show_status{false};
     bool _show_setup{false};
-    bool _show_watchplots{false};
+    bool _show_watchplots{true};
 
     bool _show_demo{false};
 
