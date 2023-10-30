@@ -394,8 +394,8 @@ enum ODObjectAccessPermission {
 
 
 struct ODObjectKey {
-    unsigned int index;
-    unsigned int subindex;
+    uint16_t index;
+    uint16_t subindex;
 };
 
 

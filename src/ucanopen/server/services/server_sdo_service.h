@@ -16,6 +16,7 @@ public:
     void update_node_id();
 
     virtual FrameHandlingStatus handle_frame(const can_frame& frame) override;
+    void restore_default_parameter(std::string_view category, std::string_view subcategory, std::string_view name);
 private:
     FrameHandlingStatus _handle_read_expedited(const can_frame& frame);
     FrameHandlingStatus _handle_write_expedited(const can_frame& frame);

@@ -173,14 +173,21 @@ void ServerSetup::_draw_setup() {
     }
 
     ImGui::NewLine();
-
+    
     if (ImGui::Button("Restore", ImVec2(120, 0))) {
-        ImGui::OpenPopup("Warning!##restore");
+        _server->sdo_service.restore_default_parameter(_server->dictionary().config.config_category,
+                                                       selected_category_iter->first,
+                                                       selected_category_iter->second[selected_object_idx]->name);
+        should_read = true;
     }
 
     ImGui::SameLine();
 
-    if (ImGui::Button("Apply", ImVec2(120, 0))) {
+    if (ImGui::Button("Restore All", ImVec2(120, 0))) {
+        ImGui::OpenPopup("Warning!##restore");
+    }
+
+    if (ImGui::Button("Apply", ImVec2(248, 0))) {
         ImGui::OpenPopup("Warning!##apply");
     }
 }

@@ -109,5 +109,20 @@ FrameHandlingStatus ServerSdoService::_handle_abort(const can_frame& frame) {
     return FrameHandlingStatus::success;
 }
 
+
+void ServerSdoService::restore_default_parameter(std::string_view category, std::string_view subcategory, std::string_view name) {
+    auto od_entry = _server.find_od_entry(category, subcategory, name);
+    if (od_entry == _server.dictionary().entries.end()) {
+        bsclog::error("Cannot restore {}::{}::{}::{}: no such OD entry.", _server.name(), category, subcategory, name);
+        return;
+    }
+
+    ODObjectKey key{od_entry->first.index, od_entry->first.subindex};
+    uint32_t key_u32 = 0;
+    memcpy(&key_u32, &key, sizeof(key));
+    ExpeditedSdoData data(key_u32);
+    _server.write("ctl", "sys", "restore_default_parameter", data);
+}
+
 } // namespace ucanopen
 
