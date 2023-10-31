@@ -1,5 +1,5 @@
 #include "controlpanel.h"
-#include "../../components/togglebutton.h"
+#include <ui/components/togglebutton.h>
 #include <icons_font_awesome/IconsFontAwesome6.h>
 
 

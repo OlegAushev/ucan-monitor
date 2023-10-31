@@ -14,9 +14,9 @@
 #include <ui/serversetup/serversetup.h>
 #include <ui/watchplot/watchplot.h>
 
-#include <ui/datapanel/srmdrive/datapanel.h>
-#include <ui/controlpanel/srmdrive/controlpanel.h>
-#include <ui/statuspanel/srmdrive/statuspanel.h>
+#include <ui/ucanopen_servers/srmdrive/controlpanel/controlpanel.h>
+#include <ui/ucanopen_servers/srmdrive/datapanel/datapanel.h>
+#include <ui/ucanopen_servers/srmdrive/statuspanel/statuspanel.h>
 
 #include <ucanopen_servers/atvvcu/atvvcu_server.h>
 
