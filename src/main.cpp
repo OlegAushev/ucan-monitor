@@ -150,6 +150,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     } else if (server_name == "atv-vcu") {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
+
+        watchplot = std::make_shared<ui::WatchPlot>(atvvcu_server);
     } else {
         // TODO Error
     }
