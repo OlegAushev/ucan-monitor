@@ -5,8 +5,17 @@ namespace ui {
 namespace srmdrive {
 
 
+StatusPanel::StatusPanel(std::shared_ptr<::srmdrive::Server> server,
+                         const std::string& menu_title,
+                         const std::string& window_title,
+                         bool show_by_default)
+        : View(menu_title, window_title, show_by_default)
+        , _server(server)
+{}
+
+
 void StatusPanel::draw(bool& open) {
-    ImGui::Begin("Status", &open);
+    ImGui::Begin(_window_title.c_str(), &open);
     _draw_error_table();
     ImGui::NewLine();
     _draw_warning_table();

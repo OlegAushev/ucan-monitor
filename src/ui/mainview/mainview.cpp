@@ -7,18 +7,10 @@ namespace ui {
 
 
 MainView::MainView(std::shared_ptr<ui::Options> options,
-                   std::shared_ptr<ui::Log> log,
-                   std::shared_ptr<ui::DataPanelInterface> datapanel,
-                   std::shared_ptr<ui::ControlPanelInterface> controlpanel,
-                   std::shared_ptr<ui::StatusPanelInterface> statuspanel,
-                   std::shared_ptr<ui::ServerSetup> serversetup,
+                   const std::vector<std::shared_ptr<View>>& views,
                    std::shared_ptr<ui::WatchPlot> watchplot)
         : _options(options)
-        , _log(log)
-        , _datapanel(datapanel)
-        , _controlpanel(controlpanel)
-        , _statuspanel(statuspanel)
-        , _serversetup(serversetup)
+        , _views(views)
 {
     _watchplots.push_back(watchplot);
 }
@@ -49,12 +41,13 @@ void MainView::draw() {
 
     _draw_menubar();
 
+    for (auto& view : _views) {
+        if (view->show) {
+            view->draw(view->show);
+        }
+    }
+
     if (_show_options)      { _options->draw(_show_options); }
-    if (_show_log)          { _log->draw(_show_log); }
-    if (_show_control)      { _controlpanel->draw(_show_control); }
-    if (_show_data)         { _datapanel->draw(_show_data); }
-    if (_show_status)       { _statuspanel->draw(_show_status); }
-    if (_show_setup)        { _serversetup->draw(_show_setup); }
     if (_show_watchplots)   { for (auto& plot : _watchplots) { plot->draw(); } }
     if (_show_demo)         { ImGui::ShowDemoWindow(); ImPlot::ShowDemoWindow(); }
     
@@ -75,11 +68,9 @@ void MainView::_draw_menubar() {
         }
 
         if (ImGui::BeginMenu("View")) {
-            ImGui::MenuItem(ICON_FA_MESSAGE" Log", nullptr, &_show_log);
-            ImGui::MenuItem(ICON_FA_GAMEPAD" Control", nullptr, &_show_control);
-            ImGui::MenuItem(ICON_FA_TABLE" Data", nullptr, &_show_data);
-            ImGui::MenuItem(ICON_FA_CIRCLE_INFO" Status", nullptr, &_show_status);
-            ImGui::MenuItem(ICON_FA_SCREWDRIVER_WRENCH" Setup", nullptr, &_show_setup);
+            for (auto& view : _views) {
+                ImGui::MenuItem(view->menu_title().c_str(), nullptr, &view->show);
+            }
             
             if (ImGui::BeginMenu(ICON_FA_CHART_LINE" Charts")) {
                 ImGui::Checkbox("Enabled##", &_show_watchplots);

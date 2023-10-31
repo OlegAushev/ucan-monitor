@@ -2,13 +2,14 @@
 
 
 #include <imgui.h>
+#include <ui/view/view.h>
 #include <ucanopen/server/server.h>
 
 
 namespace ui {
 
 
-class ServerSetup {
+class ServerSetup : public View {
 private:
     std::shared_ptr<ucanopen::Server> _server;
 
@@ -17,7 +18,10 @@ private:
     std::string _software_version;
     std::string _device_sn;
 public:
-    ServerSetup(std::shared_ptr<ucanopen::Server> server) : _server(server) {}
+    ServerSetup(std::shared_ptr<ucanopen::Server> server,
+                const std::string& menu_title,
+                const std::string& window_title,
+                bool show_by_default);
     void draw(bool& open);
 private:
     void _draw_about();

@@ -9,6 +9,7 @@
 #include <ucanopen/client/client.h>
 
 #include <ui/mainview/mainview.h>
+#include <ui/log/log.h>
 #include <ui/serverselector/serverselector.h>
 #include <ui/serversetup/serversetup.h>
 #include <ui/watchplot/watchplot.h>
@@ -124,9 +125,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     auto can_socket = std::make_shared<can::Socket>();
     auto ucanopen_client = std::make_shared<ucanopen::Client>(ucanopen::NodeId(127), can_socket);
 
-    std::shared_ptr<ui::DataPanelInterface> datapanel;
-    std::shared_ptr<ui::ControlPanelInterface> controlpanel;
-    std::shared_ptr<ui::StatusPanelInterface> statuspanel;
+    std::vector<std::shared_ptr<ui::View>> views;
+    views.push_back(gui_log);
+
     std::shared_ptr<ui::ServerSetup> serversetup;
     std::shared_ptr<ui::WatchPlot> watchplot;
 
@@ -134,10 +135,17 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     if (server_name == "srmdrive") {
         auto srmdrive_server = std::make_shared<srmdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
         ucanopen_client->register_server(srmdrive_server);
-        datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server);
-        controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server);
-        statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server);
-        serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server);
+        
+        auto controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server, ICON_FA_GAMEPAD" Control", "Control", true);
+        auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server, ICON_FA_TABLE" Data", "Data", true);
+        auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server, ICON_FA_CIRCLE_INFO" Status", "Status", false);
+        serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server, ICON_FA_SCREWDRIVER_WRENCH" Setup", "Setup", false);
+        
+        views.push_back(controlpanel);
+        views.push_back(datapanel);
+        views.push_back(statuspanel);
+        views.push_back(serversetup);
+
         watchplot = std::make_shared<ui::WatchPlot>(srmdrive_server);
     } else if (server_name == "atv-vcu") {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
@@ -146,17 +154,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         // TODO Error
     }
 
-
     // GUI Creation
     auto options = std::make_shared<ui::Options>(can_socket, ucanopen_client);
-    auto mainview = std::make_shared<ui::MainView>(options,
-                                                   gui_log,
-                                                   datapanel,
-                                                   controlpanel,
-                                                   statuspanel,
-                                                   serversetup,
-                                                   watchplot);
+    auto mainview = std::make_shared<ui::MainView>(options, views, watchplot);
 
+    // Main View Loop
     while (!glfwWindowShouldClose(window) && !mainview->should_close()) {
         // Poll and handle events (inputs, window resize, etc.)
         glfwPollEvents();

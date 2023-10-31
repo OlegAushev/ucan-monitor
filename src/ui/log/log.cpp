@@ -4,13 +4,13 @@
 namespace ui {
 
 
-Log::Log() {
+Log::Log() : View(ICON_FA_MESSAGE" Log", "Log", true) {
     _stream = std::make_shared<std::stringstream>();
 }
 
 
 void Log::draw(bool& open) {
-    ImGui::Begin("Log", &open);
+    ImGui::Begin(_window_title.c_str(), &open);
 
     if (ImGui::BeginChild("Log Scrolling Region", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
         //ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing

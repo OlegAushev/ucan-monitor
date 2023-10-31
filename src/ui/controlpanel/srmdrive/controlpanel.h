@@ -2,7 +2,7 @@
 
 
 #include <imgui.h>
-#include "../interface.h"
+#include <ui/view/view.h>
 #include <ucanopen_servers/srmdrive/srmdrive_server.h>
 #include <memory>
 
@@ -10,7 +10,7 @@
 namespace ui {
 namespace srmdrive {
 
-class ControlPanel : public ControlPanelInterface {
+class ControlPanel : public View {
 private:
     std::shared_ptr<::srmdrive::Server> _server;
     bool _emergency{false};
@@ -28,7 +28,10 @@ private:
 
     float _gamma_correction{0};
 public:
-    ControlPanel(std::shared_ptr<::srmdrive::Server> server) : _server(server) {}
+    ControlPanel(std::shared_ptr<::srmdrive::Server> server,
+                 const std::string& menu_title,
+                 const std::string& window_title,
+                 bool show_by_default);
     virtual void draw(bool& open) override;
 private:
     void _draw_watch_table();

@@ -7,8 +7,17 @@ namespace ui {
 namespace srmdrive {
 
 
+ControlPanel::ControlPanel(std::shared_ptr<::srmdrive::Server> server,
+                           const std::string& menu_title,
+                           const std::string& window_title,
+                           bool show_by_default)
+        : View(menu_title, window_title, show_by_default)
+        , _server(server)
+{}
+
+
 void ControlPanel::draw(bool& open) {
-    ImGui::Begin("Control", &open);
+    ImGui::Begin(_window_title.c_str(), &open);
 
     // emergency
     ToggleButton(ICON_FA_TRIANGLE_EXCLAMATION " Emergency   ", _emergency);

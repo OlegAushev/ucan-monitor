@@ -2,14 +2,17 @@
 
 
 #include <imgui.h>
+#include <ui/view/view.h>
+
 #include <memory>
 #include <sstream>
 #include <vector>
 
+
 namespace ui {
 
 
-class Log {
+class Log : public View {
 private:
     std::shared_ptr<std::stringstream> _stream;
     std::vector<std::string> _lines;
