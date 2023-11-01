@@ -9,25 +9,9 @@ GitInfoSetup()
 
 ################################################################################
 # Threads
-set(CMAKE_THREAD_PREFER_PTHREAD ON)
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-find_package(Threads REQUIRED)
-
-################################################################################
-# Gtk and Vala
-# find_package(PkgConfig REQUIRED)
-# pkg_check_modules(GTK4 REQUIRED gtk4 libadwaita-1 gee-0.8)
-
-# list(APPEND CMAKE_MODULE_PATH
-#     ${CMAKE_SOURCE_DIR}/cmake/vala
-# )
-# find_package(Vala REQUIRED)
-# include(${VALA_USE_FILE})
-
-# include_directories(${GTK4_INCLUDE_DIRS})
-# link_directories(${GTK4_LIBRARY_DIRS})
-
-# add_definitions(${GTK4_CFLAGS_OTHER})
+#set(CMAKE_THREAD_PREFER_PTHREAD ON)
+#set(THREADS_PREFER_PTHREAD_FLAG ON)
+#find_package(Threads REQUIRED)
 
 ################################################################################
 # Headers and Sources
@@ -41,46 +25,6 @@ file(GLOB_RECURSE app_sources CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/src/*.c
     ${PROJECT_SOURCE_DIR}/src/*.cpp
 )
-
-################################################################################
-# XML and UI Resources
-# find_program(GLIB_COMPILE_RESOURCES NAMES glib-compile-resources REQUIRED)
-# set(gresource_xml gresource.xml)
-# set(gresource_c ${CMAKE_CURRENT_BINARY_DIR}/gresource.c)
-# #message("glib-compile-resources output: " ${gresource_c})
-
-# file(GLOB_RECURSE ui_sources RELATIVE ${PROJECT_SOURCE_DIR} CONFIGURE_DEPENDS ${PROJECT_SOURCE_DIR}/src/gui/*.ui)
-
-# add_custom_command(
-# 	OUTPUT ${gresource_c}
-# 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-# 	COMMAND ${GLIB_COMPILE_RESOURCES} --generate-source --target=${gresource_c} ${gresource_xml}
-# 	VERBATIM
-# 	MAIN_DEPENDENCY ${gresource_xml}
-# 	DEPENDS	${ui_sources}
-# )
-
-# add_custom_target(
-# 	gresource-target
-# 	DEPENDS ${gresource_c}
-# )
-
-################################################################################
-# Vala Sources
-# file(GLOB_RECURSE vala_sources RELATIVE ${PROJECT_SOURCE_DIR} CONFIGURE_DEPENDS
-# 	${PROJECT_SOURCE_DIR}/src/gui/*.vala
-# )
-
-# vala_precompile(vala_c
-# 	${vala_sources}
-# PACKAGES
-# 	gtk4
-# 	libadwaita-1
-# 	gee-0.8
-# OPTIONS
-# 	--gresources=${PROJECT_SOURCE_DIR}/${gresource_xml}
-# )
-#message("valac output: " ${vala_c})
 
 ################################################################################
 # Dear ImGUI
@@ -123,7 +67,8 @@ target_include_directories(${executable} PRIVATE
 )
 
 target_link_libraries(${executable}
-    Threads::Threads
+    atomic
+    #Threads::Threads
     glfw
     ${OPENGL_LIBRARIES}
 )

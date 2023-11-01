@@ -5,6 +5,7 @@
 #include "ucanopen/server/server.h"
 #include "bsclog/bsclog.h"
 #include <algorithm>
+#include <atomic>
 
 
 namespace srmdrive {
@@ -21,20 +22,20 @@ protected:
                                                      ucanopen::SdoType sdo_type,
                                                      ucanopen::ExpeditedSdoData data) override final;
 private:
-    uint32_t _errors = 0;
-    uint16_t _warnings = 0;
+    std::atomic<uint32_t> _errors = 0;
+    std::atomic<uint16_t> _warnings = 0;
 
-    bool _power_enabled = false;
-    bool _run_enabled = false;
-    ControlMode _ctlmode = ControlMode::torque;
-    bool _emergency_enabled = false;
-    float _torque_perunit_ref = 0;
-    float _speed_rpm_ref = 0;
+    std::atomic<bool> _power_enabled{false};
+    std::atomic<bool> _run_enabled{false};
+    std::atomic<ControlMode> _ctlmode{ControlMode::torque};
+    std::atomic<bool> _emergency_enabled{false};
+    std::atomic<float> _torque_perunit_ref{0};
+    std::atomic<float> _speed_rpm_ref{0};
 
-    bool _manual_fieldctl = false;
-    ControlLoopType _ctlloop = ControlLoopType::closed;
-    float _field_current_ref = 0;
-    float _stator_current_perunit_ref = 0;
+    std::atomic<bool> _manual_fieldctl{false};
+    std::atomic<::srmdrive::ControlLoopType> _ctlloop{ControlLoopType::closed};
+    std::atomic<float> _field_current_ref{0};
+    std::atomic<float> _stator_current_perunit_ref{0};
 
 public:
     uint32_t errors() const { return _errors; }
@@ -63,17 +64,18 @@ private:
     ucanopen::can_payload _create_rpdo1();
     ucanopen::can_payload _create_rpdo2();
 
+public:
     struct Tpdo1 {
         bool run;
         bool error;
         bool warning;
         bool overheat;
-        std::string ctlmode;
-        std::string ctlloop;
-        std::string drive_state;
+        std::string_view ctlmode;
+        std::string_view ctlloop;
+        std::string_view drive_state;
         int torque;
         int speed;
-    } _tpdo1{};
+    };
 
     struct Tpdo2 {
         unsigned int dc_voltage;
@@ -81,7 +83,7 @@ private:
         float field_current;
         unsigned int mech_power;
         bool manual_field_current;
-    } _tpdo2{};
+    };
 
     struct Tpdo3 {
         int pwrmodule_temp;
@@ -89,11 +91,17 @@ private:
         int pcb_temp;
         int aw_temp;
         int fw_temp;
-    } _tpdo3{};
+    };
+
+private:
+    std::atomic<Tpdo1> _tpdo1{};
+    std::atomic<Tpdo2> _tpdo2{};
+    std::atomic<Tpdo3> _tpdo3{};
+
 public:
-    const Tpdo1& tpdo1() const { return _tpdo1; }
-    const Tpdo2& tpdo2() const { return _tpdo2; }
-    const Tpdo3& tpdo3() const { return _tpdo3; }
+    Tpdo1 tpdo1() const { return _tpdo1.load(); }
+    Tpdo2 tpdo2() const { return _tpdo2.load(); }
+    Tpdo3 tpdo3() const { return _tpdo3.load(); }
 };
 
 } // namespace srmdrive

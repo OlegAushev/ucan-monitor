@@ -178,7 +178,7 @@ inline const std::vector<std::string> warning_list = {
 };
 
 
-enum class ControlMode {
+enum class ControlMode : uint32_t {
     torque,
     speed
 };
