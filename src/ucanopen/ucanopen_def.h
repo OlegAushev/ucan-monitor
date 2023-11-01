@@ -80,7 +80,7 @@ enum class Cob {
 };
 
 
-constexpr int cob_count = 15;
+constexpr size_t cob_count = 15;
 
 
 constexpr std::array<canid_t, cob_count> cob_function_codes = {
@@ -110,7 +110,7 @@ inline canid_t calculate_cob_id(Cob cob, NodeId node_id) {
 }
 
 
-constexpr std::array<int, cob_count> cob_sizes = {
+constexpr std::array<size_t, cob_count> cob_sizes = {
     2,  // NMT
     0,  // SYNC
     2,  // EMCY
@@ -182,7 +182,7 @@ enum ODObjectType {
 };
 
 
-constexpr int od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
+constexpr size_t od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
                                          sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
                                          sizeof(uint16_t), 0, 0};
 

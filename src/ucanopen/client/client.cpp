@@ -189,11 +189,11 @@ void Client::_register_rx_messages(std::shared_ptr<Server> server) {
 
 
 void Client::_unregister_rx_messages(std::shared_ptr<Server> server) {
-    for (auto it = _rxid_to_server.begin(); it != _rxid_to_server.end();) {
-        if (it->second == server) {
-            it = _rxid_to_server.erase(it);
+    for (auto iter = _rxid_to_server.begin(); iter != _rxid_to_server.end();) {
+        if (iter->second == server) {
+            iter = _rxid_to_server.erase(iter);
         } else {
-            ++it;
+            ++iter;
         }
     }
 }

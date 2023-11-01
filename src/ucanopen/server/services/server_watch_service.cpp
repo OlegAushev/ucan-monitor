@@ -27,7 +27,7 @@ void ServerWatchService::send() {
     if (_enabled && !_objects.empty()) {
         auto now = std::chrono::steady_clock::now();
         if (now - _acq_timepoint >= _period) {
-            static int i = 0;
+            static size_t i = 0;
             if (_object_acq_enabled[i]) {
                 _server.read(_server.dictionary().config.watch_category,
                             _objects[i]->subcategory,
