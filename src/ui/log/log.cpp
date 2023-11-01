@@ -4,7 +4,7 @@
 namespace ui {
 
 
-Log::Log() : View(ICON_FA_MESSAGE" Log", "Log", true) {
+Log::Log() : View(ICON_MDI_MESSAGE_FAST_OUTLINE" Log", "Log", true) {
     _stream = std::make_shared<std::stringstream>();
 }
 

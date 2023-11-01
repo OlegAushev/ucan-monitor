@@ -1,5 +1,4 @@
 #include "serversetup.h"
-#include <icons_font_awesome/IconsFontAwesome6.h>
 
 
 namespace ui {
@@ -27,7 +26,7 @@ void ServerSetup::draw(bool& open) {
 
 void ServerSetup::_draw_about() {
     ImGui::SeparatorText("About");
-    if (ImGui::Button(ICON_FA_REPEAT " Refresh##about")) {
+    if (ImGui::Button(ICON_MDI_REFRESH " Refresh##about")) {
         _device_name.clear();
         _hardware_version.clear();
         _software_version.clear();
@@ -74,7 +73,7 @@ void ServerSetup::_draw_setup() {
     static size_t selected_object_idx = 0;
     static bool should_read = true;
 
-    if (ImGui::Button(ICON_FA_REPEAT " Refresh##setup")) {
+    if (ImGui::Button(ICON_MDI_REFRESH " Refresh##setup")) {
         should_read = true;
     }
 

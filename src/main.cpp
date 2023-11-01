@@ -4,7 +4,8 @@
 #include <GLFW/glfw3.h>
 #include <implot.h>
 
-#include <icons_font_awesome/IconsFontAwesome6.h>
+//#include <icons_font_awesome/IconsFontAwesome6.h>
+#include <icons/IconsMaterialDesignIcons.h>
 
 #include <ucanopen/client/client.h>
 
@@ -76,16 +77,17 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
     // Fonts
     float base_fontsize = 20.0f;
-    float icon_fontsize = base_fontsize * 2.0f / 3.0f;
+    float icon_fontsize = base_fontsize;
     io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf", base_fontsize, NULL, io.Fonts->GetGlyphRangesDefault());
 
         // merge in icons from Font Awesome
-    static const ImWchar icons_ranges[] = {ICON_MIN_FA, ICON_MAX_16_FA, 0};
+    static const ImWchar icons_ranges[] = {ICON_MIN_MDI, ICON_MAX_MDI, 0};
     ImFontConfig icons_config; 
     icons_config.MergeMode = true; 
     icons_config.PixelSnapH = true; 
     icons_config.GlyphMinAdvanceX = icon_fontsize;
-    io.Fonts->AddFontFromFileTTF("../assets/fonts/" FONT_ICON_FILE_NAME_FAS, icon_fontsize, &icons_config, icons_ranges);
+    icons_config.GlyphOffset = {0, 2};
+    io.Fonts->AddFontFromFileTTF("../assets/fonts/" FONT_ICON_FILE_NAME_MDI, icon_fontsize, &icons_config, icons_ranges);
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -137,10 +139,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto srmdrive_server = std::make_shared<srmdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
         ucanopen_client->register_server(srmdrive_server);
         
-        auto controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server, ICON_FA_GAMEPAD" Control", "Control", true);
-        auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server, ICON_FA_TABLE" Data", "Data", true);
-        auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server, ICON_FA_CIRCLE_INFO" Status", "Status", false);
-        serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server, ICON_FA_SCREWDRIVER_WRENCH" Setup", "Setup", false);
+        auto controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
+        auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server, ICON_MDI_TABLE" Data", "Data", true);
+        auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", false);
+        serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server, ICON_MDI_TOOLS" Setup", "Setup", false);
         
         views.push_back(controlpanel);
         views.push_back(datapanel);
@@ -152,8 +154,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
 
-        auto pdmcontrolpanel = std::make_shared<ui::atvvcu::PdmControlPanel>(atvvcu_server, ICON_FA_NETWORK_WIRED " PDM Control", "PDM Control", true);
-        auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_FA_CAR " Motor Control", "Motor Control", true);
+        auto pdmcontrolpanel = std::make_shared<ui::atvvcu::PdmControlPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE " PDM Control", "PDM Control", true);
+        auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE " Motor Control", "Motor Control", true);
 
         views.push_back(pdmcontrolpanel);
         views.push_back(motorcontrolpanel);

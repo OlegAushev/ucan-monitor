@@ -3,7 +3,7 @@
 
 #include <imgui.h>
 #include <string>
-#include <icons_font_awesome/IconsFontAwesome6.h>
+#include <icons/IconsMaterialDesignIcons.h>
 
 
 namespace ui {

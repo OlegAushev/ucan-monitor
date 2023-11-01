@@ -114,6 +114,7 @@ add_executable(${executable}
 
 target_compile_definitions(${executable} PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
+    IMGUI_USE_WCHAR32
 )
 
 target_include_directories(${executable} PRIVATE

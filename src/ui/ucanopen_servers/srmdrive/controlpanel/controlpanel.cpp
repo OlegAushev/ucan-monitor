@@ -1,6 +1,5 @@
 #include "controlpanel.h"
 #include <ui/components/togglebutton.h>
-#include <icons_font_awesome/IconsFontAwesome6.h>
 
 
 namespace ui {
@@ -20,15 +19,15 @@ void ControlPanel::draw(bool& open) {
     ImGui::Begin(_window_title.c_str(), &open);
 
     // emergency
-    ToggleButton(ICON_FA_TRIANGLE_EXCLAMATION " Emergency   ", _emergency);
+    ToggleButton(ICON_MDI_ALERT_OCTAGON_OUTLINE" Emergency   ", _emergency);
     _server->set_emergency_enabled(_emergency);
 
     // power switch
-    ToggleButton(ICON_FA_POWER_OFF " Power On/Off", _power_enabled);
+    ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
     _server->set_power_enabled(_power_enabled);
     
     // run switch
-    ToggleButton(ICON_FA_CIRCLE_PLAY " Run On/Off  ", _run_enabled);
+    ToggleButton(ICON_MDI_POWER" Run On/Off  ", _run_enabled);
     _server->set_run_enabled(_run_enabled);
 
     ImGui::Separator();

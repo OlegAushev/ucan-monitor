@@ -1,6 +1,6 @@
 #include "mainview.h"
 #include <ui/components/togglebutton.h>
-#include <icons_font_awesome/IconsFontAwesome6.h>
+#include <icons/IconsMaterialDesignIcons.h>
 
 
 namespace ui {
@@ -60,7 +60,7 @@ void MainView::_draw_menubar() {
 
         if (ImGui::BeginMenu("Menu")) {
             ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2( 2, 2 ) );
-            if (ImGui::MenuItem(ICON_FA_GEAR " Options")) { _show_options = true; }
+            if (ImGui::MenuItem(ICON_MDI_COG " Options")) { _show_options = true; }
             ImGui::PopStyleVar();
             ImGui::Separator();
             if (ImGui::MenuItem("Quit", "Alt+F4")) { _should_close = true; }
@@ -72,7 +72,7 @@ void MainView::_draw_menubar() {
                 ImGui::MenuItem(view->menu_title().c_str(), nullptr, &view->show);
             }
             
-            if (ImGui::BeginMenu(ICON_FA_CHART_LINE" Charts")) {
+            if (ImGui::BeginMenu(ICON_MDI_CHART_LINE" Charts")) {
                 ImGui::Checkbox("Enabled##", &_show_watchplots);
                 ImGui::PushItemWidth(80);
                 if (ImGui::InputInt("Number Of Plots##", &_watchplot_count)) {
@@ -90,7 +90,7 @@ void MainView::_draw_menubar() {
         }
 
         if (ImGui::BeginMenu("Tools")) {
-            ImGui::MenuItem(ICON_FA_INFO" Example", nullptr, &_show_demo);
+            ImGui::MenuItem(ICON_MDI_HELP" Example", nullptr, &_show_demo);
             ImGui::EndMenu();
         }
 
