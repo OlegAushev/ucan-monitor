@@ -14,7 +14,10 @@ extern const ucanopen::ObjectDictionaryConfig object_dictionary_config;
 
 class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 private:
-    std::array<bool, pdm_contactor_count> _pdm_contactor_state = {};
+    mutable std::mutex _mtx;
+
+    std::array<bool, pdm_contactor_count> _pdm_contactor_states = {};
+
     std::array<float, 4> _client_values;
     std::array<float, 4> _server_values;
 
@@ -26,12 +29,7 @@ protected:
     void _handle_tpdo3([[maybe_unused]] const ucanopen::can_payload& payload) {}
     void _handle_tpdo4(const ucanopen::can_payload& payload);
 
-    ucanopen::can_payload _create_rpdo1() {
-        static unsigned int counter = 0;
-        CobRpdo1 message{.counter = counter, ._reserved = 0, .value = _server_values[0]};
-        counter = (counter + 1) % 4;
-        return ucanopen::to_payload<CobRpdo1>(message);
-    }
+    ucanopen::can_payload _create_rpdo1();
 
     ucanopen::can_payload _create_rpdo2() {
         static unsigned int counter = 0;
@@ -60,13 +58,22 @@ protected:
 public:
     Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, const std::string& name);
 
+    void set_pdm_contactor_state(const std::array<bool, pdm_contactor_count>& states) {
+        std::lock_guard<std::mutex> lock(_mtx);
+        _pdm_contactor_states = states;
+    }
+
+
+
+
+
     void set_client_value(ucanopen::CobTpdo tpdo_type, double value) { _client_values[static_cast<size_t>(tpdo_type)] = value; }
     void set_server_value(ucanopen::CobRpdo rpdo_type, double value) { _server_values[static_cast<size_t>(rpdo_type)] = value; }
 
     uint32_t errors() const { return _errors; }
     uint16_t warnings() const { return _warnings; }
 
-    bool pdm_contactor_state(PdmContactor contactor) const { return _pdm_contactor_state[std::to_underlying(contactor)]; }
+    //bool pdm_contactor_state(PdmContactor contactor) const { return _pdm_contactor_state[std::to_underlying(contactor)]; }
 
     ucanopen::can_payload create_client_tpdo1() {
         static unsigned int counter = 0;
