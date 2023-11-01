@@ -18,7 +18,8 @@
 #include <ui/ucanopen_servers/srmdrive/datapanel/datapanel.h>
 #include <ui/ucanopen_servers/srmdrive/statuspanel/statuspanel.h>
 
-#include <ucanopen_servers/atvvcu/atvvcu_server.h>
+#include <ui/ucanopen_servers/atvvcu/pdmcontrolpanel/pdmcontrolpanel.h>
+#include <ui/ucanopen_servers/atvvcu/motorcontrolpanel/motorcontrolpanel.h>
 
 #include <iostream>
 #include <fstream>
@@ -150,6 +151,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     } else if (server_name == "atv-vcu") {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
+
+        auto pdmcontrolpanel = std::make_shared<ui::atvvcu::PdmControlPanel>(atvvcu_server, ICON_FA_NETWORK_WIRED " PDM Control", "PDM Control", true);
+        auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_FA_CAR " Motor Control", "Motor Control", true);
+
+        views.push_back(pdmcontrolpanel);
+        views.push_back(motorcontrolpanel);
 
         watchplot = std::make_shared<ui::WatchPlot>(atvvcu_server);
     } else {
