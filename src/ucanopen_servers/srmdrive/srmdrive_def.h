@@ -16,8 +16,8 @@ struct CobTpdo1 {
     uint16_t warning : 1;
     uint16_t overheat : 1;
     uint16_t ctlmode : 1;
-    uint16_t ctlloop : 1;
-    uint16_t _reserved : 2;
+    uint16_t ctlloop : 2;
+    uint16_t _reserved : 1;
     uint16_t drive_state : 8;
     int16_t torque : 16;
     int16_t speed : 16;
@@ -84,10 +84,10 @@ struct CobRpdo1 {
 
 struct CobRpdo2 {
     uint16_t manual_fieldctl : 1;
-    uint16_t ctlloop : 1;
-    uint16_t _reserved1 : 14;
+    uint16_t ctlloop : 2;
+    uint16_t _reserved1 : 13;
     uint16_t field_current_ref;
-    uint16_t stator_current_ref;
+    int16_t d_current_ref;
     uint16_t counter : 2;
     uint16_t _reserved2 : 6;
     uint16_t checksum : 8;
@@ -184,9 +184,10 @@ enum class ControlMode : uint32_t {
 };
 
 
-enum class ControlLoopType {
+enum class ControlLoop {
     closed,
-    open
+    open,
+    semiclosed
 };
 
 

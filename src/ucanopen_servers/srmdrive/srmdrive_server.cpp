@@ -47,8 +47,23 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
     tpdo1_.error = tpdo.error;
     tpdo1_.warning = tpdo.warning;
     tpdo1_.overheat = tpdo.overheat;
+    
     tpdo1_.ctlmode = (tpdo.ctlmode == 0) ? "torque" : "speed";
-    tpdo1_.ctlloop = (tpdo.ctlloop == 0) ? "closed" : "open";
+    
+    switch (tpdo.ctlloop) {
+    case std::to_underlying(ControlLoop::closed):
+        tpdo1_.ctlloop = "closed";
+        break;
+    case std::to_underlying(ControlLoop::open):
+        tpdo1_.ctlloop = "open";
+        break;
+    case std::to_underlying(ControlLoop::semiclosed):
+        tpdo1_.ctlloop = "semi-closed";
+        break;
+    default:
+        tpdo1_.ctlloop = "unknown";
+        break;
+    }
 
     if (tpdo.drive_state >= drive_states.size()) {
         tpdo1_.drive_state = "n/a";
@@ -128,7 +143,7 @@ ucanopen::can_payload Server::_create_rpdo2() {
     rpdo.manual_fieldctl = _manual_fieldctl;
     rpdo.ctlloop = std::to_underlying(_ctlloop.load());
     rpdo.field_current_ref = 10.0f * _field_current_ref;
-    rpdo.stator_current_ref = 10000.0f * _stator_current_perunit_ref;
+    rpdo.d_current_ref = 10000.0f * _d_current_perunit_ref;
 
     rpdo.counter = counter;
     counter = (counter + 1) & 0x3;

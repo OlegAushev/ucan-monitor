@@ -105,18 +105,34 @@ void ControlPanel::draw(bool& open) {
 
     // control loop
     if (ImGui::TreeNode("Control Loop")) {
-        ImGui::RadioButton("Closed Loop", &_ctlloop, std::to_underlying(::srmdrive::ControlLoopType::closed));
-        ImGui::SameLine();
-        ImGui::RadioButton("Open Loop", &_ctlloop, std::to_underlying(::srmdrive::ControlLoopType::open));
-        ImGui::PushItemWidth(200);
-        if (ImGui::InputFloat("Stator Current [%]", &_statorcurr_ref, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _statorcurr_ref = std::clamp(_statorcurr_ref, 0.0f, 100.0f);
+        ImGui::RadioButton("Closed Loop", &_ctlloop, std::to_underlying(::srmdrive::ControlLoop::closed));
+        if (ImGui::RadioButton("Open Loop", &_ctlloop, std::to_underlying(::srmdrive::ControlLoop::open))) {
+            _dcurr_ref = std::clamp(_dcurr_ref, 0.0f, 100.0f);
         }
+        ImGui::RadioButton("Semi-Closed Loop", &_ctlloop, std::to_underlying(::srmdrive::ControlLoop::semiclosed));
+        ImGui::PushItemWidth(200);
+
+        switch (_ctlloop) {
+        case std::to_underlying(::srmdrive::ControlLoop::closed):
+            // DO NOTHING
+            break;
+        case std::to_underlying(::srmdrive::ControlLoop::open):
+            if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _dcurr_ref = std::clamp(_dcurr_ref, 0.0f, 100.0f);
+            }
+            break;
+        case std::to_underlying(::srmdrive::ControlLoop::semiclosed):
+            if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _dcurr_ref = std::clamp(_dcurr_ref, -100.0f, 100.0f);
+            }           
+            break;
+        }
+
         ImGui::PopItemWidth();
         ImGui::TreePop();
     }
-    _server->set_ctlloop(::srmdrive::ControlLoopType(_ctlloop));
-    _server->set_stator_current(_statorcurr_ref / 100.0f);
+    _server->set_ctlloop(::srmdrive::ControlLoop(_ctlloop));
+    _server->set_d_current(_dcurr_ref / 100.0f);
 
     // gamma correction
     if (ImGui::TreeNode("Gamma Correction")) {

@@ -23,8 +23,8 @@ private:
     bool _fieldctl_enabled{false};
     float _fieldcurr_ref{0};
     
-    int _ctlloop{std::to_underlying(::srmdrive::ControlLoopType::closed)};
-    float _statorcurr_ref{0};
+    int _ctlloop{std::to_underlying(::srmdrive::ControlLoop::closed)};
+    float _dcurr_ref{0};
 
     float _gamma_correction{0};
 public:
