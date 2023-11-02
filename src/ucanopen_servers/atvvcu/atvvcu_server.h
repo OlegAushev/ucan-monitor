@@ -4,6 +4,7 @@
 #include "ucanopen/server/server.h"
 #include "atvvcu_def.h"
 #include "bsclog/bsclog.h"
+#include <atomic>
 
 
 namespace atvvcu {
@@ -14,9 +15,10 @@ extern const ucanopen::ObjectDictionaryConfig object_dictionary_config;
 
 class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 private:
-    mutable std::mutex _mtx;
-
+    mutable std::mutex _pdm_mtx;
     std::array<bool, pdm_contactor_count> _pdm_contactor_states = {};
+
+
 
     std::array<float, 4> _client_values;
     std::array<float, 4> _server_values;
@@ -58,10 +60,22 @@ protected:
 public:
     Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, const std::string& name);
 
-    void set_pdm_contactor_state(const std::array<bool, pdm_contactor_count>& states) {
-        std::lock_guard<std::mutex> lock(_mtx);
+    void set_pdm_contactor_states(const std::array<bool, pdm_contactor_count>& states) {
+        std::lock_guard<std::mutex> lock(_pdm_mtx);
         _pdm_contactor_states = states;
     }
+
+    std::array<bool, pdm_contactor_count> pdm_contactor_states() const {
+        std::lock_guard<std::mutex> lock(_pdm_mtx);
+        return _pdm_contactor_states;
+    }
+
+
+
+
+
+
+
 
 
 

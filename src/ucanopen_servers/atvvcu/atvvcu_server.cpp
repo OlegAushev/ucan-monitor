@@ -45,11 +45,13 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
             bsclog::info("{}", syslog_messages[message_id]);
         }
     } else if (entry->second.category == _dictionary.config.config_category && entry->second.type == ucanopen::OD_ENUM16) {
-        
+        // DO NOTHING
     } else if (entry->second.name == "pdm_contactor_state") {
-        for (auto i = 0; i < pdm_contactor_count; ++i) {
-            std::lock_guard<std::mutex> lock(_mtx);
-            _pdm_contactor_states[i] = data.u32() & (1 << i);
+        if (_pdm_mtx.try_lock()) {
+            for (auto i = 0; i < pdm_contactor_count; ++i) {
+                _pdm_contactor_states[i] = data.u32() & (1 << i);
+            }
+            _pdm_mtx.unlock();
         }
     }
 

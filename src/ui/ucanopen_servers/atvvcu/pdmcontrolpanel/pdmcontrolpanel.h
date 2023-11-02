@@ -20,6 +20,8 @@ public:
                     const std::string& window_title,
                     bool show_by_default);
     virtual void draw(bool& open) override;
+private:
+    std::array<bool, ::atvvcu::pdm_contactor_count> _contactor_states{};
 };
 
 

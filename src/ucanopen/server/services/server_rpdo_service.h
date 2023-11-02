@@ -34,12 +34,10 @@ public:
 
     void send() {
         if (_is_enabled) {
+            auto now = std::chrono::steady_clock::now();
             for (auto& [rpdo, message] : _rpdo_msgs) {
-                if (message.period == std::chrono::milliseconds(0)) { continue; }
-                
-                auto now = std::chrono::steady_clock::now();
+                if (message.period == std::chrono::milliseconds(0)) { continue; }  
                 if (now - message.timepoint < message.period) { continue; }
-
                 can_payload payload = message.creator();
                 _server._socket->send(create_frame(message.id, 8, payload));
                 message.timepoint = now;	
