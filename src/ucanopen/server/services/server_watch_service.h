@@ -2,9 +2,10 @@
 
 
 #include "../impl/impl_server.h"
-#include <vector>
 #include <map>
 #include <mutex>
+#include <shared_mutex>
+#include <vector>
 #include <boost/circular_buffer.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 
@@ -20,6 +21,7 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> _acq_timepoint;
     std::vector<const ODObject*> _objects;
     std::vector<bool> _object_acq_enabled;
+    mutable std::shared_mutex _objects_mtx;
 
     using WatchKey = std::pair<std::string_view, std::string_view>;
     using WatchBuf = boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>;
@@ -44,14 +46,20 @@ public:
     void enable() { _enabled = true; }
     void disable() { _enabled = false; }
     void set_period(std::chrono::milliseconds period) { _period = period; }
-    const std::vector<const ODObject*>& objects() const { return _objects; }
+    
+    std::vector<const ODObject*> objects() const {
+        std::shared_lock lock(_objects_mtx);
+        return _objects;
+    }
 
     bool acq_enabled(size_t idx) {
+        std::shared_lock lock(_objects_mtx);
         if (idx >= _object_acq_enabled.size()) { return false; }
         return _object_acq_enabled[idx];
     }
 
     void enable_acq(size_t idx, bool value) {
+        std::unique_lock lock(_objects_mtx);
         if (idx >= _object_acq_enabled.size()) { return;}
         _object_acq_enabled[idx] = value;
     }

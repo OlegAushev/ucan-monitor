@@ -17,8 +17,6 @@ DataPanel::DataPanel(std::shared_ptr<::srmdrive::Server> server,
 
 void DataPanel::draw(bool& open) {
     ImGui::Begin(_window_title.c_str(), &open);
-    _draw_watch_table();
-    ImGui::NewLine();
     _draw_tpdo1_table();
     ImGui::NewLine();
     _draw_tpdo2_table();
@@ -27,58 +25,6 @@ void DataPanel::draw(bool& open) {
     ImGui::NewLine();
     _draw_tpdo4_table();
     ImGui::End();
-}
-
-
-void DataPanel::_draw_watch_table() {
-    static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-    if (ImGui::BeginTable("watch_table", 3, flags)) {
-        ImGui::TableSetupColumn("", ImGuiTableColumnFlags_WidthFixed, 20.0f);
-        ImGui::TableSetupColumn("Parameter");
-        ImGui::TableSetupColumn("Value");
-        //ImGui::TableHeadersRow();
-
-        static int all_acq_enabled = 1;
-        const auto& watch_objects = _server->watch_service.objects();
-
-        ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
-        for (int col = 0; col < 3; ++col)
-        {
-            ImGui::TableSetColumnIndex(col);
-            if (col == 0) {
-                ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-                if (ui::CheckBoxTristate("##select_all", all_acq_enabled)) {
-                    for (size_t i = 0; i < watch_objects.size(); ++i) {
-                        _server->watch_service.enable_acq(i, all_acq_enabled);
-                    }
-                }
-                ImGui::PopStyleVar();
-                ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-            }
-            ImGui::TableHeader(ImGui::TableGetColumnName(col));
-        }
-
-        for (size_t row = 0; row < watch_objects.size(); ++row) {
-            ImGui::TableNextRow();
-
-            ImGui::TableSetColumnIndex(0);
-            bool acq_enabled = _server->watch_service.acq_enabled(row);
-            ImGui::PushID(row);
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-            if (ImGui::Checkbox("##", &acq_enabled)) {
-                _server->watch_service.enable_acq(row, acq_enabled);
-                all_acq_enabled = -1;
-            }
-            ImGui::PopStyleVar();
-            ImGui::PopID();
-
-            ImGui::TableSetColumnIndex(1);
-            ImGui::Text("%s [%s]", watch_objects[row]->name.c_str(), watch_objects[row]->unit.c_str());
-            ImGui::TableSetColumnIndex(2);
-            ImGui::TextUnformatted(_server->watch_service.string_value(watch_objects[row]->subcategory, watch_objects[row]->name).c_str());
-        }
-        ImGui::EndTable();
-    }
 }
 
 

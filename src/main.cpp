@@ -13,6 +13,7 @@
 #include <ui/log/log.h>
 #include <ui/serverselector/serverselector.h>
 #include <ui/serversetup/serversetup.h>
+#include <ui/watchpanel/watchpanel.h>
 #include <ui/watchplot/watchplot.h>
 
 #include <ui/ucanopen_servers/srmdrive/controlpanel/controlpanel.h>
@@ -132,6 +133,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     views.push_back(gui_log);
 
     std::shared_ptr<ui::ServerSetup> serversetup;
+    std::shared_ptr<ui::WatchPanel> watchpanel;
     std::shared_ptr<ui::WatchPlot> watchplot;
 
     auto server_name = ui::ServerSelector::instance().selected_server();
@@ -140,11 +142,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         ucanopen_client->register_server(srmdrive_server);
         
         auto controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
-        auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server, ICON_MDI_TABLE" Data", "Data", true);
+        watchpanel = std::make_shared<ui::WatchPanel>(srmdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
+        auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
         auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", false);
         serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server, ICON_MDI_TOOLS" Setup", "Setup", false);
         
         views.push_back(controlpanel);
+        views.push_back(watchpanel);
         views.push_back(datapanel);
         views.push_back(statuspanel);
         views.push_back(serversetup);

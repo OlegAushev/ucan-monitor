@@ -8,7 +8,7 @@
 namespace ui {
 
 
-bool CheckBoxTristate(const char* label, int& v_tristate)
+inline bool CheckBoxTristate(const char* label, int& v_tristate)
 {
     bool ret = false;
     if (v_tristate == -1) {

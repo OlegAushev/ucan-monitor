@@ -24,6 +24,7 @@ ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher&
 
 
 void ServerWatchService::send() {
+    std::shared_lock lock(_objects_mtx);
     if (_enabled && !_objects.empty()) {
         auto now = std::chrono::steady_clock::now();
         if (now - _acq_timepoint >= _period) {
