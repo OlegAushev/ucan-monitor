@@ -137,22 +137,25 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3006, 0x07}, {"config", "model_controllers", "kp_flux_weakening", "", OD_FLOAT32, OD_ACCESS_RW}},
 {{0x3006, 0x08}, {"config", "model_controllers", "ki_flux_weakening", "", OD_FLOAT32, OD_ACCESS_RW}},
 
-{{0x3007, 0x01}, {"config", "resolver", "pole_pairs", "", OD_INT16, OD_ACCESS_RW}},
-{{0x3007, 0x02}, {"config", "resolver", "install_direction", "", OD_INT16, OD_ACCESS_RO}},
-{{0x3007, 0x03}, {"config", "resolver", "install_offset", "rad", OD_FLOAT32, OD_ACCESS_RO}},
-{{0x3007, 0x04}, {"config", "resolver", "observer_natural_freq", "rad/s", OD_FLOAT32, OD_ACCESS_RW}},
-{{0x3007, 0x05}, {"config", "resolver", "observer_damping_factor", "", OD_FLOAT32, OD_ACCESS_RW}},
+{{0x3007, 0x01}, {"config", "mras", "kp", "", OD_FLOAT32, OD_ACCESS_RW}},
+{{0x3007, 0x02}, {"config", "mras", "ki", "", OD_FLOAT32, OD_ACCESS_RW}},
 
-{{0x3008, 0x01}, {"config", "precharge", "dclink_charge_threshold", "V", OD_FLOAT32, OD_ACCESS_RW}},
-{{0x3008, 0x02}, {"config", "precharge", "dclink_charge_timeout_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
-{{0x3008, 0x03}, {"config", "precharge", "charging_contactor_holdup_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
-{{0x3008, 0x04}, {"config", "precharge", "dclink_discharge_threshold", "V", OD_FLOAT32, OD_ACCESS_RW}},
-{{0x3008, 0x05}, {"config", "precharge", "dclink_discharge_timeout_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
+{{0x3008, 0x01}, {"config", "resolver", "pole_pairs", "", OD_INT16, OD_ACCESS_RW}},
+{{0x3008, 0x02}, {"config", "resolver", "install_direction", "", OD_INT16, OD_ACCESS_RO}},
+{{0x3008, 0x03}, {"config", "resolver", "install_offset", "rad", OD_FLOAT32, OD_ACCESS_RO}},
+{{0x3008, 0x04}, {"config", "resolver", "observer_natural_freq", "rad/s", OD_FLOAT32, OD_ACCESS_RW}},
+{{0x3008, 0x05}, {"config", "resolver", "observer_damping_factor", "", OD_FLOAT32, OD_ACCESS_RW}},
 
-{{0x3009, 0x01}, {"config", "insulation", "min_batt_voltage", "V", OD_FLOAT32, OD_ACCESS_RW}},
-{{0x3009, 0x02}, {"config", "insulation", "testing_period_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
-{{0x3009, 0x03}, {"config", "insulation", "delay_before_adc_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
-{{0x3009, 0x04}, {"config", "insulation", "insulation_low_limit", "Ω", OD_FLOAT32, OD_ACCESS_RW}},
+{{0x3009, 0x01}, {"config", "precharge", "dclink_charge_threshold", "V", OD_FLOAT32, OD_ACCESS_RW}},
+{{0x3009, 0x02}, {"config", "precharge", "dclink_charge_timeout_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
+{{0x3009, 0x03}, {"config", "precharge", "charging_contactor_holdup_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
+{{0x3009, 0x04}, {"config", "precharge", "dclink_discharge_threshold", "V", OD_FLOAT32, OD_ACCESS_RW}},
+{{0x3009, 0x05}, {"config", "precharge", "dclink_discharge_timeout_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
+
+{{0x300A, 0x01}, {"config", "insulation", "min_batt_voltage", "V", OD_FLOAT32, OD_ACCESS_RW}},
+{{0x300A, 0x02}, {"config", "insulation", "testing_period_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
+{{0x300A, 0x03}, {"config", "insulation", "delay_before_adc_ms", "ms", OD_UINT32, OD_ACCESS_RW}},
+{{0x300A, 0x04}, {"config", "insulation", "insulation_low_limit", "Ω", OD_FLOAT32, OD_ACCESS_RW}},
 
 
 }
