@@ -8,7 +8,7 @@
 namespace ucanopen {
 
 
-class ServerTpdoService : public impl::FrameReceiverInterface {
+class ServerTpdoService : public impl::FrameReceiverInterface, public impl::TpdoPublisher {
 private:
     impl::Server& _server;
 
@@ -40,6 +40,11 @@ public:
     }
 
     virtual FrameHandlingStatus handle_frame(const can_frame& frame) override;
+private:
+    struct TpdoMapping {
+
+    };
+    std::map<CobTpdo, TpdoMapping> _tpdo_mapping;
 };
 
 

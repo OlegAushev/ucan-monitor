@@ -144,8 +144,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
         watchpanel = std::make_shared<ui::WatchPanel>(srmdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
         auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
-        auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", false);
-        serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server, ICON_MDI_TOOLS" Setup", "Setup", false);
+        auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", true);
+        serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server, ICON_MDI_TOOLS" Setup", "Setup", true);
         
         views.push_back(controlpanel);
         views.push_back(watchpanel);

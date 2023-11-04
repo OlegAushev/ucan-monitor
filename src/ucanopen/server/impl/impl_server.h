@@ -45,6 +45,7 @@ class ServerTpdoService;
 class ServerRpdoService;
 class ServerSdoService;
 class SdoSubscriber;
+class TpdoSubscriber;
 
 
 namespace impl {
@@ -113,6 +114,16 @@ protected:
 };
 
 
+class TpdoPublisher {
+public:
+    virtual ~TpdoPublisher() = default;
+    void register_subscriber(TpdoSubscriber& subscriber) { _subscriber_list.push_back(&subscriber); }
+    void unregister_subscriber(TpdoSubscriber& subscriber) { _subscriber_list.remove(&subscriber); }
+protected:
+    std::list<TpdoSubscriber*> _subscriber_list;
+};
+
+
 } // namespace impl
 
 
@@ -128,6 +139,22 @@ public:
         _publisher.unregister_subscriber(*this);
     }
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) = 0;
+    void unsubscribe() { _publisher.unregister_subscriber(*this); }
+};
+
+
+class TpdoSubscriber {
+private:
+    impl::TpdoPublisher& _publisher;
+public:
+    TpdoSubscriber(impl::TpdoPublisher& publisher)
+            : _publisher(publisher) {
+        _publisher.register_subscriber(*this);
+    }
+    virtual ~TpdoSubscriber() {
+        _publisher.unregister_subscriber(*this);
+    }
+    virtual FrameHandlingStatus handle_tpdo(CobTpdo tpdo, const can_payload& payload) = 0;
     void unsubscribe() { _publisher.unregister_subscriber(*this); }
 };
 

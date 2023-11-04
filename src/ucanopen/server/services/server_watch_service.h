@@ -13,12 +13,14 @@
 namespace ucanopen {
 
 
-class ServerWatchService : public SdoSubscriber {
+class ServerWatchService : public SdoSubscriber, public TpdoSubscriber {
 private:
     impl::Server& _server;
     bool _enabled{false};
     std::chrono::milliseconds _period{1000};
     std::chrono::time_point<std::chrono::steady_clock> _acq_timepoint;
+    
+    // sdo watch objects
     std::vector<const ODObject*> _objects;
     std::vector<bool> _object_acq_enabled;
     mutable std::shared_mutex _objects_mtx;
@@ -31,17 +33,20 @@ private:
         std::string str;
     };
 
+    // current data
     std::map<WatchKey, WatchCurrentData> _current_data;
     mutable std::mutex _current_data_mtx;
 
+    // history
     std::chrono::time_point<std::chrono::steady_clock> _history_start;
     std::map<WatchKey, WatchBuf> _history;
     mutable std::mutex _history_mtx;
     static constexpr size_t _history_size = 1000;
 public:
-    ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher);
+    ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher, impl::TpdoPublisher& tpdo_publisher);
     void send();
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
+    virtual FrameHandlingStatus handle_tpdo(CobTpdo tpdo, const can_payload& payload) override;
 
     void enable() { _enabled = true; }
     void disable() { _enabled = false; }

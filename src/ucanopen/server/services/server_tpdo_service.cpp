@@ -32,6 +32,11 @@ FrameHandlingStatus ServerTpdoService::handle_frame(const can_frame& frame) {
         std::copy(frame.data, std::next(frame.data, frame.can_dlc), payload.begin());
         message.payload = payload;
         message.handler(payload);
+
+        for (auto& subscriber : _subscriber_list) {
+            subscriber->handle_tpdo(tpdo, payload);
+        }
+
         return FrameHandlingStatus::success;
     }
     return FrameHandlingStatus::id_mismatch;

@@ -5,8 +5,9 @@
 namespace ucanopen {
 
 
-ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher)
+ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher, impl::TpdoPublisher& tpdo_publisher)
         : SdoSubscriber(sdo_publisher)
+        , TpdoSubscriber(tpdo_publisher)
         , _server(server) {
     _acq_timepoint = std::chrono::steady_clock::now();
     _history_start = std::chrono::steady_clock::now();
@@ -62,6 +63,12 @@ FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry, SdoType sd
         return FrameHandlingStatus::success;
     }
     return FrameHandlingStatus::irrelevant_frame;
+}
+
+
+FrameHandlingStatus ServerWatchService::handle_tpdo(CobTpdo tpdo, const can_payload& payload) {
+    //bsclog::info("TPDO: {}, payload: {}", std::to_underlying(tpdo), payload[0]);
+    return FrameHandlingStatus::success;
 }
 
 
