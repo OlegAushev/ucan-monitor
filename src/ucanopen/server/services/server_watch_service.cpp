@@ -21,6 +21,33 @@ ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher&
             _history.insert({WatchKey{object.subcategory, object.name}, WatchBuf(_history_size)});
         }
     }
+
+    // create tpdo mapping
+    for (int i = 0; i < 4; ++i) {
+        uint16_t index = 0x1A00 + i;
+        if (!_server.dictionary().entries.contains({index, 0x00})) {
+            continue;
+        }
+
+        uint16_t subindex = 0x01;
+        uint64_t offset = 0;
+        while (_server.dictionary().entries.contains({index, subindex})) {
+            const auto& object = _server.dictionary().entries.at({index, subindex});
+            _tpdo_objects.push_back(&object);
+            _current_data.insert({WatchKey{object.subcategory, object.name}, {ExpeditedSdoData{}, "..."}});
+            _history.insert({WatchKey{object.subcategory, object.name}, WatchBuf(_history_size)});
+
+            uint64_t mask = 0;
+            for (size_t i = 0; i < od_object_data_type_sizes[object.data_type]; ++i) {
+                mask |= 0xFF << i * 8;
+            }
+
+            _tpdo_mapping[CobTpdo(i)].push_back({object.subcategory, object.name, offset, mask});
+            offset += od_object_data_type_sizes[object.data_type] * 8;
+
+            ++subindex;
+        }
+    }
 }
 
 
@@ -53,10 +80,10 @@ FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry, SdoType sd
         _current_data[watch_key].str = sdo_data.to_string(object.data_type, 2);
         
         std::lock_guard<std::mutex> history_lock(_history_mtx);
-        auto item = _history.find(watch_key);
+        auto history_item = _history.find(watch_key);
         float time = std::chrono::duration_cast<std::chrono::microseconds>(now - _history_start).count()/1000000.0f;
         float value = sdo_data.f32();
-        item->second.push_back({time, value});
+        history_item->second.push_back({time, value});
 
         return FrameHandlingStatus::success;
     }
@@ -65,8 +92,35 @@ FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry, SdoType sd
 
 
 FrameHandlingStatus ServerWatchService::handle_tpdo(CobTpdo tpdo, const can_payload& payload) {
-    //bsclog::info("TPDO: {}, payload: {}", std::to_underlying(tpdo), payload[0]);
+    auto now = std::chrono::steady_clock::now();
+    auto tpdo_data = _unmap_tpdo(tpdo, payload);
+
+    for (const auto& item : tpdo_data) {
+        WatchKey watch_key{std::get<0>(item), std::get<1>(item)};
+        
+        std::lock_guard<std::mutex> history_lock(_history_mtx);
+        auto history_item = _history.find(watch_key);
+        float time = std::chrono::duration_cast<std::chrono::microseconds>(now - _history_start).count()/1000000.0f;
+        history_item->second.push_back({time, std::get<2>(item)});
+    }
+
     return FrameHandlingStatus::success;
+}
+
+
+std::vector<std::tuple<std::string_view, std::string_view, float>> ServerWatchService::_unmap_tpdo(CobTpdo tpdo, const can_payload& payload) const {
+    if (!_tpdo_mapping.contains(tpdo)) {
+        return {};
+    }
+
+    std::vector<std::tuple<std::string_view, std::string_view, float>> ret;
+    uint64_t data = from_payload<uint64_t>(payload);
+
+    for (const auto& mapping : _tpdo_mapping.at(tpdo)) {
+        ret.push_back({mapping.subcategory, mapping.name, float((data >> mapping.offset) & mapping.mask)});
+    }
+
+    return ret;
 }
 
 

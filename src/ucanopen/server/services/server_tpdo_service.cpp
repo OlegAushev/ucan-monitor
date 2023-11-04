@@ -11,28 +11,6 @@ ServerTpdoService::ServerTpdoService(impl::Server& server)
 void ServerTpdoService::register_tpdo(CobTpdo tpdo, std::chrono::milliseconds timeout, std::function<void(const can_payload&)> handler) {
     canid_t id = calculate_cob_id(to_cob(tpdo), _server.node_id());
     _tpdo_msgs.emplace(tpdo, Message{id, timeout, std::chrono::steady_clock::now(), can_payload{}, handler});
-
-    uint16_t index = 0x1A00 + std::to_underlying(tpdo);
-
-    if (!_server.dictionary().entries.contains({index, 0x00})) {
-        return;
-    }
-
-    uint16_t subindex = 0x01;
-    uint64_t offset = 0;
-    while (_server.dictionary().entries.contains({index, subindex})) {
-        uint64_t mask = 0;
-        const auto& entry = _server.dictionary().entries.at({index, subindex});
-
-        for (size_t i = 0; i < od_object_data_type_sizes[entry.data_type]; ++i) {
-            mask |= 0xFF << i * 8;
-        }
-
-        _tpdo_mapping[tpdo].push_back({entry.subcategory, entry.name, offset, mask});
-        offset += od_object_data_type_sizes[entry.data_type] * 8;
-
-        ++subindex;
-    }
 }
 
 

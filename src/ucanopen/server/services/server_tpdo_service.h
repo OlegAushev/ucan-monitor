@@ -40,14 +40,6 @@ public:
     }
 
     virtual FrameHandlingStatus handle_frame(const can_frame& frame) override;
-private:
-    struct TpdoMapping {
-        std::string subcategory;
-        std::string name;
-        uint64_t offset;
-        uint64_t mask;
-    };
-    std::map<CobTpdo, std::vector<TpdoMapping>> _tpdo_mapping;
 };
 
 

@@ -60,7 +60,12 @@ private:
     Chart* _p_ychart{nullptr};
 
     void _init_charts() {
-        for (const auto& obj : _server->watch_service.objects()) {
+        auto objects = _server->watch_service.objects();
+        for (const auto& object : _server->watch_service.tpdo_objects()) {
+            objects.push_back(object);
+        }
+
+        for (const auto& obj : objects) {
             Chart chart;
             chart.subcategory = obj->subcategory;
             chart.name = obj->name;

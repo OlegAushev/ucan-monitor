@@ -5,6 +5,7 @@
 #include <map>
 #include <mutex>
 #include <shared_mutex>
+#include <tuple>
 #include <vector>
 #include <boost/circular_buffer.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
@@ -106,6 +107,22 @@ public:
     }
 
     std::mutex& history_mtx() { return _history_mtx; }
+
+private:
+    // tpdo watch objects
+    std::vector<const ODObject*> _tpdo_objects;
+    struct TpdoMapping {
+        std::string subcategory;
+        std::string name;
+        uint64_t offset;
+        uint64_t mask;
+    };
+    std::map<CobTpdo, std::vector<TpdoMapping>> _tpdo_mapping;
+    std::vector<std::tuple<std::string_view, std::string_view, float>> _unmap_tpdo(CobTpdo tpdo, const can_payload& payload) const;
+public:
+    std::vector<const ODObject*> tpdo_objects() const {
+        return _tpdo_objects;
+    }
 };
 
 
