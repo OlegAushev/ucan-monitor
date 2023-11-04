@@ -86,11 +86,17 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
         else
             return ODAccessStatus::invalid_value;
         break;
+    case OD_INT8:
+        sdo_data = ExpeditedSdoData(int8_t(std::stoi(value)));
+        break;
     case OD_INT16:
         sdo_data = ExpeditedSdoData(int16_t(std::stoi(value)));
         break;
     case OD_INT32:
         sdo_data = ExpeditedSdoData(int32_t(std::stoi(value)));
+        break;
+    case OD_UINT8:
+        sdo_data = ExpeditedSdoData(uint8_t(std::stoul(value)));
         break;
     case OD_UINT16:
         sdo_data = ExpeditedSdoData(uint16_t(std::stoul(value)));
@@ -100,9 +106,6 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
         break;
     case OD_FLOAT32:
         sdo_data = ExpeditedSdoData(float(std::stof(value)));
-        break;
-    case OD_ENUM16:
-        sdo_data = ExpeditedSdoData(uint16_t(std::stoi(value)));
         break;
     default:
         return ODAccessStatus::invalid_value;

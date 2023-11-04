@@ -50,9 +50,7 @@ FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry, SdoType sd
     if ((object.category == _server.dictionary().config.watch_category) && (sdo_type == SdoType::response_to_read)) {
         WatchKey watch_key{object.subcategory, object.name};
         _current_data[watch_key].raw = sdo_data;
-        if (object.data_type != OD_ENUM16) {
-            _current_data[watch_key].str = sdo_data.to_string(object.data_type, 2);
-        }
+        _current_data[watch_key].str = sdo_data.to_string(object.data_type, 2);
         
         std::lock_guard<std::mutex> history_lock(_history_mtx);
         auto item = _history.find(watch_key);

@@ -171,20 +171,21 @@ inline CobTpdo opposite_pdo(CobRpdo rpdo) {
 
 enum ODObjectDataType {
     OD_BOOL,
+    OD_INT8,
     OD_INT16,
     OD_INT32,
+    OD_UINT8,
     OD_UINT16,
     OD_UINT32,
     OD_FLOAT32,
-    OD_ENUM16,
     OD_EXEC,
     OD_STRING
 };
 
 
-constexpr size_t od_object_data_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
-                                         sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
-                                         sizeof(uint16_t), 0, 0};
+constexpr size_t od_object_data_type_sizes[10] = {sizeof(bool), sizeof(int8_t), sizeof(int16_t), sizeof(int32_t),
+                                                  sizeof(uint8_t), sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
+                                                  0, 0};
 
 
 namespace sdo_cs_codes {
@@ -208,14 +209,22 @@ private:
 public:
     ExpeditedSdoData() = default;
     ExpeditedSdoData(bool val) { memcpy(&_data, &val, sizeof(val)); }
+    ExpeditedSdoData(int8_t val) { memcpy(&_data, &val, sizeof(val)); }
     ExpeditedSdoData(int16_t val) { memcpy(&_data, &val, sizeof(val)); }
     ExpeditedSdoData(int32_t val) { memcpy(&_data, &val, sizeof(_data)); }
+    ExpeditedSdoData(uint8_t val) { memcpy(&_data, &val, sizeof(val)); }
     ExpeditedSdoData(uint16_t val) { memcpy(&_data, &val, sizeof(val)); }
     ExpeditedSdoData(uint32_t val) { memcpy(&_data, &val, sizeof(_data)); }
     ExpeditedSdoData(float val) { memcpy(&_data, &val, sizeof(_data)); }
 
     bool bool32() const {
         return _data;
+    }
+
+    int8_t i8() const {
+        int8_t val;
+        memcpy(&val, &_data, sizeof(int8_t));
+        return val;
     }
 
     int16_t i16() const {
@@ -227,6 +236,12 @@ public:
     int32_t i32() const {
         int32_t val;
         memcpy(&val, &_data, sizeof(int32_t));
+        return val;
+    }
+
+    uint8_t u8() const {
+        uint8_t val;
+        memcpy(&val, &_data, sizeof(uint8_t));
         return val;
     }
 
@@ -252,10 +267,14 @@ public:
         switch (type) {
         case ucanopen::OD_BOOL:
             return bool32() ? "true" : "false";
+        case ucanopen::OD_INT8:
+            return std::to_string(i8());
         case ucanopen::OD_INT16:
             return std::to_string(i16());
         case ucanopen::OD_INT32:
             return std::to_string(i32());
+        case ucanopen::OD_UINT8:
+            return std::to_string(u8());
         case ucanopen::OD_UINT16:
             return std::to_string(u16());
         case ucanopen::OD_UINT32:
@@ -270,8 +289,6 @@ public:
                 return std::make_error_code(ec).message();
             }
         }
-        case ucanopen::OD_ENUM16:
-            return std::to_string(u16());
         case ucanopen::OD_EXEC:
             return std::string();
         case ucanopen::OD_STRING: {

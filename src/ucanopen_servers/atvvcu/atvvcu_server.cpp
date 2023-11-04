@@ -44,8 +44,6 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
         if ((message_id != 0) && (message_id < syslog_messages.size())) {
             bsclog::info("{}", syslog_messages[message_id]);
         }
-    } else if (entry->second.category == _dictionary.config.config_category && entry->second.data_type == ucanopen::OD_ENUM16) {
-        // DO NOTHING
     } else if (entry->second.name == "pdm_contactor_state") {
         if (_pdm_mtx.try_lock()) {
             for (auto i = 0; i < pdm_contactor_count; ++i) {

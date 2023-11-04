@@ -120,6 +120,18 @@ void ServerSetup::_draw_setup() {
 
         switch (selected_category_iter->second[selected_object_idx]->data_type) {
         case ucanopen::OD_BOOL:
+        case ucanopen::OD_UINT8: {
+            uint8_t value_u8 = parameter_value.value().u8();
+            if (ImGui::InputScalar("Value", ImGuiDataType_U8, &value_u8, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _server->write(_server->dictionary().config.config_category,
+                            selected_category_iter->first,
+                            selected_category_iter->second[selected_object_idx]->name,
+                            ucanopen::ExpeditedSdoData(uint8_t(value_u8)));
+                should_read = true;
+            }
+            break;
+        }
+
         case ucanopen::OD_UINT16: {
             uint16_t value_u16 = parameter_value.value().u16();
             if (ImGui::InputScalar("Value", ImGuiDataType_U16, &value_u16, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -131,6 +143,7 @@ void ServerSetup::_draw_setup() {
             }
             break;
         }
+
         case ucanopen::OD_UINT32: {
             uint32_t value_u32 = parameter_value.value().u32();
             if (ImGui::InputScalar("Value", ImGuiDataType_U32, &value_u32, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -142,6 +155,19 @@ void ServerSetup::_draw_setup() {
             }
             break;
         }
+
+        case ucanopen::OD_INT8: {
+            int16_t value_i8 = parameter_value.value().i8();
+            if (ImGui::InputScalar("Value", ImGuiDataType_S8, &value_i8, NULL, NULL, "%d", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _server->write(_server->dictionary().config.config_category,
+                            selected_category_iter->first,
+                            selected_category_iter->second[selected_object_idx]->name,
+                            ucanopen::ExpeditedSdoData(int8_t(value_i8)));
+                should_read = true;
+            }
+            break;
+        }
+
         case ucanopen::OD_INT16: {
             int16_t value_i16 = parameter_value.value().i16();
             if (ImGui::InputScalar("Value", ImGuiDataType_S16, &value_i16, NULL, NULL, "%d", ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -153,6 +179,7 @@ void ServerSetup::_draw_setup() {
             }
             break;
         }
+
         case ucanopen::OD_INT32: {
             int32_t value_i32 = parameter_value.value().i32();
             if (ImGui::InputScalar("Value", ImGuiDataType_S32, &value_i32, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -164,6 +191,7 @@ void ServerSetup::_draw_setup() {
             }
             break;
         }
+
         case ucanopen::OD_FLOAT32: {
             float value_f32 = parameter_value.value().f32();
             if (ImGui::InputScalar("Value", ImGuiDataType_Float, &value_f32, NULL, NULL, "%.6f", ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -175,6 +203,7 @@ void ServerSetup::_draw_setup() {
             }
             break;
         }
+
         default:
             break;
         }
