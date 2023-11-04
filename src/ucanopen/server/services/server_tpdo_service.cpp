@@ -24,12 +24,12 @@ void ServerTpdoService::register_tpdo(CobTpdo tpdo, std::chrono::milliseconds ti
         uint64_t mask = 0;
         const auto& entry = _server.dictionary().entries.at({index, subindex});
 
-        for (size_t i = 0; i < od_object_type_sizes[entry.type]; ++i) {
+        for (size_t i = 0; i < od_object_data_type_sizes[entry.data_type]; ++i) {
             mask |= 0xFF << i * 8;
         }
 
         _tpdo_mapping[tpdo].push_back({entry.subcategory, entry.name, offset, mask});
-        offset += od_object_type_sizes[entry.type] * 8;
+        offset += od_object_data_type_sizes[entry.data_type] * 8;
 
         ++subindex;
     }

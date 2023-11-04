@@ -169,7 +169,7 @@ inline CobTpdo opposite_pdo(CobRpdo rpdo) {
 }
 
 
-enum ODObjectType {
+enum ODObjectDataType {
     OD_BOOL,
     OD_INT16,
     OD_INT32,
@@ -182,7 +182,7 @@ enum ODObjectType {
 };
 
 
-constexpr size_t od_object_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
+constexpr size_t od_object_data_type_sizes[9] = {sizeof(bool), sizeof(int16_t), sizeof(int32_t),
                                          sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
                                          sizeof(uint16_t), 0, 0};
 
@@ -248,7 +248,7 @@ public:
         return val;
     }
 
-    std::string to_string(ODObjectType type, int precision = 6) const {
+    std::string to_string(ODObjectDataType type, int precision = 6) const {
         switch (type) {
         case ucanopen::OD_BOOL:
             return bool32() ? "true" : "false";
@@ -409,7 +409,7 @@ struct ODObject {
     std::string subcategory;
     std::string name;
     std::string unit;
-    ODObjectType type;
+    ODObjectDataType data_type;
     ODObjectAccessPermission access_permission;
 
     bool has_read_permission() const { return access_permission != OD_ACCESS_WO; }

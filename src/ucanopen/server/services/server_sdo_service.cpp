@@ -42,14 +42,14 @@ FrameHandlingStatus ServerSdoService::_handle_read_expedited(const can_frame& fr
     const auto& [key, object] = *entry;
 
     SdoType sdo_type;
-    if (object.type == ODObjectType::OD_EXEC) {
+    if (object.data_type == ODObjectDataType::OD_EXEC) {
         sdo_type = SdoType::response_to_exec;
         bsclog::success("Executed {}::{}::{}::{}.", _server.name(), object.category, object.subcategory, object.name);
     } else {
         sdo_type = SdoType::response_to_read;
         if (object.category != _server.dictionary().config.watch_category) {
             bsclog::success("{}::{}::{}::{} = {}.",
-                            _server.name(), object.category, object.subcategory, object.name, sdo.data.to_string(object.type));
+                            _server.name(), object.category, object.subcategory, object.name, sdo.data.to_string(object.data_type));
         }
     }
 
@@ -71,7 +71,7 @@ FrameHandlingStatus ServerSdoService::_handle_write_expedited(const can_frame& f
     const auto& [key, object] = *entry;
 
     SdoType sdo_type;
-    if (object.type == ODObjectType::OD_EXEC) {
+    if (object.data_type == ODObjectDataType::OD_EXEC) {
         sdo_type = SdoType::response_to_exec;
         bsclog::success("Executed {}::{}::{}::{}.", _server.name(), object.category, object.subcategory, object.name);
     } else {

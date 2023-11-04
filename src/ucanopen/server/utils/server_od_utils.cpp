@@ -40,7 +40,7 @@ StringReader::StringReader(impl::Server& server, impl::SdoPublisher& publisher,
 
     const auto& [key, object] = *_entry;
 
-    if (object.type != OD_STRING) {
+    if (object.data_type != OD_STRING) {
         _ready = true;
         return;
     }
@@ -96,7 +96,7 @@ NumvalReader::NumvalReader(impl::Server& server, impl::SdoPublisher& publisher,
 
     const auto& [key, object] = *_entry;
 
-    if (object.type == OD_EXEC || object.type == OD_STRING) {
+    if (object.data_type == OD_EXEC || object.data_type == OD_STRING) {
         _ready = true;
         return;
     }
@@ -119,7 +119,7 @@ std::string NumvalReader::get(std::future<void> signal_terminate) const {
 
 FrameHandlingStatus NumvalReader::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
     if (sdo_type == SdoType::response_to_read && entry == _entry) {
-        _result = sdo_data.to_string(_entry->second.type);
+        _result = sdo_data.to_string(_entry->second.data_type);
         _ready = true;
         return FrameHandlingStatus::success;
     }
@@ -139,7 +139,7 @@ ExpeditedSdoDataReader::ExpeditedSdoDataReader(impl::Server& server, impl::SdoPu
 
     const auto& [key, object] = *_entry;
 
-    if (object.type == OD_EXEC || object.type == OD_STRING) {
+    if (object.data_type == OD_EXEC || object.data_type == OD_STRING) {
         _ready = true;
         return;
     }

@@ -54,13 +54,13 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
     message.cs = sdo_cs_codes::client_init_write;
     message.expedited_transfer = 1;
     message.data_size_indicated = 1;
-    message.data_empty_bytes = 8 - od_object_type_sizes[object.type];
+    message.data_empty_bytes = 8 - od_object_data_type_sizes[object.data_type];
     message.index = key.index;
     message.subindex = key.subindex;
     message.data = sdo_data;
 
     bsclog::info("Sending request to write {}::{}::{}::{} = {}...",
-                    _name, object.category, object.subcategory, object.name, sdo_data.to_string(object.type));
+                    _name, object.category, object.subcategory, object.name, sdo_data.to_string(object.data_type));
     _socket->send(create_frame(Cob::rsdo, _node_id, message.to_payload()));
     return ODAccessStatus::success;
 }
@@ -77,7 +77,7 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
     const auto& [key, object] = *entry;
     ExpeditedSdoData sdo_data;
 
-    switch (object.type) {
+    switch (object.data_type) {
     case OD_BOOL:
         if (value == "TRUE" || value == "true" || value == "ON" || value == "on" || value == "1")
             sdo_data = ExpeditedSdoData(true);
@@ -112,7 +112,7 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
     message.cs = sdo_cs_codes::client_init_write;
     message.expedited_transfer = 1;
     message.data_size_indicated = 1;
-    message.data_empty_bytes = 8 - od_object_type_sizes[object.type];
+    message.data_empty_bytes = 8 - od_object_data_type_sizes[object.data_type];
     message.index = key.index;
     message.subindex = key.subindex;
     message.data = sdo_data;
@@ -185,7 +185,7 @@ ODAccessStatus impl::Server::find_od_entry(std::string_view category, std::strin
     if (ret_entry == _dictionary.entries.end()) {
         bsclog::error("Cannot execute {}::{}::{}::{}: no such OD entry.", _name, category, subcategory, name);
         return ODAccessStatus::not_found;
-    } else if ((ret_entry->second.type != ODObjectType::OD_EXEC) || (ret_entry->second.has_write_permission() == false)) {
+    } else if ((ret_entry->second.data_type != ODObjectDataType::OD_EXEC) || (ret_entry->second.has_write_permission() == false)) {
         bsclog::error("Cannot execute {}::{}::{}::{}: not executable OD entry.", _name, category, subcategory, name);
         return ODAccessStatus::access_denied;
     }

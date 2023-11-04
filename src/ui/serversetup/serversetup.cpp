@@ -118,7 +118,7 @@ void ServerSetup::_draw_setup() {
         ImGui::InputText("Value", str.data(), 3, ImGuiInputTextFlags_ReadOnly);
     } else {
 
-        switch (selected_category_iter->second[selected_object_idx]->type) {
+        switch (selected_category_iter->second[selected_object_idx]->data_type) {
         case ucanopen::OD_BOOL:
         case ucanopen::OD_UINT16: {
             uint16_t value_u16 = parameter_value.value().u16();
