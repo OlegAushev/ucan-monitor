@@ -159,15 +159,15 @@ void WatchPlot::_draw_plot_yt() {
         for (size_t i = 0; i < _charts.size(); ++i) {
             const auto& chart = _charts[i];
 
-            const auto* history = _server->log_service.get_log(chart.subcategory, chart.name);
+            const auto* log_buf = _server->log_service.get_log(chart.subcategory, chart.name);
             auto& mtx = _server->log_service.log_mtx();
             std::lock_guard<std::mutex> lock(mtx);
-            auto size = history->size();
+            auto size = log_buf->size();
 
             if (chart.on_plot && size > 0) {
-                const float* p_time = &(history->array_two().first->x());
-                const float* p_value = &(history->array_two().first->y());
-                size_t offset = history->array_one().first - history->array_two().first;
+                const float* p_time = &(log_buf->array_two().first->x());
+                const float* p_value = &(log_buf->array_two().first->y());
+                size_t offset = log_buf->array_one().first - log_buf->array_two().first;
 
                 ImPlot::SetAxis(chart.y_axis);
                 //ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
@@ -228,21 +228,21 @@ void WatchPlot::_draw_plot_yx() {
         ImPlot::SetupAxis(ImAxis_Y1, _p_ychart == nullptr ? "[drop here]" : _p_ychart->label.c_str(), yflags);
 
         if (_p_xchart != nullptr && _p_ychart != nullptr) {
-            const auto* xhistory = _server->log_service.get_log(_p_xchart->subcategory, _p_xchart->name);
-            const auto* yhistory = _server->log_service.get_log(_p_ychart->subcategory, _p_ychart->name);
+            const auto* xbuf = _server->log_service.get_log(_p_xchart->subcategory, _p_xchart->name);
+            const auto* ybuf = _server->log_service.get_log(_p_ychart->subcategory, _p_ychart->name);
 
             auto& mtx = _server->log_service.log_mtx();
             std::lock_guard<std::mutex> lock(mtx);
 
-            auto xsize = xhistory->size();
-            auto ysize = yhistory->size();
+            auto xsize = xbuf->size();
+            auto ysize = ybuf->size();
             
-            size_t xoffset = xhistory->array_one().first - xhistory->array_two().first;
-            size_t yoffset = yhistory->array_one().first - yhistory->array_two().first;
+            size_t xoffset = xbuf->array_one().first - xbuf->array_two().first;
+            size_t yoffset = ybuf->array_one().first - ybuf->array_two().first;
 
             if (xsize == ysize && xoffset == yoffset) {
-                const float* p_xvalues = &(xhistory->array_two().first->y());
-                const float* p_yvalues = &(yhistory->array_two().first->y());
+                const float* p_xvalues = &(xbuf->array_two().first->y());
+                const float* p_yvalues = &(ybuf->array_two().first->y());
                 ImPlot::PlotLine("##xy", p_xvalues, p_yvalues, xsize, 0, xoffset, sizeof(boost::geometry::model::d2::point_xy<float>));
             }
         }
