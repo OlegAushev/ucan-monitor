@@ -76,6 +76,8 @@ private:
             _charts.push_back(chart);
         }
     }
+private:
+    void _export_to_csv();
 };
 
 

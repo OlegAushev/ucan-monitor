@@ -57,6 +57,10 @@ void WatchPlot::_draw_menubar() {
                 ImGui::EndMenu();
             }
 
+            if (ImGui::MenuItem("Export to CSV", nullptr, nullptr, !_running)) {
+                _export_to_csv();
+            }
+
             if (ImGui::MenuItem("Reset")) {
                 _reset();        
             }
@@ -309,6 +313,15 @@ void WatchPlot::_draw_plot_yx() {
 
         ImPlot::EndPlot();
     }
+}
+
+
+void WatchPlot::_export_to_csv() {
+    auto snapshot = _log_snapshot;
+    for (auto& buf : snapshot) {
+        buf.second.linearize();
+    }
+    
 }
 
 
