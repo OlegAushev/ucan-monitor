@@ -152,15 +152,15 @@ void WatchPlot::_draw_plot_yt() {
         ImPlot::SetupAxis(ImAxis_Y2, nullptr, y2flags | ImPlotAxisFlags_Opposite);
         ImPlot::SetupAxis(ImAxis_Y3, nullptr, y3flags | ImPlotAxisFlags_Opposite);
 
-        float now = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - _server->watch_service.history_start()).count()/1000000.0f;
+        float now = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - _server->log_service.log_start()).count()/1000000.0f;
         ImPlot::SetupAxisLimits(ImAxis_X1, now - _time_depth, now, ImGuiCond_Always);
 
         // draw lines
         for (size_t i = 0; i < _charts.size(); ++i) {
             const auto& chart = _charts[i];
 
-            const auto* history = _server->watch_service.history(chart.subcategory, chart.name);
-            auto& mtx = _server->watch_service.history_mtx();
+            const auto* history = _server->log_service.get_log(chart.subcategory, chart.name);
+            auto& mtx = _server->log_service.log_mtx();
             std::lock_guard<std::mutex> lock(mtx);
             auto size = history->size();
 
@@ -228,10 +228,10 @@ void WatchPlot::_draw_plot_yx() {
         ImPlot::SetupAxis(ImAxis_Y1, _p_ychart == nullptr ? "[drop here]" : _p_ychart->label.c_str(), yflags);
 
         if (_p_xchart != nullptr && _p_ychart != nullptr) {
-            const auto* xhistory = _server->watch_service.history(_p_xchart->subcategory, _p_xchart->name);
-            const auto* yhistory = _server->watch_service.history(_p_ychart->subcategory, _p_ychart->name);
+            const auto* xhistory = _server->log_service.get_log(_p_xchart->subcategory, _p_xchart->name);
+            const auto* yhistory = _server->log_service.get_log(_p_ychart->subcategory, _p_ychart->name);
 
-            auto& mtx = _server->watch_service.history_mtx();
+            auto& mtx = _server->log_service.log_mtx();
             std::lock_guard<std::mutex> lock(mtx);
 
             auto xsize = xhistory->size();

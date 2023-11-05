@@ -8,6 +8,7 @@
 #include "services/server_watch_service.h"
 #include "services/server_config_service.h"
 #include "services/server_sdo_service.h"
+#include "services/server_log_service.h"
 #include "utils/server_od_utils.h"
 #include <atomic>
 #include <functional>
@@ -26,6 +27,7 @@ public:
     ServerSdoService sdo_service;
     ServerWatchService watch_service;
     ServerConfigService config_service;
+    ServerLogService log_service;
 public:
     Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary);
     virtual ~Server() = default;

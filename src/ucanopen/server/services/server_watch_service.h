@@ -14,7 +14,7 @@
 namespace ucanopen {
 
 
-class ServerWatchService : public SdoSubscriber, public TpdoSubscriber {
+class ServerWatchService : public SdoSubscriber {
 private:
     impl::Server& _server;
     bool _enabled{false};
@@ -35,19 +35,13 @@ private:
     };
 
     // current data
-    std::map<WatchKey, WatchCurrentData> _current_data;
-    mutable std::mutex _current_data_mtx;
+    std::map<WatchKey, WatchCurrentData> _data;
+    mutable std::mutex _data_mtx;
 
-    // history
-    std::chrono::time_point<std::chrono::steady_clock> _history_start;
-    std::map<WatchKey, WatchBuf> _history;
-    mutable std::mutex _history_mtx;
-    static constexpr size_t _history_size = 1000;
 public:
-    ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher, impl::TpdoPublisher& tpdo_publisher);
+    ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher);
     void send();
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
-    virtual FrameHandlingStatus handle_tpdo(CobTpdo tpdo, const can_payload& payload) override;
 
     void enable() { _enabled = true; }
     void disable() { _enabled = false; }
@@ -71,57 +65,21 @@ public:
     }
 
     std::string string_value(std::string_view watch_subcategory, std::string_view watch_name) const {
-        std::lock_guard<std::mutex> lock(_current_data_mtx);
-        auto it = _current_data.find({watch_subcategory, watch_name});
-        if (it == _current_data.end()) {
+        std::lock_guard<std::mutex> lock(_data_mtx);
+        auto data = _data.find({watch_subcategory, watch_name});
+        if (data == _data.end()) {
             return "n/a";
         }
-        return it->second.str;
+        return data->second.str;
     }
 
     ExpeditedSdoData value(std::string_view watch_subcategory, std::string_view watch_name) {
-        std::lock_guard<std::mutex> lock(_current_data_mtx);
-        auto it = _current_data.find({watch_subcategory, watch_name});
-        if (it == _current_data.end()) {
+        std::lock_guard<std::mutex> lock(_data_mtx);
+        auto data = _data.find({watch_subcategory, watch_name});
+        if (data == _data.end()) {
             return 0;
         }
-        return it->second.raw;
-    }
-
-    boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>* history(std::string_view watch_subcategory, std::string_view watch_name) {
-        std::lock_guard<std::mutex> lock(_history_mtx);
-        auto iter = _history.find({watch_subcategory, watch_name});
-        if (iter == _history.end()) {
-            return nullptr;
-        }
-        return &iter->second;
-    }
-
-    auto history_start() const { return _history_start; }
-    void set_history_size(size_t size) {
-        std::lock_guard<std::mutex> lock(_history_mtx);
-        for (auto& item : _history) {
-            item.second.set_capacity(size);
-            item.second.clear();
-        }
-    }
-
-    std::mutex& history_mtx() { return _history_mtx; }
-
-private:
-    // tpdo watch objects
-    std::vector<const ODObject*> _tpdo_objects;
-    struct TpdoMapping {
-        std::string subcategory;
-        std::string name;
-        uint64_t offset;
-        uint64_t mask;
-    };
-    std::map<CobTpdo, std::vector<TpdoMapping>> _tpdo_mapping;
-    std::vector<std::tuple<std::string_view, std::string_view, float>> _unmap_tpdo(CobTpdo tpdo, const can_payload& payload) const;
-public:
-    std::vector<const ODObject*> tpdo_objects() const {
-        return _tpdo_objects;
+        return data->second.raw;
     }
 };
 
