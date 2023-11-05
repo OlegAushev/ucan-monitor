@@ -1,5 +1,6 @@
 #include "watchplot.h"
 #include <icons/IconsMaterialDesignIcons.h>
+#include <csv_writer/csv_writer.h>
 
 
 namespace ui {
@@ -91,12 +92,12 @@ void WatchPlot::_draw_menubar() {
         }
 
         if (_running) {
-            if (ImGui::Button(ICON_MDI_PAUSE)) {
+            if (ImGui::MenuItem(ICON_MDI_PAUSE)) {
                 _log_snapshot = _server->log_service.get_log();
                 _running = false;
             }
         } else {
-            if (ImGui::Button(ICON_MDI_PLAY)) {
+            if (ImGui::MenuItem(ICON_MDI_PLAY)) {
                 _running = true;
             }
         }
