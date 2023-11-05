@@ -1,4 +1,5 @@
 #include "watchplot.h"
+#include <icons/IconsMaterialDesignIcons.h>
 
 
 namespace ui {
@@ -89,6 +90,17 @@ void WatchPlot::_draw_menubar() {
             ImGui::EndDragDropTarget();
         }
 
+        if (_running) {
+            if (ImGui::Button(ICON_MDI_PAUSE)) {
+                _log_snapshot = _server->log_service.get_log();
+                _running = false;
+            }
+        } else {
+            if (ImGui::Button(ICON_MDI_PLAY)) {
+                _running = true;
+            }
+        }
+
         ImGui::EndMenuBar();
     }
 }
@@ -152,14 +164,23 @@ void WatchPlot::_draw_plot_yt() {
         ImPlot::SetupAxis(ImAxis_Y2, nullptr, y2flags | ImPlotAxisFlags_Opposite);
         ImPlot::SetupAxis(ImAxis_Y3, nullptr, y3flags | ImPlotAxisFlags_Opposite);
 
-        float now = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - _server->log_service.log_start()).count()/1000000.0f;
-        ImPlot::SetupAxisLimits(ImAxis_X1, now - _time_depth, now, ImGuiCond_Always);
+        if (_running) {
+            _now = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - _server->log_service.log_start()).count()/1000000.0f;
+        }
+
+        ImPlot::SetupAxisLimits(ImAxis_X1, _now - _time_depth, _now, ImGuiCond_Always);
 
         // draw lines
         for (size_t i = 0; i < _charts.size(); ++i) {
             const auto& chart = _charts[i];
 
-            const auto* log_buf = _server->log_service.get_log(chart.subcategory, chart.name);
+            const ucanopen::ServerLogService::LogBuf* log_buf = nullptr;
+            if (_running) {
+                log_buf = _server->log_service.get_log(chart.subcategory, chart.name);
+            } else {
+                log_buf = &_log_snapshot.at({chart.subcategory, chart.name});
+            }
+
             auto& mtx = _server->log_service.log_mtx();
             std::lock_guard<std::mutex> lock(mtx);
             auto size = log_buf->size();

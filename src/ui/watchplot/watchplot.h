@@ -15,7 +15,11 @@ private:
     static inline int _plotid_count{0};
     int _plotid;
     std::shared_ptr<::ucanopen::Server> _server;
+    float _now{0.0f};
     float _time_depth{60.0f};
+
+    bool _running{true};
+    std::map<ucanopen::ServerLogService::LogKey, ucanopen::ServerLogService::LogBuf> _log_snapshot;
 
     enum class Mode {
         y_t,

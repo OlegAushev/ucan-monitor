@@ -15,12 +15,13 @@ namespace ucanopen {
 
 
 class ServerLogService : public SdoSubscriber, public TpdoSubscriber {
+public:
+    using LogKey = std::pair<std::string_view, std::string_view>;
+    using LogBuf = boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>;
 private:
     impl::Server& _server;
     std::vector<const ODObject*> _objects;
 
-    using LogKey = std::pair<std::string_view, std::string_view>;
-    using LogBuf = boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>;
 
     std::chrono::time_point<std::chrono::steady_clock> _start;
     std::map<LogKey, LogBuf> _log;
@@ -32,13 +33,17 @@ public:
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
     virtual FrameHandlingStatus handle_tpdo(CobTpdo tpdo, const can_payload& payload) override;
 
-    boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>* get_log(std::string_view watch_subcategory, std::string_view watch_name) {
+    const boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>* get_log(std::string_view watch_subcategory, std::string_view watch_name) const {
         std::lock_guard<std::mutex> lock(_log_mtx);
         auto iter = _log.find({watch_subcategory, watch_name});
         if (iter == _log.end()) {
             return nullptr;
         }
         return &iter->second;
+    }
+
+    std::map<LogKey, LogBuf> get_log() const {
+        return _log;
     }
 
     auto log_start() const { return _start; }
