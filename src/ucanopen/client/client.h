@@ -169,13 +169,13 @@ public:
         bsclog::info("Set {} server watch messages period to {}.", name, period);
     }
 
-    void set_log_size_on_server(std::string_view name, size_t size) {
+    void set_log_capacity_on_server(std::string_view name, size_t size) {
         auto server = _get_server(name);
         if (server == nullptr) {
             bsclog::error("Failed to set watch history size on {} server: server not found.", name);
             return;
         }
-        server->log_service.set_log_size(size);
+        server->log_service.set_log_capacity(size);
         bsclog::info("Set {} server watch history size to {}.", name, size);
     }
 

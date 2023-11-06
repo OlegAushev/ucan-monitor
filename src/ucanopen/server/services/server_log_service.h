@@ -26,7 +26,7 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> _start;
     std::map<LogKey, LogBuf> _log;
     mutable std::mutex _log_mtx;
-    static constexpr size_t _log_size = 1000;
+    static inline size_t _log_capacity = 1000;
 public:
     ServerLogService(impl::Server& server, impl::SdoPublisher& sdo_publisher, impl::TpdoPublisher& tpdo_publisher);
     std::vector<const ODObject*> objects() const { return _objects; }
@@ -35,11 +35,11 @@ public:
 
     const boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>* get_log(std::string_view watch_subcategory, std::string_view watch_name) const {
         std::lock_guard<std::mutex> lock(_log_mtx);
-        auto iter = _log.find({watch_subcategory, watch_name});
-        if (iter == _log.end()) {
+        auto log = _log.find({watch_subcategory, watch_name});
+        if (log == _log.end()) {
             return nullptr;
         }
-        return &iter->second;
+        return &log->second;
     }
 
     std::map<LogKey, LogBuf> get_log() const {
@@ -47,11 +47,15 @@ public:
     }
 
     auto log_start() const { return _start; }
-    void set_log_size(size_t size) {
+    size_t log_capacity() const { return _log_capacity; }
+    void set_log_capacity(size_t capacity) {
         std::lock_guard<std::mutex> lock(_log_mtx);
-        for (auto& item : _log) {
-            item.second.set_capacity(size);
-            item.second.clear();
+        _log_capacity = capacity;
+        for (auto& log : _log) {
+            if (capacity < log.second.capacity()) {
+                log.second.clear();
+            }
+            log.second.set_capacity(capacity);
         }
     }
 

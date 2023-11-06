@@ -12,9 +12,9 @@ ServerLogService::ServerLogService(impl::Server& server, impl::SdoPublisher& sdo
 
     for (const auto& [key, object] : _server.dictionary().entries) {
         // add watch objects to log
-        if (object.category == _server.dictionary().config.watch_category) {
+        if (object.category == _server.dictionary().config.watch_category && object.data_type == OD_FLOAT32) {
             _objects.push_back(&object);
-            _log.insert({LogKey{object.subcategory, object.name}, LogBuf(_log_size)});
+            _log.insert({LogKey{object.subcategory, object.name}, LogBuf(_log_capacity)});
         }
     }
 
@@ -33,7 +33,7 @@ ServerLogService::ServerLogService(impl::Server& server, impl::SdoPublisher& sdo
                 // avoid duplicating objects
                 _objects.push_back(&object);
             }
-            _log.insert({LogKey{object.subcategory, object.name}, LogBuf(_log_size)});
+            _log.insert({LogKey{object.subcategory, object.name}, LogBuf(_log_capacity)});
 
             uint64_t mask = 0;
             for (size_t i = 0; i < od_object_data_type_sizes[object.data_type]; ++i) {
@@ -53,14 +53,21 @@ FrameHandlingStatus ServerLogService::handle_sdo(ODEntryIter entry, SdoType sdo_
     auto now = std::chrono::steady_clock::now();
     const auto& [key, object] = *entry;
 
-    if ((object.category == _server.dictionary().config.watch_category) && (sdo_type == SdoType::response_to_read)) {
+    if ((object.category == _server.dictionary().config.watch_category)
+            && (object.data_type == OD_FLOAT32)
+            && (sdo_type == SdoType::response_to_read)) {
         LogKey log_key{object.subcategory, object.name};
         
         std::lock_guard<std::mutex> lock(_log_mtx);
-        auto log_item = _log.find(log_key);
+        
+        auto log = _log.find(log_key);
+        if (log == _log.end()) {
+            return FrameHandlingStatus::irrelevant_frame;
+        }
+
         float time = std::chrono::duration_cast<std::chrono::microseconds>(now - _start).count()/1000000.0f;
         float value = sdo_data.f32();
-        log_item->second.push_back({time, value});
+        log->second.push_back({time, value});
 
         return FrameHandlingStatus::success;
     }
@@ -76,9 +83,14 @@ FrameHandlingStatus ServerLogService::handle_tpdo(CobTpdo tpdo, const can_payloa
         LogKey log_key{std::get<0>(item), std::get<1>(item)};
         
         std::lock_guard<std::mutex> lock(_log_mtx);
-        auto log_item = _log.find(log_key);
+        
+        auto log = _log.find(log_key);
+        if (log == _log.end()) {
+            return FrameHandlingStatus::irrelevant_frame;
+        }
+
         float time = std::chrono::duration_cast<std::chrono::microseconds>(now - _start).count()/1000000.0f;
-        log_item->second.push_back({time, std::get<2>(item)});
+        log->second.push_back({time, std::get<2>(item)});
     }
 
     return FrameHandlingStatus::success;

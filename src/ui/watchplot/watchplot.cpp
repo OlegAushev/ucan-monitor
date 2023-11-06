@@ -179,11 +179,21 @@ void WatchPlot::_draw_plot_yt() {
         for (size_t i = 0; i < _charts.size(); ++i) {
             const auto& chart = _charts[i];
 
+            // get pointer to log circular buffer
             const ucanopen::ServerLogService::LogBuf* log_buf = nullptr;
             if (_running) {
                 log_buf = _server->log_service.get_log(chart.subcategory, chart.name);
             } else {
-                log_buf = &_log_snapshot.at({chart.subcategory, chart.name});
+                auto log_iter = _log_snapshot.find({chart.subcategory, chart.name});
+                if (log_iter == _log_snapshot.end()) {
+                    log_buf = nullptr;
+                } else {
+                    log_buf = &log_iter->second;
+                }
+            }
+
+            if (!log_buf) {
+                continue;
             }
 
             auto& mtx = _server->log_service.log_mtx();
@@ -254,22 +264,45 @@ void WatchPlot::_draw_plot_yx() {
         ImPlot::SetupAxis(ImAxis_Y1, _p_ychart == nullptr ? "[drop here]" : _p_ychart->label.c_str(), yflags);
 
         if (_p_xchart != nullptr && _p_ychart != nullptr) {
-            const auto* xbuf = _server->log_service.get_log(_p_xchart->subcategory, _p_xchart->name);
-            const auto* ybuf = _server->log_service.get_log(_p_ychart->subcategory, _p_ychart->name);
+            // get pointers to log circular buffers
+            const ucanopen::ServerLogService::LogBuf* xbuf;
+            const ucanopen::ServerLogService::LogBuf* ybuf;
 
-            auto& mtx = _server->log_service.log_mtx();
-            std::lock_guard<std::mutex> lock(mtx);
+            if (_running) {
+                xbuf = _server->log_service.get_log(_p_xchart->subcategory, _p_xchart->name);
+                ybuf = _server->log_service.get_log(_p_ychart->subcategory, _p_ychart->name);
+            } else{
+                auto xbuf_iter = _log_snapshot.find({_p_xchart->subcategory, _p_xchart->name});
+                auto ybuf_iter = _log_snapshot.find({_p_ychart->subcategory, _p_ychart->name});
+                
+                if (xbuf_iter == _log_snapshot.end()) {
+                    xbuf = nullptr;
+                } else {
+                    xbuf = &xbuf_iter->second;
+                }
 
-            auto xsize = xbuf->size();
-            auto ysize = ybuf->size();
-            
-            size_t xoffset = xbuf->array_one().first - xbuf->array_two().first;
-            size_t yoffset = ybuf->array_one().first - ybuf->array_two().first;
+                if (ybuf_iter == _log_snapshot.end()) {
+                    ybuf = nullptr;
+                } else {
+                    ybuf = &ybuf_iter->second;
+                }
+            }
 
-            if (xsize == ysize && xoffset == yoffset) {
-                const float* p_xvalues = &(xbuf->array_two().first->y());
-                const float* p_yvalues = &(ybuf->array_two().first->y());
-                ImPlot::PlotLine("##xy", p_xvalues, p_yvalues, xsize, 0, xoffset, sizeof(boost::geometry::model::d2::point_xy<float>));
+            if (xbuf && ybuf) {
+                auto& mtx = _server->log_service.log_mtx();
+                std::lock_guard<std::mutex> lock(mtx);
+
+                auto xsize = xbuf->size();
+                auto ysize = ybuf->size();
+                
+                size_t xoffset = xbuf->array_one().first - xbuf->array_two().first;
+                size_t yoffset = ybuf->array_one().first - ybuf->array_two().first;
+
+                if (xsize == ysize && xoffset == yoffset) {
+                    const float* p_xvalues = &(xbuf->array_two().first->y());
+                    const float* p_yvalues = &(ybuf->array_two().first->y());
+                    ImPlot::PlotLine("##xy", p_xvalues, p_yvalues, xsize, 0, xoffset, sizeof(boost::geometry::model::d2::point_xy<float>));
+                }
             }
         }
 
@@ -321,7 +354,28 @@ void WatchPlot::_export_to_csv() {
     for (auto& buf : snapshot) {
         buf.second.linearize();
     }
+
+    static int counter = 1;
+    std::string filename = "data_" + std::to_string(counter++) + ".csv";
+    CsvWriter csv(filename);
+
+    for (const auto& buf : snapshot) {
+        csv << "time" << std::string(buf.first.first) + "::" + std::string(buf.first.second);
+    }
+    csv.next_row();
     
+    for (size_t row = 0; row < _server->log_service.log_capacity(); ++row) {
+        for (const auto& buf : snapshot) {
+            if (row < buf.second.size()) {
+                csv << buf.second.array_one().first[row].x() << buf.second.array_one().first[row].y();
+            } else {
+                csv << "" << "";
+            }
+        }
+        csv.next_row();
+    }
+
+    bsclog::success("Data exported to {}.", filename);  
 }
 
 

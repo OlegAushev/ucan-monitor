@@ -40,16 +40,17 @@ void ServerWatchService::send() {
 
 
 FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
-    auto now = std::chrono::steady_clock::now();
     const auto& [key, object] = *entry;
 
     if ((object.category == _server.dictionary().config.watch_category) && (sdo_type == SdoType::response_to_read)) {
         WatchKey watch_key{object.subcategory, object.name};
         std::lock_guard<std::mutex> lock(_data_mtx);
+        
         auto data = _data.find(watch_key);
         if (data == _data.end()) {
             return FrameHandlingStatus::irrelevant_frame;
         }
+
         data->second.raw = sdo_data;
         data->second.str = sdo_data.to_string(object.data_type, 2);
         return FrameHandlingStatus::success;

@@ -190,9 +190,9 @@ void Options::_draw_server_settings(const std::string& server) {
         _client->set_watch_period_on_server(server, std::chrono::milliseconds(_server_watch_period));
     }
 
-    if (ImGui::InputInt("Log Size", &_server_log_size, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-        _server_log_size = std::clamp(_server_log_size, 10, 1000000);
-        _client->set_log_size_on_server(server, _server_log_size);
+    if (ImGui::InputInt("Log Capacity", &_server_log_capacity, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _server_log_capacity = std::clamp(_server_log_capacity, 10, 1000000);
+        _client->set_log_capacity_on_server(server, _server_log_capacity);
     }
 }
 

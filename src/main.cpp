@@ -26,6 +26,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <csv_writer/csv_writer.h>
+
 
 const std::vector<std::string> server_names = {"srmdrive", "atv-vcu"};
 
@@ -37,7 +39,7 @@ static void glfw_error_callback(int error, const char* description) {
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     bsclog::add_sink(std::shared_ptr<std::ostream>(&std::cout, [](void*){}));
-    auto logfile = std::make_shared<std::ofstream>("logfile.txt");
+    auto logfile = std::make_shared<std::ofstream>("log.txt");
     bsclog::add_sink(logfile);
     auto gui_log = std::make_shared<ui::Log>(); 
     bsclog::add_sink(gui_log->stream());
@@ -145,7 +147,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         watchpanel = std::make_shared<ui::WatchPanel>(srmdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
         auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
         auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", true);
-        serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server, ICON_MDI_TOOLS" Setup", "Setup", true);
+        serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server, ICON_MDI_TOOLS" Setup", "Setup", false);
         
         views.push_back(controlpanel);
         views.push_back(watchpanel);
