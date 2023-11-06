@@ -185,7 +185,7 @@ enum ODObjectDataType {
 
 constexpr size_t od_object_data_type_sizes[10] = {sizeof(bool), sizeof(int8_t), sizeof(int16_t), sizeof(int32_t),
                                                   sizeof(uint8_t), sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
-                                                  0, 0};
+                                                  4, 4};
 
 
 namespace sdo_cs_codes {
