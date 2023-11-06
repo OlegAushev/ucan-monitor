@@ -426,8 +426,8 @@ struct ODObject {
     std::string subcategory;
     std::string name;
     std::string unit;
-    ODObjectDataType data_type;
     ODObjectAccessPermission access_permission;
+    ODObjectDataType data_type;
 
     bool has_read_permission() const { return access_permission != OD_ACCESS_WO; }
     bool has_write_permission() const { return (access_permission == OD_ACCESS_RW) || (access_permission == OD_ACCESS_WO); }
