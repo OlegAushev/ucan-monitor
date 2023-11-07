@@ -1,5 +1,4 @@
 /build/
-/builddir/
 /bin/
 /.flatpak-builder/
-/build-dir/
+/.cache/
