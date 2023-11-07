@@ -15,9 +15,8 @@ extern const ucanopen::ObjectDictionaryConfig object_dictionary_config;
 
 class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 private:
-    mutable std::mutex _pdm_mtx;
-    std::array<bool, pdm_contactor_count> _pdm_contactor_states = {};
-
+    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_states = {};
+    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_refstates = {};
 
 
     std::array<float, 4> _client_values;
@@ -26,10 +25,10 @@ private:
     uint32_t _errors = 0;
     uint16_t _warnings = 0;
 protected:
-    void _handle_tpdo1([[maybe_unused]] const ucanopen::can_payload& payload) {}
+    void _handle_tpdo1(const ucanopen::can_payload& payload);
     void _handle_tpdo2([[maybe_unused]] const ucanopen::can_payload& payload) {}
     void _handle_tpdo3([[maybe_unused]] const ucanopen::can_payload& payload) {}
-    void _handle_tpdo4(const ucanopen::can_payload& payload);
+    void _handle_tpdo4([[maybe_unused]] const ucanopen::can_payload& payload) {};
 
     ucanopen::can_payload _create_rpdo1();
 
@@ -61,25 +60,14 @@ public:
     Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, const std::string& name);
 
     void set_pdm_contactor_states(const std::array<bool, pdm_contactor_count>& states) {
-        std::lock_guard<std::mutex> lock(_pdm_mtx);
-        _pdm_contactor_states = states;
+        std::copy(states.begin(), states.end(), _pdm_contactor_refstates.begin());
     }
 
     std::array<bool, pdm_contactor_count> pdm_contactor_states() const {
-        std::lock_guard<std::mutex> lock(_pdm_mtx);
-        return _pdm_contactor_states;
+        std::array<bool, pdm_contactor_count> ret;
+        std::copy(_pdm_contactor_states.begin(), _pdm_contactor_states.end(), ret.begin());
+        return ret;
     }
-
-
-
-
-
-
-
-
-
-
-
 
     void set_client_value(ucanopen::CobTpdo tpdo_type, double value) { _client_values[static_cast<size_t>(tpdo_type)] = value; }
     void set_server_value(ucanopen::CobRpdo rpdo_type, double value) { _server_values[static_cast<size_t>(rpdo_type)] = value; }
@@ -88,34 +76,6 @@ public:
     uint16_t warnings() const { return _warnings; }
 
     //bool pdm_contactor_state(PdmContactor contactor) const { return _pdm_contactor_state[std::to_underlying(contactor)]; }
-
-    ucanopen::can_payload create_client_tpdo1() {
-        static unsigned int counter = 0;
-        CobClientTpdo1 message{.counter = counter, ._reserved = 0, .value = _client_values[0]};
-        counter = (counter + 1) % 4;
-        return ucanopen::to_payload<CobClientTpdo1>(message);
-    }
-
-    ucanopen::can_payload create_client_tpdo2() {
-        static unsigned int counter = 0;
-        CobClientTpdo2 message{.counter = counter, ._reserved = 0, .value = _client_values[1]};
-        counter = (counter + 1) % 4;
-        return ucanopen::to_payload<CobClientTpdo2>(message);
-    }
-
-    ucanopen::can_payload create_client_tpdo3() {
-        static unsigned int counter = 0;
-        CobClientTpdo3 message{.counter = counter, ._reserved = 0, .value = _client_values[2]};
-        counter = (counter + 1) % 4;
-        return ucanopen::to_payload<CobClientTpdo3>(message);
-    }
-
-    ucanopen::can_payload create_client_tpdo4() {
-        static unsigned int counter = 0;
-        CobClientTpdo4 message{.counter = counter, ._reserved = 0, .value = _client_values[3]};
-        counter = (counter + 1) % 4;
-        return ucanopen::to_payload<CobClientTpdo4>(message);
-    }
 };
 
 } // namespace atvvcu

@@ -7,6 +7,7 @@
 //#include <icons_font_awesome/IconsFontAwesome6.h>
 #include <icons/IconsMaterialDesignIcons.h>
 
+#include <memory>
 #include <ucanopen/client/client.h>
 
 #include <ui/mainview/mainview.h>
@@ -20,7 +21,7 @@
 #include <ui/ucanopen_servers/srmdrive/datapanel/datapanel.h>
 #include <ui/ucanopen_servers/srmdrive/statuspanel/statuspanel.h>
 
-#include <ui/ucanopen_servers/atvvcu/pdmcontrolpanel/pdmcontrolpanel.h>
+#include <ui/ucanopen_servers/atvvcu/pdmpanel/pdmpanel.h>
 #include <ui/ucanopen_servers/atvvcu/motorcontrolpanel/motorcontrolpanel.h>
 
 #include <iostream>
@@ -160,11 +161,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
 
-        auto pdmcontrolpanel = std::make_shared<ui::atvvcu::PdmControlPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE " PDM Control", "PDM Control", true);
+        auto pdmpanel = std::make_shared<ui::atvvcu::PdmPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE " PDM", "PDM", true);
         auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE " Motor Control", "Motor Control", true);
 
-        views.push_back(pdmcontrolpanel);
+        views.push_back(pdmpanel);
         views.push_back(motorcontrolpanel);
+
 
         watchplot = std::make_shared<ui::WatchPlot>(atvvcu_server);
     } else {

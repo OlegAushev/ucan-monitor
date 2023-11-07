@@ -22,6 +22,43 @@ enum class PdmContactor {
 };
 
 
+struct CobTpdo1 {
+    uint32_t pdm_battery_connect : 1;
+    uint32_t pdm_motor1_bypass : 1;
+    uint32_t pdm_motor2_bypass : 1;
+    uint32_t pdm_motor3_bypass : 1;
+    uint32_t pdm_motor4_bypass : 1;
+    uint32_t pdm_charge_mode : 1;
+    uint32_t pdm_charge_allow : 1;
+    uint32_t pdm_equip_bypass : 1;
+    uint32_t _reserved1 : 24;
+    uint32_t _reserved2 : 24;
+    uint32_t counter : 2;
+    uint32_t _reserved3 : 6;
+};
+
+
+struct CobTpdo2 {
+    uint32_t counter : 2;
+    uint32_t _reserved : 30;
+    float value;
+};
+
+
+struct CobTpdo3 {
+    uint32_t counter : 2;
+    uint32_t _reserved : 30;
+    float value;
+};
+
+
+struct CobTpdo4 {
+    uint32_t counter : 2;
+    uint32_t _reserved : 30;
+    float value;
+};
+
+
 struct CobRpdo1 {
     uint32_t pdm_battery_connect : 1;
     uint32_t pdm_motor1_bypass : 1;
@@ -53,34 +90,6 @@ struct CobRpdo3 {
 
 
 struct CobRpdo4 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
-};
-
-
-struct CobClientTpdo1 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
-};
-
-
-struct CobClientTpdo2 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
-};
-
-
-struct CobClientTpdo3 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
-};
-
-
-struct CobClientTpdo4 {
     uint32_t counter : 2;
     uint32_t _reserved : 30;
     float value;

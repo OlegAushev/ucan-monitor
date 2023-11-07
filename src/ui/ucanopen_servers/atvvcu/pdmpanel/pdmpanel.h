@@ -11,16 +11,19 @@ namespace ui {
 namespace atvvcu {
 
 
-class PdmControlPanel : public View {
+class PdmPanel : public View {
 private:
     std::shared_ptr<::atvvcu::Server> _server;
 public:
-    PdmControlPanel(std::shared_ptr<::atvvcu::Server> server,
+    PdmPanel(std::shared_ptr<::atvvcu::Server> server,
                     const std::string& menu_title,
                     const std::string& window_title,
                     bool show_by_default);
     virtual void draw(bool& open) override;
 private:
+    void _draw_contactor_states();
+private:
+    std::array<bool, ::atvvcu::pdm_contactor_count> _contactor_refstates{};
     std::array<bool, ::atvvcu::pdm_contactor_count> _contactor_states{};
 };
 
