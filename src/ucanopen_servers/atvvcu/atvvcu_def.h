@@ -76,9 +76,24 @@ struct CobRpdo1 {
 
 
 struct CobRpdo2 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
+    uint32_t Ctrl_Mode : 1;
+    uint32_t Enable : 1;
+    uint32_t Discharge_Enable : 1;
+    uint32_t Main_Relay_State : 1;
+    uint32_t Fault_Level : 4;
+    uint32_t Gear_State : 2;
+    uint32_t Brake_State : 1;
+    uint32_t Handbrake_State : 1;
+    uint32_t Fault_Reset : 1;
+    uint32_t Reserved1 : 3;
+    int16_t Speed_Cmd : 16;
+    int16_t Trq_Cmd : 16;
+
+    uint32_t wheel : 2;
+    uint32_t _reserved1 : 6;
+
+    uint32_t counter : 4;
+    uint32_t _reserved2 : 4;
 };
 
 

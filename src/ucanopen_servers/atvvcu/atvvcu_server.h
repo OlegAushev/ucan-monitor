@@ -15,12 +15,21 @@ extern const ucanopen::ObjectDictionaryConfig object_dictionary_config;
 
 class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 private:
-    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_states = {};
-    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_refstates = {};
+    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_states{};
+    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_refstates{};
 
+public:
+    std::array<std::atomic_bool, 4> motordrive_refmode{};
+    std::array<std::atomic_bool, 4> motordrive_refstatus{};
+    std::array<std::atomic_bool, 4> motordrive_refdischarge{};
+    std::array<std::atomic_bool, 4> motordrive_refrelay{};
+    std::array<std::atomic_bool, 4> motordrive_reffootbrake{};
+    std::array<std::atomic_bool, 4> motordrive_refhandbrake{};
+    std::array<std::atomic_bool, 4> motordrive_reffaultreset{};
+    std::array<std::atomic_uint8_t, 4> motordrive_refgear{};
+    std::array<std::atomic_int16_t, 4> motordrive_refspeed{};
+    std::array<std::atomic_int16_t, 4> motordrive_reftorque{};
 
-    std::array<float, 4> _client_values;
-    std::array<float, 4> _server_values;
 
     uint32_t _errors = 0;
     uint16_t _warnings = 0;
@@ -32,25 +41,14 @@ protected:
 
     ucanopen::can_payload _create_rpdo1();
 
-    ucanopen::can_payload _create_rpdo2() {
-        static unsigned int counter = 0;
-        CobRpdo2 message{.counter = counter, ._reserved = 0, .value = _server_values[1]};
-        counter = (counter + 1) % 4;
-        return ucanopen::to_payload<CobRpdo2>(message);
-    }
+    ucanopen::can_payload _create_rpdo2();
 
     ucanopen::can_payload _create_rpdo3() {
-        static unsigned int counter = 0;
-        CobRpdo3 message{.counter = counter, ._reserved = 0, .value = _server_values[2]};
-        counter = (counter + 1) % 4;
-        return ucanopen::to_payload<CobRpdo3>(message);
+        return {};
     }
 
     ucanopen::can_payload _create_rpdo4() {
-        static unsigned int counter = 0;
-        CobRpdo4 message{.counter = counter, ._reserved = 0, .value = _server_values[3]};
-        counter = (counter + 1) % 4;
-        return ucanopen::to_payload<CobRpdo4>(message);
+        return {};
     }
 
     virtual ucanopen::FrameHandlingStatus handle_sdo(ucanopen::ODEntryIter entry,
@@ -69,8 +67,7 @@ public:
         return ret;
     }
 
-    void set_client_value(ucanopen::CobTpdo tpdo_type, double value) { _client_values[static_cast<size_t>(tpdo_type)] = value; }
-    void set_server_value(ucanopen::CobRpdo rpdo_type, double value) { _server_values[static_cast<size_t>(rpdo_type)] = value; }
+
 
     uint32_t errors() const { return _errors; }
     uint16_t warnings() const { return _warnings; }
