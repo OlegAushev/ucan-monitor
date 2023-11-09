@@ -35,6 +35,7 @@ public:
     virtual void draw(bool& open) override;
 private:
     void _draw_popups();
+    void _read_keyboard();
 };
 
 

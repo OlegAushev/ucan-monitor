@@ -1,4 +1,5 @@
 #include "controlpanel.h"
+#include "imgui.h"
 #include <ui/components/togglebutton.h>
 
 
@@ -18,16 +19,24 @@ ControlPanel::ControlPanel(std::shared_ptr<::srmdrive::Server> server,
 void ControlPanel::draw(bool& open) {
     ImGui::Begin(_window_title.c_str(), &open);
 
+    _read_keyboard();
+
     // emergency
     ToggleButton(ICON_MDI_ALERT_OCTAGON_OUTLINE" Emergency   ", _emergency);
+    ImGui::SameLine();
+    ImGui::TextDisabled("(F2)");
     _server->set_emergency_enabled(_emergency);
 
     // power switch
     ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
+    ImGui::SameLine();
+    ImGui::TextDisabled("(F3)");
     _server->set_power_enabled(_power_enabled);
     
     // run switch
     ToggleButton(ICON_MDI_POWER" Run On/Off  ", _run_enabled);
+    ImGui::SameLine();
+    ImGui::TextDisabled("(F4)");
     _server->set_run_enabled(_run_enabled);
 
     ImGui::Separator();
@@ -206,6 +215,21 @@ void ControlPanel::_draw_popups() {
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
+    }
+}
+
+
+void ControlPanel::_read_keyboard() {
+    if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F2))) {
+        _emergency = !_emergency;
+    }
+
+    if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F3))) {
+        _power_enabled = !_power_enabled;
+    }
+
+    if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F4))) {
+        _run_enabled = !_run_enabled;
     }
 }
 
