@@ -54,14 +54,14 @@ void Server::_handle_tpdo1([[maybe_unused]] const ucanopen::can_payload& payload
     static_assert(sizeof(CobTpdo1) == 8);
     CobTpdo1 tpdo = ucanopen::from_payload<CobTpdo1>(payload);
 
-    _pdm_contactor_states[std::to_underlying(PdmContactor::battery_connect)] = tpdo.pdm_battery_connect; 
-    _pdm_contactor_states[std::to_underlying(PdmContactor::motor1_bypass)] = tpdo.pdm_motor1_bypass; 
-    _pdm_contactor_states[std::to_underlying(PdmContactor::motor2_bypass)] = tpdo.pdm_motor2_bypass; 
-    _pdm_contactor_states[std::to_underlying(PdmContactor::motor3_bypass)] = tpdo.pdm_motor3_bypass; 
-    _pdm_contactor_states[std::to_underlying(PdmContactor::motor4_bypass)] = tpdo.pdm_motor4_bypass; 
-    _pdm_contactor_states[std::to_underlying(PdmContactor::charge_mode)] = tpdo.pdm_charge_mode; 
-    _pdm_contactor_states[std::to_underlying(PdmContactor::charge_allow)] = tpdo.pdm_charge_allow; 
-    _pdm_contactor_states[std::to_underlying(PdmContactor::equip_bypass)] = tpdo.pdm_equip_bypass; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::battery_connect)] = tpdo.pdm_battery_connect; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::motor1_bypass)] = tpdo.pdm_motor1_bypass; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::motor2_bypass)] = tpdo.pdm_motor2_bypass; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::motor3_bypass)] = tpdo.pdm_motor3_bypass; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::motor4_bypass)] = tpdo.pdm_motor4_bypass; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::charge_mode)] = tpdo.pdm_charge_mode; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::charge_allow)] = tpdo.pdm_charge_allow; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::equip_bypass)] = tpdo.pdm_equip_bypass; 
 }
 
 
@@ -70,14 +70,14 @@ ucanopen::can_payload Server::_create_rpdo1() {
     static unsigned int counter = 0;
     CobRpdo1 rpdo{};
 
-    rpdo.pdm_battery_connect = _pdm_contactor_refstates[std::to_underlying(PdmContactor::battery_connect)];
-    rpdo.pdm_motor1_bypass = _pdm_contactor_refstates[std::to_underlying(PdmContactor::motor1_bypass)];
-    rpdo.pdm_motor2_bypass = _pdm_contactor_refstates[std::to_underlying(PdmContactor::motor2_bypass)];
-    rpdo.pdm_motor3_bypass = _pdm_contactor_refstates[std::to_underlying(PdmContactor::motor3_bypass)];
-    rpdo.pdm_motor4_bypass = _pdm_contactor_refstates[std::to_underlying(PdmContactor::motor4_bypass)];
-    rpdo.pdm_charge_mode = _pdm_contactor_refstates[std::to_underlying(PdmContactor::charge_mode)];
-    rpdo.pdm_charge_allow = _pdm_contactor_refstates[std::to_underlying(PdmContactor::charge_allow)];
-    rpdo.pdm_equip_bypass = _pdm_contactor_refstates[std::to_underlying(PdmContactor::equip_bypass)];
+    rpdo.pdm_battery_connect = pdm_contactor_ref_state[std::to_underlying(PdmContactor::battery_connect)];
+    rpdo.pdm_motor1_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::motor1_bypass)];
+    rpdo.pdm_motor2_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::motor2_bypass)];
+    rpdo.pdm_motor3_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::motor3_bypass)];
+    rpdo.pdm_motor4_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::motor4_bypass)];
+    rpdo.pdm_charge_mode = pdm_contactor_ref_state[std::to_underlying(PdmContactor::charge_mode)];
+    rpdo.pdm_charge_allow = pdm_contactor_ref_state[std::to_underlying(PdmContactor::charge_allow)];
+    rpdo.pdm_equip_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::equip_bypass)];
 
     rpdo.counter = counter;
     counter = (counter + 1) % 4;
@@ -92,16 +92,16 @@ ucanopen::can_payload Server::_create_rpdo2() {
     static unsigned int wheel = 0;
     CobRpdo2 rpdo{};
 
-    rpdo.Ctrl_Mode = motordrive_refmode[wheel];
-    rpdo.Enable = motordrive_refstatus[wheel];
-    rpdo.Discharge_Enable = motordrive_refdischarge[wheel];
-    rpdo.Main_Relay_State = motordrive_refrelay[wheel];
-    rpdo.Gear_State = motordrive_refgear[wheel];
-    rpdo.Brake_State = motordrive_reffootbrake[wheel];
-    rpdo.Handbrake_State = motordrive_refhandbrake[wheel];
-    rpdo.Fault_Reset = motordrive_reffaultreset[wheel];
-    rpdo.Speed_Cmd = motordrive_refspeed[wheel];
-    rpdo.Trq_Cmd = motordrive_reftorque[wheel];
+    rpdo.ctlmode = motordrive_ref_ctlmode[wheel];
+    rpdo.enable_controller = motordrive_ref_enable[wheel];
+    rpdo.discharge = motordrive_ref_discharge[wheel];
+    rpdo.mainrelay = motordrive_ref_mainrelay[wheel];
+    rpdo.gear = motordrive_ref_gear[wheel];
+    rpdo.footbrake = motordrive_ref_footbrake[wheel];
+    rpdo.handbrake = motordrive_ref_handbrake[wheel];
+    rpdo.fault_reset = motordrive_ref_faultreset[wheel];
+    rpdo.speed_cmd = motordrive_ref_speed[wheel];
+    rpdo.torque_cmd = motordrive_ref_torque[wheel];
 
     rpdo.wheel = wheel;
     wheel = (wheel + 1) % 4;

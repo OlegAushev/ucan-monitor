@@ -23,8 +23,8 @@ public:
 private:
     void _draw_contactor_states();
 private:
-    std::array<bool, ::atvvcu::pdm_contactor_count> _contactor_refstates{};
-    std::array<bool, ::atvvcu::pdm_contactor_count> _contactor_states{};
+    std::array<bool, ::atvvcu::pdm_contactor_count> _contactor_ref_state{};
+    std::array<bool, ::atvvcu::pdm_contactor_count> _contactor_state{};
 };
 
 

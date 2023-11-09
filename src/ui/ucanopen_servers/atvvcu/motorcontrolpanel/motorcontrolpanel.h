@@ -24,20 +24,20 @@ public:
 private:
     std::array<std::string, 4> _window_titles = {"Motor LF##ctl", "Motor LB##ctl", "Motor RF##ctl", "Motor RB##ctl"};
 
-    std::array<int, 4> _refmode{};
-    std::array<int, 4> _refgear{};
-    std::array<bool, 4> _refstatus{};
-    std::array<bool, 4> _refdischarge{};
-    std::array<bool, 4> _refrelay{};
-    std::array<bool, 4> _reffootbrake{};
-    std::array<bool, 4> _refhandbrake{};
-    std::array<bool, 4> _reffaultreset{};
+    std::array<int, 4> _ref_ctlmode{};
+    std::array<int, 4> _ref_gear{};
+    std::array<bool, 4> _ref_enable{};
+    std::array<bool, 4> _ref_discharge{};
+    std::array<bool, 4> _ref_mainrelay{};
+    std::array<bool, 4> _ref_footbrake{};
+    std::array<bool, 4> _ref_handbrake{};
+    std::array<bool, 4> _ref_faultreset{};
 
-    std::array<int, 4> _refspeed{};
-    std::array<int, 4> _reftorque{};
+    std::array<int, 4> _ref_speed{};
+    std::array<int, 4> _ref_torque{};
 
-    int _refeltorque_max{0};
-    int _refbraketorque_max{0};
+    int _ref_eltorque_max{0};
+    int _ref_braketorque_max{0};
 };
 
 

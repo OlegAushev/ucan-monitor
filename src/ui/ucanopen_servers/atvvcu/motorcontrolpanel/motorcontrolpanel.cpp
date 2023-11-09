@@ -25,49 +25,49 @@ void MotorControlPanel::draw(bool& open) {
         ImGui::Begin(_window_titles[i].c_str(), &open);
 
         ImGui::SeparatorText(ICON_MDI_CAMERA_CONTROL" Control Mode");
-        ImGui::RadioButton("Speed", &_refmode[i], 0);
+        ImGui::RadioButton("Speed", &_ref_ctlmode[i], 0);
         ImGui::SameLine();
-        ImGui::RadioButton("Torque", &_refmode[i], 1);
+        ImGui::RadioButton("Torque", &_ref_ctlmode[i], 1);
 
         ImGui::SeparatorText(ICON_MDI_CAR_SHIFT_PATTERN" Gear");
-        ImGui::RadioButton("Neutral", &_refgear[i], 0);
+        ImGui::RadioButton("Neutral", &_ref_gear[i], 0);
         ImGui::SameLine();
-        ImGui::RadioButton("Forward", &_refgear[i], 1);
+        ImGui::RadioButton("Forward", &_ref_gear[i], 1);
         ImGui::SameLine();
-        ImGui::RadioButton("Reverse", &_refgear[i], 2);
+        ImGui::RadioButton("Reverse", &_ref_gear[i], 2);
 
         ImGui::SeparatorText("");
-        ui::ToggleButton(ICON_MDI_ELECTRIC_SWITCH" Relay ", _refrelay[i]);
+        ui::ToggleButton(ICON_MDI_ELECTRIC_SWITCH" Relay ", _ref_mainrelay[i]);
         ImGui::SameLine();
-        ui::ToggleButton(ICON_MDI_POWER" Enable", _refstatus[i]);     
-        ui::ToggleButton(ICON_MDI_FLASH_OFF_OUTLINE" Discharge  ", _refdischarge[i]);
+        ui::ToggleButton(ICON_MDI_POWER" Enable", _ref_enable[i]);     
+        ui::ToggleButton(ICON_MDI_FLASH_OFF_OUTLINE" Discharge  ", _ref_discharge[i]);
 
-        ui::ToggleButton(ICON_MDI_CAR_BRAKE_ALERT" FBrake", _reffootbrake[i]);
+        ui::ToggleButton(ICON_MDI_CAR_BRAKE_ALERT" FBrake", _ref_footbrake[i]);
         ImGui::SameLine();
-        ui::ToggleButton(ICON_MDI_CAR_BRAKE_HOLD" HBrake", _refhandbrake[i]);
+        ui::ToggleButton(ICON_MDI_CAR_BRAKE_HOLD" HBrake", _ref_handbrake[i]);
 
-        ui::ToggleButton(ICON_MDI_ALERT_CIRCLE_OUTLINE" Fault Reset", _reffaultreset[i]);
+        ui::ToggleButton(ICON_MDI_ALERT_CIRCLE_OUTLINE" Fault Reset", _ref_faultreset[i]);
 
         ImGui::PushItemWidth(150);
-        if (ImGui::InputInt("Speed [rpm]", &_refspeed[i], 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _refspeed[i] = std::clamp(_refspeed[i], -10000, 10000);
+        if (ImGui::InputInt("Speed [rpm]", &_ref_speed[i], 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _ref_speed[i] = std::clamp(_ref_speed[i], -10000, 10000);
         }
 
-        if (ImGui::InputInt("Torque [Nm]", &_reftorque[i], 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _reftorque[i] = std::clamp(_reftorque[i], -400, 400);
+        if (ImGui::InputInt("Torque [Nm]", &_ref_torque[i], 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _ref_torque[i] = std::clamp(_ref_torque[i], -400, 400);
         }
         ImGui::PopItemWidth();
 
         if (ImGui::TreeNode("Torque Limits")) {
             ImGui::PushItemWidth(150);
-            if (ImGui::InputInt("El Torque [Nm]", &_refeltorque_max, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _refeltorque_max = std::clamp(_refeltorque_max, 0, 400);
-                _server->write("ctl", "motordrive", "eltorque_max", std::to_string(_refeltorque_max));
+            if (ImGui::InputInt("El Torque [Nm]", &_ref_eltorque_max, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_eltorque_max = std::clamp(_ref_eltorque_max, 0, 400);
+                _server->write("ctl", "motordrive", "eltorque_max", std::to_string(_ref_eltorque_max));
             }
 
-            if (ImGui::InputInt("Brk Torque [Nm]", &_refbraketorque_max, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _refbraketorque_max = std::clamp(_refbraketorque_max, -400, 400);
-                _server->write("ctl", "motordrive", "braketorque_max", std::to_string(_refbraketorque_max));
+            if (ImGui::InputInt("Brk Torque [Nm]", &_ref_braketorque_max, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_braketorque_max = std::clamp(_ref_braketorque_max, -400, 400);
+                _server->write("ctl", "motordrive", "braketorque_max", std::to_string(_ref_braketorque_max));
             }
             ImGui::PopItemWidth();
 
@@ -77,16 +77,16 @@ void MotorControlPanel::draw(bool& open) {
         ImGui::End();
     }
 
-    std::copy(_refmode.begin(), _refmode.end(), _server->motordrive_refmode.begin());
-    std::copy(_refstatus.begin(), _refstatus.end(), _server->motordrive_refstatus.begin());
-    std::copy(_refdischarge.begin(), _refdischarge.end(), _server->motordrive_refdischarge.begin());
-    std::copy(_refrelay.begin(), _refrelay.end(), _server->motordrive_refrelay.begin());
-    std::copy(_reffootbrake.begin(), _reffootbrake.end(), _server->motordrive_reffootbrake.begin());
-    std::copy(_refhandbrake.begin(), _refhandbrake.end(), _server->motordrive_refhandbrake.begin());
-    std::copy(_reffaultreset.begin(), _reffaultreset.end(), _server->motordrive_reffaultreset.begin());
-    std::copy(_refgear.begin(), _refgear.end(), _server->motordrive_refgear.begin());
-    std::copy(_refspeed.begin(), _refspeed.end(), _server->motordrive_refspeed.begin());
-    std::copy(_reftorque.begin(), _reftorque.end(), _server->motordrive_reftorque.begin());
+    std::copy(_ref_ctlmode.begin(), _ref_ctlmode.end(), _server->motordrive_ref_ctlmode.begin());
+    std::copy(_ref_enable.begin(), _ref_enable.end(), _server->motordrive_ref_enable.begin());
+    std::copy(_ref_discharge.begin(), _ref_discharge.end(), _server->motordrive_ref_discharge.begin());
+    std::copy(_ref_mainrelay.begin(), _ref_mainrelay.end(), _server->motordrive_ref_mainrelay.begin());
+    std::copy(_ref_footbrake.begin(), _ref_footbrake.end(), _server->motordrive_ref_footbrake.begin());
+    std::copy(_ref_handbrake.begin(), _ref_handbrake.end(), _server->motordrive_ref_handbrake.begin());
+    std::copy(_ref_faultreset.begin(), _ref_faultreset.end(), _server->motordrive_ref_faultreset.begin());
+    std::copy(_ref_gear.begin(), _ref_gear.end(), _server->motordrive_ref_gear.begin());
+    std::copy(_ref_speed.begin(), _ref_speed.end(), _server->motordrive_ref_speed.begin());
+    std::copy(_ref_torque.begin(), _ref_torque.end(), _server->motordrive_ref_torque.begin());
 }
 
 
