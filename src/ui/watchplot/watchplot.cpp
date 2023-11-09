@@ -96,12 +96,12 @@ void WatchPlot::_draw_menubar() {
         }
 
         if (_running) {
-            if (ImGui::MenuItem(ICON_MDI_PAUSE)) {
+            if (ImGui::MenuItem(ICON_MDI_PAUSE"Pause ")) {
                 _log_snapshot = _server->log_service.get_log();
                 _running = false;
             }
         } else {
-            if (ImGui::MenuItem(ICON_MDI_PLAY)) {
+            if (ImGui::MenuItem(ICON_MDI_PLAY"Resume")) {
                 _running = true;
             }
         }
