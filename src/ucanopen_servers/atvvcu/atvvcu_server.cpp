@@ -1,4 +1,5 @@
 #include "atvvcu_server.h"
+#include "ucanopen/ucanopen_def.h"
 #include "ucanopen_servers/atvvcu/atvvcu_def.h"
 #include <utility>
 
@@ -50,7 +51,7 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
 }
 
 
-void Server::_handle_tpdo1([[maybe_unused]] const ucanopen::can_payload& payload) {
+void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo1) == 8);
     CobTpdo1 tpdo = ucanopen::from_payload<CobTpdo1>(payload);
 
@@ -62,6 +63,20 @@ void Server::_handle_tpdo1([[maybe_unused]] const ucanopen::can_payload& payload
     pdm_contactor_state[std::to_underlying(PdmContactor::charge_mode)] = tpdo.pdm_charge_mode; 
     pdm_contactor_state[std::to_underlying(PdmContactor::charge_allow)] = tpdo.pdm_charge_allow; 
     pdm_contactor_state[std::to_underlying(PdmContactor::equip_bypass)] = tpdo.pdm_equip_bypass; 
+}
+
+
+void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
+    static_assert(sizeof(CobTpdo2) == 8);
+    CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
+
+    size_t wheel = tpdo.wheel;
+    motordrive_errors[wheel] = tpdo.controller_errors;
+    motordrive_ctlmode[wheel] = tpdo.ctlmode;
+    motordrive_enabled[wheel] = tpdo.controller_enabled;
+    motordrive_discharge[wheel] = tpdo.discharge;
+    motordrive_faultlevel[wheel] = tpdo.controller_fault_level;
+    motordrive_faultcode[wheel] = tpdo.fault_code;
 }
 
 

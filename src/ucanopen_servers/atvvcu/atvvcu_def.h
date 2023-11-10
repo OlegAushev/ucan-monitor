@@ -39,23 +39,19 @@ struct CobTpdo1 {
 
 
 struct CobTpdo2 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
-};
+    uint32_t controller_errors : 24;
+    uint32_t _reserved1 : 8;
+    uint32_t ctlmode : 1;
+    uint32_t controller_enabled : 1;
+    uint32_t discharge : 2;
+    uint32_t controller_fault_level : 4;
+    uint32_t fault_code : 8;
+    
+    uint32_t wheel : 2;
+    uint32_t _reserved2 : 6;
 
-
-struct CobTpdo3 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
-};
-
-
-struct CobTpdo4 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
+    uint32_t counter : 4;
+    uint32_t _reserved3 : 4;
 };
 
 
@@ -94,20 +90,6 @@ struct CobRpdo2 {
 
     uint32_t counter : 4;
     uint32_t _reserved3 : 4;
-};
-
-
-struct CobRpdo3 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
-};
-
-
-struct CobRpdo4 {
-    uint32_t counter : 2;
-    uint32_t _reserved : 30;
-    float value;
 };
 
 

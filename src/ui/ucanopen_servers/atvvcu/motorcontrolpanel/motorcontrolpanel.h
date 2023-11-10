@@ -1,11 +1,9 @@
 #pragma once
 
 
-#include <array>
 #include <imgui.h>
 #include <ui/view/view.h>
 #include <ucanopen_servers/atvvcu/atvvcu_server.h>
-#include <memory>
 
 
 namespace ui {
@@ -22,7 +20,10 @@ public:
                       bool show_by_default);
     virtual void draw(bool& open) override;
 private:
-    std::array<std::string, 4> _window_titles = {"Motor LF##ctl", "Motor LB##ctl", "Motor RF##ctl", "Motor RB##ctl"};
+    std::array<std::string, 4> _window_titles = {"Motor LF Control##ctl",
+                                                 "Motor LB Control##ctl",
+                                                 "Motor RF Control##ctl",
+                                                 "Motor RB Control##ctl"};
 
     std::array<int, 4> _ref_ctlmode{};
     std::array<int, 4> _ref_gear{};
