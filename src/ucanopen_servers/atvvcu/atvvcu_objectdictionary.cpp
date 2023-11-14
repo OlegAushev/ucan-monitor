@@ -27,6 +27,37 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslog_message", "", OD_ACCESS_RO, OD_UINT32}},
 
+{{0x5001, 0x01}, {"watch", "motordrive", "vdc_lf", "V", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5001, 0x02}, {"watch", "motordrive", "vdc_lb", "V", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5001, 0x03}, {"watch", "motordrive", "vdc_rf", "V", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5001, 0x04}, {"watch", "motordrive", "vdc_rb", "V", OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5002, 0x01}, {"watch", "motordrive", "iac_lf", "A", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5002, 0x02}, {"watch", "motordrive", "iac_lb", "A", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5002, 0x03}, {"watch", "motordrive", "iac_rf", "A", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5002, 0x04}, {"watch", "motordrive", "iac_rb", "A", OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5003, 0x01}, {"watch", "motordrive", "speed_lf", "rpm", OD_ACCESS_RO, OD_INT32}},
+{{0x5003, 0x02}, {"watch", "motordrive", "speed_lb", "rpm", OD_ACCESS_RO, OD_INT32}},
+{{0x5003, 0x03}, {"watch", "motordrive", "speed_rf", "rpm", OD_ACCESS_RO, OD_INT32}},
+{{0x5003, 0x04}, {"watch", "motordrive", "speed_rb", "rpm", OD_ACCESS_RO, OD_INT32}},
+
+{{0x5004, 0x01}, {"watch", "motordrive", "torque_lf", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5004, 0x02}, {"watch", "motordrive", "torque_lb", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5004, 0x03}, {"watch", "motordrive", "torque_rf", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5004, 0x04}, {"watch", "motordrive", "torque_rb", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5005, 0x01}, {"watch", "motordrive", "motortemp_lf", "o", OD_ACCESS_RO, OD_INT32}},
+{{0x5005, 0x02}, {"watch", "motordrive", "motortemp_lb", "o", OD_ACCESS_RO, OD_INT32}},
+{{0x5005, 0x03}, {"watch", "motordrive", "motortemp_rf", "o", OD_ACCESS_RO, OD_INT32}},
+{{0x5005, 0x04}, {"watch", "motordrive", "motortemp_rb", "o", OD_ACCESS_RO, OD_INT32}},
+
+{{0x5006, 0x01}, {"watch", "motordrive", "moduletemp_lf", "o", OD_ACCESS_RO, OD_INT32}},
+{{0x5006, 0x02}, {"watch", "motordrive", "moduletemp_lb", "o", OD_ACCESS_RO, OD_INT32}},
+{{0x5006, 0x03}, {"watch", "motordrive", "moduletemp_rf", "o", OD_ACCESS_RO, OD_INT32}},
+{{0x5006, 0x04}, {"watch", "motordrive", "moduletemp_rb", "o", OD_ACCESS_RO, OD_INT32}},
+
+
 }
 };
 

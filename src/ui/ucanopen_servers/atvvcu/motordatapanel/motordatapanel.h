@@ -30,7 +30,7 @@ private:
     std::array<std::string_view, 4> _iac_watchobj = {"iac_lf", "iac_lb", "iac_rf", "iac_rb"};
     std::array<std::string_view, 4> _torque_watchobj = {"torque_lf", "torque_lb", "torque_rf", "torque_rb"};
     std::array<std::string_view, 4> _speed_watchobj = {"speed_lf", "speed_lb", "speed_rf", "speed_rb"};
-    std::array<std::string_view, 4> _motortemp_watchobj = {"motortemp_lf", "torque_lb", "motortemp_rf", "motortemp_rb"};
+    std::array<std::string_view, 4> _motortemp_watchobj = {"motortemp_lf", "motortemp_lb", "motortemp_rf", "motortemp_rb"};
     std::array<std::string_view, 4> _moduletemp_watchobj = {"moduletemp_lf", "moduletemp_lb", "moduletemp_rf", "moduletemp_rb"};
 };
 
