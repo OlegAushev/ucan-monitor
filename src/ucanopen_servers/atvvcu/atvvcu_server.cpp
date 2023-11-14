@@ -12,8 +12,8 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
 {
     tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo1, std::chrono::milliseconds(1100),
             [this](ucanopen::can_payload payload) { this->_handle_tpdo1(payload); });
-    // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1100),
-    //         [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1100),
+            [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
     // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1100),
     //         [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
     // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1100),
@@ -68,15 +68,50 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
 
 void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo2) == 8);
-    CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
 
+    CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
     size_t wheel = tpdo.wheel;
-    motordrive_errors[wheel] = tpdo.controller_errors;
-    motordrive_ctlmode[wheel] = tpdo.ctlmode;
-    motordrive_enabled[wheel] = tpdo.controller_enabled;
-    motordrive_discharge[wheel] = tpdo.discharge;
-    motordrive_faultlevel[wheel] = tpdo.controller_fault_level;
-    motordrive_faultcode[wheel] = tpdo.fault_code;
+    MotorDriveData data{};
+
+    data.errors = tpdo.controller_errors;
+    data.ctlmode = (tpdo.ctlmode == 0) ? "speed" : "torque";
+    data.enabled = tpdo.controller_enabled;
+
+    switch (tpdo.discharge) {
+    case 0:
+        data.discharge = "charged";
+        break;
+    case 1: case 2:
+        data.discharge = "discharged";
+        break;
+    case 3:
+        data.discharge = "failed";
+    }
+
+    switch (tpdo.controller_fault_level) {
+    case 0:
+        data.faultlevel = "no error";
+        break;
+    case 1:
+        data.faultlevel = "level 1";
+        break;
+    case 2:
+        data.faultlevel = "level 2";
+        break;
+    case 3:
+        data.faultlevel = "level 3";
+        break;
+    case 4:
+        data.faultlevel = "level 4";
+        break;
+    default:
+        data.faultlevel = "unknown";
+        break;
+    }
+
+    data.faultcode = tpdo.fault_code;
+
+    motordrive_data[wheel] = data;
 }
 
 

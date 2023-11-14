@@ -4,7 +4,10 @@
 #include "ucanopen/server/server.h"
 #include "atvvcu_def.h"
 #include "bsclog/bsclog.h"
+#include <array>
 #include <atomic>
+#include <cstdint>
+#include <string_view>
 
 
 namespace atvvcu {
@@ -32,12 +35,17 @@ public:
     std::array<std::atomic_int16_t, 4> motordrive_ref_speed{};
     std::array<std::atomic_int16_t, 4> motordrive_ref_torque{};
 
-    std::array<std::atomic_uint32_t, 4> motordrive_errors{};
-    std::array<std::atomic_bool, 4> motordrive_ctlmode{};
-    std::array<std::atomic_bool, 4> motordrive_enabled{};
-    std::array<std::atomic_bool, 4> motordrive_discharge{};
-    std::array<std::atomic_uint32_t, 4> motordrive_faultlevel{};
-    std::array<std::atomic_uint32_t, 4> motordrive_faultcode{};
+    struct MotorDriveData {
+        uint32_t errors;
+        std::string_view ctlmode;
+        bool enabled;
+        std::string_view discharge;
+        std::string_view faultlevel;
+        uint32_t faultcode;
+    };
+
+    std::array<std::atomic<MotorDriveData>, 4> motordrive_data;
+
 protected:
     void _handle_tpdo1(const ucanopen::can_payload& payload);
     void _handle_tpdo2(const ucanopen::can_payload& payload);

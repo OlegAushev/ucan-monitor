@@ -18,9 +18,9 @@ MotorControlPanel::MotorControlPanel(std::shared_ptr<::atvvcu::Server> server,
 {}
 
 
-void MotorControlPanel::draw(bool& open) {
+void MotorControlPanel::draw([[maybe_unused]] bool& open) {
     for (size_t i = 0; i < 4; ++i) {
-        ImGui::Begin(_window_titles[i].c_str(), &open);
+        ImGui::Begin(_window_titles[i].c_str());
 
         ImGui::SeparatorText(ICON_MDI_CAMERA_CONTROL" Control Mode");
         ImGui::RadioButton("Speed", &_ref_ctlmode[i], 0);

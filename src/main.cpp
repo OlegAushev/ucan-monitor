@@ -23,6 +23,7 @@
 
 #include <ui/ucanopen_servers/atvvcu/pdmpanel/pdmpanel.h>
 #include <ui/ucanopen_servers/atvvcu/motorcontrolpanel/motorcontrolpanel.h>
+#include <ui/ucanopen_servers/atvvcu/motordatapanel/motordatapanel.h>
 
 #include <iostream>
 #include <fstream>
@@ -161,10 +162,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
 
-        auto pdmpanel = std::make_shared<ui::atvvcu::PdmPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE " PDM", "PDM", true);
-        auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE " Motor Control", "Motor Control", true);
+        auto pdmpanel = std::make_shared<ui::atvvcu::PdmPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE" PDM", "PDM", true);
+        auto motordatapanel = std::make_shared<ui::atvvcu::MotorDataPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE" Motor Data", "Motor Data", true);
+        auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE" Motor Control", "Motor Control", true);
 
         views.push_back(pdmpanel);
+        views.push_back(motordatapanel);
         views.push_back(motorcontrolpanel);
 
 
