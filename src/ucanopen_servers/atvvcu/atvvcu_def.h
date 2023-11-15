@@ -22,7 +22,7 @@ enum class PdmContactor {
 };
 
 
-struct CobTpdo1 {
+struct CobTpdo2 {
     uint32_t pdm_battery_connect : 1;
     uint32_t pdm_motor1_bypass : 1;
     uint32_t pdm_motor2_bypass : 1;
@@ -38,7 +38,7 @@ struct CobTpdo1 {
 };
 
 
-struct CobTpdo2 {
+struct CobTpdo3 {
     uint32_t controller_errors : 24;
     uint32_t _reserved1 : 8;
     uint32_t ctlmode : 1;
@@ -55,7 +55,7 @@ struct CobTpdo2 {
 };
 
 
-struct CobRpdo1 {
+struct CobRpdo2 {
     uint32_t pdm_battery_connect : 1;
     uint32_t pdm_motor1_bypass : 1;
     uint32_t pdm_motor2_bypass : 1;
@@ -71,7 +71,7 @@ struct CobRpdo1 {
 };
 
 
-struct CobRpdo2 {
+struct CobRpdo3 {
     uint32_t ctlmode : 1;
     uint32_t enable_controller : 1;
     uint32_t discharge : 1;

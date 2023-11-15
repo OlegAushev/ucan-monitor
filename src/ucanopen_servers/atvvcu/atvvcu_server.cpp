@@ -10,19 +10,19 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
         : ucanopen::Server(socket, node_id, name, object_dictionary)
         , ucanopen::SdoSubscriber(sdo_service)
 {
-    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo1, std::chrono::milliseconds(1100),
-            [this](ucanopen::can_payload payload) { this->_handle_tpdo1(payload); });
     tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1100),
             [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1100),
+            [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
     // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1100),
     //         [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
     // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1100),
     //         [this](ucanopen::can_payload payload) { this->_handle_tpdo4(payload); });
 
-    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1, std::chrono::milliseconds(100),
-            [this](){ return this->_create_rpdo1(); });
-    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2, std::chrono::milliseconds(50),
+    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2, std::chrono::milliseconds(100),
             [this](){ return this->_create_rpdo2(); });
+    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3, std::chrono::milliseconds(50),
+            [this](){ return this->_create_rpdo3(); });
     // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3, std::chrono::milliseconds(100),
     //         [this](){ return this->_create_rpdo3(); });
     // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo4, std::chrono::milliseconds(500),
@@ -51,9 +51,9 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
 }
 
 
-void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
-    static_assert(sizeof(CobTpdo1) == 8);
-    CobTpdo1 tpdo = ucanopen::from_payload<CobTpdo1>(payload);
+void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
+    static_assert(sizeof(CobTpdo2) == 8);
+    CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
 
     pdm_contactor_state[std::to_underlying(PdmContactor::battery_connect)] = tpdo.pdm_battery_connect; 
     pdm_contactor_state[std::to_underlying(PdmContactor::motor1_bypass)] = tpdo.pdm_motor1_bypass; 
@@ -66,10 +66,10 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
 }
 
 
-void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
-    static_assert(sizeof(CobTpdo2) == 8);
+void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
+    static_assert(sizeof(CobTpdo3) == 8);
 
-    CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
+    CobTpdo3 tpdo = ucanopen::from_payload<CobTpdo3>(payload);
     size_t wheel = tpdo.wheel;
     MotorDriveData data{};
 
@@ -115,10 +115,10 @@ void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
 }
 
 
-ucanopen::can_payload Server::_create_rpdo1() {
-    static_assert(sizeof(CobRpdo1) == 8);
+ucanopen::can_payload Server::_create_rpdo2() {
+    static_assert(sizeof(CobRpdo2) == 8);
     static unsigned int counter = 0;
-    CobRpdo1 rpdo{};
+    CobRpdo2 rpdo{};
 
     rpdo.pdm_battery_connect = pdm_contactor_ref_state[std::to_underlying(PdmContactor::battery_connect)];
     rpdo.pdm_motor1_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::motor1_bypass)];
@@ -132,15 +132,15 @@ ucanopen::can_payload Server::_create_rpdo1() {
     rpdo.counter = counter;
     counter = (counter + 1) % 4;
 
-    return ucanopen::to_payload<CobRpdo1>(rpdo);
+    return ucanopen::to_payload<CobRpdo2>(rpdo);
 }
 
 
-ucanopen::can_payload Server::_create_rpdo2() {
-    static_assert(sizeof(CobRpdo2) == 8);
+ucanopen::can_payload Server::_create_rpdo3() {
+    static_assert(sizeof(CobRpdo3) == 8);
     static unsigned int counter = 0;
     static unsigned int wheel = 0;
-    CobRpdo2 rpdo{};
+    CobRpdo3 rpdo{};
 
     rpdo.ctlmode = motordrive_ref_ctlmode[wheel];
     rpdo.enable_controller = motordrive_ref_enable[wheel];
@@ -159,7 +159,7 @@ ucanopen::can_payload Server::_create_rpdo2() {
     rpdo.counter = counter;
     counter = (counter + 1) % 16;
 
-    return ucanopen::to_payload<CobRpdo2>(rpdo);
+    return ucanopen::to_payload<CobRpdo3>(rpdo);
 }
 
 

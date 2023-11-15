@@ -47,11 +47,11 @@ public:
     std::array<std::atomic<MotorDriveData>, 4> motordrive_data;
 
 protected:
-    void _handle_tpdo1(const ucanopen::can_payload& payload);
     void _handle_tpdo2(const ucanopen::can_payload& payload);
+    void _handle_tpdo3(const ucanopen::can_payload& payload);
 
-    ucanopen::can_payload _create_rpdo1();
     ucanopen::can_payload _create_rpdo2();
+    ucanopen::can_payload _create_rpdo3();
 
 
     virtual ucanopen::FrameHandlingStatus handle_sdo(ucanopen::ODEntryIter entry,
