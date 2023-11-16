@@ -1,4 +1,5 @@
 #include "pdmpanel.h"
+#include "icons/IconsMaterialDesignIcons.h"
 #include "imgui.h"
 #include "ucanopen_servers/atvvcu/atvvcu_def.h"
 #include <algorithm>
@@ -22,14 +23,13 @@ PdmPanel::PdmPanel(std::shared_ptr<::atvvcu::Server> server,
 void PdmPanel::draw(bool& open) {
     ImGui::Begin(_window_title.c_str(), &open);
 
-    ToggleButton(ICON_MDI_CAR_BATTERY" Battery       ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::battery_connect)]);
-    ToggleButton(ICON_MDI_NUMERIC_1_BOX_OUTLINE" Motor 1 Bypass", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::motor1_bypass)]);
-    ToggleButton(ICON_MDI_NUMERIC_2_BOX_OUTLINE" Motor 2 Bypass", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::motor2_bypass)]);
-    ToggleButton(ICON_MDI_NUMERIC_3_BOX_OUTLINE" Motor 3 Bypass", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::motor3_bypass)]);
-    ToggleButton(ICON_MDI_NUMERIC_4_BOX_OUTLINE" Motor 4 Bypass", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::motor4_bypass)]);
-    ToggleButton(ICON_MDI_STAR_THREE_POINTS_OUTLINE" 3ph Charge    ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::charge_mode)]);
+    ToggleButton(ICON_MDI_BATTERY_POSITIVE      " Battery +   ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::battery_p)]);
+    ToggleButton(ICON_MDI_BATTERY_NEGATIVE      " Battery -   ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::battery_n)]);
+    ToggleButton(ICON_MDI_NUMERIC_1_BOX_OUTLINE " Front Bypass", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::front_bypass)]);
+    ToggleButton(ICON_MDI_NUMERIC_2_BOX_OUTLINE " Back Bypass ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::back_bypass)]);
+    ToggleButton(ICON_MDI_NUMERIC_3_BOX_OUTLINE " Aux Bypass  ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::aux_bypass)]);
     ToggleButton(ICON_MDI_EV_STATION" Allow Charge  ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::charge_allow)]);
-    ToggleButton(ICON_MDI_DEVICES" Equip Bypass  ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::equip_bypass)]);
+    ToggleButton(ICON_MDI_STAR_THREE_POINTS_OUTLINE" 3ph Charge    ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::charge_mode)]);
 
     std::copy(_contactor_ref_state.begin(), _contactor_ref_state.end(), _server->pdm_contactor_ref_state.begin());
 
@@ -44,8 +44,8 @@ void PdmPanel::_draw_contactor_states() {
     std::copy(_server->pdm_contactor_state.begin(), _server->pdm_contactor_state.end(), _contactor_state.begin());
 
     const std::array<std::string_view, ::atvvcu::pdm_contactor_count> contactor_names = {
-        "Battery", "Motor 1 Bypass", "Motor 2 Bypass", "Motor 3 Bypass", "Motor 4 Bypass",
-        "3ph Charge", "Allow Charge", "Equip Bypass"  
+        "Battery +", "Battery -", "Front Bypass", "Back Bypass", "Aux Bypass",
+        "Allow Charge", "3ph Charge"
     };
 
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;

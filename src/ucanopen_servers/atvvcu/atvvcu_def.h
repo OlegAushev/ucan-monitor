@@ -9,29 +9,27 @@
 namespace atvvcu {
 
 
-static constexpr int pdm_contactor_count = 8;
+static constexpr int pdm_contactor_count = 7;
 enum class PdmContactor {
-    battery_connect,
-    motor1_bypass,
-    motor2_bypass,
-    motor3_bypass,
-    motor4_bypass,
-    charge_mode,
+    battery_p,
+    battery_n,
+    front_bypass,
+    back_bypass,
+    aux_bypass,
     charge_allow,
-    equip_bypass
+    charge_mode,
 };
 
 
 struct CobTpdo2 {
-    uint32_t pdm_battery_connect : 1;
-    uint32_t pdm_motor1_bypass : 1;
-    uint32_t pdm_motor2_bypass : 1;
-    uint32_t pdm_motor3_bypass : 1;
-    uint32_t pdm_motor4_bypass : 1;
-    uint32_t pdm_charge_mode : 1;
+    uint32_t pdm_battery_p : 1;
+    uint32_t pdm_battery_n : 1;
+    uint32_t pdm_front_bypass : 1;
+    uint32_t pdm_back_bypass : 1;
+    uint32_t pdm_aux_bypass : 1;
     uint32_t pdm_charge_allow : 1;
-    uint32_t pdm_equip_bypass : 1;
-    uint32_t _reserved1 : 24;
+    uint32_t pdm_charge_mode : 1;
+    uint32_t _reserved1 : 25;
     uint32_t _reserved2 : 24;
     uint32_t counter : 2;
     uint32_t _reserved3 : 6;
@@ -56,15 +54,14 @@ struct CobTpdo3 {
 
 
 struct CobRpdo2 {
-    uint32_t pdm_battery_connect : 1;
-    uint32_t pdm_motor1_bypass : 1;
-    uint32_t pdm_motor2_bypass : 1;
-    uint32_t pdm_motor3_bypass : 1;
-    uint32_t pdm_motor4_bypass : 1;
-    uint32_t pdm_charge_mode : 1;
+    uint32_t pdm_battery_p : 1;
+    uint32_t pdm_battery_n : 1;
+    uint32_t pdm_front_bypass : 1;
+    uint32_t pdm_back_bypass : 1;
+    uint32_t pdm_aux_bypass : 1;
     uint32_t pdm_charge_allow : 1;
-    uint32_t pdm_equip_bypass : 1;
-    uint32_t _reserved1 : 24;
+    uint32_t pdm_charge_mode : 1;
+    uint32_t _reserved1 : 25;
     uint32_t _reserved2 : 24;
     uint32_t counter : 2;
     uint32_t _reserved3 : 6;

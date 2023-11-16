@@ -55,14 +55,13 @@ void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo2) == 8);
     CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
 
-    pdm_contactor_state[std::to_underlying(PdmContactor::battery_connect)] = tpdo.pdm_battery_connect; 
-    pdm_contactor_state[std::to_underlying(PdmContactor::motor1_bypass)] = tpdo.pdm_motor1_bypass; 
-    pdm_contactor_state[std::to_underlying(PdmContactor::motor2_bypass)] = tpdo.pdm_motor2_bypass; 
-    pdm_contactor_state[std::to_underlying(PdmContactor::motor3_bypass)] = tpdo.pdm_motor3_bypass; 
-    pdm_contactor_state[std::to_underlying(PdmContactor::motor4_bypass)] = tpdo.pdm_motor4_bypass; 
-    pdm_contactor_state[std::to_underlying(PdmContactor::charge_mode)] = tpdo.pdm_charge_mode; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::battery_p)] = tpdo.pdm_battery_p; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::battery_n)] = tpdo.pdm_battery_n; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::front_bypass)] = tpdo.pdm_front_bypass; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::back_bypass)] = tpdo.pdm_back_bypass; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::aux_bypass)] = tpdo.pdm_aux_bypass; 
     pdm_contactor_state[std::to_underlying(PdmContactor::charge_allow)] = tpdo.pdm_charge_allow; 
-    pdm_contactor_state[std::to_underlying(PdmContactor::equip_bypass)] = tpdo.pdm_equip_bypass; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::charge_mode)] = tpdo.pdm_charge_mode; 
 }
 
 
@@ -120,14 +119,13 @@ ucanopen::can_payload Server::_create_rpdo2() {
     static unsigned int counter = 0;
     CobRpdo2 rpdo{};
 
-    rpdo.pdm_battery_connect = pdm_contactor_ref_state[std::to_underlying(PdmContactor::battery_connect)];
-    rpdo.pdm_motor1_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::motor1_bypass)];
-    rpdo.pdm_motor2_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::motor2_bypass)];
-    rpdo.pdm_motor3_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::motor3_bypass)];
-    rpdo.pdm_motor4_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::motor4_bypass)];
-    rpdo.pdm_charge_mode = pdm_contactor_ref_state[std::to_underlying(PdmContactor::charge_mode)];
+    rpdo.pdm_battery_p = pdm_contactor_ref_state[std::to_underlying(PdmContactor::battery_p)];
+    rpdo.pdm_battery_n = pdm_contactor_ref_state[std::to_underlying(PdmContactor::battery_n)];
+    rpdo.pdm_front_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::front_bypass)];
+    rpdo.pdm_back_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::back_bypass)];
+    rpdo.pdm_aux_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::aux_bypass)];
     rpdo.pdm_charge_allow = pdm_contactor_ref_state[std::to_underlying(PdmContactor::charge_allow)];
-    rpdo.pdm_equip_bypass = pdm_contactor_ref_state[std::to_underlying(PdmContactor::equip_bypass)];
+    rpdo.pdm_charge_mode = pdm_contactor_ref_state[std::to_underlying(PdmContactor::charge_mode)];
 
     rpdo.counter = counter;
     counter = (counter + 1) % 4;
