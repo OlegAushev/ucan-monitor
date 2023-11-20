@@ -36,4 +36,25 @@ inline bool ToggleButton(const char* label, bool& toggle)
 }
 
 
+inline bool ToggleSmallButton(const char* label, bool& toggle)
+{
+    bool pressed = false;
+    const auto active = toggle;
+    if(active) {
+        SetButtonHighlightColor();
+    }
+
+    if(ImGui::SmallButton(label)) {
+        toggle = !toggle;
+        pressed = true;
+    }
+    
+    if(active) {
+        ImGui::PopStyleColor(3);
+    }
+
+    return pressed;
+}
+
+
 } // namespace ui

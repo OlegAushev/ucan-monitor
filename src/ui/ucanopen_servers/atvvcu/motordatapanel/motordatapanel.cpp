@@ -20,9 +20,9 @@ void MotorDataPanel::draw(bool& open) {
         ImGui::Begin(_window_titles[i].c_str(), &open);
 
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-        if (ImGui::BeginTable("tpdo_table", 2, flags)) {
+        if (ImGui::BeginTable("data_table", 2, flags)) {
             ImGui::TableSetupColumn("Parameter");
-            ImGui::TableSetupColumn("Value");
+            ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthFixed, 120.0f);
             ImGui::TableHeadersRow();
 
             auto data = _server->motordrive_data[i].load();
