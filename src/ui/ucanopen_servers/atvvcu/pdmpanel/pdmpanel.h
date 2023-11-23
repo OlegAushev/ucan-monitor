@@ -17,9 +17,9 @@ private:
     std::shared_ptr<::atvvcu::Server> _server;
 public:
     PdmPanel(std::shared_ptr<::atvvcu::Server> server,
-                    const std::string& menu_title,
-                    const std::string& window_title,
-                    bool show_by_default);
+             const std::string& menu_title,
+             const std::string& window_title,
+             bool show_by_default);
     virtual void draw(bool& open) override;
 private:
     void _draw_contactor_states();

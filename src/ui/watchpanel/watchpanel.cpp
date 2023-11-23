@@ -60,7 +60,7 @@ void WatchPanel::draw(bool& open) {
             ImGui::PopID();
 
             ImGui::TableSetColumnIndex(1);
-            ImGui::Text("%s [%s]", _watch_objects[row]->name.c_str(), _watch_objects[row]->unit.c_str());
+            ImGui::Text("%s[%s]", _watch_objects[row]->name.c_str(), _watch_objects[row]->unit.c_str());
             ImGui::TableSetColumnIndex(2);
             ImGui::TextUnformatted(_server->watch_service.string_value(_watch_objects[row]->subcategory, _watch_objects[row]->name).c_str());
         }

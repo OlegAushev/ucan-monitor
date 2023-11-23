@@ -1,6 +1,7 @@
 {
     "clangd.arguments": [
-        "--compile-commands-dir=build"
+        "--compile-commands-dir=build",
+        "--header-insertion=never"
     ],
 
     "files.associations": {
@@ -79,5 +80,45 @@
         "unordered_set": "cpp",
         "fstream": "cpp",
         "shared_mutex": "cpp"
+    },
+    "workbench.colorCustomizations": {
+        "[Visual Studio Light - C++]": {
+            "editor.background": "#F7F7F7",
+            "titleBar.activeBackground": "#DDDDDD",
+            "titleBar.inactiveBackground": "#DDDDDD",
+            "editorGroupHeader.tabsBackground": "#DDDDDD",
+            "editorGroupHeader.tabsBorder": "#00000000",
+            "tab.border": "#00000000",
+            "tab.inactiveBackground": "#E8E8E8",
+            "sideBar.background": "#DDDDDD",
+        },
+        "[Visual Studio 2017 Light - C++]": {
+            "editor.background": "#F7F7F7",
+            "titleBar.activeBackground": "#DDDDDD",
+            "titleBar.inactiveBackground": "#DDDDDD",
+            "editorGroupHeader.tabsBackground": "#DDDDDD",
+            "editorGroupHeader.tabsBorder": "#00000000",
+            "tab.border": "#00000000",
+            "tab.inactiveBackground": "#E8E8E8",
+            "sideBar.background": "#DDDDDD",
+        }
+    },
+    "editor.tokenColorCustomizations": {
+        "[Visual Studio Light - C++]": {
+            "textMateRules": [{
+                "scope": "variable.parameter",
+                "settings": {
+                    "foreground": "#000000"
+                }
+            }]
+        },
+        "[Visual Studio 2017 Light - C++]": {
+            "textMateRules": [{
+                "scope": "variable.parameter",
+                "settings": {
+                    "foreground": "#000000"
+                }
+            }]
+        }
     }
 }

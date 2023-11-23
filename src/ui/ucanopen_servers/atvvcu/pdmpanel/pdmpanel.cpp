@@ -1,9 +1,4 @@
 #include "pdmpanel.h"
-#include "icons/IconsMaterialDesignIcons.h"
-#include "imgui.h"
-#include "ucanopen_servers/atvvcu/atvvcu_def.h"
-#include <algorithm>
-#include <string_view>
 #include <ui/components/togglebutton.h>
 
 
@@ -12,9 +7,9 @@ namespace atvvcu {
 
 
 PdmPanel::PdmPanel(std::shared_ptr<::atvvcu::Server> server,
-                                 const std::string& menu_title,
-                                 const std::string& window_title,
-                                 bool show_by_default)
+                   const std::string& menu_title,
+                   const std::string& window_title,
+                   bool show_by_default)
         : View(menu_title, window_title, show_by_default)
         , _server(server)
 {}

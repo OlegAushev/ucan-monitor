@@ -10,7 +10,7 @@ namespace atvvcu {
 
 
 static constexpr int pdm_contactor_count = 7;
-enum class PdmContactor {
+enum class PdmContactor : unsigned int {
     battery_p,
     battery_n,
     front_bypass,
@@ -18,6 +18,36 @@ enum class PdmContactor {
     aux_bypass,
     charge_allow,
     charge_mode,
+};
+
+
+inline const std::vector<std::string> vcu_opmodes {
+    "normal",
+    "debug "
+};
+
+
+inline const std::vector<std::string> vcu_states = {
+    "idle    ",
+    "wait    ",
+    "standby ",
+    "powerup ",
+    "ready   ",
+    "start   ",
+    "run     ",
+    "stop    ",
+    "shutdown"
+};
+
+
+struct CobTpdo1 {
+    uint32_t vcu_state : 4;
+    uint32_t vcu_opmode : 1;
+    uint32_t _reserved1 : 27;
+
+    uint32_t _reserved2 : 24;
+    uint32_t counter : 2;
+    uint32_t _reserved3 : 6;
 };
 
 
@@ -50,6 +80,15 @@ struct CobTpdo3 {
 
     uint32_t counter : 4;
     uint32_t _reserved3 : 4;
+};
+
+
+struct CobRpdo1 {
+    uint32_t debug : 1;
+    uint32_t power : 1;
+    uint32_t run : 1;
+    uint32_t _reserved1 : 29;
+    uint32_t _reserved2 : 32;
 };
 
 

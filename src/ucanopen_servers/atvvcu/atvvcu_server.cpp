@@ -10,21 +10,21 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
         : ucanopen::Server(socket, node_id, name, object_dictionary)
         , ucanopen::SdoSubscriber(sdo_service)
 {
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo1, std::chrono::milliseconds(1100),
+            [this](ucanopen::can_payload payload) { this->_handle_tpdo1(payload); });
     tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1100),
             [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
     tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1100),
             [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
-    // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1100),
-    //         [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
     // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1100),
     //         [this](ucanopen::can_payload payload) { this->_handle_tpdo4(payload); });
 
+    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1, std::chrono::milliseconds(100),
+            [this](){ return this->_create_rpdo1(); });
     rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2, std::chrono::milliseconds(100),
             [this](){ return this->_create_rpdo2(); });
     rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3, std::chrono::milliseconds(50),
             [this](){ return this->_create_rpdo3(); });
-    // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3, std::chrono::milliseconds(100),
-    //         [this](){ return this->_create_rpdo3(); });
     // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo4, std::chrono::milliseconds(500),
     //         [this](){ return this->_create_rpdo4(); });
 }
@@ -48,6 +48,18 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
     }
 
     return ucanopen::FrameHandlingStatus::success;
+}
+
+
+void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
+    static_assert(sizeof(CobTpdo1) == 8);
+    CobTpdo1 tpdo = ucanopen::from_payload<CobTpdo1>(payload);
+
+    SystemData data_{};
+    data_.vcu_state = (tpdo.vcu_state < vcu_states.size()) ? std::string_view(vcu_states[tpdo.vcu_state]) : "unknown";
+    data_.vcu_opmode = (tpdo.vcu_opmode < vcu_opmodes.size()) ? std::string_view(vcu_opmodes[tpdo.vcu_opmode]) : "unknown";
+
+    system_data = data_;
 }
 
 
@@ -111,6 +123,22 @@ void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
     data.faultcode = tpdo.fault_code;
 
     motordrive_data[wheel] = data;
+}
+
+
+ucanopen::can_payload Server::_create_rpdo1() {
+    static_assert(sizeof(CobRpdo1) == 8);
+    static unsigned int counter = 0;
+    
+    CobRpdo1 rpdo{};
+    rpdo.debug = debug_enabled;
+    rpdo.power = power_enabled;
+    rpdo.run = run_enabled;
+
+    //rpdo.counter = counter;
+    counter = (counter + 1) % 4;
+
+    return ucanopen::to_payload<CobRpdo1>(rpdo);
 }
 
 

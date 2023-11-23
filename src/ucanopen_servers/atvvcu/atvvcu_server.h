@@ -21,6 +21,10 @@ class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 private:
 
 public:
+    std::atomic<bool> debug_enabled{false};
+    std::atomic<bool> power_enabled{false};
+    std::atomic<bool> run_enabled{false};
+
     std::array<std::atomic_bool, pdm_contactor_count> pdm_contactor_state{};
     std::array<std::atomic_bool, pdm_contactor_count> pdm_contactor_ref_state{};
 
@@ -46,10 +50,19 @@ public:
 
     std::array<std::atomic<MotorDriveData>, 4> motordrive_data;
 
+    struct SystemData {
+        std::string_view vcu_state;
+        std::string_view vcu_opmode;
+    };
+
+    std::atomic<SystemData> system_data;
+
 protected:
+    void _handle_tpdo1(const ucanopen::can_payload& payload);
     void _handle_tpdo2(const ucanopen::can_payload& payload);
     void _handle_tpdo3(const ucanopen::can_payload& payload);
 
+    ucanopen::can_payload _create_rpdo1();
     ucanopen::can_payload _create_rpdo2();
     ucanopen::can_payload _create_rpdo3();
 

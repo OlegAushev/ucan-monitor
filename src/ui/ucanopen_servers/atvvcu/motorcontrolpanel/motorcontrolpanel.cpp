@@ -1,7 +1,4 @@
 #include "motorcontrolpanel.h"
-#include "imgui.h"
-#include <algorithm>
-#include <string>
 #include <ui/components/togglebutton.h>
 
 
