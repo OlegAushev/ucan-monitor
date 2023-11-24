@@ -21,8 +21,16 @@ enum class PdmContactor : unsigned int {
 };
 
 
+enum class VcuOperationMode : unsigned int {
+    normal,
+    ctlemu,
+    debug,
+};
+
+
 inline const std::vector<std::string> vcu_opmodes {
     "normal",
+    "ctlemu",
     "debug "
 };
 
@@ -42,8 +50,8 @@ inline const std::vector<std::string> vcu_states = {
 
 struct CobTpdo1 {
     uint32_t vcu_state : 4;
-    uint32_t vcu_opmode : 1;
-    uint32_t _reserved1 : 27;
+    uint32_t vcu_opmode : 2;
+    uint32_t _reserved1 : 26;
 
     uint32_t _reserved2 : 24;
     uint32_t counter : 2;
@@ -84,10 +92,10 @@ struct CobTpdo3 {
 
 
 struct CobRpdo1 {
-    uint32_t debug : 1;
+    uint32_t opmode : 2;
     uint32_t power : 1;
     uint32_t run : 1;
-    uint32_t _reserved1 : 29;
+    uint32_t _reserved1 : 28;
     uint32_t _reserved2 : 32;
 };
 

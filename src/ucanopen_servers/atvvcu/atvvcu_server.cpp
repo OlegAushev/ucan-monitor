@@ -131,7 +131,7 @@ ucanopen::can_payload Server::_create_rpdo1() {
     static unsigned int counter = 0;
     
     CobRpdo1 rpdo{};
-    rpdo.debug = debug_enabled;
+    rpdo.opmode = std::to_underlying(vcu_opmode.load());
     rpdo.power = power_enabled;
     rpdo.run = run_enabled;
 

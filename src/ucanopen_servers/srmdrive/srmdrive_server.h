@@ -33,7 +33,7 @@ private:
     std::atomic<float> _speed_rpm_ref{0};
 
     std::atomic<bool> _manual_fieldctl{false};
-    std::atomic<::srmdrive::ControlLoop> _ctlloop{ControlLoop::closed};
+    std::atomic<ControlLoop> _ctlloop{ControlLoop::closed};
     std::atomic<float> _field_current_ref{0};
     std::atomic<float> _d_current_perunit_ref{0};
 

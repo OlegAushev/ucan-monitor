@@ -20,6 +20,14 @@ void SystemPanel::draw(bool& open) {
 
     _read_keyboard();
 
+    ImGui::RadioButton("Normal", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::normal));
+    ImGui::SameLine();
+    ImGui::RadioButton("Ctlemu", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::ctlemu));
+    ImGui::SameLine();
+    ImGui::RadioButton("Debug ", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::debug));
+   
+    _server->vcu_opmode = ::atvvcu::VcuOperationMode(_vcu_opmode);
+
     ImGui::TextUnformatted("Uptime[s]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("sys", "uptime").c_str());
@@ -33,13 +41,6 @@ void SystemPanel::draw(bool& open) {
     ImGui::TextUnformatted("VCU Mode:");
     ImGui::SameLine();
     ImGui::TextUnformatted(systemdata_tpdo.vcu_opmode.data());
-    ImGui::SameLine();
-    if (_debug_enabled) {
-        ui::ToggleSmallButton(ICON_MDI_BUG_STOP_OUTLINE, _debug_enabled);
-    } else {
-        ui::ToggleSmallButton(ICON_MDI_BUG_PLAY_OUTLINE, _debug_enabled);
-    }
-    _server->debug_enabled = _debug_enabled;
 
     // power switch
     ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);

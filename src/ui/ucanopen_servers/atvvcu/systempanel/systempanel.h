@@ -15,7 +15,7 @@ class SystemPanel : public View {
 private:
     std::shared_ptr<::atvvcu::Server> _server;
 
-    bool _debug_enabled{false};
+    int _vcu_opmode{std::to_underlying(::atvvcu::VcuOperationMode::normal)};
     bool _power_enabled{false};
     bool _run_enabled{false};
 public:

@@ -21,7 +21,7 @@ class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 private:
 
 public:
-    std::atomic<bool> debug_enabled{false};
+    std::atomic<VcuOperationMode> vcu_opmode{VcuOperationMode::normal};
     std::atomic<bool> power_enabled{false};
     std::atomic<bool> run_enabled{false};
 
