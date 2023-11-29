@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include <array>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -91,6 +92,15 @@ struct CobTpdo3 {
 };
 
 
+struct CobTpdo4 {
+    uint32_t errors;
+    uint16_t warnings;
+    uint16_t counter : 2;
+    uint16_t domain : 6;
+    uint16_t _reserved : 8;
+};
+
+
 struct CobRpdo1 {
     uint32_t opmode : 2;
     uint32_t power : 1;
@@ -161,16 +171,51 @@ inline const std::vector<std::string> syslog_messages = {
 };
 
 
-inline const std::vector<std::string_view> error_list = {
-    "can_bus_connection_lost",
+inline constexpr size_t error_domain_count = 3;
+inline const std::array<std::string_view, error_domain_count> error_domains = {
+    "sys", "ucanopen", "pdm"
 };
 
 
-inline const std::vector<std::string_view> warning_list = {
-    "can_bus_error",
-    "can_bus_overrun",
-    "can_bus_connection_lost",
-};
+inline const std::array<std::vector<std::string_view>, error_domain_count> error_list = {{
+    {
+        "emergency_stop",
+        "eeprom_error",
+    },
+    {
+        "can_bus_error",
+        "can_bus_overrun",
+        "can_bus_connection_lost",
+        "can_bus_checksum_mismatch",
+        "can_bus_counter_freeze",
+    },
+    {
+        "battery_p_failure",
+        "battery_n_failure",
+        "front_bypass_failure",
+        "back_bypass_failure",
+        "aux_bypass_failure",
+        "charge_allow_failure",
+        "charge_mode_failure", 
+    }
+}};
+
+
+inline const std::array<std::vector<std::string_view>, error_domain_count> warning_list = {{
+    {
+
+    },
+    {
+        "can_bus_error",
+        "can_bus_overrun",
+        "can_bus_connection_lost",
+        "can_bus_checksum_mismatch",
+        "can_bus_counter_freeze",     
+    },
+    {
+
+    }
+}};
 
 
 } // namespace atvvcu

@@ -25,6 +25,8 @@ public:
                 bool show_by_default);
     virtual void draw(bool& open) override;
 private:
+    void _draw_controls();
+    void _draw_status();
     void _read_keyboard();
 };
 

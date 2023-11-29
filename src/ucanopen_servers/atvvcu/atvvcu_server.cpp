@@ -16,8 +16,8 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
             [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
     tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1100),
             [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
-    // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1100),
-    //         [this](ucanopen::can_payload payload) { this->_handle_tpdo4(payload); });
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1100),
+            [this](ucanopen::can_payload payload) { this->_handle_tpdo4(payload); });
 
     rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1, std::chrono::milliseconds(100),
             [this](){ return this->_create_rpdo1(); });
@@ -123,6 +123,21 @@ void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
     data.faultcode = tpdo.fault_code;
 
     motordrive_data[wheel] = data;
+}
+
+
+void Server::_handle_tpdo4(const ucanopen::can_payload& payload) {
+    static_assert(sizeof(CobTpdo4) == 8);
+
+    CobTpdo4 tpdo = ucanopen::from_payload<CobTpdo4>(payload);
+
+    size_t domain = tpdo.domain;
+    if (domain >= error_domain_count) {
+        return;
+    }
+
+    errors[domain] = tpdo.errors;
+    warnings[domain] = tpdo.warnings;
 }
 
 

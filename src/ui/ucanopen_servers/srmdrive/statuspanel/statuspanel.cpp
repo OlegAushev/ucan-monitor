@@ -25,7 +25,7 @@ void StatusPanel::draw(bool& open) {
 
 void StatusPanel::_draw_error_table() {
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-    if (ImGui::BeginTable("error_table", 2, flags)) {
+    if (ImGui::BeginTable("error_table", 1, flags)) {
         const auto& error_list = _server->error_list();
         auto errors = _server->errors();
 
@@ -35,8 +35,8 @@ void StatusPanel::_draw_error_table() {
             ImGui::Text("%s", error_list[row].c_str());
             
             if ((errors & (1 << row)) != 0) {
-                ImGui::TableSetColumnIndex(1);
-                ImGui::TextUnformatted("X");
+                ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.65f));
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
             }
         }
 
@@ -47,7 +47,7 @@ void StatusPanel::_draw_error_table() {
 
 void StatusPanel::_draw_warning_table() {
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-    if (ImGui::BeginTable("warning_table", 2, flags)) {
+    if (ImGui::BeginTable("warning_table", 1, flags)) {
         const auto& warning_list = _server->warning_list();
         auto warnings = _server->warnings();
 
@@ -57,8 +57,8 @@ void StatusPanel::_draw_warning_table() {
             ImGui::Text("%s", warning_list[row].c_str());
             
             if ((warnings & (1 << row)) != 0) {
-                ImGui::TableSetColumnIndex(1);
-                ImGui::TextUnformatted("X");
+                ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.3f, 0.65f));
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
             }
         }
 

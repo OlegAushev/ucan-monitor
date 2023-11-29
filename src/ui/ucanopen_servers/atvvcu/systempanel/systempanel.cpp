@@ -19,7 +19,14 @@ void SystemPanel::draw(bool& open) {
     ImGui::Begin(_window_title.c_str(), &open);
 
     _read_keyboard();
+    _draw_controls();
+    _draw_status();
 
+    ImGui::End();
+}
+
+
+void SystemPanel::_draw_controls() {
     ImGui::RadioButton("Normal", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::normal));
     ImGui::SameLine();
     ImGui::RadioButton("Ctlemu", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::ctlemu));
@@ -53,8 +60,75 @@ void SystemPanel::draw(bool& open) {
     ImGui::SameLine();
     ImGui::TextDisabled("(F4)");
     _server->run_enabled = _run_enabled;
+}
 
-    ImGui::End();
+
+void SystemPanel::_draw_status() {
+    for (auto domain_idx = 0uz; domain_idx < ::atvvcu::error_domain_count; ++domain_idx) {
+        if (_server->errors[domain_idx] != 0) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+            ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+            ImGui::PopStyleColor();
+        } else if (_server->warnings[domain_idx] != 0) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.3f, 0.95f)));
+            ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+            ImGui::PopStyleColor();
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+            ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+            ImGui::PopStyleColor();         
+        }
+
+        ImGui::SameLine();
+        
+        if (ImGui::TreeNode(::atvvcu::error_domains[domain_idx].data())) {
+            // draw error table
+            if (::atvvcu::error_list[domain_idx].size() != 0) {
+                ImGui::SeparatorText("Errors");
+                static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+                if (ImGui::BeginTable("error_table", 1, flags)) {
+                    uint32_t errors = _server->errors[domain_idx];
+
+                    for (auto row = 0uz; row < ::atvvcu::error_list[domain_idx].size(); ++row) {
+                        ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::Text("%s", ::atvvcu::error_list[domain_idx][row].data());
+                        
+                        if ((errors & (1 << row)) != 0) {
+                            ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.65f));
+                            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                        }
+                    }
+
+                    ImGui::EndTable();
+                }
+            }
+
+            // draw warning table
+            if (::atvvcu::warning_list[domain_idx].size() != 0) {
+                ImGui::SeparatorText("Warnings");
+                static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+                if (ImGui::BeginTable("warning_table", 1, flags)) {
+                    uint32_t warnings = _server->warnings[domain_idx];
+
+                    for (auto row = 0uz; row < ::atvvcu::warning_list[domain_idx].size(); ++row) {
+                        ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::Text("%s", ::atvvcu::warning_list[domain_idx][row].data());
+                        
+                        if ((warnings & (1 << row)) != 0) {
+                            ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.3f, 0.65f));
+                            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                        }
+                    }
+
+                    ImGui::EndTable();
+                }
+            }
+
+            ImGui::TreePop();
+        }
+    }
 }
 
 

@@ -48,19 +48,23 @@ public:
         uint32_t faultcode;
     };
 
-    std::array<std::atomic<MotorDriveData>, 4> motordrive_data;
+    std::array<std::atomic<MotorDriveData>, 4> motordrive_data{};
 
     struct SystemData {
         std::string_view vcu_state;
         std::string_view vcu_opmode;
     };
 
-    std::atomic<SystemData> system_data;
+    std::atomic<SystemData> system_data{};
+
+    std::array<std::atomic_uint32_t, error_domain_count> errors{};
+    std::array<std::atomic_uint16_t, error_domain_count> warnings{};
 
 protected:
     void _handle_tpdo1(const ucanopen::can_payload& payload);
     void _handle_tpdo2(const ucanopen::can_payload& payload);
     void _handle_tpdo3(const ucanopen::can_payload& payload);
+    void _handle_tpdo4(const ucanopen::can_payload& payload);
 
     ucanopen::can_payload _create_rpdo1();
     ucanopen::can_payload _create_rpdo2();
