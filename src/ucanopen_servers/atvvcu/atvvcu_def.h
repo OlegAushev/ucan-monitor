@@ -40,12 +40,12 @@ inline const std::vector<std::string> vcu_states = {
     "idle    ",
     "wait    ",
     "standby ",
-    "powerup ",
+    "poweron ",
     "ready   ",
     "start   ",
     "run     ",
     "stop    ",
-    "shutdown"
+    "poweroff"
 };
 
 
@@ -196,7 +196,9 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> error
         "back_bypass_failure",
         "aux_bypass_failure",
         "charge_allow_failure",
-        "charge_mode_failure", 
+        "charge_mode_failure",
+        "poweron_failed",
+        "poweroff_failed"
     }
 }};
 
