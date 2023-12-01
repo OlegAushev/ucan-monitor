@@ -41,18 +41,18 @@ public:
 
     struct MotorDriveData {
         uint32_t errors;
-        std::string_view ctlmode;
+        std::string_view ctlmode{"..."};
         bool enabled;
-        std::string_view discharge;
-        std::string_view faultlevel;
+        std::string_view discharge{"..."};
+        std::string_view faultlevel{"..."};
         uint32_t faultcode;
     };
 
     std::array<std::atomic<MotorDriveData>, 4> motordrive_data{};
 
     struct SystemData {
-        std::string_view vcu_state;
-        std::string_view vcu_opmode;
+        std::string_view vcu_state{"..."};
+        std::string_view vcu_opmode{"..."};
     };
 
     std::atomic<SystemData> system_data{};

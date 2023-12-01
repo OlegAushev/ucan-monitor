@@ -81,8 +81,8 @@ struct CobTpdo3 {
     uint32_t ctlmode : 1;
     uint32_t controller_enabled : 1;
     uint32_t discharge : 2;
-    uint32_t controller_fault_level : 4;
-    uint32_t fault_code : 8;
+    uint32_t controller_faultlevel : 4;
+    uint32_t faultcode : 8;
     
     uint32_t wheel : 2;
     uint32_t _reserved2 : 6;
@@ -130,11 +130,11 @@ struct CobRpdo3 {
     uint32_t enable_controller : 1;
     uint32_t discharge : 1;
     uint32_t mainrelay : 1;
-    uint32_t vehicle_fault_level : 4;
+    uint32_t vehicle_faultlevel : 4;
     uint32_t gear : 2;
     uint32_t footbrake : 1;
     uint32_t handbrake : 1;
-    uint32_t fault_reset : 1;
+    uint32_t faultreset : 1;
     uint32_t _reserved1 : 3;
     int16_t speed_cmd : 16;
     int16_t torque_cmd : 16;

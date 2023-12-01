@@ -27,6 +27,8 @@ void SystemPanel::draw(bool& open) {
 
 
 void SystemPanel::_draw_controls() {
+    ImGui::SeparatorText("Control");
+
     ImGui::RadioButton("Normal", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::normal));
     ImGui::SameLine();
     ImGui::RadioButton("Ctlemu", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::ctlemu));
@@ -60,10 +62,20 @@ void SystemPanel::_draw_controls() {
     ImGui::SameLine();
     ImGui::TextDisabled("(F4)");
     _server->run_enabled = _run_enabled;
+
+    // misc actions
+    if (ImGui::TreeNode("Misc Actions")) {
+        if (ImGui::Button("Clear Errors", ImVec2(300, 0))) {
+            _server->exec("ctl", "sys", "clear_errors");
+        }
+        ImGui::TreePop();
+    }
 }
 
 
 void SystemPanel::_draw_status() {
+    ImGui::SeparatorText("Status");
+
     for (auto domain_idx = 0uz; domain_idx < ::atvvcu::error_domain_count; ++domain_idx) {
         if (_server->errors[domain_idx] != 0) {
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));

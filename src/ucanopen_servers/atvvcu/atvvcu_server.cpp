@@ -99,7 +99,7 @@ void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
         data.discharge = "failed";
     }
 
-    switch (tpdo.controller_fault_level) {
+    switch (tpdo.controller_faultlevel) {
     case 0:
         data.faultlevel = "no error";
         break;
@@ -120,7 +120,7 @@ void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
         break;
     }
 
-    data.faultcode = tpdo.fault_code;
+    data.faultcode = tpdo.faultcode;
 
     motordrive_data[wheel] = data;
 }
@@ -190,7 +190,7 @@ ucanopen::can_payload Server::_create_rpdo3() {
     rpdo.gear = motordrive_ref_gear[wheel];
     rpdo.footbrake = motordrive_ref_footbrake[wheel];
     rpdo.handbrake = motordrive_ref_handbrake[wheel];
-    rpdo.fault_reset = motordrive_ref_faultreset[wheel];
+    rpdo.faultreset = motordrive_ref_faultreset[wheel];
     rpdo.speed_cmd = motordrive_ref_speed[wheel];
     rpdo.torque_cmd = motordrive_ref_torque[wheel];
 
