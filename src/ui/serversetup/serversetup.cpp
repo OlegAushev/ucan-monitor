@@ -36,28 +36,28 @@ void ServerSetup::_draw_about() {
     ImGui::TextDisabled("Device Name: ");
     ImGui::SameLine();
     if (_device_name.empty()) {
-        _device_name = _server->read_string("info", "sys", "device_name", std::chrono::milliseconds(500));
+        _device_name = _server->read_string("info", "sys", "device_name", std::chrono::milliseconds(500)).value_or("n/a");
     }
     ImGui::TextUnformatted(_device_name.c_str());
 
     ImGui::TextDisabled("Hardware Version: ");
     ImGui::SameLine();
     if (_hardware_version.empty()) {
-        _hardware_version = _server->read_string("info", "sys", "hardware_version", std::chrono::milliseconds(500));
+        _hardware_version = _server->read_string("info", "sys", "hardware_version", std::chrono::milliseconds(500)).value_or("n/a");
     }
     ImGui::TextUnformatted(_hardware_version.c_str());
 
     ImGui::TextDisabled("Software Version: ");
     ImGui::SameLine();
     if (_software_version.empty()) {
-        _software_version = _server->read_string("info", "sys", "firmware_version", std::chrono::milliseconds(500));
+        _software_version = _server->read_string("info", "sys", "firmware_version", std::chrono::milliseconds(500)).value_or("n/a");
     }
     ImGui::TextUnformatted(_software_version.c_str());
 
     ImGui::TextDisabled("Device S/N: ");
     ImGui::SameLine();
     if (_device_sn.empty()) {
-        _device_sn = _server->read_numval("info", "sys", "serial_number", std::chrono::milliseconds(500));
+        _device_sn = _server->read_scalar("info", "sys", "serial_number", std::chrono::milliseconds(500)).value_or("n/a");
     }
     ImGui::TextUnformatted(_device_sn.c_str()); 
 }

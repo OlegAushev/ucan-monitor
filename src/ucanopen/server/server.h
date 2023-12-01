@@ -37,13 +37,32 @@ private:
     void _set_node_id(NodeId nodeId);
 
     std::vector<impl::FrameReceiverInterface*> _rx_services;
+
 public:
-    uint32_t read_serial_number();
-    std::string read_string(std::string_view category, std::string_view subcategory, std::string_view name,
-                            std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
-    std::string read_numval(std::string_view category, std::string_view subcategory, std::string_view name,
-                            std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
-    std::optional<ExpeditedSdoData> read_expdata(std::string_view category, std::string_view subcategory, std::string_view name,
+    std::optional<std::string> read_string(std::string_view category,
+                                           std::string_view subcategory,
+                                           std::string_view name,
+                                           std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
+    
+    std::optional<std::string> read_scalar(std::string_view category,
+                                           std::string_view subcategory,
+                                           std::string_view name,
+                                           std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
+    
+    std::optional<ExpeditedSdoData> read_expdata(std::string_view category,
+                                                 std::string_view subcategory,
+                                                 std::string_view name,
+                                                 std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
+    
+    std::optional<ExpeditedSdoData> exec_expdata(std::string_view category,
+                                                 std::string_view subcategory,
+                                                 std::string_view name,
+                                                 std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
+
+    std::optional<ExpeditedSdoData> write_expdata(std::string_view category,
+                                                 std::string_view subcategory,
+                                                 std::string_view name,
+                                                 ExpeditedSdoData sdo_data,
                                                  std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
 };
 

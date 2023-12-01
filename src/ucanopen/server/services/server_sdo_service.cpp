@@ -106,6 +106,13 @@ FrameHandlingStatus ServerSdoService::_handle_abort(const can_frame& frame) {
     bsclog::error("Aborted SDO {}::{}::{}::{}: {} (error code: 0x{:X})",
                     _server.name(), object.category, object.subcategory, object.name,
                     error_msg, abort_sdo.error_code);
+
+    ExpeditedSdo sdo(frame.data);
+    auto sdo_type = SdoType::abort;
+    for (auto& subscriber : _subscriber_list) {
+        subscriber->handle_sdo(entry, sdo_type, sdo.data);
+    }
+
     return FrameHandlingStatus::success;
 }
 

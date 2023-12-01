@@ -6,33 +6,11 @@ namespace utils {
 
 
 //----------------------------------------------------------------------------------------------------------------------
-uint32_t SerialNumberReader::get(std::future<void> signal_terminate) const {
-    _server.read("sys", "info", "serial_number");
-    while (signal_terminate.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout
-        && _serial_number == 0) {
-        /*WAIT*/
-    }
-    return _serial_number;
-}
-
-
-FrameHandlingStatus SerialNumberReader::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
-    if (sdo_type == SdoType::response_to_read
-     && entry->second.category == "sys"
-     && entry->second.subcategory == "info"
-     && entry->second.name == "serial_number") {
-        _serial_number = sdo_data.u32();
-        return FrameHandlingStatus::success;
-    }
-    return FrameHandlingStatus::irrelevant_frame;
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
 StringReader::StringReader(impl::Server& server, impl::SdoPublisher& publisher,
                            std::string_view category, std::string_view subcategory, std::string_view name)
         : SdoSubscriber(publisher)
-        , _server(server) {
+        , _server(server)
+{
     if (_server.find_od_entry(category, subcategory, name, _entry, traits::check_read_perm{}) != ODAccessStatus::success) {
         _ready = true;
         return;
@@ -52,7 +30,7 @@ StringReader::StringReader(impl::Server& server, impl::SdoPublisher& publisher,
 }
 
 
-std::string StringReader::get(std::future<void> signal_terminate) const {
+std::optional<std::string> StringReader::get(std::future<void> signal_terminate) const {
     while (signal_terminate.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout
        && !_ready) {
         /*WAIT*/
@@ -85,10 +63,11 @@ FrameHandlingStatus StringReader::handle_sdo(ODEntryIter entry, SdoType sdo_type
 
 
 //----------------------------------------------------------------------------------------------------------------------
-NumvalReader::NumvalReader(impl::Server& server, impl::SdoPublisher& publisher,
+ScalarReader::ScalarReader(impl::Server& server, impl::SdoPublisher& publisher,
                            std::string_view category, std::string_view subcategory, std::string_view name)
         : SdoSubscriber(publisher)
-        , _server(server) {
+        , _server(server)
+{
     if (_server.find_od_entry(category, subcategory, name, _entry, traits::check_read_perm{}) != ODAccessStatus::success) {
         _ready = true;
         return;
@@ -108,7 +87,7 @@ NumvalReader::NumvalReader(impl::Server& server, impl::SdoPublisher& publisher,
 }
 
 
-std::string NumvalReader::get(std::future<void> signal_terminate) const {
+std::optional<std::string> ScalarReader::get(std::future<void> signal_terminate) const {
     while (signal_terminate.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout
        && !_ready) {
         /*WAIT*/
@@ -117,9 +96,11 @@ std::string NumvalReader::get(std::future<void> signal_terminate) const {
 }
 
 
-FrameHandlingStatus NumvalReader::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
-    if (sdo_type == SdoType::response_to_read && entry == _entry) {
-        _result = sdo_data.to_string(_entry->second.data_type);
+FrameHandlingStatus ScalarReader::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
+    if (entry == _entry) {
+        if (sdo_type == SdoType::response_to_read) {
+            _result = sdo_data.to_string(_entry->second.data_type);
+        }
         _ready = true;
         return FrameHandlingStatus::success;
     }
@@ -131,7 +112,8 @@ FrameHandlingStatus NumvalReader::handle_sdo(ODEntryIter entry, SdoType sdo_type
 ExpeditedSdoDataReader::ExpeditedSdoDataReader(impl::Server& server, impl::SdoPublisher& publisher,
                                                std::string_view category, std::string_view subcategory, std::string_view name)
         : SdoSubscriber(publisher)
-        , _server(server) {
+        , _server(server)
+{
     if (_server.find_od_entry(category, subcategory, name, _entry, traits::check_read_perm{}) != ODAccessStatus::success) {
         _ready = true;
         return;
@@ -161,8 +143,91 @@ std::optional<ExpeditedSdoData> ExpeditedSdoDataReader::get(std::future<void> si
 
 
 FrameHandlingStatus ExpeditedSdoDataReader::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
-    if (sdo_type == SdoType::response_to_read && entry == _entry) {
-        _result = sdo_data;
+    if (entry == _entry) {
+        if (sdo_type == SdoType::response_to_read) {
+            _result = sdo_data;
+        }
+        _ready = true;
+        return FrameHandlingStatus::success;
+    }
+    return FrameHandlingStatus::irrelevant_frame;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+Executor::Executor(impl::Server& server, impl::SdoPublisher& publisher,
+                   std::string_view category, std::string_view subcategory, std::string_view name)
+        : SdoSubscriber(publisher)
+        , _server(server)\
+{
+    if (_server.exec(category, subcategory, name) != ODAccessStatus::success) {
+        _ready = true;
+        return;
+    }	
+}
+
+
+std::optional<ExpeditedSdoData> Executor::get(std::future<void> signal_terminate) const {
+    while (signal_terminate.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout
+       && !_ready) {
+        /*WAIT*/
+    }
+    return _result;
+}
+
+
+FrameHandlingStatus Executor::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
+    if (entry == _entry) {
+        if (sdo_type == SdoType::response_to_exec) {
+            _result = sdo_data;
+        }
+        _ready = true;
+        return FrameHandlingStatus::success;
+    }
+    return FrameHandlingStatus::irrelevant_frame;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+ExpeditedSdoDataWriter::ExpeditedSdoDataWriter(impl::Server& server, impl::SdoPublisher& publisher,
+                                               std::string_view category, std::string_view subcategory, std::string_view name,
+                                               ExpeditedSdoData sdo_data)
+        : SdoSubscriber(publisher)
+        , _server(server)
+{
+    if (_server.find_od_entry(category, subcategory, name, _entry, traits::check_write_perm{}) != ODAccessStatus::success) {
+        _ready = true;
+        return;
+    }
+
+    const auto& [key, object] = *_entry;
+
+    if (object.data_type == OD_EXEC || object.data_type == OD_STRING) {
+        _ready = true;
+        return;
+    }
+
+    if (_server.write(category, subcategory, name, sdo_data) != ODAccessStatus::success) {
+        _ready = true;
+        return;
+    }	
+}
+
+
+std::optional<ExpeditedSdoData> ExpeditedSdoDataWriter::get(std::future<void> signal_terminate) const {
+    while (signal_terminate.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout
+       && !_ready) {
+        /*WAIT*/
+    }
+    return _result;
+}
+
+
+FrameHandlingStatus ExpeditedSdoDataWriter::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
+    if (entry == _entry) {
+        if (sdo_type == SdoType::response_to_write) {
+            _result = sdo_data;
+        }
         _ready = true;
         return FrameHandlingStatus::success;
     }
