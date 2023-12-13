@@ -21,7 +21,7 @@ set(post_configure_file ${post_configure_dir}/git_info.cpp)
 #
 #
 function(GitInfoWrite git_describe git_hash git_diff git_branch)
-	file(WRITE ${CMAKE_BINARY_DIR}/git-state.txt
+	file(WRITE ${CMAKE_BINARY_DIR}/git-info.txt
 		${git_describe}\n
 		${git_hash}\n
 		${git_diff}\n
@@ -73,7 +73,7 @@ function(GitInfoCheck)
 		file(COPY ${pre_configure_dir}/git_info.h DESTINATION ${post_configure_dir})
 	endif()
 
-	GitInfoWrite(${GIT_DESCRIBE} ${GIT_HASH} "${GIT_DIFF}" ${GIT_BRANCH})
+	GitInfoWrite("${GIT_DESCRIBE}" "${GIT_HASH}" "${GIT_DIFF}" "${GIT_BRANCH}")
 	configure_file(${pre_configure_file} ${post_configure_file} @ONLY)
 endfunction()
 
