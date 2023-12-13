@@ -17,7 +17,7 @@ private:
 
     size_t _selected_interface_idx{0};
     size_t _selected_bitrate_idx{0};
-    can::Error _error{can::Error::none};
+    can::Status _can_status{can::Status::ok};
 
     int _client_sync_period{200};
     int _server_watch_period{10};

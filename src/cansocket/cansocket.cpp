@@ -29,7 +29,7 @@ Socket::Socket() {
     }
 
     if (script_result.exitcode == 0) {
-        if (_create_socket("can0") != Error::none) {
+        if (_create_socket("can0") != Status::ok) {
             _socket = -1;
         }
     }
@@ -43,19 +43,19 @@ Socket::~Socket() {
 }
 
 
-Error Socket::_create_socket(const std::string& interface) {
+Status Socket::_create_socket(const std::string& interface) {
     /* CREATE SOCKET */
     bsclog::info("Creating CAN socket...");
     _socket = socket(PF_CAN, SOCK_RAW, CAN_RAW);
     if (_socket < 0) {
         bsclog::error("Failed to create CAN socket.");
-        return Error::socket_creation_failed;
+        return Status::socket_creation_failed;
     }
 
     std::strcpy(_ifr.ifr_name, interface.c_str());
     if (ioctl(_socket, SIOCGIFINDEX, &_ifr) < 0) {
         bsclog::error("Failed to retrieve CAN interface.");
-        return Error::interface_retrieving_failed;
+        return Status::interface_retrieving_failed;
     }
 
     memset(&_addr, 0, sizeof(_addr));
@@ -69,23 +69,23 @@ Error Socket::_create_socket(const std::string& interface) {
 
     if (bind(_socket, (sockaddr*)&_addr, sizeof(_addr)) < 0) {
         bsclog::error("Failed to bind CAN socket.");
-        return Error::socket_binding_failed;
+        return Status::socket_binding_failed;
     }
 
     _recv_fd.fd = _socket;
     _recv_fd.events = POLLIN;
 
     bsclog::success("Created CAN socket.");
-    return Error::none;
+    return Status::ok;
 }
 
 
-Error Socket::connect(const std::string& interface, const std::string& bitrate) {
+Status Socket::connect(const std::string& interface, const std::string& bitrate) {
     _socket = -1;
 
     if (std::find(detail::interface_list.begin(), detail::interface_list.end(), interface) == detail::interface_list.end()
             || std::find(detail::bitrate_list.begin(), detail::bitrate_list.end(), bitrate) == detail::bitrate_list.end()) {
-        return Error::invalid_argument;
+        return Status::invalid_argument;
     }
 
     std::lock_guard<std::mutex> lock1(_send_mtx);
@@ -97,7 +97,7 @@ Error Socket::connect(const std::string& interface, const std::string& bitrate) 
     std::filesystem::path script_path = _find_script("socketcan_enable.sh");
     if (script_path.empty()) {
         bsclog::error("Failed to find SocketCAN enabling script.");
-        return Error::script_not_found;
+        return Status::script_not_found;
     }
 
     bsclog::success("Found SocketCAN enabling script: {}", script_path.string());
@@ -113,26 +113,26 @@ Error Socket::connect(const std::string& interface, const std::string& bitrate) 
         bsclog::log("{}", log_str);
     }
 
-    Error error;
+    Status error;
     switch (pkexec_result.exitcode) {
     case 0:
-        error = Error::none;
+        error = Status::ok;
         break;
     case 1:
-        error = Error::invalid_argument;
+        error = Status::invalid_argument;
         break;
     case 2:
-        error = Error::device_not_found;
+        error = Status::device_not_found;
         break;
     case 3:
-        error = Error::socketcan_init_failed;
+        error = Status::socketcan_init_failed;
         break;
     default:
-        error = Error::script_exec_failed;
+        error = Status::script_exec_failed;
         break;
     }
 
-    if (error != Error::none) {
+    if (error != Status::ok) {
         bsclog::error("Failed to enable SocketCAN interface. Error code: {}", std::to_underlying(error));
         return error;
     }
@@ -141,10 +141,10 @@ Error Socket::connect(const std::string& interface, const std::string& bitrate) 
 }
 
 
-Error Socket::disconnect() {
+Status Socket::disconnect() {
     if (_socket < 0) {
         bsclog::error("Failed to close CAN socket: no socket.");
-        return Error::socket_closed;
+        return Status::socket_closed;
     }
 
     std::lock_guard<std::mutex> lock1(_send_mtx);
@@ -152,11 +152,11 @@ Error Socket::disconnect() {
 
     if (close(_socket) < 0) {
         bsclog::error("Failed to close CAN socket.");
-        return Error::socket_closing_failed;
+        return Status::socket_closing_failed;
     } else {
         bsclog::success("Closed socket.");
         _socket = -1;
-        return Error::none;
+        return Status::ok;
     }
 }
 
@@ -173,23 +173,23 @@ std::filesystem::path Socket::_find_script(std::filesystem::path name) {
 }
 
 
-Error Socket::send(const can_frame& frame) {
+Status Socket::send(const can_frame& frame) {
     if (_socket < 0) {
-        return Error::socket_closed;
+        return Status::socket_closed;
     }
 
     std::lock_guard<std::mutex> lock(_send_mtx);
 
     if (::write(_socket, &frame, sizeof(can_frame)) != sizeof(can_frame)) {
-        return Error::send_error;
+        return Status::send_error;
     }
-    return Error::none;
+    return Status::ok;
 }
 
 
-Error Socket::recv(can_frame& frame) {
+Status Socket::recv(can_frame& frame) {
     if (_socket < 0) {
-        return Error::socket_closed;
+        return Status::socket_closed;
     }
 
     int byte_count;
@@ -199,17 +199,17 @@ Error Socket::recv(can_frame& frame) {
     int ret = poll(&_recv_fd, 1, _recv_timeout.count());
     switch (ret) {
     case -1:
-        return Error::recv_error;
+        return Status::recv_error;
         break;
     case 0:
-        return Error::recv_timeout;
+        return Status::recv_timeout;
         break;
     default:
         byte_count = ::read(_socket, &frame, sizeof(can_frame));
         if (byte_count < 0) {
-            return Error::recv_error;
+            return Status::recv_error;
         } else {
-            return Error::none;
+            return Status::ok;
         }
         break;
     }

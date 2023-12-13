@@ -27,8 +27,8 @@
 namespace can {
 
 
-enum class Error {
-    none,
+enum class Status {
+    ok,
     invalid_argument,
     script_not_found,
     device_not_found,
@@ -74,14 +74,14 @@ public:
     Socket(const Socket& other) = delete;
     Socket& operator=(const Socket& other) = delete;
 
-    Error connect(const std::string& interface, const std::string& bitrate);
-    Error disconnect();
+    Status connect(const std::string& interface, const std::string& bitrate);
+    Status disconnect();
 
-    Error send(const can_frame& frame);
-    Error recv(can_frame& frame);
+    Status send(const can_frame& frame);
+    Status recv(can_frame& frame);
 
 private:
-    Error _create_socket(const std::string& interface);
+    Status _create_socket(const std::string& interface);
     std::filesystem::path _find_script(std::filesystem::path name);
 
     std::string exec(const char* cmd) {

@@ -81,8 +81,8 @@ void Options::_draw_socketcan_tab() {
     ImGui::NewLine();
 
     if (ImGui::Button("Disconnect", ImVec2(120, 0))) {
-        _error = _socket->disconnect();
-        if (_error == can::Error::none) {
+        _can_status = _socket->disconnect();
+        if (_can_status == can::Status::ok) {
             ImGui::OpenPopup("CAN Bus setup success");
         } else {
             ImGui::OpenPopup("CAN Bus setup fail");
@@ -92,8 +92,8 @@ void Options::_draw_socketcan_tab() {
     ImGui::SameLine();
 
     if (ImGui::Button("Connect", ImVec2(120, 0))) {
-        _error = _socket->connect(can::detail::interface_list[_selected_interface_idx], can::detail::bitrate_list[_selected_bitrate_idx]);
-        if (_error == can::Error::none) {
+        _can_status = _socket->connect(can::detail::interface_list[_selected_interface_idx], can::detail::bitrate_list[_selected_bitrate_idx]);
+        if (_can_status == can::Status::ok) {
             ImGui::OpenPopup("CAN Bus setup success");
         } else {
             ImGui::OpenPopup("CAN Bus setup fail");
@@ -108,7 +108,7 @@ void Options::_draw_socketcan_tab() {
 
     if (ImGui::BeginPopup("CAN Bus setup fail"))
     {
-        ImGui::Text("Fail. Error code: %d", std::to_underlying(_error));
+        ImGui::Text("Fail. Error code: %d", std::to_underlying(_can_status));
         ImGui::EndPopup();
     }
 }
