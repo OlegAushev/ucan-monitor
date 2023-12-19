@@ -159,6 +159,7 @@ inline const std::vector<std::string> error_list = {
     "ia_sensor_fault",
     "if_sensor_fault",
     "eeprom_error",
+    "resolver_failure"
 };
 
 
