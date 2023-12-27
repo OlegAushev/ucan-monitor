@@ -17,7 +17,7 @@ class MainView {
 private:
     std::shared_ptr<ui::Options> _options;
     std::vector<std::shared_ptr<View>> _views;
-    std::vector<std::shared_ptr<Tool>> _tools;
+    std::vector<std::shared_ptr<View>> _tools;
     std::vector<std::shared_ptr<WatchPlot>> _watchplots;
     int _watchplot_count = 1;
 
@@ -28,6 +28,7 @@ private:
 public:
     MainView(std::shared_ptr<Options> options,
              const std::vector<std::shared_ptr<View>>& views,
+             const std::vector<std::shared_ptr<View>>& tools,
              const std::vector<std::shared_ptr<WatchPlot>>& watchplots);
     void draw();
     bool should_close() { return _should_close; }

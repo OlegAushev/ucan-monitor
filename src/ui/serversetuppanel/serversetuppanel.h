@@ -21,7 +21,7 @@ public:
     ServerSetupPanel(std::shared_ptr<ucanopen::Server> server,
                 const std::string& menu_title,
                 const std::string& window_title,
-                bool show_by_default);
+                bool open);
     virtual void draw() override;
 private:
     void _draw_about();

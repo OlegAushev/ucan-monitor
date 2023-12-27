@@ -9,14 +9,14 @@ namespace atvvcu {
 PdmPanel::PdmPanel(std::shared_ptr<::atvvcu::Server> server,
                    const std::string& menu_title,
                    const std::string& window_title,
-                   bool show_by_default)
-        : View(menu_title, window_title, show_by_default)
+                   bool open)
+        : View(menu_title, window_title, open)
         , _server(server)
 {}
 
 
 void PdmPanel::draw() {
-    ImGui::Begin(_window_title.c_str(), &show);
+    ImGui::Begin(_window_title.c_str(), &is_open);
 
     // ToggleButton(ICON_MDI_BATTERY_POSITIVE      " Battery +   ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::battery_p)]);
     // ToggleButton(ICON_MDI_BATTERY_NEGATIVE      " Battery -   ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::battery_n)]);

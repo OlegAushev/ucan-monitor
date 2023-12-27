@@ -10,7 +10,7 @@ Log::Log() : View(ICON_MDI_MESSAGE_FAST_OUTLINE" Log", "Log", true) {
 
 
 void Log::draw() {
-    ImGui::Begin(_window_title.c_str(), &show);
+    ImGui::Begin(_window_title.c_str(), &is_open);
 
     if (ImGui::BeginChild("Log Scrolling Region", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
         //ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing

@@ -134,6 +134,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     auto ucanopen_client = std::make_shared<ucanopen::Client>(ucanopen::NodeId(127), can_socket);
 
     std::vector<std::shared_ptr<ui::View>> views;
+    std::vector<std::shared_ptr<ui::View>> tools;
     views.push_back(gui_log);
 
     std::shared_ptr<ui::ServerSetupPanel> serversetuppanel;
@@ -187,7 +188,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
     // GUI Creation
     auto options = std::make_shared<ui::Options>(can_socket, ucanopen_client);
-    auto mainview = std::make_shared<ui::MainView>(options, views, watchplots);
+    auto mainview = std::make_shared<ui::MainView>(options, views, tools, watchplots);
 
     // Main View Loop
     while (!glfwWindowShouldClose(window) && !mainview->should_close()) {

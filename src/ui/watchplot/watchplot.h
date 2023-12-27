@@ -35,7 +35,7 @@ public:
     WatchPlot(std::shared_ptr<::ucanopen::Server> server,
               const std::string& menu_title,
               const std::string& window_title,
-              bool show_by_default);
+              bool open);
     virtual void draw();
     std::shared_ptr<::ucanopen::Server> server() const { return _server; };
 private:

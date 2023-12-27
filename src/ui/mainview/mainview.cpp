@@ -8,9 +8,11 @@ namespace ui {
 
 MainView::MainView(std::shared_ptr<ui::Options> options,
                    const std::vector<std::shared_ptr<View>>& views,
+                   const std::vector<std::shared_ptr<View>>& tools,
                    const std::vector<std::shared_ptr<WatchPlot>>& watchplots)
         : _options(options)
         , _views(views)
+        , _tools(tools)
         , _watchplots(watchplots)
 {}
 
@@ -41,19 +43,19 @@ void MainView::draw() {
     _draw_menubar();
 
     for (auto& view : _views) {
-        if (view->show) {
+        if (view->is_open) {
             view->draw();
         }
     }
 
     for (auto& tool : _tools) {
-        if (tool->show) {
+        if (tool->is_open) {
             tool->draw();
         }
     }
 
     for (auto& watchplot : _watchplots) {
-        if (watchplot->show) {
+        if (watchplot->is_open) {
             watchplot->draw();
         }
     }
@@ -79,14 +81,14 @@ void MainView::_draw_menubar() {
 
         if (ImGui::BeginMenu("View")) {
             for (auto& view : _views) {
-                ImGui::MenuItem(view->menu_title().c_str(), nullptr, &view->show);
+                ImGui::MenuItem(view->menu_title().c_str(), nullptr, &view->is_open);
             }
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Tools")) {
             for (auto& tool : _tools) {
-                ImGui::MenuItem(tool->menu_title().c_str(), nullptr, &tool->show);
+                ImGui::MenuItem(tool->menu_title().c_str(), nullptr, &tool->is_open);
             }
             ImGui::MenuItem(ICON_MDI_HELP" Example", nullptr, &_show_demo);
             ImGui::EndMenu();
@@ -95,7 +97,7 @@ void MainView::_draw_menubar() {
         if (ImGui::BeginMenu("Plots")) {
             if (ImGui::BeginMenu(ICON_MDI_CHART_LINE" Watch")) {
                 for (auto& watchplot : _watchplots) {
-                    ImGui::MenuItem(watchplot->menu_title().c_str(), nullptr, &watchplot->show);
+                    ImGui::MenuItem(watchplot->menu_title().c_str(), nullptr, &watchplot->is_open);
                 }
                 // ImGui::Checkbox("Enabled##", &_show_watchplots);
                 // ImGui::PushItemWidth(80);

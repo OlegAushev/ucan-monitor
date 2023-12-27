@@ -10,14 +10,14 @@ namespace srmdrive {
 ControlPanel::ControlPanel(std::shared_ptr<::srmdrive::Server> server,
                            const std::string& menu_title,
                            const std::string& window_title,
-                           bool show_by_default)
-        : View(menu_title, window_title, show_by_default)
+                           bool open)
+        : View(menu_title, window_title, open)
         , _server(server)
 {}
 
 
 void ControlPanel::draw() {
-    ImGui::Begin(_window_title.c_str(), &show);
+    ImGui::Begin(_window_title.c_str(), &is_open);
 
     _read_keyboard();
 
