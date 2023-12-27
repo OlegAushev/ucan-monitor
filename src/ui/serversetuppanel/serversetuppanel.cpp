@@ -1,10 +1,10 @@
-#include "serversetup.h"
+#include "serversetuppanel.h"
 
 
 namespace ui {
 
 
-ServerSetup::ServerSetup(std::shared_ptr<ucanopen::Server> server,
+ServerSetupPanel::ServerSetupPanel(std::shared_ptr<ucanopen::Server> server,
                          const std::string& menu_title,
                          const std::string& window_title,
                          bool show_by_default)
@@ -13,7 +13,7 @@ ServerSetup::ServerSetup(std::shared_ptr<ucanopen::Server> server,
 {}
 
 
-void ServerSetup::draw(bool& open) {
+void ServerSetupPanel::draw(bool& open) {
     ImGui::Begin(_window_title.c_str(), &open);
 
     _draw_about();
@@ -24,7 +24,7 @@ void ServerSetup::draw(bool& open) {
 }
 
 
-void ServerSetup::_draw_about() {
+void ServerSetupPanel::_draw_about() {
     ImGui::SeparatorText("About");
     if (ImGui::Button(ICON_MDI_REFRESH " Refresh##about")) {
         _device_name.clear();
@@ -63,7 +63,7 @@ void ServerSetup::_draw_about() {
 }
 
 
-void ServerSetup::_draw_setup() {
+void ServerSetupPanel::_draw_setup() {
     ImGui::SeparatorText("Setup");
 
     const auto& objects = _server->config_service.objects();
@@ -230,7 +230,7 @@ void ServerSetup::_draw_setup() {
 }
 
 
-void ServerSetup::_draw_popups() {
+void ServerSetupPanel::_draw_popups() {
     // Always center this window when appearing
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));

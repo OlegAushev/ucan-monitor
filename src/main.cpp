@@ -13,7 +13,7 @@
 #include <ui/mainview/mainview.h>
 #include <ui/log/log.h>
 #include <ui/serverselector/serverselector.h>
-#include <ui/serversetup/serversetup.h>
+#include <ui/serversetuppanel/serversetuppanel.h>
 #include <ui/watchpanel/watchpanel.h>
 #include <ui/watchplot/watchplot.h>
 
@@ -137,7 +137,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     std::vector<std::shared_ptr<ui::View>> views;
     views.push_back(gui_log);
 
-    std::shared_ptr<ui::ServerSetup> serversetup;
+    std::shared_ptr<ui::ServerSetupPanel> serversetuppanel;
     std::shared_ptr<ui::WatchPanel> watchpanel;
     std::shared_ptr<ui::WatchPlot> watchplot;
 
@@ -150,13 +150,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         watchpanel = std::make_shared<ui::WatchPanel>(srmdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
         auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
         auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", true);
-        serversetup = std::make_shared<ui::ServerSetup>(srmdrive_server, ICON_MDI_TOOLS" Setup", "Setup", false);
+        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(srmdrive_server, ICON_MDI_TOOLS" Setup", "Setup", false);
         
         views.push_back(controlpanel);
         views.push_back(watchpanel);
         views.push_back(datapanel);
         views.push_back(statuspanel);
-        views.push_back(serversetup);
+        views.push_back(serversetuppanel);
 
         watchplot = std::make_shared<ui::WatchPlot>(srmdrive_server);
     } else if (server_name == "atv-vcu") {

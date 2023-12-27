@@ -9,7 +9,7 @@
 namespace ui {
 
 
-class ServerSetup : public View {
+class ServerSetupPanel : public View {
 private:
     std::shared_ptr<ucanopen::Server> _server;
 
@@ -18,7 +18,7 @@ private:
     std::string _software_version;
     std::string _device_sn;
 public:
-    ServerSetup(std::shared_ptr<ucanopen::Server> server,
+    ServerSetupPanel(std::shared_ptr<ucanopen::Server> server,
                 const std::string& menu_title,
                 const std::string& window_title,
                 bool show_by_default);
