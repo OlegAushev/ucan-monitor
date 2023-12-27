@@ -15,9 +15,9 @@ MotorDataPanel::MotorDataPanel(std::shared_ptr<::atvvcu::Server> server,
 {}
 
 
-void MotorDataPanel::draw(bool& open) {
+void MotorDataPanel::draw() {
     for (size_t i = 0; i < 4; ++i) {
-        ImGui::Begin(_window_titles[i].c_str(), &open);
+        ImGui::Begin(_window_titles[i].c_str(), &show);
 
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
         if (ImGui::BeginTable("data_table", 2, flags)) {

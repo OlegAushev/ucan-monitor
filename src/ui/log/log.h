@@ -18,7 +18,7 @@ private:
     std::vector<std::string> _lines;
 public:
     Log();
-    void draw(bool& open);
+    void draw();
     std::shared_ptr<std::stringstream> stream() { return _stream; }
 };
 

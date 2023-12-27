@@ -42,13 +42,13 @@ void MainView::draw() {
 
     for (auto& view : _views) {
         if (view->show) {
-            view->draw(view->show);
+            view->draw();
         }
     }
 
     for (auto& tool : _tools) {
         if (tool->show) {
-            tool->draw(tool->show);
+            tool->draw();
         }
     }
 
@@ -93,20 +93,23 @@ void MainView::_draw_menubar() {
         }
 
         if (ImGui::BeginMenu("Plots")) {
-            // if (ImGui::BeginMenu(ICON_MDI_CHART_LINE" Watch")) {
-            //     ImGui::Checkbox("Enabled##", &_show_watchplots);
-            //     ImGui::PushItemWidth(80);
-            //     if (ImGui::InputInt("Number Of Plots##", &_watchplot_count)) {
-            //         _watchplot_count = std::clamp(_watchplot_count, 1, 4);
-            //         if (size_t(_watchplot_count) > _watchplots.size()) {
-            //             _watchplots.push_back(std::make_shared<WatchPlot>(_watchplots.front()->server()));
-            //         } else if (size_t(_watchplot_count) < _watchplots.size()) {
-            //             _watchplots.pop_back();
-            //         }
-            //     }
-            //     ImGui::PopItemWidth();
-            //     ImGui::EndMenu();
-            // }
+            if (ImGui::BeginMenu(ICON_MDI_CHART_LINE" Watch")) {
+                for (auto& watchplot : _watchplots) {
+                    ImGui::MenuItem(watchplot->menu_title().c_str(), nullptr, &watchplot->show);
+                }
+                // ImGui::Checkbox("Enabled##", &_show_watchplots);
+                // ImGui::PushItemWidth(80);
+                // if (ImGui::InputInt("Number Of Plots##", &_watchplot_count)) {
+                //     _watchplot_count = std::clamp(_watchplot_count, 1, 4);
+                //     if (size_t(_watchplot_count) > _watchplots.size()) {
+                //         _watchplots.push_back(std::make_shared<WatchPlot>(_watchplots.front()->server()));
+                //     } else if (size_t(_watchplot_count) < _watchplots.size()) {
+                //         _watchplots.pop_back();
+                //     }
+                // }
+                // ImGui::PopItemWidth();
+                ImGui::EndMenu();
+            }
 
             ImGui::EndMenu();
         }

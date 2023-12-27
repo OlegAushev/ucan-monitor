@@ -22,7 +22,7 @@ WatchPlot::WatchPlot(std::shared_ptr<::ucanopen::Server> server,
 
 
 void WatchPlot::draw() {
-    ImGui::Begin(_header_id.c_str(), nullptr, ImGuiWindowFlags_MenuBar);
+    ImGui::Begin(_window_title.c_str(), &show, ImGuiWindowFlags_MenuBar);
 
     _draw_menubar();
     //_draw_panel();

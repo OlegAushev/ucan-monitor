@@ -14,8 +14,8 @@ StatusPanel::StatusPanel(std::shared_ptr<::srmdrive::Server> server,
 {}
 
 
-void StatusPanel::draw(bool& open) {
-    ImGui::Begin(_window_title.c_str(), &open);
+void StatusPanel::draw() {
+    ImGui::Begin(_window_title.c_str(), &show);
     _draw_error_table();
     ImGui::NewLine();
     _draw_warning_table();

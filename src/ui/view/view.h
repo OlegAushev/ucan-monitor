@@ -20,7 +20,7 @@ public:
             , show(show_by_default)
     {}
 
-    virtual void draw(bool& open) = 0;
+    virtual void draw() = 0;
 
     bool show;
     const std::string& menu_title() const { return _menu_title; }

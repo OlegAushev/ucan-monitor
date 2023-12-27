@@ -16,8 +16,8 @@ ControlPanel::ControlPanel(std::shared_ptr<::srmdrive::Server> server,
 {}
 
 
-void ControlPanel::draw(bool& open) {
-    ImGui::Begin(_window_title.c_str(), &open);
+void ControlPanel::draw() {
+    ImGui::Begin(_window_title.c_str(), &show);
 
     _read_keyboard();
 

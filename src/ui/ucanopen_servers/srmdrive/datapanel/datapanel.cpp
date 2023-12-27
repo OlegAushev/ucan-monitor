@@ -15,8 +15,8 @@ DataPanel::DataPanel(std::shared_ptr<::srmdrive::Server> server,
 {}
 
 
-void DataPanel::draw(bool& open) {
-    ImGui::Begin(_window_title.c_str(), &open);
+void DataPanel::draw() {
+    ImGui::Begin(_window_title.c_str(), &show);
     _draw_tpdo1_table();
     ImGui::NewLine();
     _draw_tpdo2_table();

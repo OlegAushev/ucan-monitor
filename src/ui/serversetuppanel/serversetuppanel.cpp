@@ -13,8 +13,8 @@ ServerSetupPanel::ServerSetupPanel(std::shared_ptr<ucanopen::Server> server,
 {}
 
 
-void ServerSetupPanel::draw(bool& open) {
-    ImGui::Begin(_window_title.c_str(), &open);
+void ServerSetupPanel::draw() {
+    ImGui::Begin(_window_title.c_str(), &show);
 
     _draw_about();
     _draw_setup();

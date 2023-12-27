@@ -15,7 +15,7 @@ MotorControlPanel::MotorControlPanel(std::shared_ptr<::atvvcu::Server> server,
 {}
 
 
-void MotorControlPanel::draw([[maybe_unused]] bool& open) {
+void MotorControlPanel::draw() {
     for (size_t i = 0; i < 4; ++i) {
         ImGui::Begin(_window_titles[i].c_str());
 

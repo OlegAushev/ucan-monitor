@@ -36,8 +36,7 @@ public:
               const std::string& menu_title,
               const std::string& window_title,
               bool show_by_default);
-    void draw();
-    void draw(bool& open) {}
+    virtual void draw();
     std::shared_ptr<::ucanopen::Server> server() const { return _server; };
 private:
     void _draw_menubar();

@@ -16,8 +16,8 @@ WatchPanel::WatchPanel(std::shared_ptr<ucanopen::Server> server,
 }
 
 
-void WatchPanel::draw(bool& open) {
-    ImGui::Begin(_window_title.c_str(), &open);
+void WatchPanel::draw() {
+    ImGui::Begin(_window_title.c_str(), &show);
 
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("watch_table", 3, flags)) {

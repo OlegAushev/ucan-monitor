@@ -20,7 +20,7 @@ public:
              const std::string& menu_title,
              const std::string& window_title,
              bool show_by_default);
-    virtual void draw(bool& open) override;
+    virtual void draw() override;
 private:
     void _draw_contactor_states();
 private:

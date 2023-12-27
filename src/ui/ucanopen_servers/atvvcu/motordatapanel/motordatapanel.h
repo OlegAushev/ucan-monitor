@@ -19,7 +19,7 @@ public:
                    const std::string& menu_title,
                    const std::string& window_title,
                    bool show_by_default);
-    virtual void draw(bool& open) override;
+    virtual void draw() override;
 private:
     std::array<std::string, 4> _window_titles = {"Motor LF Data##data",
                                                  "Motor LB Data##data",

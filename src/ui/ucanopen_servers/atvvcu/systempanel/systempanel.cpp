@@ -15,8 +15,8 @@ SystemPanel::SystemPanel(std::shared_ptr<::atvvcu::Server> server,
 {}
 
 
-void SystemPanel::draw(bool& open) {
-    ImGui::Begin(_window_title.c_str(), &open);
+void SystemPanel::draw() {
+    ImGui::Begin(_window_title.c_str(), &show);
 
     _read_keyboard();
     _draw_controls();
