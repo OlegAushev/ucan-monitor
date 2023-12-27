@@ -6,6 +6,21 @@
 namespace ui {
 
 
+WatchPlot::WatchPlot(std::shared_ptr<::ucanopen::Server> server,
+                     const std::string& menu_title,
+                     const std::string& window_title,
+                     bool show_by_default)
+        : View(menu_title, window_title, show_by_default)
+        , _server(server)
+{
+    _plotid = ++_plotid_count;
+    _init_charts();
+    _header_id = std::format("Watch Plot##{}", _plotid);
+    _dndleft_id = std::format("dndleft##{}", _plotid);
+    _dnd_id = std::format("dnd##{}", _plotid);
+}
+
+
 void WatchPlot::draw() {
     ImGui::Begin(_header_id.c_str(), nullptr, ImGuiWindowFlags_MenuBar);
 

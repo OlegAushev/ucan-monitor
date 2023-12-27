@@ -3,11 +3,11 @@
 
 #include <imgui.h>
 #include <implot.h>
+#include "../tool/tool.h"
 #include "../view/view.h"
 #include "../options/options.h"
 #include "../watchplot/watchplot.h"
 #include <memory>
-#include <list>
 
 
 namespace ui {
@@ -17,7 +17,8 @@ class MainView {
 private:
     std::shared_ptr<ui::Options> _options;
     std::vector<std::shared_ptr<View>> _views;
-    std::list<std::shared_ptr<ui::WatchPlot>> _watchplots;
+    std::vector<std::shared_ptr<Tool>> _tools;
+    std::vector<std::shared_ptr<WatchPlot>> _watchplots;
     int _watchplot_count = 1;
 
     bool _should_close{false};
@@ -25,9 +26,9 @@ private:
     bool _show_watchplots{true};
     bool _show_demo{false};
 public:
-    MainView(std::shared_ptr<ui::Options> options,
+    MainView(std::shared_ptr<Options> options,
              const std::vector<std::shared_ptr<View>>& views,
-             std::shared_ptr<ui::WatchPlot> watchplot);
+             const std::vector<std::shared_ptr<WatchPlot>>& watchplots);
     void draw();
     bool should_close() { return _should_close; }
 private:

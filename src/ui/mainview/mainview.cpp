@@ -8,12 +8,11 @@ namespace ui {
 
 MainView::MainView(std::shared_ptr<ui::Options> options,
                    const std::vector<std::shared_ptr<View>>& views,
-                   std::shared_ptr<ui::WatchPlot> watchplot)
+                   const std::vector<std::shared_ptr<WatchPlot>>& watchplots)
         : _options(options)
         , _views(views)
-{
-    _watchplots.push_back(watchplot);
-}
+        , _watchplots(watchplots)
+{}
 
 
 void MainView::draw() {
@@ -47,8 +46,19 @@ void MainView::draw() {
         }
     }
 
+    for (auto& tool : _tools) {
+        if (tool->show) {
+            tool->draw(tool->show);
+        }
+    }
+
+    for (auto& watchplot : _watchplots) {
+        if (watchplot->show) {
+            watchplot->draw();
+        }
+    }
+
     if (_show_options)      { _options->draw(_show_options); }
-    if (_show_watchplots)   { for (auto& plot : _watchplots) { plot->draw(); } }
     if (_show_demo)         { ImGui::ShowDemoWindow(); ImPlot::ShowDemoWindow(); }
     
     ImGui::End();
@@ -71,26 +81,33 @@ void MainView::_draw_menubar() {
             for (auto& view : _views) {
                 ImGui::MenuItem(view->menu_title().c_str(), nullptr, &view->show);
             }
-            
-            if (ImGui::BeginMenu(ICON_MDI_CHART_LINE" Charts")) {
-                ImGui::Checkbox("Enabled##", &_show_watchplots);
-                ImGui::PushItemWidth(80);
-                if (ImGui::InputInt("Number Of Plots##", &_watchplot_count)) {
-                    _watchplot_count = std::clamp(_watchplot_count, 1, 4);
-                    if (size_t(_watchplot_count) > _watchplots.size()) {
-                        _watchplots.push_back(std::make_shared<WatchPlot>(_watchplots.front()->server()));
-                    } else if (size_t(_watchplot_count) < _watchplots.size()) {
-                        _watchplots.pop_back();
-                    }
-                }
-                ImGui::PopItemWidth();
-                ImGui::EndMenu();
-            }
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Tools")) {
+            for (auto& tool : _tools) {
+                ImGui::MenuItem(tool->menu_title().c_str(), nullptr, &tool->show);
+            }
             ImGui::MenuItem(ICON_MDI_HELP" Example", nullptr, &_show_demo);
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Plots")) {
+            // if (ImGui::BeginMenu(ICON_MDI_CHART_LINE" Watch")) {
+            //     ImGui::Checkbox("Enabled##", &_show_watchplots);
+            //     ImGui::PushItemWidth(80);
+            //     if (ImGui::InputInt("Number Of Plots##", &_watchplot_count)) {
+            //         _watchplot_count = std::clamp(_watchplot_count, 1, 4);
+            //         if (size_t(_watchplot_count) > _watchplots.size()) {
+            //             _watchplots.push_back(std::make_shared<WatchPlot>(_watchplots.front()->server()));
+            //         } else if (size_t(_watchplot_count) < _watchplots.size()) {
+            //             _watchplots.pop_back();
+            //         }
+            //     }
+            //     ImGui::PopItemWidth();
+            //     ImGui::EndMenu();
+            // }
+
             ImGui::EndMenu();
         }
 

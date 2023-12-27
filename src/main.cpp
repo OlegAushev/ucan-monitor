@@ -129,7 +129,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         glfwSwapBuffers(window);
     }
 
- 
     // Server Creation
     auto can_socket = std::make_shared<can::Socket>();
     auto ucanopen_client = std::make_shared<ucanopen::Client>(ucanopen::NodeId(127), can_socket);
@@ -139,7 +138,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
     std::shared_ptr<ui::ServerSetupPanel> serversetuppanel;
     std::shared_ptr<ui::WatchPanel> watchpanel;
-    std::shared_ptr<ui::WatchPlot> watchplot;
+    std::vector<std::shared_ptr<ui::WatchPlot>> watchplots;
 
     auto server_name = ui::ServerSelector::instance().selected_server();
     if (server_name == "srmdrive") {
@@ -158,7 +157,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         views.push_back(statuspanel);
         views.push_back(serversetuppanel);
 
-        watchplot = std::make_shared<ui::WatchPlot>(srmdrive_server);
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 1", "Watch Plot 1", true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 2", "Watch Plot 2", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 3", "Watch Plot 3", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 4", "Watch Plot 4", false));
     } else if (server_name == "atv-vcu") {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
@@ -175,15 +177,17 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         views.push_back(motordatapanel);
         views.push_back(motorcontrolpanel);
 
-
-        watchplot = std::make_shared<ui::WatchPlot>(atvvcu_server);
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 1", "Watch Plot 1", true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 2", "Watch Plot 2", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 3", "Watch Plot 3", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 4", "Watch Plot 4", false));
     } else {
         // TODO Error
     }
 
     // GUI Creation
     auto options = std::make_shared<ui::Options>(can_socket, ucanopen_client);
-    auto mainview = std::make_shared<ui::MainView>(options, views, watchplot);
+    auto mainview = std::make_shared<ui::MainView>(options, views, watchplots);
 
     // Main View Loop
     while (!glfwWindowShouldClose(window) && !mainview->should_close()) {

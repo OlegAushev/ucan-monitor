@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 #include <implot.h>
+#include <ui/view/view.h>
 #include <ucanopen/server/server.h>
 #include <memory>
 
@@ -10,7 +11,7 @@
 namespace ui {
 
 
-class WatchPlot {
+class WatchPlot : public View {
 private:
     static inline int _plotid_count{0};
     int _plotid;
@@ -31,14 +32,12 @@ private:
     std::string _dndleft_id;
     std::string _dnd_id;
 public:
-    WatchPlot(std::shared_ptr<::ucanopen::Server> server) : _server(server) {
-        _plotid = ++_plotid_count;
-        _init_charts();
-        _header_id = std::format("Watch Plot##{}", _plotid);
-        _dndleft_id = std::format("dndleft##{}", _plotid);
-        _dnd_id = std::format("dnd##{}", _plotid);
-    }
+    WatchPlot(std::shared_ptr<::ucanopen::Server> server,
+              const std::string& menu_title,
+              const std::string& window_title,
+              bool show_by_default);
     void draw();
+    void draw(bool& open) {}
     std::shared_ptr<::ucanopen::Server> server() const { return _server; };
 private:
     void _draw_menubar();
