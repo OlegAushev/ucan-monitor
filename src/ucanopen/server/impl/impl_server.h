@@ -72,13 +72,8 @@ public:
     NodeId node_id() const { return _node_id; }
     NmtState nmt_state() const { return _nmt_state; }
     const ObjectDictionary& dictionary() const { return _dictionary; }
-
-    ODAccessStatus read(std::string_view category, std::string_view subcategory, std::string_view name);
-    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, ExpeditedSdoData sdo_data);
-    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, const std::string& value);
-    ODAccessStatus exec(std::string_view category, std::string_view subcategory, std::string_view name);
 public:
-    ODEntryIter find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name) {
+    ODEntryIter find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name) const {
         auto iter = _dictionary_aux.find({category, subcategory, name});
         if (iter == _dictionary_aux.end()) {
             return _dictionary.entries.end();
@@ -88,13 +83,18 @@ public:
 
     ODAccessStatus find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name,
                     ODEntryIter& ret_entry,
-                    traits::check_read_perm);
+                    traits::check_read_perm) const;
     ODAccessStatus find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name,
                     ODEntryIter& ret_entry,
-                    traits::check_write_perm);
+                    traits::check_write_perm) const;
     ODAccessStatus find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name,
                     ODEntryIter& ret_entry,
-                    traits::check_exec_perm);
+                    traits::check_exec_perm) const;
+public:
+    ODAccessStatus read(std::string_view category, std::string_view subcategory, std::string_view name);
+    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, ExpeditedSdoData sdo_data);
+    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, const std::string& value);
+    ODAccessStatus exec(std::string_view category, std::string_view subcategory, std::string_view name);
 };
 
 

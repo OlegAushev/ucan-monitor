@@ -60,10 +60,10 @@ public:
                                                  std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
 
     std::optional<ExpeditedSdoData> write_expdata(std::string_view category,
-                                                 std::string_view subcategory,
-                                                 std::string_view name,
-                                                 ExpeditedSdoData sdo_data,
-                                                 std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
+                                                  std::string_view subcategory,
+                                                  std::string_view name,
+                                                  ExpeditedSdoData sdo_data,
+                                                  std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
 };
 
 } // namespace ucanopen
