@@ -3,7 +3,6 @@
 
 #include <imgui.h>
 #include <implot.h>
-#include "../tool/tool.h"
 #include "../view/view.h"
 #include "../options/options.h"
 #include "../watchplot/watchplot.h"
