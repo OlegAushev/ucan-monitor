@@ -39,7 +39,9 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
 
 //----------------------------------------------------------------------------------------------------------------------
 void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
+    static_assert(sizeof(CobTpdo1) == 8);
     CobTpdo1 tpdo = ucanopen::from_payload<CobTpdo1>(payload);
+
     Tpdo1 tpdo1_{};
     tpdo1_.run = tpdo.run;
     tpdo1_.error = tpdo.error;
@@ -77,7 +79,9 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
 
 
 void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
+    static_assert(sizeof(CobTpdo2) == 8);
     CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
+
     Tpdo2 tpdo2_{};
     tpdo2_.dc_voltage = tpdo.dc_voltage;
     tpdo2_.stator_current = tpdo.stator_current;
@@ -90,7 +94,9 @@ void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
 
 
 void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
+    static_assert(sizeof(CobTpdo3) == 8);
     CobTpdo3 tpdo = ucanopen::from_payload<CobTpdo3>(payload);
+    
     Tpdo3 tpdo3_{};
     tpdo3_.pwrmodule_temp = int(tpdo.pwrmodule_temp) - 40;
     tpdo3_.excmodule_temp = int(tpdo.excmodule_temp) - 40;
@@ -103,7 +109,9 @@ void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
 
 
 void Server::_handle_tpdo4(const ucanopen::can_payload& payload){
+    static_assert(sizeof(CobTpdo4) == 8);
     CobTpdo4 tpdo = ucanopen::from_payload<CobTpdo4>(payload);
+
     _errors = tpdo.errors;
     _warnings = tpdo.warnings;
 }
@@ -111,8 +119,10 @@ void Server::_handle_tpdo4(const ucanopen::can_payload& payload){
 
 //----------------------------------------------------------------------------------------------------------------------
 ucanopen::can_payload Server::_create_rpdo1() {
+    static_assert(sizeof(CobRpdo1) == 8);
     static unsigned int counter = 0;
-    CobRpdo1 rpdo;
+    
+    CobRpdo1 rpdo{};
 
     rpdo.power = _power_enabled;
     rpdo.run = _run_enabled;
@@ -135,11 +145,14 @@ ucanopen::can_payload Server::_create_rpdo1() {
 
 
 ucanopen::can_payload Server::_create_rpdo2() {
+    static_assert(sizeof(CobRpdo2) == 8);
     static unsigned int counter = 0;
-    CobRpdo2 rpdo;
+
+    CobRpdo2 rpdo{};
 
     rpdo.manual_fieldctl = _manual_fieldctl;
     rpdo.ctlloop = std::to_underlying(_ctlloop.load());
+    rpdo.openloop_angle = _openloop_angle;
     rpdo.field_current_ref = 10.0f * _field_current_ref;
     rpdo.d_current_ref = 10000.0f * _d_current_perunit_ref;
 
@@ -156,6 +169,4 @@ ucanopen::can_payload Server::_create_rpdo2() {
 }
 
 
-
 }
-

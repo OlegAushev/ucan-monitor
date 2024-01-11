@@ -24,7 +24,6 @@ struct CobTpdo1 {
     uint16_t counter : 2;
     uint16_t _reserved2 : 6;
     uint16_t checksum : 8;
-    CobTpdo1() { memset(this, 0, sizeof(CobTpdo1)); static_assert(sizeof(CobTpdo1) == 8); }
 };
 
 
@@ -37,7 +36,6 @@ struct CobTpdo2 {
     uint16_t manual_field_current : 1;
     uint16_t _reserved : 5;
     uint16_t checksum : 8;
-    CobTpdo2() { memset(this, 0, sizeof(CobTpdo2)); static_assert(sizeof(CobTpdo2) == 8); }
 };
 
 
@@ -51,7 +49,6 @@ struct CobTpdo3 {
     uint16_t counter : 2;
     uint16_t _reserved2 : 6;
     uint16_t checksum : 8;
-    CobTpdo3() { memset(this, 0, sizeof(CobTpdo3)); static_assert(sizeof(CobTpdo3) == 8); }
 };
 
 
@@ -61,7 +58,6 @@ struct CobTpdo4 {
     uint16_t counter : 2;
     uint16_t _reserved : 6;
     uint16_t checksum : 8;
-    CobTpdo4() { memset(this, 0, sizeof(CobTpdo4)); static_assert(sizeof(CobTpdo4) == 8); }
 };
 
 
@@ -78,20 +74,19 @@ struct CobRpdo1 {
     uint16_t counter : 2;
     uint16_t _reserved2 : 6;
     uint16_t checksum : 8;
-    CobRpdo1() { memset(this, 0, sizeof(CobTpdo1)); static_assert(sizeof(CobRpdo1) == 8); }
 };
 
 
 struct CobRpdo2 {
     uint16_t manual_fieldctl : 1;
     uint16_t ctlloop : 2;
-    uint16_t _reserved1 : 13;
+    uint16_t _reserved1 : 4;
+    uint16_t openloop_angle : 9;
     uint16_t field_current_ref;
     int16_t d_current_ref;
     uint16_t counter : 2;
     uint16_t _reserved2 : 6;
     uint16_t checksum : 8;
-    CobRpdo2() { memset(this, 0, sizeof(CobTpdo2)); static_assert(sizeof(CobRpdo2) == 8); }
 };
 
 

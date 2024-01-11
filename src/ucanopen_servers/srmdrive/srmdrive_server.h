@@ -34,6 +34,7 @@ private:
 
     std::atomic<bool> _manual_fieldctl{false};
     std::atomic<ControlLoop> _ctlloop{ControlLoop::closed};
+    std::atomic<uint16_t> _openloop_angle{0};
     std::atomic<float> _field_current_ref{0};
     std::atomic<float> _d_current_perunit_ref{0};
 
@@ -53,6 +54,7 @@ public:
 
     void set_manual_fieldctl_enabled(bool enabled) { _manual_fieldctl = enabled; }
     void set_ctlloop(ControlLoop ctlloop) { _ctlloop = ctlloop; }
+    void set_openloop_angle(uint16_t value) { _openloop_angle = value % 360; }
     void set_field_current(float val) { _field_current_ref = std::clamp(val, 0.0f, 100.0f); }
     void set_d_current(float val_perunit) { _d_current_perunit_ref = std::clamp(val_perunit, -1.0f, 1.0f); }
 private:

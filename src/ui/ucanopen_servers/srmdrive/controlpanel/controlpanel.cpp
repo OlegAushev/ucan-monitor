@@ -25,18 +25,21 @@ void ControlPanel::draw() {
     ToggleButton(ICON_MDI_ALERT_OCTAGON_OUTLINE" Emergency   ", _emergency);
     ImGui::SameLine();
     ImGui::TextDisabled("(F2)");
+    
     _server->set_emergency_enabled(_emergency);
 
     // power switch
     ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
+
     _server->set_power_enabled(_power_enabled);
     
     // run switch
     ToggleButton(ICON_MDI_POWER" Run On/Off  ", _run_enabled);
     ImGui::SameLine();
     ImGui::TextDisabled("(F4)");
+
     _server->set_run_enabled(_run_enabled);
 
     ImGui::Separator();
@@ -53,6 +56,7 @@ void ControlPanel::draw() {
         _torque_percent_ref = std::clamp(_torque_percent_ref, -100.0f, 100.0f);
     }
     ImGui::PopItemWidth();
+
     _server->set_torque(_torque_percent_ref / 100.0f);
 
     // speed input
@@ -67,8 +71,8 @@ void ControlPanel::draw() {
         _speed_ref = std::clamp(_speed_ref, -8000.0f, 8000.0f);
     }
     ImGui::PopItemWidth();
-    _server->set_speed(_speed_ref);
 
+    _server->set_speed(_speed_ref);
     _server->set_ctlmode(::srmdrive::ControlMode(_ctlmode));
 
     ImGui::Separator();
@@ -109,6 +113,7 @@ void ControlPanel::draw() {
         ImGui::PopItemWidth();
         ImGui::TreePop();
     }
+
     _server->set_manual_fieldctl_enabled(_fieldctl_enabled);
     _server->set_field_current(_fieldcurr_ref);
 
@@ -129,6 +134,15 @@ void ControlPanel::draw() {
             if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
                 _dcurr_ref = std::clamp(_dcurr_ref, 0.0f, 100.0f);
             }
+
+            if (_speed_ref == 0) {
+                ImGui::PushItemWidth(200);
+                if (ImGui::InputInt("Angle [deg]", &_openloop_angle, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _openloop_angle = std::clamp(_openloop_angle, 0, 360);
+                }
+                ImGui::PopItemWidth();
+            }
+
             break;
         case std::to_underlying(::srmdrive::ControlLoop::semiclosed):
             if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -140,19 +154,10 @@ void ControlPanel::draw() {
         ImGui::PopItemWidth();
         ImGui::TreePop();
     }
+
     _server->set_ctlloop(::srmdrive::ControlLoop(_ctlloop));
     _server->set_d_current(_dcurr_ref / 100.0f);
-
-    // gamma correction
-    if (ImGui::TreeNode("Gamma Correction")) {
-        ImGui::PushItemWidth(200);
-        if (ImGui::InputFloat("Gamma Correction [deg]", &_gamma_correction, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _gamma_correction = std::clamp(_gamma_correction, -180.0f, 180.0f);
-            _server->write("ctl", "drive", "set_gamma_correction", std::to_string(_gamma_correction));
-        }
-        ImGui::PopItemWidth();
-        ImGui::TreePop();
-    }
+    _server->set_openloop_angle(_openloop_angle);
 
     ImGui::End();
 }

@@ -26,7 +26,7 @@ private:
     int _ctlloop{std::to_underlying(::srmdrive::ControlLoop::closed)};
     float _dcurr_ref{0};
 
-    float _gamma_correction{0};
+    int _openloop_angle{0};
 public:
     ControlPanel(std::shared_ptr<::srmdrive::Server> server,
                  const std::string& menu_title,
