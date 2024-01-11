@@ -126,7 +126,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3005, 0x06}, {"config", "model_basic", "torque_negmax", "pu", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x07}, {"config", "model_basic", "speed_rpmmax", "rpm", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x08}, {"config", "model_basic", "i_dmax_fluxweak", "A", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3005, 0x09}, {"config", "model_basic", "gamma_correction", "rad", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x09}, {"config", "model_basic", "i_f_coeff", "", OD_ACCESS_RW, OD_FLOAT32}},
 
 {{0x3006, 0x01}, {"config", "model_controllers", "kp_speed", "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3006, 0x02}, {"config", "model_controllers", "ki_speed", "", OD_ACCESS_RW, OD_FLOAT32}},
@@ -136,7 +136,6 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3006, 0x06}, {"config", "model_controllers", "ki_iq", "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3006, 0x07}, {"config", "model_controllers", "kp_fluxweak", "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3006, 0x08}, {"config", "model_controllers", "ki_fluxweak", "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x09}, {"config", "model_controllers", "i_f_coeff", "", OD_ACCESS_RW, OD_FLOAT32}},
 
 {{0x3007, 0x01}, {"config", "mras", "kp", "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3007, 0x02}, {"config", "mras", "ki", "", OD_ACCESS_RW, OD_FLOAT32}},
