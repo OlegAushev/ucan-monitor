@@ -25,7 +25,7 @@ void ControlPanel::draw() {
     ToggleButton(ICON_MDI_ALERT_OCTAGON_OUTLINE" Emergency   ", _emergency);
     ImGui::SameLine();
     ImGui::TextDisabled("(F2)");
-    
+
     _server->set_emergency_enabled(_emergency);
 
     // power switch
@@ -55,6 +55,9 @@ void ControlPanel::draw() {
     if (ImGui::InputFloat("Torque [%]", &_torque_percent_ref, 1.0f, 100.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
         _torque_percent_ref = std::clamp(_torque_percent_ref, -100.0f, 100.0f);
     }
+    if (_ctlmode != std::to_underlying(::srmdrive::ControlMode::torque)) {
+        _torque_percent_ref = 0;
+    }
     ImGui::PopItemWidth();
 
     _server->set_torque(_torque_percent_ref / 100.0f);
@@ -69,6 +72,9 @@ void ControlPanel::draw() {
     ImGui::PushItemWidth(200);
     if (ImGui::InputFloat("Speed [rpm]", &_speed_ref, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
         _speed_ref = std::clamp(_speed_ref, -8000.0f, 8000.0f);
+    }
+    if (_ctlmode != std::to_underlying(::srmdrive::ControlMode::speed)) {
+        _speed_ref = 0;
     }
     ImGui::PopItemWidth();
 
@@ -110,6 +116,10 @@ void ControlPanel::draw() {
         if (ImGui::InputFloat("Field Current [A]", &_fieldcurr_ref, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
             _fieldcurr_ref = std::clamp(_fieldcurr_ref, 0.0f, 50.0f);
         }
+        if (!_fieldctl_enabled) {
+            _fieldcurr_ref = 0;
+        }
+
         ImGui::PopItemWidth();
         ImGui::TreePop();
     }
