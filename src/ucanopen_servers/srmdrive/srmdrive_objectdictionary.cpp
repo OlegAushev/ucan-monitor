@@ -53,15 +53,15 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x09}, {"watch", "model", "iD", "A", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x0A}, {"watch", "model", "iQ", "A", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x0B}, {"watch", "resolver", "speed", "rpm", OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x0C}, {"watch", "resolver",  "angle", "o",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x0C}, {"watch", "resolver",  "angle", "rad",  OD_ACCESS_RO, OD_FLOAT32}},
 
 
-// {{0x5000, 0xE0}, {"watch", "resolver", "sinmax", "", OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0xE1}, {"watch", "resolver", "sinoff", "", OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0xE2}, {"watch", "resolver", "sinmin", "", OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0xE3}, {"watch", "resolver", "cosmax", "", OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0xE4}, {"watch", "resolver", "cosoff", "", OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0xE5}, {"watch", "resolver", "cosmin", "", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0xE0}, {"watch", "resolver", "sinmax", "", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0xE1}, {"watch", "resolver", "sinoff", "", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0xE2}, {"watch", "resolver", "sinmin", "", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0xE3}, {"watch", "resolver", "cosmax", "", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0xE4}, {"watch", "resolver", "cosoff", "", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0xE5}, {"watch", "resolver", "cosmin", "", OD_ACCESS_RO, OD_FLOAT32}},
 
 
 {{0x5000, 0xF0}, {"watch", "sys", "sine", "", OD_ACCESS_RO, OD_FLOAT32}},
@@ -145,6 +145,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3008, 0x03}, {"config", "resolver", "install_offset", "rad", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x3008, 0x04}, {"config", "resolver", "observer_natural_freq", "rad/s", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3008, 0x05}, {"config", "resolver", "observer_damping_factor", "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3008, 0x06}, {"config", "resolver", "exc_factor", "", OD_ACCESS_RW, OD_FLOAT32}},
 
 {{0x3009, 0x01}, {"config", "precharge", "dclink_charge_threshold", "V", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3009, 0x02}, {"config", "precharge", "dclink_charge_timeout_ms", "ms", OD_ACCESS_RW, OD_UINT32}},
