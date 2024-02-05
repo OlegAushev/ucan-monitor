@@ -68,8 +68,14 @@ struct CobTpdo2 {
     uint32_t pdm_aux_bypass : 1;
     uint32_t pdm_charge_allow : 1;
     uint32_t pdm_charge_mode : 1;
-    uint32_t _reserved1 : 25;
-    uint32_t _reserved2 : 24;
+
+    uint32_t _reserved1 : 9;
+
+    uint32_t bms_voltage : 16;
+    uint32_t bms_charge_pct : 8;
+
+    uint32_t _reserved2 : 16;
+    
     uint32_t counter : 2;
     uint32_t _reserved3 : 6;
 };

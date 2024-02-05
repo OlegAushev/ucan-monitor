@@ -73,7 +73,10 @@ void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
     pdm_contactor_state[std::to_underlying(PdmContactor::back_bypass)] = tpdo.pdm_back_bypass; 
     pdm_contactor_state[std::to_underlying(PdmContactor::aux_bypass)] = tpdo.pdm_aux_bypass; 
     pdm_contactor_state[std::to_underlying(PdmContactor::charge_allow)] = tpdo.pdm_charge_allow; 
-    pdm_contactor_state[std::to_underlying(PdmContactor::charge_mode)] = tpdo.pdm_charge_mode; 
+    pdm_contactor_state[std::to_underlying(PdmContactor::charge_mode)] = tpdo.pdm_charge_mode;
+
+    bms_voltage = uint16_t(tpdo.bms_voltage) / 10.0f;
+    bms_charge_pct = uint8_t(tpdo.bms_charge_pct);
 }
 
 

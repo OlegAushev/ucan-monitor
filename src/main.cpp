@@ -22,6 +22,7 @@
 #include <ui/ucanopen_servers/srmdrive/statuspanel/statuspanel.h>
 
 #include <ui/ucanopen_servers/atvvcu/systempanel/systempanel.h>
+#include <ui/ucanopen_servers/atvvcu/bmspanel/bmspanel.h>
 #include <ui/ucanopen_servers/atvvcu/pdmpanel/pdmpanel.h>
 #include <ui/ucanopen_servers/atvvcu/motorcontrolpanel/motorcontrolpanel.h>
 #include <ui/ucanopen_servers/atvvcu/motordatapanel/motordatapanel.h>
@@ -162,18 +163,21 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 2", "Watch Plot 2", false));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 3", "Watch Plot 3", false));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 4", "Watch Plot 4", false));
+
     } else if (server_name == "atv-vcu") {
         auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
         ucanopen_client->register_server(atvvcu_server);
 
         watchpanel = std::make_shared<ui::WatchPanel>(atvvcu_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
         auto systempanel = std::make_shared<ui::atvvcu::SystemPanel>(atvvcu_server, ICON_MDI_GAUGE" System", " System", true);
+        auto bmspanel = std::make_shared<ui::atvvcu::BmsPanel>(atvvcu_server, ICON_MDI_CAR_BATTERY" BMS", "BMS", true);
         auto pdmpanel = std::make_shared<ui::atvvcu::PdmPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE" PDM", "PDM", true);
         auto motordatapanel = std::make_shared<ui::atvvcu::MotorDataPanel>(atvvcu_server, ICON_MDI_TABLE" Motor Data", "Motor Data", true);
         auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE" Motor Control", "Motor Control", true);
 
         views.push_back(watchpanel);
         views.push_back(systempanel);
+        views.push_back(bmspanel);
         views.push_back(pdmpanel);
         views.push_back(motordatapanel);
         views.push_back(motorcontrolpanel);
@@ -182,6 +186,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 2", "Watch Plot 2", false));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 3", "Watch Plot 3", false));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 4", "Watch Plot 4", false));
+    
     } else {
         // TODO Error
     }

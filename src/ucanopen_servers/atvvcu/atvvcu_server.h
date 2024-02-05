@@ -25,6 +25,9 @@ public:
     std::atomic<bool> power_enabled{false};
     std::atomic<bool> run_enabled{false};
 
+    std::atomic<float> bms_voltage{0.0f};
+    std::atomic<float> bms_charge_pct{0.0f};
+
     std::array<std::atomic_bool, pdm_contactor_count> pdm_contactor_state{};
     std::array<std::atomic_bool, pdm_contactor_count> pdm_contactor_ref_state{};
 
