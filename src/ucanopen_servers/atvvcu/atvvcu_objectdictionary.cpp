@@ -57,6 +57,12 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5006, 0x03}, {"watch", "motordrive", "moduletemp_rf", "o", OD_ACCESS_RO, OD_INT32}},
 {{0x5006, 0x04}, {"watch", "motordrive", "moduletemp_rb", "o", OD_ACCESS_RO, OD_INT32}},
 
+{{0x5010, 0x01}, {"watch", "bms", "i_batt", "A", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5010, 0x02}, {"watch", "bms", "t_cellmin", "o", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5010, 0x03}, {"watch", "bms", "t_cellmax", "o", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5010, 0x04}, {"watch", "bms", "charge_pct", "%", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5010, 0x05}, {"watch", "bms", "v_batt", "V", OD_ACCESS_RO, OD_FLOAT32}},
+
 
 }
 };
