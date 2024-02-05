@@ -226,4 +226,105 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> warni
 }};
 
 
+inline const std::vector<std::string_view> bms_internal_states = {
+    "low_soc",
+    "high_ch_current",
+    "ch_contactor_state",
+    "allow_charging",
+    "ch_current_present",
+    "dch_contactor_state",
+    "dch_current_present",
+    "increased_voltage",
+    "high_dch_temp_state",
+    "cooler_state",
+    "hyg_shutdown",
+    "init",
+    "prech_contactor_state",
+    "combilift_shutdown",
+    "cell_analysis",
+    "balancing_series_1",
+    "balancing_series_2",
+    "aux_dch_contactor_state",
+    "power_down_ack",
+    "crown_ews",
+    "main_contactor_state",
+    "service_reset",
+    "ch_dch_contactor_state",
+    "ready_to_charge",
+    "ready_to_discharge",   
+};
+
+
+inline const std::vector<std::string_view> bms_error_register_1 = {
+    "overcurrent",
+    "undervoltage",
+    "overvoltage",
+    "low_dch_temp",
+    "high_dch_temp",
+    "battery_cover",
+    "high_humidity",
+    "water",
+    "high_logic_temp",
+    "logic_offline",
+    "critical_error",
+    "crown_error",
+    "cell_count_error",
+    "hyg_offline",
+    "need_ack",
+    "combilift_offline",
+    "short_circuit",
+    "high_contactor_temp",
+    "logic_count_error",
+    "adc_error",
+    "current_sensor_error",
+    "ch_contactor_cycles_error",
+    "dch_contactor_cycles_error",
+    "shunt_offline",
+    "shunt_error",
+    "settings_error",
+    "wdt_reset",
+    "no_temp_sensors",
+    "temp_sensor_shorted",
+    "spirit_offline",
+};
+
+
+inline const std::vector<std::string_view> bms_error_register_2 = {
+    "low_ch_temp",
+    "high_ch_temp",
+    "sd_mount_error",
+    "sd_rw_error",
+    "unallowable_charging",
+    "stuck_contactor",
+    "ch_contactor_feedback_error",
+    "dch_contactor_feedback_error",
+    "insulation_fault",
+    "pch_contactor_feedback_error",
+    "ch_dch_contactor_feedback_error",
+    "main_contactor_feedback_error",
+};
+
+
+inline const std::vector<std::string_view> bms_discrete_inputs_1 = {
+    "battery_cover",
+    "charger_connected",
+    "power_down_request",
+    "inhibit_charging",
+    "inhibit_discharging",
+    "ch_contactor_feedback",
+    "dch_contactor_feedback",
+    "insulation_status",  
+};
+
+
+inline const std::vector<std::string_view> bms_discrete_inputs_2 = {
+    "charge_request",
+    "precharge_request",
+    "discharge_request",
+    "pch_contactor_feedback",
+    "ch_dch_contactor_feedback",
+    "main_contactor_feedback",
+};
+
+
 } // namespace atvvcu
