@@ -31,17 +31,7 @@ public:
     std::array<std::atomic_bool, pdm_contactor_count> pdm_contactor_state{};
     std::array<std::atomic_bool, pdm_contactor_count> pdm_contactor_ref_state{};
 
-    std::array<std::atomic_bool, 4> motordrive_ref_ctlmode{};
-    std::array<std::atomic_bool, 4> motordrive_ref_enable{};
-    std::array<std::atomic_bool, 4> motordrive_ref_discharge{};
-    std::array<std::atomic_bool, 4> motordrive_ref_mainrelay{};
-    std::array<std::atomic_bool, 4> motordrive_ref_footbrake{};
-    std::array<std::atomic_bool, 4> motordrive_ref_handbrake{};
-    std::array<std::atomic_bool, 4> motordrive_ref_faultreset{};
-    std::array<std::atomic_uint8_t, 4> motordrive_ref_gear{};
-    std::array<std::atomic_int16_t, 4> motordrive_ref_speed{};
-    std::array<std::atomic_int16_t, 4> motordrive_ref_torque{};
-
+public:
     struct MotorDriveData {
         uint32_t errors;
         std::string_view ctlmode{"..."};
@@ -79,6 +69,63 @@ protected:
                                                      ucanopen::ExpeditedSdoData data) override;
 public:
     Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, const std::string& name);
+
+private:
+    std::array<std::atomic_bool, 4> _motordrive_ref_ctlmode{};
+    std::array<std::atomic_bool, 4> _motordrive_ref_enable{};
+    std::array<std::atomic_bool, 4> _motordrive_ref_discharge{};
+    std::array<std::atomic_bool, 4> _motordrive_ref_mainrelay{};
+    std::array<std::atomic_bool, 4> _motordrive_ref_footbrake{};
+    std::array<std::atomic_bool, 4> _motordrive_ref_handbrake{};
+    std::array<std::atomic_bool, 4> _motordrive_ref_faultreset{};
+    std::array<std::atomic_uint8_t, 4> _motordrive_ref_gear{};
+    std::array<std::atomic_int16_t, 4> _motordrive_ref_speed{};
+    std::array<std::atomic_int16_t, 4> _motordrive_ref_torque{};
+
+public:
+    void set_motordrive_ref_ctlmode(const std::array<int, 4>& ref) {
+        std::copy(ref.begin(), ref.end(), _motordrive_ref_ctlmode.begin());
+    }
+
+    void set_motordrive_ref_enable(const std::array<bool, 4>& ref) {
+        std::copy(ref.begin(), ref.end(), _motordrive_ref_enable.begin());
+    }
+
+    void set_motordrive_ref_discharge(const std::array<bool, 4>& ref) {
+        std::copy(ref.begin(), ref.end(), _motordrive_ref_discharge.begin());
+    }
+
+    void set_motordrive_ref_mainrelay(const std::array<bool, 4>& ref) {
+        std::copy(ref.begin(), ref.end(), _motordrive_ref_mainrelay.begin());
+    }
+
+    void set_motordrive_ref_footbrake(const std::array<bool, 4>& ref) {
+        std::copy(ref.begin(), ref.end(), _motordrive_ref_footbrake.begin());
+    }
+
+    void set_motordrive_ref_handbrake(const std::array<bool, 4>& ref) {
+        std::copy(ref.begin(), ref.end(), _motordrive_ref_handbrake.begin());
+    }
+
+    void set_motordrive_ref_faultreset(const std::array<bool, 4>& ref) {
+        std::copy(ref.begin(), ref.end(), _motordrive_ref_faultreset.begin());
+    }
+
+    void set_motordrive_ref_gear(const std::array<int, 4>& ref) {
+        std::copy(ref.begin(), ref.end(), _motordrive_ref_gear.begin());
+    }
+
+    void set_motordrive_ref_speed(const std::array<float, 4>& ref) {
+        for (auto i = 0uz; i < ref.size(); ++i) {
+            _motordrive_ref_speed[i] = std::clamp(ref[i], -10000.0f, 10000.0f);
+        }
+    }
+
+    void set_motordrive_ref_torque(const std::array<float, 4>& ref) {
+        for (auto i = 0uz; i < ref.size(); ++i) {
+            _motordrive_ref_torque[i] = std::clamp(ref[i] * 10.0f, -4000.0f, 4000.0f);
+        }
+    }
 };
 
 

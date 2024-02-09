@@ -34,8 +34,8 @@ private:
     std::array<bool, 4> _ref_handbrake{};
     std::array<bool, 4> _ref_faultreset{};
 
-    std::array<int, 4> _ref_speed{};
-    std::array<int, 4> _ref_torque{};
+    std::array<float, 4> _ref_speed{};
+    std::array<float, 4> _ref_torque{};
 
     int _ref_eltorque_max{0};
     int _ref_braketorque_max{0};

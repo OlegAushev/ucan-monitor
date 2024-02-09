@@ -44,12 +44,12 @@ void MotorControlPanel::draw() {
         ui::ToggleButton(ICON_MDI_ALERT_CIRCLE_OUTLINE" Fault Reset", _ref_faultreset[i]);
 
         ImGui::PushItemWidth(150);
-        if (ImGui::InputInt("Speed [rpm]", &_ref_speed[i], 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _ref_speed[i] = std::clamp(_ref_speed[i], -10000, 10000);
+        if (ImGui::InputFloat("Speed [rpm]", &_ref_speed[i], 1.0f, 100.0f, "%.0f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _ref_speed[i] = std::clamp(_ref_speed[i], -10000.0f, 10000.0f);
         }
 
-        if (ImGui::InputInt("Torque [Nm]", &_ref_torque[i], 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _ref_torque[i] = std::clamp(_ref_torque[i], -400, 400);
+        if (ImGui::InputFloat("Torque [Nm]", &_ref_torque[i], 1.0f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _ref_torque[i] = std::clamp(_ref_torque[i], -400.0f, 400.0f);
         }
         ImGui::PopItemWidth();
 
@@ -72,16 +72,16 @@ void MotorControlPanel::draw() {
         ImGui::End();
     }
 
-    std::copy(_ref_ctlmode.begin(), _ref_ctlmode.end(), _server->motordrive_ref_ctlmode.begin());
-    std::copy(_ref_enable.begin(), _ref_enable.end(), _server->motordrive_ref_enable.begin());
-    std::copy(_ref_discharge.begin(), _ref_discharge.end(), _server->motordrive_ref_discharge.begin());
-    std::copy(_ref_mainrelay.begin(), _ref_mainrelay.end(), _server->motordrive_ref_mainrelay.begin());
-    std::copy(_ref_footbrake.begin(), _ref_footbrake.end(), _server->motordrive_ref_footbrake.begin());
-    std::copy(_ref_handbrake.begin(), _ref_handbrake.end(), _server->motordrive_ref_handbrake.begin());
-    std::copy(_ref_faultreset.begin(), _ref_faultreset.end(), _server->motordrive_ref_faultreset.begin());
-    std::copy(_ref_gear.begin(), _ref_gear.end(), _server->motordrive_ref_gear.begin());
-    std::copy(_ref_speed.begin(), _ref_speed.end(), _server->motordrive_ref_speed.begin());
-    std::copy(_ref_torque.begin(), _ref_torque.end(), _server->motordrive_ref_torque.begin());
+    _server->set_motordrive_ref_ctlmode(_ref_ctlmode);
+    _server->set_motordrive_ref_enable(_ref_enable);
+    _server->set_motordrive_ref_discharge(_ref_discharge);
+    _server->set_motordrive_ref_mainrelay(_ref_mainrelay);
+    _server->set_motordrive_ref_footbrake(_ref_footbrake);
+    _server->set_motordrive_ref_handbrake(_ref_handbrake);
+    _server->set_motordrive_ref_faultreset(_ref_faultreset);
+    _server->set_motordrive_ref_gear(_ref_gear);
+    _server->set_motordrive_ref_speed(_ref_speed);
+    _server->set_motordrive_ref_torque(_ref_torque);
 }
 
 

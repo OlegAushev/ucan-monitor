@@ -186,16 +186,16 @@ ucanopen::can_payload Server::_create_rpdo3() {
     static unsigned int wheel = 0;
     CobRpdo3 rpdo{};
 
-    rpdo.ctlmode = motordrive_ref_ctlmode[wheel];
-    rpdo.enable_controller = motordrive_ref_enable[wheel];
-    rpdo.discharge = motordrive_ref_discharge[wheel];
-    rpdo.mainrelay = motordrive_ref_mainrelay[wheel];
-    rpdo.gear = motordrive_ref_gear[wheel];
-    rpdo.footbrake = motordrive_ref_footbrake[wheel];
-    rpdo.handbrake = motordrive_ref_handbrake[wheel];
-    rpdo.faultreset = motordrive_ref_faultreset[wheel];
-    rpdo.speed_cmd = motordrive_ref_speed[wheel];
-    rpdo.torque_cmd = motordrive_ref_torque[wheel];
+    rpdo.ctlmode = _motordrive_ref_ctlmode[wheel];
+    rpdo.enable_controller = _motordrive_ref_enable[wheel];
+    rpdo.discharge = _motordrive_ref_discharge[wheel];
+    rpdo.mainrelay = _motordrive_ref_mainrelay[wheel];
+    rpdo.gear = _motordrive_ref_gear[wheel];
+    rpdo.footbrake = _motordrive_ref_footbrake[wheel];
+    rpdo.handbrake = _motordrive_ref_handbrake[wheel];
+    rpdo.faultreset = _motordrive_ref_faultreset[wheel];
+    rpdo.speed_cmd = _motordrive_ref_speed[wheel];
+    rpdo.torque_cmd = _motordrive_ref_torque[wheel];
 
     rpdo.wheel = wheel;
     wheel = (wheel + 1) % 4;
