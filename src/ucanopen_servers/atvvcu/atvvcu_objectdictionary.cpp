@@ -37,10 +37,10 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5002, 0x03}, {"watch", "motordrive", "iac_rf", "A", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5002, 0x04}, {"watch", "motordrive", "iac_rb", "A", OD_ACCESS_RO, OD_FLOAT32}},
 
-{{0x5003, 0x01}, {"watch", "motordrive", "speed_lf", "rpm", OD_ACCESS_RO, OD_INT32}},
-{{0x5003, 0x02}, {"watch", "motordrive", "speed_lb", "rpm", OD_ACCESS_RO, OD_INT32}},
-{{0x5003, 0x03}, {"watch", "motordrive", "speed_rf", "rpm", OD_ACCESS_RO, OD_INT32}},
-{{0x5003, 0x04}, {"watch", "motordrive", "speed_rb", "rpm", OD_ACCESS_RO, OD_INT32}},
+{{0x5003, 0x01}, {"watch", "motordrive", "speed_lf", "rpm", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5003, 0x02}, {"watch", "motordrive", "speed_lb", "rpm", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5003, 0x03}, {"watch", "motordrive", "speed_rf", "rpm", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5003, 0x04}, {"watch", "motordrive", "speed_rb", "rpm", OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5004, 0x01}, {"watch", "motordrive", "torque_lf", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5004, 0x02}, {"watch", "motordrive", "torque_lb", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
