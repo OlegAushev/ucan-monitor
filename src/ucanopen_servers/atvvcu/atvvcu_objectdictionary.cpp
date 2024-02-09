@@ -47,15 +47,15 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5004, 0x03}, {"watch", "motordrive", "torque_rf", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5004, 0x04}, {"watch", "motordrive", "torque_rb", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
 
-{{0x5005, 0x01}, {"watch", "motordrive", "motortemp_lf", "o", OD_ACCESS_RO, OD_INT32}},
-{{0x5005, 0x02}, {"watch", "motordrive", "motortemp_lb", "o", OD_ACCESS_RO, OD_INT32}},
-{{0x5005, 0x03}, {"watch", "motordrive", "motortemp_rf", "o", OD_ACCESS_RO, OD_INT32}},
-{{0x5005, 0x04}, {"watch", "motordrive", "motortemp_rb", "o", OD_ACCESS_RO, OD_INT32}},
+{{0x5005, 0x01}, {"watch", "motordrive", "motortemp_lf", "o", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5005, 0x02}, {"watch", "motordrive", "motortemp_lb", "o", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5005, 0x03}, {"watch", "motordrive", "motortemp_rf", "o", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5005, 0x04}, {"watch", "motordrive", "motortemp_rb", "o", OD_ACCESS_RO, OD_FLOAT32}},
 
-{{0x5006, 0x01}, {"watch", "motordrive", "moduletemp_lf", "o", OD_ACCESS_RO, OD_INT32}},
-{{0x5006, 0x02}, {"watch", "motordrive", "moduletemp_lb", "o", OD_ACCESS_RO, OD_INT32}},
-{{0x5006, 0x03}, {"watch", "motordrive", "moduletemp_rf", "o", OD_ACCESS_RO, OD_INT32}},
-{{0x5006, 0x04}, {"watch", "motordrive", "moduletemp_rb", "o", OD_ACCESS_RO, OD_INT32}},
+{{0x5006, 0x01}, {"watch", "motordrive", "moduletemp_lf", "o", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5006, 0x02}, {"watch", "motordrive", "moduletemp_lb", "o", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5006, 0x03}, {"watch", "motordrive", "moduletemp_rf", "o", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5006, 0x04}, {"watch", "motordrive", "moduletemp_rb", "o", OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5010, 0x01}, {"watch", "bms", "i_batt", "A", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5010, 0x02}, {"watch", "bms", "t_cellmin", "o", OD_ACCESS_RO, OD_FLOAT32}},
