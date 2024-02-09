@@ -18,19 +18,6 @@ extern const ucanopen::ObjectDictionaryConfig object_dictionary_config;
 
 
 class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
-private:
-
-public:
-    std::atomic<VcuOperationMode> vcu_opmode{VcuOperationMode::normal};
-    std::atomic<bool> power_enabled{false};
-    std::atomic<bool> run_enabled{false};
-
-    std::atomic<float> bms_voltage{0.0f};
-    std::atomic<float> bms_charge_pct{0.0f};
-
-    std::array<std::atomic_bool, pdm_contactor_count> pdm_contactor_state{};
-    std::array<std::atomic_bool, pdm_contactor_count> pdm_contactor_ref_state{};
-
 public:
     struct MotorDriveData {
         uint32_t errors;
@@ -69,6 +56,35 @@ protected:
                                                      ucanopen::ExpeditedSdoData data) override;
 public:
     Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, const std::string& name);
+
+private:
+    std::atomic<VcuOperationMode> _vcu_opmode{VcuOperationMode::normal};
+    std::atomic<bool> _power_enabled{false};
+    std::atomic<bool> _run_enabled{false};
+
+public:
+    void set_vcu_opmode(VcuOperationMode mode) { _vcu_opmode = mode; }
+    void toggle_power(bool is_enabled) { _power_enabled = is_enabled; }
+    void toggle_run(bool is_enabled) { _run_enabled = is_enabled; 
+    }
+private:
+    std::atomic<float> _bms_voltage{0.0f};
+    std::atomic<float> _bms_charge_pct{0.0f};
+
+private:
+    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_feedback_state{};
+    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_ref_state{};
+
+public:
+    std::array<bool, pdm_contactor_count> pdm_contactor_feedback_state() const {
+        std::array<bool, pdm_contactor_count> ret;
+        std::copy(_pdm_contactor_feedback_state.begin(), _pdm_contactor_feedback_state.end(), ret.begin());
+        return ret;
+    }
+
+    void set_pdm_contactor_ref_state(const std::array<bool, pdm_contactor_count> ref) {
+        std::copy(ref.begin(), ref.end(), _pdm_contactor_ref_state.begin());
+    }
 
 private:
     std::array<std::atomic_bool, 4> _motordrive_ref_ctlmode{};

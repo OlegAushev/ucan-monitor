@@ -35,7 +35,7 @@ void SystemPanel::_draw_controls() {
     ImGui::SameLine();
     ImGui::RadioButton("Debug ", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::debug));
    
-    _server->vcu_opmode = ::atvvcu::VcuOperationMode(_vcu_opmode);
+    _server->set_vcu_opmode(::atvvcu::VcuOperationMode(_vcu_opmode));
 
     ImGui::TextUnformatted("Uptime[s]:");
     ImGui::SameLine();
@@ -55,13 +55,13 @@ void SystemPanel::_draw_controls() {
     ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
-    _server->power_enabled = _power_enabled;
+    _server->toggle_power(_power_enabled);
     
     // run switch
     ToggleButton(ICON_MDI_POWER" Run On/Off  ", _run_enabled);
     ImGui::SameLine();
     ImGui::TextDisabled("(F4)");
-    _server->run_enabled = _run_enabled;
+    _server->toggle_run(_run_enabled);
 
     // misc actions
     if (ImGui::TreeNode("Misc Actions")) {

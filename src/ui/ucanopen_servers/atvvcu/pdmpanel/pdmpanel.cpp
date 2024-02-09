@@ -33,7 +33,7 @@ void PdmPanel::draw() {
 
 
 void PdmPanel::_draw_contactor_states() {
-    std::copy(_server->pdm_contactor_state.begin(), _server->pdm_contactor_state.end(), _contactor_state.begin());
+    _contactor_feedback_state = _server->pdm_contactor_feedback_state();
 
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("contactor_table", 2, flags)) {
@@ -56,7 +56,7 @@ void PdmPanel::_draw_contactor_states() {
             ImGui::TextUnformatted(_contactor_labels[row].data());
 
             ImGui::TableSetColumnIndex(1);
-            if (_contactor_state[row]) {
+            if (_contactor_feedback_state[row]) {
                 ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH_CLOSED" On");
                 ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.65f));
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
@@ -70,7 +70,7 @@ void PdmPanel::_draw_contactor_states() {
         ImGui::EndTable();
     }
 
-    std::copy(_contactor_ref_state.begin(), _contactor_ref_state.end(), _server->pdm_contactor_ref_state.begin());
+    _server->set_pdm_contactor_ref_state(_contactor_ref_state);
 }
 
 
