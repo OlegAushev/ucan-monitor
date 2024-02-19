@@ -104,31 +104,31 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
 
     // Server Selection Loop
-    while (!glfwWindowShouldClose(window) && !ui::ServerSelector::instance().server_is_selected()) {
-        // Poll and handle events (inputs, window resize, etc.)
-        glfwPollEvents();
+    // while (!glfwWindowShouldClose(window) && !ui::ServerSelector::instance().server_is_selected()) {
+    //     // Poll and handle events (inputs, window resize, etc.)
+    //     glfwPollEvents();
 
-        // Start the Dear ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+    //     // Start the Dear ImGui frame
+    //     ImGui_ImplOpenGL3_NewFrame();
+    //     ImGui_ImplGlfw_NewFrame();
+    //     ImGui::NewFrame();
 
-        ui::ServerSelector::instance().show(server_names);
+    //     ui::ServerSelector::instance().show(server_names);
 
-        // Rendering
-        // (Your code clears your framebuffer, renders your other stuff etc.)
-        ImGui::Render();
+    //     // Rendering
+    //     // (Your code clears your framebuffer, renders your other stuff etc.)
+    //     ImGui::Render();
 
 
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
+    //     int display_w, display_h;
+    //     glfwGetFramebufferSize(window, &display_w, &display_h);
+    //     glViewport(0, 0, display_w, display_h);
+    //     glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+    //     glClear(GL_COLOR_BUFFER_BIT);
 
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        glfwSwapBuffers(window);
-    }
+    //     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    //     glfwSwapBuffers(window);
+    // }
 
     // Server Creation
     auto can_socket = std::make_shared<can::Socket>();
@@ -142,7 +142,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     std::shared_ptr<ui::WatchPanel> watchpanel;
     std::vector<std::shared_ptr<ui::WatchPlot>> watchplots;
 
-    auto server_name = ui::ServerSelector::instance().selected_server();
+    auto server_name = "srmdrive"; // ui::ServerSelector::instance().selected_server();
     if (server_name == "srmdrive") {
         auto srmdrive_server = std::make_shared<srmdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
         ucanopen_client->register_server(srmdrive_server);
