@@ -19,10 +19,18 @@ void SystemPanel::draw() {
     ImGui::Begin(_window_title.c_str(), &is_open);
 
     _read_keyboard();
+    _draw_debug_controls();
     _draw_controls();
     _draw_status();
 
     ImGui::End();
+}
+
+
+void SystemPanel::_draw_debug_controls() {
+    if (ImGui::TreeNode("Debug")) {
+        ImGui::TreePop();
+    }
 }
 
 

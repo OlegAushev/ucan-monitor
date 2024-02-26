@@ -16,6 +16,9 @@ MotorDataPanel::MotorDataPanel(std::shared_ptr<::atvvcu::Server> server,
 
 
 void MotorDataPanel::draw() {
+    auto data = _server->drive.data();
+
+
     for (size_t i = 0; i < 4; ++i) {
         ImGui::Begin(_window_titles[i].c_str(), &is_open);
 
@@ -25,20 +28,18 @@ void MotorDataPanel::draw() {
             ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthFixed, 120.0f);
             ImGui::TableHeadersRow();
 
-            auto data = _server->motordrive_data[i].load();
-
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted("Mode [bool]");
             ImGui::TableSetColumnIndex(1);
-            ImGui::TextUnformatted(data.ctlmode.data());
+            ImGui::TextUnformatted(data[i].ctlmode.data());
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted("Enabled [bool]");
             ImGui::TableSetColumnIndex(1);
-            ImGui::Text("%d", data.enabled);
-            if (data.enabled) {
+            ImGui::Text("%d", data[i].enabled);
+            if (data[i].enabled) {
                 ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.65f));
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
             } else {
@@ -86,25 +87,25 @@ void MotorDataPanel::draw() {
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted("DC Link");
             ImGui::TableSetColumnIndex(1);
-            ImGui::TextUnformatted(data.discharge.data());
+            ImGui::TextUnformatted(data[i].discharge.data());
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted("Fault Level");
             ImGui::TableSetColumnIndex(1);
-            ImGui::TextUnformatted(data.faultlevel.data());
+            ImGui::TextUnformatted(data[i].faultlevel.data());
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted("Fault Code [hex]");
             ImGui::TableSetColumnIndex(1);
-            ImGui::Text("0x%02X", data.faultcode);
+            ImGui::Text("0x%02X", data[i].faultcode);
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted("Errors [hex]");
             ImGui::TableSetColumnIndex(1);
-            ImGui::Text("0x%08X", data.errors);
+            ImGui::Text("0x%08X", data[i].errors);
 
             ImGui::EndTable();
         }

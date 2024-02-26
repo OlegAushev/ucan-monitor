@@ -10,18 +10,6 @@
 namespace atvvcu {
 
 
-static constexpr int pdm_contactor_count = 7;
-enum class PdmContactor : unsigned int {
-    battery_p,
-    battery_n,
-    front_bypass,
-    back_bypass,
-    aux_bypass,
-    charge_allow,
-    charge_mode,
-};
-
-
 enum class VcuOperationMode : unsigned int {
     normal,
     ctlemu,
@@ -51,16 +39,23 @@ inline const std::vector<std::string> vcu_states = {
 
 struct CobTpdo1 {
     uint32_t vcu_state : 4;
-    uint32_t vcu_opmode : 2;
-    uint32_t _reserved1 : 26;
+    uint32_t vcu_dbg : 1;
+    uint32_t _reserved1 : 3;
 
-    uint32_t _reserved2 : 24;
-    uint32_t counter : 2;
-    uint32_t _reserved3 : 6;
-};
+    uint32_t dash_dbg : 1;
+    uint32_t pdm_dbg : 1;
+    uint32_t drive_dbg : 1;
+    uint32_t gear_dbg : 1;
+    uint32_t accl_dbg : 1;
+    uint32_t steer_dbg : 1;
+    uint32_t _reserved2 : 2;
 
+    uint32_t faultreset : 1;
+    uint32_t power : 1;
+    uint32_t run : 1;
+    uint32_t gear : 2;
+    uint32_t _reserved3 : 3;
 
-struct CobTpdo2 {
     uint32_t pdm_battery_p : 1;
     uint32_t pdm_battery_n : 1;
     uint32_t pdm_front_bypass : 1;
@@ -68,6 +63,24 @@ struct CobTpdo2 {
     uint32_t pdm_aux_bypass : 1;
     uint32_t pdm_charge_allow : 1;
     uint32_t pdm_charge_mode : 1;
+    uint32_t _reserved4 : 1;
+
+    uint32_t accl : 8;
+
+
+    uint32_t _reserved5 : 24;
+
+};
+
+
+struct CobTpdo2 {
+    // uint32_t pdm_battery_p : 1;
+    // uint32_t pdm_battery_n : 1;
+    // uint32_t pdm_front_bypass : 1;
+    // uint32_t pdm_back_bypass : 1;
+    // uint32_t pdm_aux_bypass : 1;
+    // uint32_t pdm_charge_allow : 1;
+    // uint32_t pdm_charge_mode : 1;
 
     uint32_t _reserved1 : 9;
 
@@ -75,7 +88,6 @@ struct CobTpdo2 {
     uint32_t bms_charge_pct : 8;
 
     uint32_t _reserved2 : 16;
-    
     uint32_t counter : 2;
     uint32_t _reserved3 : 6;
 };
@@ -108,15 +120,20 @@ struct CobTpdo4 {
 
 
 struct CobRpdo1 {
-    uint32_t opmode : 2;
+    uint32_t dash_dbg : 1;
+    uint32_t pdm_dbg : 1;
+    uint32_t drive_dbg : 1;
+    uint32_t gear_dbg : 1;
+    uint32_t accl_dbg : 1;
+    uint32_t steer_dbg : 1;
+    uint32_t _reserved1 : 2;
+
+    uint32_t faultreset : 1;
     uint32_t power : 1;
     uint32_t run : 1;
-    uint32_t _reserved1 : 28;
-    uint32_t _reserved2 : 32;
-};
+    uint32_t gear : 2;
+    uint32_t _reserved2 : 3;
 
-
-struct CobRpdo2 {
     uint32_t pdm_battery_p : 1;
     uint32_t pdm_battery_n : 1;
     uint32_t pdm_front_bypass : 1;
@@ -124,14 +141,17 @@ struct CobRpdo2 {
     uint32_t pdm_aux_bypass : 1;
     uint32_t pdm_charge_allow : 1;
     uint32_t pdm_charge_mode : 1;
-    uint32_t _reserved1 : 25;
-    uint32_t _reserved2 : 24;
+    uint32_t _reserved3 : 1;
+
+    uint32_t accl : 8;
+
+    uint32_t _reserved4 : 24;
+
     uint32_t counter : 2;
-    uint32_t _reserved3 : 6;
+    uint32_t _reserved5 : 6;
 };
 
-
-struct CobRpdo3 {
+struct CobRpdo2 {
     uint32_t ctlmode : 1;
     uint32_t enable_controller : 1;
     uint32_t discharge : 1;

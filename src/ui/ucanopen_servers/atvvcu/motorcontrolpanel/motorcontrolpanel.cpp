@@ -72,16 +72,16 @@ void MotorControlPanel::draw() {
         ImGui::End();
     }
 
-    _server->set_motordrive_ref_ctlmode(_ref_ctlmode);
-    _server->set_motordrive_ref_enable(_ref_enable);
-    _server->set_motordrive_ref_discharge(_ref_discharge);
-    _server->set_motordrive_ref_mainrelay(_ref_mainrelay);
-    _server->set_motordrive_ref_footbrake(_ref_footbrake);
-    _server->set_motordrive_ref_handbrake(_ref_handbrake);
-    _server->set_motordrive_ref_faultreset(_ref_faultreset);
-    _server->set_motordrive_ref_gear(_ref_gear);
-    _server->set_motordrive_ref_speed(_ref_speed);
-    _server->set_motordrive_ref_torque(_ref_torque);
+    _server->drive.set_ref_ctlmode(_ref_ctlmode);
+    _server->drive.set_ref_enable(_ref_enable);
+    _server->drive.set_ref_discharge(_ref_discharge);
+    _server->drive.set_ref_mainrelay(_ref_mainrelay);
+    _server->drive.set_ref_footbrake(_ref_footbrake);
+    _server->drive.set_ref_handbrake(_ref_handbrake);
+    _server->drive.set_ref_faultreset(_ref_faultreset);
+    _server->drive.set_ref_gear(_ref_gear);
+    _server->drive.set_ref_speed(_ref_speed);
+    _server->drive.set_ref_torque(_ref_torque);
 }
 
 

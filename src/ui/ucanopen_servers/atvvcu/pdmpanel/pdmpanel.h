@@ -24,9 +24,9 @@ public:
 private:
     void _draw_contactor_states();
 private:
-    std::array<bool, ::atvvcu::pdm_contactor_count> _contactor_ref_state{};
-    std::array<bool, ::atvvcu::pdm_contactor_count> _contactor_feedback_state{};
-    std::array<std::string_view, ::atvvcu::pdm_contactor_count> _contactor_labels = {
+    std::array<bool, ::atvvcu::pdm::contactor_count> _contactor_ref_state{};
+    std::array<bool, ::atvvcu::pdm::contactor_count> _contactor_feedback_state{};
+    std::array<std::string_view, ::atvvcu::pdm::contactor_count> _contactor_labels = {
         ICON_MDI_BATTERY_POSITIVE" Battery +",
         ICON_MDI_BATTERY_NEGATIVE" Battery -",
         ICON_MDI_NUMERIC_1_BOX_OUTLINE" Front Bypass",

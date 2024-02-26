@@ -15,6 +15,13 @@ class SystemPanel : public View {
 private:
     std::shared_ptr<::atvvcu::Server> _server;
 
+    bool _dash_dbg{false};
+    bool _pdm_dbg{false};
+    bool _drive_dbg{false};
+    bool _gear_dbg{false};
+    bool _accl_dbg{false};
+    bool _steer_dbg{false};
+
     int _vcu_opmode{std::to_underlying(::atvvcu::VcuOperationMode::normal)};
     bool _power_enabled{false};
     bool _run_enabled{false};
@@ -25,6 +32,7 @@ public:
                 bool open);
     virtual void draw() override;
 private:
+    void _draw_debug_controls();
     void _draw_controls();
     void _draw_status();
     void _read_keyboard();

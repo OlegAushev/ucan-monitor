@@ -9,6 +9,9 @@
 #include <cstdint>
 #include <string_view>
 
+#include "util/pdm.h"
+#include "util/drive.h"
+
 
 namespace atvvcu {
 
@@ -19,16 +22,8 @@ extern const ucanopen::ObjectDictionaryConfig object_dictionary_config;
 
 class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 public:
-    struct MotorDriveData {
-        uint32_t errors;
-        std::string_view ctlmode{"..."};
-        bool enabled;
-        std::string_view discharge{"..."};
-        std::string_view faultlevel{"..."};
-        uint32_t faultcode;
-    };
-
-    std::array<std::atomic<MotorDriveData>, 4> motordrive_data{};
+    pdm::Controller pdm;
+    drive::Controller drive;
 
     struct SystemData {
         std::string_view vcu_state{"..."};
@@ -48,7 +43,7 @@ protected:
 
     ucanopen::can_payload _create_rpdo1();
     ucanopen::can_payload _create_rpdo2();
-    ucanopen::can_payload _create_rpdo3();
+    //ucanopen::can_payload _create_rpdo3();
 
 
     virtual ucanopen::FrameHandlingStatus handle_sdo(ucanopen::ODEntryIter entry,
@@ -72,76 +67,7 @@ private:
     std::atomic<float> _bms_charge_pct{0.0f};
 
 private:
-    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_feedback_state{};
-    std::array<std::atomic_bool, pdm_contactor_count> _pdm_contactor_ref_state{};
 
-public:
-    std::array<bool, pdm_contactor_count> pdm_contactor_feedback_state() const {
-        std::array<bool, pdm_contactor_count> ret;
-        std::copy(_pdm_contactor_feedback_state.begin(), _pdm_contactor_feedback_state.end(), ret.begin());
-        return ret;
-    }
-
-    void set_pdm_contactor_ref_state(const std::array<bool, pdm_contactor_count> ref) {
-        std::copy(ref.begin(), ref.end(), _pdm_contactor_ref_state.begin());
-    }
-
-private:
-    std::array<std::atomic_bool, 4> _motordrive_ref_ctlmode{};
-    std::array<std::atomic_bool, 4> _motordrive_ref_enable{};
-    std::array<std::atomic_bool, 4> _motordrive_ref_discharge{};
-    std::array<std::atomic_bool, 4> _motordrive_ref_mainrelay{};
-    std::array<std::atomic_bool, 4> _motordrive_ref_footbrake{};
-    std::array<std::atomic_bool, 4> _motordrive_ref_handbrake{};
-    std::array<std::atomic_bool, 4> _motordrive_ref_faultreset{};
-    std::array<std::atomic_uint8_t, 4> _motordrive_ref_gear{};
-    std::array<std::atomic_int16_t, 4> _motordrive_ref_speed{};
-    std::array<std::atomic_int16_t, 4> _motordrive_ref_torque{};
-
-public:
-    void set_motordrive_ref_ctlmode(const std::array<int, 4>& ref) {
-        std::copy(ref.begin(), ref.end(), _motordrive_ref_ctlmode.begin());
-    }
-
-    void set_motordrive_ref_enable(const std::array<bool, 4>& ref) {
-        std::copy(ref.begin(), ref.end(), _motordrive_ref_enable.begin());
-    }
-
-    void set_motordrive_ref_discharge(const std::array<bool, 4>& ref) {
-        std::copy(ref.begin(), ref.end(), _motordrive_ref_discharge.begin());
-    }
-
-    void set_motordrive_ref_mainrelay(const std::array<bool, 4>& ref) {
-        std::copy(ref.begin(), ref.end(), _motordrive_ref_mainrelay.begin());
-    }
-
-    void set_motordrive_ref_footbrake(const std::array<bool, 4>& ref) {
-        std::copy(ref.begin(), ref.end(), _motordrive_ref_footbrake.begin());
-    }
-
-    void set_motordrive_ref_handbrake(const std::array<bool, 4>& ref) {
-        std::copy(ref.begin(), ref.end(), _motordrive_ref_handbrake.begin());
-    }
-
-    void set_motordrive_ref_faultreset(const std::array<bool, 4>& ref) {
-        std::copy(ref.begin(), ref.end(), _motordrive_ref_faultreset.begin());
-    }
-
-    void set_motordrive_ref_gear(const std::array<int, 4>& ref) {
-        std::copy(ref.begin(), ref.end(), _motordrive_ref_gear.begin());
-    }
-
-    void set_motordrive_ref_speed(const std::array<float, 4>& ref) {
-        for (auto i = 0uz; i < ref.size(); ++i) {
-            _motordrive_ref_speed[i] = std::clamp(ref[i], -10000.0f, 10000.0f);
-        }
-    }
-
-    void set_motordrive_ref_torque(const std::array<float, 4>& ref) {
-        for (auto i = 0uz; i < ref.size(); ++i) {
-            _motordrive_ref_torque[i] = std::clamp(ref[i] * 10.0f, -4000.0f, 4000.0f);
-        }
-    }
 };
 
 

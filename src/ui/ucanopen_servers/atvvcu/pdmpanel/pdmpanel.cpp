@@ -33,7 +33,7 @@ void PdmPanel::draw() {
 
 
 void PdmPanel::_draw_contactor_states() {
-    _contactor_feedback_state = _server->pdm_contactor_feedback_state();
+    _contactor_feedback_state = _server->pdm.contactor_feedback_state();
 
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("contactor_table", 2, flags)) {
@@ -41,7 +41,7 @@ void PdmPanel::_draw_contactor_states() {
         ImGui::TableSetupColumn("State", ImGuiTableColumnFlags_WidthFixed, 80.0f);
         ImGui::TableHeadersRow();
 
-        for (size_t row = 0; row < ::atvvcu::pdm_contactor_count; ++row) {
+        for (size_t row = 0; row < ::atvvcu::pdm::contactor_count; ++row) {
             ImGui::TableNextRow();
 
             ImGui::TableSetColumnIndex(0);
@@ -70,7 +70,7 @@ void PdmPanel::_draw_contactor_states() {
         ImGui::EndTable();
     }
 
-    _server->set_pdm_contactor_ref_state(_contactor_ref_state);
+    _server->pdm.set_contactor_ref_state(_contactor_ref_state);
 }
 
 
