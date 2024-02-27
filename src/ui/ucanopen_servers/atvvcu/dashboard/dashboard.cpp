@@ -101,6 +101,8 @@ void Dashboard::_draw_controls() {
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->vcu_state().data());
 
+    ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
+    if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
     // power switch
     ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
     ImGui::SameLine();
@@ -112,6 +114,8 @@ void Dashboard::_draw_controls() {
     ImGui::SameLine();
     ImGui::TextDisabled("(F4)");
     _server->dash.toggle_run(_run_enabled);
+
+    if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
 
     // Gear
     ImGui::SeparatorText(ICON_MDI_CAR_SHIFT_PATTERN" Gear");
@@ -153,7 +157,7 @@ void Dashboard::_draw_controls() {
 
 
 void Dashboard::_draw_status() {
-    ImGui::SeparatorText("Status");
+    ImGui::SeparatorText(ICON_MDI_INFORMATION_SLAB_CIRCLE" Status");
 
     for (auto domain_idx = 0uz; domain_idx < ::atvvcu::error_domain_count; ++domain_idx) {
         if (_server->errors[domain_idx] != 0) {
