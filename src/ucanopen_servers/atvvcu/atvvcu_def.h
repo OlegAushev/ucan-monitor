@@ -197,9 +197,9 @@ inline const std::vector<std::string> syslog_messages = {
 };
 
 
-inline constexpr size_t error_domain_count = 3;
+inline constexpr size_t error_domain_count = 4;
 inline const std::array<std::string_view, error_domain_count> error_domains = {
-    "sys", "ucanopen", "pdm"
+    "sys", "ucanopen", "pdm", "accl"
 };
 
 
@@ -225,6 +225,12 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> error
         "charge_mode_failure",
         "poweron_failed",
         "poweroff_failed"
+    },
+    {
+        "accl1_low",
+        "accl1_high",
+        "accl2_low",
+        "accl2_high",
     }
 }};
 
@@ -242,6 +248,9 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> warni
     },
     {
 
+    },
+    {
+        
     }
 }};
 
