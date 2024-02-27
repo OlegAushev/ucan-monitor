@@ -19,17 +19,20 @@ void MotorControlPanel::draw() {
     for (size_t i = 0; i < 4; ++i) {
         ImGui::Begin(_window_titles[i].c_str());
 
+        if (!_server->drive.debug_mode()) { ImGui::BeginDisabled(); }
+
         ImGui::SeparatorText(ICON_MDI_CAMERA_CONTROL" Control Mode");
         ImGui::RadioButton("Speed", &_ref_ctlmode[i], 0);
         ImGui::SameLine();
         ImGui::RadioButton("Torque", &_ref_ctlmode[i], 1);
 
         ImGui::SeparatorText(ICON_MDI_CAR_SHIFT_PATTERN" Gear");
-        ImGui::RadioButton("Neutral", &_ref_gear[i], 0);
-        ImGui::SameLine();
-        ImGui::RadioButton("Forward", &_ref_gear[i], 1);
-        ImGui::SameLine();
-        ImGui::RadioButton("Reverse", &_ref_gear[i], 2);
+
+        if (_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); }
+        ImGui::RadioButton("R", &_ref_gear[i], 2);
+        ImGui::RadioButton("N", &_ref_gear[i], 0);
+        ImGui::RadioButton("D", &_ref_gear[i], 1);
+        if (_server->gear_selector.debug_mode()) { ImGui::EndDisabled(); }
 
         ImGui::SeparatorText("");
         ui::ToggleButton(ICON_MDI_ELECTRIC_SWITCH" Relay ", _ref_mainrelay[i]);
@@ -68,6 +71,8 @@ void MotorControlPanel::draw() {
 
             ImGui::TreePop();
         }
+
+        if (!_server->drive.debug_mode()) { ImGui::EndDisabled(); }
 
         ImGui::End();
     }

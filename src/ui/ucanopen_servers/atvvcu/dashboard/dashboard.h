@@ -11,7 +11,7 @@ namespace ui {
 namespace atvvcu {
 
 
-class SystemPanel : public View {
+class Dashboard : public View {
 private:
     std::shared_ptr<::atvvcu::Server> _server;
 
@@ -22,11 +22,13 @@ private:
     bool _accl_dbg{false};
     bool _steer_dbg{false};
 
-    int _vcu_opmode{std::to_underlying(::atvvcu::VcuOperationMode::normal)};
     bool _power_enabled{false};
     bool _run_enabled{false};
+
+    int _ref_gear{0};
+    float _accl{0};
 public:
-    SystemPanel(std::shared_ptr<::atvvcu::Server> server,
+    Dashboard(std::shared_ptr<::atvvcu::Server> server,
                 const std::string& menu_title,
                 const std::string& window_title,
                 bool open);

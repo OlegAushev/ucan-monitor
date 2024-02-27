@@ -1,4 +1,4 @@
-#include "systempanel.h"
+#include "dashboard.h"
 #include <ui/components/togglebutton.h>
 
 
@@ -6,7 +6,7 @@ namespace ui {
 namespace atvvcu {
 
 
-SystemPanel::SystemPanel(std::shared_ptr<::atvvcu::Server> server,
+Dashboard::Dashboard(std::shared_ptr<::atvvcu::Server> server,
                          const std::string& menu_title,
                          const std::string& window_title,
                          bool open)
@@ -15,11 +15,10 @@ SystemPanel::SystemPanel(std::shared_ptr<::atvvcu::Server> server,
 {}
 
 
-void SystemPanel::draw() {
+void Dashboard::draw() {
     ImGui::Begin(_window_title.c_str(), &is_open);
 
     _read_keyboard();
-    _draw_debug_controls();
     _draw_controls();
     _draw_status();
 
@@ -27,7 +26,7 @@ void SystemPanel::draw() {
 }
 
 
-void SystemPanel::_draw_debug_controls() {
+void Dashboard::_draw_debug_controls() {
     if (_server->vcu_debug_mode()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
         ImGui::TextUnformatted(ICON_MDI_BUG); 
@@ -38,7 +37,7 @@ void SystemPanel::_draw_debug_controls() {
 
     ImGui::SameLine();
 
-    if (ImGui::TreeNode("Debug options")) {
+    if (ImGui::TreeNode("Debug Options")) {
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
         
         ImGui::Checkbox("PDM", &_pdm_dbg);
@@ -93,30 +92,14 @@ void SystemPanel::_draw_debug_controls() {
 }
 
 
-void SystemPanel::_draw_controls() {
-    ImGui::SeparatorText("Control");
-
-    ImGui::RadioButton("Normal", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::normal));
-    ImGui::SameLine();
-    ImGui::RadioButton("Ctlemu", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::ctlemu));
-    ImGui::SameLine();
-    ImGui::RadioButton("Debug ", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::debug));
-   
-    // FIXME _server->set_vcu_opmode(::atvvcu::VcuOperationMode(_vcu_opmode));
-
+void Dashboard::_draw_controls() {
     ImGui::TextUnformatted("Uptime[s]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("sys", "uptime").c_str());
 
-    // ::atvvcu::Server::SystemData systemdata_tpdo = _server->system_data.load();
-
-    // ImGui::TextUnformatted("VCU State:");
-    // ImGui::SameLine();
-    // ImGui::TextUnformatted(systemdata_tpdo.vcu_state.data());
-
-    // ImGui::TextUnformatted("VCU Mode:");
-    // ImGui::SameLine();
-    // ImGui::TextUnformatted(systemdata_tpdo.vcu_opmode.data());
+    ImGui::TextUnformatted("VCU State:");
+    ImGui::SameLine();
+    ImGui::TextUnformatted(_server->vcu_state().data());
 
     // power switch
     ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
@@ -130,7 +113,36 @@ void SystemPanel::_draw_controls() {
     ImGui::TextDisabled("(F4)");
     _server->dash.toggle_run(_run_enabled);
 
-    // misc actions
+    // Gear
+    ImGui::SeparatorText(ICON_MDI_CAR_SHIFT_PATTERN" Gear");
+    if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); _ref_gear = std::to_underlying(_server->gear_selector.gear()); }
+
+    ImGui::RadioButton("R", &_ref_gear, 2);
+    if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::reverse) { ImGui::SameLine(); ImGui::TextUnformatted(ICON_MDI_CHEVRON_LEFT); }
+
+    ImGui::RadioButton("N", &_ref_gear, 0);
+    if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::neutral) { ImGui::SameLine(); ImGui::TextUnformatted(ICON_MDI_CHEVRON_LEFT); }
+
+    ImGui::RadioButton("D", &_ref_gear, 1);
+    if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::forward) { ImGui::SameLine(); ImGui::TextUnformatted(ICON_MDI_CHEVRON_LEFT); }
+
+    if (!_server->gear_selector.debug_mode()) { ImGui::EndDisabled(); }
+    _server->gear_selector.set_gear(::atvvcu::gear::Gear(_ref_gear));
+
+    // Accelerator pedal
+    ImGui::SeparatorText(ICON_MDI_SPEEDOMETER" Pedal");
+    ImGui::ProgressBar(_server->accl_pedal.pressure());
+    if (!_server->accl_pedal.debug_mode()) { ImGui::BeginDisabled(); }
+    ImGui::SliderFloat("", &_accl, 0.0f, 1.0f);
+    if (!_server->accl_pedal.debug_mode()) { ImGui::EndDisabled(); }
+    _server->accl_pedal.set_pressure(_accl);
+
+    // Misc
+    ImGui::SeparatorText("");
+    _draw_debug_controls();
+
+    ImGui::TextUnformatted(ICON_MDI_WRENCH);
+    ImGui::SameLine();
     if (ImGui::TreeNode("Misc Actions")) {
         if (ImGui::Button("Clear Errors", ImVec2(300, 0))) {
             _server->exec("ctl", "sys", "clear_errors");
@@ -140,7 +152,7 @@ void SystemPanel::_draw_controls() {
 }
 
 
-void SystemPanel::_draw_status() {
+void Dashboard::_draw_status() {
     ImGui::SeparatorText("Status");
 
     for (auto domain_idx = 0uz; domain_idx < ::atvvcu::error_domain_count; ++domain_idx) {
@@ -211,7 +223,7 @@ void SystemPanel::_draw_status() {
 }
 
 
-void SystemPanel::_read_keyboard() {
+void Dashboard::_read_keyboard() {
     if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F2))) {
         //_emergency = !_emergency;
     }

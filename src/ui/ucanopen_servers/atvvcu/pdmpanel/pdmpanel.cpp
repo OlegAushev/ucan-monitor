@@ -45,6 +45,7 @@ void PdmPanel::_draw_contactor_states() {
             ImGui::TableNextRow();
 
             ImGui::TableSetColumnIndex(0);
+            if (!_server->pdm.debug_mode()) {ImGui::BeginDisabled(); }
             ImGui::PushID(row);
             if (_contactor_ref_state[row]) {
                 ui::ToggleSmallButton(ICON_MDI_ELECTRIC_SWITCH_CLOSED"##", _contactor_ref_state[row]);
@@ -52,6 +53,7 @@ void PdmPanel::_draw_contactor_states() {
                 ui::ToggleSmallButton(ICON_MDI_ELECTRIC_SWITCH"##", _contactor_ref_state[row]);
             }
             ImGui::PopID();
+            if (!_server->pdm.debug_mode()) { ImGui::EndDisabled(); }
             ImGui::SameLine();
             ImGui::TextUnformatted(_contactor_labels[row].data());
 

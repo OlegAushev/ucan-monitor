@@ -165,8 +165,10 @@ ucanopen::can_payload Server::_create_rpdo1() {
     rpdo.drive_dbg = drive._ref_debug_mode;
 
     rpdo.gear_dbg = gear_selector._ref_debug_mode;
+    rpdo.gear = std::to_underlying(gear_selector._ref_gear.load());
 
     rpdo.accl_dbg = accl_pedal._ref_debug_mode;
+    rpdo.accl = accl_pedal._ref_pressure * 100.f;
 
     rpdo.counter = counter;
     counter = (counter + 1) % 4;

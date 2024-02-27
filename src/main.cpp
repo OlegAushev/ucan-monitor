@@ -21,7 +21,7 @@
 #include <ui/ucanopen_servers/srmdrive/datapanel/datapanel.h>
 #include <ui/ucanopen_servers/srmdrive/statuspanel/statuspanel.h>
 
-#include <ui/ucanopen_servers/atvvcu/systempanel/systempanel.h>
+#include <ui/ucanopen_servers/atvvcu/dashboard/dashboard.h>
 #include <ui/ucanopen_servers/atvvcu/bmspanel/bmspanel.h>
 #include <ui/ucanopen_servers/atvvcu/pdmpanel/pdmpanel.h>
 #include <ui/ucanopen_servers/atvvcu/motorcontrolpanel/motorcontrolpanel.h>
@@ -169,7 +169,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         ucanopen_client->register_server(atvvcu_server);
 
         watchpanel = std::make_shared<ui::WatchPanel>(atvvcu_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
-        auto systempanel = std::make_shared<ui::atvvcu::SystemPanel>(atvvcu_server, ICON_MDI_GAUGE" System", " System", true);
+        auto systempanel = std::make_shared<ui::atvvcu::Dashboard>(atvvcu_server, ICON_MDI_GAUGE" Dashboard", "Dashboard", true);
         auto bmspanel = std::make_shared<ui::atvvcu::BmsPanel>(atvvcu_server, ICON_MDI_CAR_BATTERY" BMS", "BMS", true);
         auto pdmpanel = std::make_shared<ui::atvvcu::PdmPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE" PDM", "PDM", true);
         auto motordatapanel = std::make_shared<ui::atvvcu::MotorDataPanel>(atvvcu_server, ICON_MDI_TABLE" Motor Data", "Motor Data", true);
