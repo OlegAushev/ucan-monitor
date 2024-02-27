@@ -23,10 +23,6 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
             [this](){ return this->_create_rpdo1(); });
     rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2, std::chrono::milliseconds(100),
             [this](){ return this->_create_rpdo2(); });
-    // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3, std::chrono::milliseconds(50),
-    //         [this](){ return this->_create_rpdo3(); });
-    // rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo4, std::chrono::milliseconds(500),
-    //         [this](){ return this->_create_rpdo4(); });
 }
 
 
@@ -38,13 +34,6 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
         if ((message_id != 0) && (message_id < syslog_messages.size())) {
             bsclog::info("{}", syslog_messages[message_id]);
         }
-    } else if (entry->second.name == "pdm_contactor_state") {
-        // if (_pdm_mtx.try_lock()) {
-        //     for (auto i = 0; i < pdm_contactor_count; ++i) {
-        //         _pdm_contactor_states[i] = data.u32() & (1 << i);
-        //     }
-        //     _pdm_mtx.unlock();
-        // }
     }
 
     return ucanopen::FrameHandlingStatus::success;
@@ -55,25 +44,30 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo1) == 8);
     CobTpdo1 tpdo = ucanopen::from_payload<CobTpdo1>(payload);
 
-    SystemData data_{};
-    data_.vcu_state = (tpdo.vcu_state < vcu_states.size()) ? std::string_view(vcu_states[tpdo.vcu_state]) : "unknown";
+    _vcu_state.store((tpdo.vcu_state < vcu_states.size()) ? std::string_view(vcu_states[tpdo.vcu_state]) : "unknown");
+    _vcu_debug_mode.store(tpdo.vcu_dbg);
+
+    dash._debug_mode.store(tpdo.dash_dbg);
+    dash._fault_reset.store(tpdo.faultreset);
+    dash._power_enabled.store(tpdo.power);
+    dash._run_enabled.store(tpdo.run);
     
-    pdm._debug_mode = tpdo.pdm_dbg;
-    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::battery_p)] = tpdo.pdm_battery_p; 
-    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::battery_n)] = tpdo.pdm_battery_n; 
-    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::front_bypass)] = tpdo.pdm_front_bypass; 
-    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::back_bypass)] = tpdo.pdm_back_bypass; 
-    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::aux_bypass)] = tpdo.pdm_aux_bypass; 
-    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::charge_allow)] = tpdo.pdm_charge_allow; 
-    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::charge_mode)] = tpdo.pdm_charge_mode;
+    pdm._debug_mode.store(tpdo.pdm_dbg);
+    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::battery_p)].store(tpdo.pdm_battery_p);
+    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::battery_n)].store(tpdo.pdm_battery_n);
+    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::front_bypass)].store(tpdo.pdm_front_bypass);
+    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::back_bypass)].store(tpdo.pdm_back_bypass);
+    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::aux_bypass)].store(tpdo.pdm_aux_bypass);
+    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::charge_allow)].store(tpdo.pdm_charge_allow);
+    pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::charge_mode)].store(tpdo.pdm_charge_mode);
 
-    drive._debug_mode = tpdo.drive_dbg;
+    drive._debug_mode.store(tpdo.drive_dbg);
 
-    gear_selector._debug_mode = tpdo.gear_dbg;
+    gear_selector._debug_mode.store(tpdo.gear_dbg);
+    if (tpdo.gear <= gear::gears.size()) { gear_selector._gear.store(gear::Gear(tpdo.gear)); }
 
-    accl_pedal._debug_mode = tpdo.accl_dbg;
-
-    system_data = data_;
+    accl_pedal._debug_mode.store(tpdo.accl_dbg);
+    accl_pedal._pressure.store(tpdo.accl / 100.0f);
 }
 
 
@@ -81,15 +75,15 @@ void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo2) == 8);
     CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
 
-    _bms_voltage = uint16_t(tpdo.bms_voltage) / 10.0f;
-    _bms_charge_pct = uint8_t(tpdo.bms_charge_pct);
+    bms._voltage = uint16_t(tpdo.bms_voltage) / 10.0f;
+    bms._charge_pct = uint8_t(tpdo.bms_charge_pct);
 }
 
 
 void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo3) == 8);
-
     CobTpdo3 tpdo = ucanopen::from_payload<CobTpdo3>(payload);
+
     size_t wheel = tpdo.wheel;
     drive::Controller::Data data{};
 
@@ -155,8 +149,8 @@ ucanopen::can_payload Server::_create_rpdo1() {
     static unsigned int counter = 0;
     CobRpdo1 rpdo{};
 
-    rpdo.power = _power_enabled;
-    rpdo.run = _run_enabled;
+    rpdo.power = dash._ref_power_enabled;
+    rpdo.run = dash._ref_run_enabled;
 
     rpdo.pdm_dbg = pdm._ref_debug_mode;
     rpdo.pdm_battery_p = pdm._contactor_ref_state[std::to_underlying(pdm::Contactor::battery_p)];

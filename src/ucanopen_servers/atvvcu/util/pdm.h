@@ -14,7 +14,7 @@ class Server;
 namespace pdm {
 
 
-static constexpr int contactor_count = 7;
+inline constexpr int contactor_count = 7;
 enum class Contactor : unsigned int {
     battery_p,
     battery_n,

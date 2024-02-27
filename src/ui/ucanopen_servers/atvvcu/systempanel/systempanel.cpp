@@ -43,33 +43,33 @@ void SystemPanel::_draw_controls() {
     ImGui::SameLine();
     ImGui::RadioButton("Debug ", &_vcu_opmode, std::to_underlying(::atvvcu::VcuOperationMode::debug));
    
-    _server->set_vcu_opmode(::atvvcu::VcuOperationMode(_vcu_opmode));
+    // FIXME _server->set_vcu_opmode(::atvvcu::VcuOperationMode(_vcu_opmode));
 
     ImGui::TextUnformatted("Uptime[s]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("sys", "uptime").c_str());
 
-    ::atvvcu::Server::SystemData systemdata_tpdo = _server->system_data.load();
+    // ::atvvcu::Server::SystemData systemdata_tpdo = _server->system_data.load();
 
-    ImGui::TextUnformatted("VCU State:");
-    ImGui::SameLine();
-    ImGui::TextUnformatted(systemdata_tpdo.vcu_state.data());
+    // ImGui::TextUnformatted("VCU State:");
+    // ImGui::SameLine();
+    // ImGui::TextUnformatted(systemdata_tpdo.vcu_state.data());
 
-    ImGui::TextUnformatted("VCU Mode:");
-    ImGui::SameLine();
-    ImGui::TextUnformatted(systemdata_tpdo.vcu_opmode.data());
+    // ImGui::TextUnformatted("VCU Mode:");
+    // ImGui::SameLine();
+    // ImGui::TextUnformatted(systemdata_tpdo.vcu_opmode.data());
 
     // power switch
     ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
-    _server->toggle_power(_power_enabled);
+    _server->dash.toggle_power(_power_enabled);
     
     // run switch
     ToggleButton(ICON_MDI_POWER" Run On/Off  ", _run_enabled);
     ImGui::SameLine();
     ImGui::TextDisabled("(F4)");
-    _server->toggle_run(_run_enabled);
+    _server->dash.toggle_run(_run_enabled);
 
     // misc actions
     if (ImGui::TreeNode("Misc Actions")) {
