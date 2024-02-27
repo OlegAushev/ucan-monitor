@@ -149,6 +149,7 @@ ucanopen::can_payload Server::_create_rpdo1() {
     static unsigned int counter = 0;
     CobRpdo1 rpdo{};
 
+    rpdo.dash_dbg = dash._ref_debug_mode;
     rpdo.power = dash._ref_power_enabled;
     rpdo.run = dash._ref_run_enabled;
 

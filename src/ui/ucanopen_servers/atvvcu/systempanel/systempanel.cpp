@@ -28,9 +28,68 @@ void SystemPanel::draw() {
 
 
 void SystemPanel::_draw_debug_controls() {
-    if (ImGui::TreeNode("Debug")) {
+    if (_server->vcu_debug_mode()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_BUG); 
+        ImGui::PopStyleColor();        
+    } else {
+        ImGui::TextUnformatted(ICON_MDI_BUG);           
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::TreeNode("Debug options")) {
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+        
+        ImGui::Checkbox("PDM", &_pdm_dbg);
+        if (_server->pdm.debug_mode()) {
+            ImGui::SameLine();
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+            ImGui::TextUnformatted(ICON_MDI_BUG); 
+            ImGui::PopStyleColor();             
+        }
+
+        ImGui::Checkbox("Drive", &_drive_dbg);
+        if (_server->drive.debug_mode()) {
+            ImGui::SameLine();
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+            ImGui::TextUnformatted(ICON_MDI_BUG); 
+            ImGui::PopStyleColor();             
+        }
+
+        ImGui::Checkbox("Dash", &_dash_dbg);
+        if (_server->dash.debug_mode()) {
+            ImGui::SameLine();
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+            ImGui::TextUnformatted(ICON_MDI_BUG); 
+            ImGui::PopStyleColor();             
+        }
+
+        ImGui::Checkbox("Gear", &_gear_dbg);
+        if (_server->gear_selector.debug_mode()) {
+            ImGui::SameLine();
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+            ImGui::TextUnformatted(ICON_MDI_BUG); 
+            ImGui::PopStyleColor();             
+        }
+
+        ImGui::Checkbox("Pedal", &_accl_dbg);
+        if (_server->accl_pedal.debug_mode()) {
+            ImGui::SameLine();
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+            ImGui::TextUnformatted(ICON_MDI_BUG); 
+            ImGui::PopStyleColor();             
+        }
+
+        ImGui::PopStyleVar();
         ImGui::TreePop();
     }
+
+    _server->pdm.toggle_debug_mode(_pdm_dbg);
+    _server->drive.toggle_debug_mode(_drive_dbg);
+    _server->dash.toggle_debug_mode(_dash_dbg);
+    _server->gear_selector.toggle_debug_mode(_gear_dbg);
+    _server->accl_pedal.toggle_debug_mode(_accl_dbg);
 }
 
 

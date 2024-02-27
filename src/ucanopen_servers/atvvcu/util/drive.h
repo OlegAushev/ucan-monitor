@@ -46,8 +46,8 @@ private:
     std::array<std::atomic_int16_t, 4> _ref_torque{};
 
 public:
-    bool debug_mode() const { return _debug_mode; }
-    void toggle_debug_mode(bool dbg_enabled) { _ref_debug_mode = dbg_enabled; }
+    bool debug_mode() const { return _debug_mode.load(); }
+    void toggle_debug_mode(bool dbg_enabled) { _ref_debug_mode.store(dbg_enabled); }
     
     std::array<Data, 4> data() const {
         std::array<Data, 4> ret;
