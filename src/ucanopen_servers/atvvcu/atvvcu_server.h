@@ -11,6 +11,9 @@
 
 #include "util/pdm.h"
 #include "util/drive.h"
+#include "util/bms.h"
+#include "util/accl.h"
+#include "util/gear.h"
 
 
 namespace atvvcu {
@@ -22,8 +25,11 @@ extern const ucanopen::ObjectDictionaryConfig object_dictionary_config;
 
 class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 public:
+    bms::Controller bms;
     pdm::Controller pdm;
     drive::Controller drive;
+    gear::GearSelector gear_selector;
+    accl::AcceleratorPedal accl_pedal;
 
     struct SystemData {
         std::string_view vcu_state{"..."};

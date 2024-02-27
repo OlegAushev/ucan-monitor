@@ -35,7 +35,6 @@ private:
     std::array<std::atomic_bool, contactor_count> _contactor_ref_state{};
 public:
     bool debug_mode() const { return _debug_mode; }
-
     void toggle_debug_mode(bool dbg_enabled) { _ref_debug_mode = dbg_enabled; }
 
     std::array<bool, contactor_count> contactor_feedback_state() const {

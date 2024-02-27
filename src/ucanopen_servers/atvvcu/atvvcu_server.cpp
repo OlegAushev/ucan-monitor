@@ -67,6 +67,12 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::charge_allow)] = tpdo.pdm_charge_allow; 
     pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::charge_mode)] = tpdo.pdm_charge_mode;
 
+    drive._debug_mode = tpdo.drive_dbg;
+
+    gear_selector._debug_mode = tpdo.gear_dbg;
+
+    accl_pedal._debug_mode = tpdo.accl_dbg;
+
     system_data = data_;
 }
 
@@ -160,6 +166,12 @@ ucanopen::can_payload Server::_create_rpdo1() {
     rpdo.pdm_aux_bypass = pdm._contactor_ref_state[std::to_underlying(pdm::Contactor::aux_bypass)];
     rpdo.pdm_charge_allow = pdm._contactor_ref_state[std::to_underlying(pdm::Contactor::charge_allow)];
     rpdo.pdm_charge_mode = pdm._contactor_ref_state[std::to_underlying(pdm::Contactor::charge_mode)];
+
+    rpdo.drive_dbg = drive._ref_debug_mode;
+
+    rpdo.gear_dbg = gear_selector._ref_debug_mode;
+
+    rpdo.accl_dbg = accl_pedal._ref_debug_mode;
 
     rpdo.counter = counter;
     counter = (counter + 1) % 4;
