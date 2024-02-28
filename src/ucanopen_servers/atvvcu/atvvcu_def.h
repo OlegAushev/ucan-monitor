@@ -231,6 +231,7 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> error
         "accl1_high",
         "accl2_low",
         "accl2_high",
+        "accl12_ratio"
     }
 }};
 
