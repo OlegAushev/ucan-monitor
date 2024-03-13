@@ -137,7 +137,7 @@ void Dashboard::_draw_controls() {
     ImGui::SeparatorText(ICON_MDI_SPEEDOMETER" Pedal");
     ImGui::ProgressBar(_server->accl_pedal.pressure());
     if (!_server->accl_pedal.debug_mode()) { ImGui::BeginDisabled(); }
-    ImGui::SliderFloat("", &_accl, 0.0f, 1.0f);
+    ImGui::SliderFloat("##", &_accl, 0.0f, 1.0f);
     if (!_server->accl_pedal.debug_mode()) { ImGui::EndDisabled(); }
     _server->accl_pedal.set_pressure(_accl);
 
