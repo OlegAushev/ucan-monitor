@@ -9,9 +9,9 @@ GitInfoSetup()
 
 ################################################################################
 # Threads
-#set(CMAKE_THREAD_PREFER_PTHREAD ON)
-#set(THREADS_PREFER_PTHREAD_FLAG ON)
-#find_package(Threads REQUIRED)
+# set(CMAKE_THREAD_PREFER_PTHREAD ON)
+# set(THREADS_PREFER_PTHREAD_FLAG ON)
+# find_package(Threads REQUIRED)
 
 ################################################################################
 # Headers and Sources
@@ -68,7 +68,7 @@ target_include_directories(${executable} PRIVATE
 
 target_link_libraries(${executable}
     atomic
-    #Threads::Threads
+    # Threads::Threads
     glfw
     ${OPENGL_LIBRARIES}
 )
@@ -93,10 +93,6 @@ target_compile_features(${executable} PRIVATE
     cxx_std_23
 )
 
-target_link_options(${executable} PRIVATE
-    -Wl,--export-dynamic # sic! for signals
-)
-
 ################################################################################
 # Misc Options
 set(CMAKE_VERBOSE_MAKEFILE OFF)
@@ -108,5 +104,3 @@ install(TARGETS ${CMAKE_PROJECT_NAME}
     RUNTIME
     DESTINATION /app/bin
 )
-
-
