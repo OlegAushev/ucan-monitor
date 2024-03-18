@@ -6,7 +6,7 @@
             "${workspaceFolder}/**"
         ],
         "compileCommands": "${workspaceFolder}/build/compile_commands.json",
-        "configurationProvider": "ms-vscode.cpptools"   // in this case works better than ms-vscode.cmake-tools
+        "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4
