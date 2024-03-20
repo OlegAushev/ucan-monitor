@@ -1,0 +1,53 @@
+app-id: org.flatpak.ucan-monitor
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: ucan-monitor
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=session-bus
+  - --socket=x11
+  - --socket=wayland
+  - --filesystem=host
+  - --device=dri
+modules:
+  - name: glfw
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DBUILD_SHARED_LIBS=ON
+      - -DGLFW_BUILD_EXAMPLES=OFF
+      - -DGLFW_BUILD_TESTS=OFF
+      - -DGLFW_BUILD_DOCS=OFF
+    sources:
+      - type: archive
+        url: https://github.com/glfw/glfw/releases/download/3.3.8/glfw-3.3.8.zip
+        sha256: 4d025083cc4a3dd1f91ab9b9ba4f5807193823e565a5bcf4be202669d9911ea6
+    cleanup:
+      - /include
+      - /lib/pkgconfig
+    
+  - name: boost
+    buildsystem: simple
+    build-commands:
+      - ./bootstrap.sh --prefix=/app --with-libraries=headers
+      - ./b2 install variant=release link=shared runtime-link=shared cxxflags="$CXXFLAGS"
+        linkflags="$LDFLAGS" -j $FLATPAK_BUILDER_N_JOBS
+    sources:
+      - type: archive
+        url: https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.gz
+        sha256: a5800f405508f5df8114558ca9855d2640a2de8f0445f051fa1c7c3383045724
+        x-checker-data:
+          type: html
+          url: https://www.boost.org/feed/downloads.rss
+          version-pattern: <item><title>Version ([\d\.]+)<\/title>
+          url-template: https://boostorg.jfrog.io/artifactory/main/release/${version}/source/boost_${major}_${minor}_${patch}.tar.gz
+
+  - name: ucan-monitor
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+    sources:
+      - type: dir
+        path: /home/oleg/dev/pc/ucan-monitor
