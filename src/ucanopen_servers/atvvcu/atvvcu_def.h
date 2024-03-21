@@ -50,11 +50,12 @@ struct CobTpdo1 {
     uint32_t steer_dbg : 1;
     uint32_t _reserved2 : 2;
 
+    uint32_t emergency : 1;
     uint32_t faultreset : 1;
     uint32_t power : 1;
     uint32_t run : 1;
     uint32_t gear : 2;
-    uint32_t _reserved3 : 3;
+    uint32_t _reserved3 : 2;
 
     uint32_t pdm_battery_p : 1;
     uint32_t pdm_battery_n : 1;
@@ -125,11 +126,12 @@ struct CobRpdo1 {
     uint32_t steer_dbg : 1;
     uint32_t _reserved1 : 2;
 
+    uint32_t emergency : 1;
     uint32_t faultreset : 1;
     uint32_t power : 1;
     uint32_t run : 1;
     uint32_t gear : 2;
-    uint32_t _reserved2 : 3;
+    uint32_t _reserved2 : 2;
 
     uint32_t pdm_battery_p : 1;
     uint32_t pdm_battery_n : 1;

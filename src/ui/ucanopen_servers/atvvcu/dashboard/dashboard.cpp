@@ -103,17 +103,68 @@ void Dashboard::_draw_controls() {
 
     ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
     if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
+
+    // emergency switch
+    if (_server->dash.emergency()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    }
+    ImGui::SameLine();
+    ToggleButton(ICON_MDI_ALERT_OCTAGON_OUTLINE" Emergency   ", _emergency);
+    ImGui::SameLine();
+    ImGui::TextDisabled("(F2)");
+    _server->dash.toggle_emergency(_emergency);
+
     // power switch
+    if (_server->dash.power_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    }
+    ImGui::SameLine();
     ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
     _server->dash.toggle_power(_power_enabled);
     
     // run switch
+    if (_server->dash.run_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    }
+    ImGui::SameLine();
     ToggleButton(ICON_MDI_POWER" Run On/Off  ", _run_enabled);
     ImGui::SameLine();
     ImGui::TextDisabled("(F4)");
     _server->dash.toggle_run(_run_enabled);
+
+    // fault reset switch
+    if (_server->dash.emergency()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    }
+    ImGui::SameLine();
+    ToggleButton(ICON_MDI_CLOSE_CIRCLE_OUTLINE" Fault Reset ", _fault_reset);
+    _server->dash.toggle_fault_reset(_fault_reset);
 
     if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
 
@@ -229,7 +280,7 @@ void Dashboard::_draw_status() {
 
 void Dashboard::_read_keyboard() {
     if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F2))) {
-        //_emergency = !_emergency;
+        _emergency = !_emergency;
     }
 
     if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F3))) {

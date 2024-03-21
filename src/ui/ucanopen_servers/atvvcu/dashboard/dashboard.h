@@ -22,8 +22,10 @@ private:
     bool _accl_dbg{false};
     bool _steer_dbg{false};
 
+    bool _emergency{false};
     bool _power_enabled{false};
     bool _run_enabled{false};
+    bool _fault_reset{false};
 
     int _ref_gear{0};
     float _accl{0};
