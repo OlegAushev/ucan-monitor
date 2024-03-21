@@ -18,7 +18,11 @@ Socket::Socket() {
     bsclog::success("Found SocketCAN checking script: {}", script_path.string());
 
     /* RUN SCRIPT */
+#ifdef FLATPAK_BUILD
+    std::string cmd = "flatpak-spawn --host sh " + script_path.string() + " " + "can0" + " 2>&1";
+#else
     std::string cmd = "sh " + script_path.string() + " " + "can0" + " 2>&1";
+#endif
     bsclog::info("Checking SocketCAN interface can0, executing system command: {}", cmd);
     
     auto script_result = cmdexec::run(cmd);
@@ -103,7 +107,11 @@ Status Socket::connect(const std::string& interface, const std::string& bitrate)
     bsclog::success("Found SocketCAN enabling script: {}", script_path.string());
 
     /* RUN SCRIPT */
+#ifdef FLATPAK_BUILD
+    std::string cmd = "flatpak-spawn --host pkexec sh " + script_path.string() + " " + interface + " " + bitrate + " 2>&1";
+#else
     std::string cmd = "pkexec sh " + script_path.string() + " " + interface + " " + bitrate + " 2>&1";
+#endif
     bsclog::info("Enabling SocketCAN interface {}, executing system command: {}", interface, cmd);
 
     auto pkexec_result = cmdexec::run(cmd);

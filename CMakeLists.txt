@@ -14,6 +14,10 @@ GitInfoSetup()
 # find_package(Threads REQUIRED)
 
 ################################################################################
+# Options
+option(FLATPAK_BUILD "Flatpak build configuration" OFF)
+
+################################################################################
 # Headers and Sources
 set(app_incdirs
     ${PROJECT_SOURCE_DIR}
@@ -61,6 +65,13 @@ target_compile_definitions(${executable} PRIVATE
     IMGUI_USE_WCHAR32
 )
 
+if(FLATPAK_BUILD)
+    message(STATUS "Flatpak build: ON")
+    target_compile_definitions(${executable} PRIVATE FLATPAK_BUILD)
+else()
+    message(STATUS "Flatpak build: OFF")
+endif()
+
 target_include_directories(${executable} PRIVATE
     ${app_incdirs}
     ${imgui_incdirs}
@@ -103,4 +114,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 install(TARGETS ${CMAKE_PROJECT_NAME}
     RUNTIME
     DESTINATION /app/bin
+)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/assets
+    DESTINATION /app   
 )

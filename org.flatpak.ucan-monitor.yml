@@ -11,6 +11,7 @@ finish-args:
   - --socket=wayland
   - --filesystem=host
   - --device=dri
+  - --talk-name=org.freedesktop.Flatpak
 modules:
   - name: glfw
     buildsystem: cmake-ninja
@@ -48,6 +49,7 @@ modules:
     buildsystem: cmake-ninja
     config-opts:
       - -DCMAKE_BUILD_TYPE=Release
+      - -DFLATPAK_BUILD=ON
     sources:
       - type: dir
         path: /home/oleg/dev/pc/ucan-monitor
