@@ -50,7 +50,7 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     dash._debug_mode.store(tpdo.dash_dbg);
     dash._remote_control.store(tpdo.remote_control);
     dash._emergency.store(tpdo.emergency);
-    dash._fault_reset.store(tpdo.faultreset);
+    dash._faultreset.store(tpdo.faultreset);
     dash._power_enabled.store(tpdo.power);
     dash._run_enabled.store(tpdo.run);
     
@@ -152,6 +152,8 @@ ucanopen::can_payload Server::_create_rpdo1() {
     CobRpdo1 rpdo{};
 
     rpdo.dash_dbg = dash._ref_debug_mode;
+    rpdo.emergency = dash._ref_emergency;
+    rpdo.faultreset = dash._ref_faultreset;
     rpdo.power = dash._ref_power_enabled;
     rpdo.run = dash._ref_run_enabled;
 

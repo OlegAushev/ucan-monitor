@@ -163,7 +163,7 @@ void Dashboard::_draw_controls() {
     _server->dash.toggle_run(_run_enabled);
 
     // fault reset switch
-    if (_server->dash.emergency()) {
+    if (_server->dash.faultreset_enabled()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
         ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
         ImGui::PopStyleColor();
@@ -174,7 +174,7 @@ void Dashboard::_draw_controls() {
     }
     ImGui::SameLine();
     ToggleButton(ICON_MDI_CLOSE_CIRCLE_OUTLINE" Fault Reset ", _fault_reset);
-    _server->dash.toggle_fault_reset(_fault_reset);
+    _server->dash.toggle_faultreset(_fault_reset);
 
     if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
 
