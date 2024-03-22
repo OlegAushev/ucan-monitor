@@ -19,6 +19,7 @@ private:
     std::atomic_bool _debug_mode{false};
     std::atomic_bool _ref_debug_mode{false};
 
+    std::atomic<bool> _remote_control{false};
     std::atomic<bool> _emergency{false};
     std::atomic<bool> _fault_reset{false};
     std::atomic<bool> _power_enabled{false};
@@ -32,6 +33,7 @@ public:
     bool debug_mode() const { return _debug_mode.load(); }
     void toggle_debug_mode(bool dbg_enabled) { _ref_debug_mode.store(dbg_enabled); }
 
+    bool remote_control_enabled() const { return _remote_control.load(); }
     bool emergency() const { return _emergency.load(); }
     bool fault_reset_enabled() const { return _fault_reset.load(); }
     bool power_enabled() const { return _power_enabled.load(); }

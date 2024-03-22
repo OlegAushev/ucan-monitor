@@ -93,11 +93,21 @@ void Dashboard::_draw_debug_controls() {
 
 
 void Dashboard::_draw_controls() {
-    ImGui::TextUnformatted("Uptime[s]:");
+    ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE" Uptime[s]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("sys", "uptime").c_str());
 
-    ImGui::TextUnformatted("VCU State:");
+    if (_server->dash.remote_control_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_CONTROLLER); 
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_CONTROLLER_OFF); 
+        ImGui::PopStyleColor();        
+    }
+    ImGui::SameLine();
+    ImGui::TextUnformatted(" VCU State:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->vcu_state().data());
 

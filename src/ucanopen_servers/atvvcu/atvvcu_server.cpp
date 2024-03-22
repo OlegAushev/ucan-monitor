@@ -48,6 +48,8 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     _vcu_debug_mode.store(tpdo.vcu_dbg);
 
     dash._debug_mode.store(tpdo.dash_dbg);
+    dash._remote_control.store(tpdo.remote_control);
+    dash._emergency.store(tpdo.emergency);
     dash._fault_reset.store(tpdo.faultreset);
     dash._power_enabled.store(tpdo.power);
     dash._run_enabled.store(tpdo.run);

@@ -26,7 +26,7 @@ extern const ucanopen::ObjectDictionaryConfig object_dictionary_config;
 
 class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 private:
-    std::atomic<std::string_view> _vcu_state;
+    std::atomic<std::string_view> _vcu_state{"n/a"};
     std::atomic_bool _vcu_debug_mode;
 public:
     bms::Controller bms;
