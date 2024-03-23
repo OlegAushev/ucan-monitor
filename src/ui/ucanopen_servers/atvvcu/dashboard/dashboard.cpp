@@ -93,6 +93,8 @@ void Dashboard::_draw_debug_controls() {
 
 
 void Dashboard::_draw_controls() {
+    ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
+
     ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE" Uptime[s]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("sys", "uptime").c_str());
@@ -111,7 +113,6 @@ void Dashboard::_draw_controls() {
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->vcu_state().data());
 
-    ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
     if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
 
     // emergency switch
@@ -180,7 +181,7 @@ void Dashboard::_draw_controls() {
 
     // Gear
     ImGui::SeparatorText(ICON_MDI_CAR_SHIFT_PATTERN" Gear");
-    if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); _ref_gear = std::to_underlying(_server->gear_selector.gear()); }
+    if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); /*_ref_gear = std::to_underlying(_server->gear_selector.gear());*/ }
 
     ImGui::RadioButton("R", &_ref_gear, 2);
     if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::reverse) { ImGui::SameLine(); ImGui::TextUnformatted(ICON_MDI_CHEVRON_LEFT); }

@@ -25,15 +25,15 @@ inline const std::vector<std::string> vcu_opmodes {
 
 
 inline const std::vector<std::string> vcu_states = {
-    "idle    ",
-    "wait    ",
-    "standby ",
-    "poweron ",
-    "ready   ",
-    "start   ",
-    "run     ",
-    "stop    ",
-    "poweroff"
+    "IDLE    ",
+    "WAIT    ",
+    "STANDBY ",
+    "POWERON ",
+    "READY   ",
+    "START   ",
+    "RUN     ",
+    "STOP    ",
+    "POWEROFF"
 };
 
 
@@ -205,8 +205,14 @@ inline const std::array<std::string_view, error_domain_count> error_domains = {
 
 inline const std::array<std::vector<std::string_view>, error_domain_count> error_list = {{
     {
-        "emergency_stop",
+        "emergency",
         "eeprom_error",
+        "drive_lf_nc",
+        "drive_lb_nc",
+        "drive_rf_nc",
+        "drive_rb_nc",
+        "bms_nc",
+        "remote_nc"
     },
     {
         "can_bus_error",
@@ -238,7 +244,8 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> error
 
 inline const std::array<std::vector<std::string_view>, error_domain_count> warning_list = {{
     {
-
+        "dclink_disconnected",
+        "dclink_charging"
     },
     {
         "can_bus_error",
