@@ -183,14 +183,41 @@ void Dashboard::_draw_controls() {
     ImGui::SeparatorText(ICON_MDI_CAR_SHIFT_PATTERN" Gear");
     if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); /*_ref_gear = std::to_underlying(_server->gear_selector.gear());*/ }
 
+    if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::reverse){
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    }
+    ImGui::SameLine();
     ImGui::RadioButton("R", &_ref_gear, 2);
-    if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::reverse) { ImGui::SameLine(); ImGui::TextUnformatted(ICON_MDI_CHEVRON_LEFT); }
 
+    if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::neutral){
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    }
+    ImGui::SameLine();
     ImGui::RadioButton("N", &_ref_gear, 0);
-    if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::neutral) { ImGui::SameLine(); ImGui::TextUnformatted(ICON_MDI_CHEVRON_LEFT); }
 
+    if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::forward){
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+    }
+    ImGui::SameLine();
     ImGui::RadioButton("D", &_ref_gear, 1);
-    if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::forward) { ImGui::SameLine(); ImGui::TextUnformatted(ICON_MDI_CHEVRON_LEFT); }
 
     if (!_server->gear_selector.debug_mode()) { ImGui::EndDisabled(); }
     _server->gear_selector.set_gear(::atvvcu::gear::Gear(_ref_gear));
