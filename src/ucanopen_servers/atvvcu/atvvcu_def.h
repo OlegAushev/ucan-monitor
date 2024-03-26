@@ -49,7 +49,7 @@ struct CobTpdo1 {
     uint32_t accl_dbg : 1;
     uint32_t steer_dbg : 1;
     uint32_t brake_dbg : 1;
-    uint32_t _reserved2 : 1;
+    uint32_t esp_dbg : 1;
 
     uint32_t remote_control : 1;
     uint32_t emergency : 1;
@@ -133,7 +133,7 @@ struct CobRpdo1 {
     uint32_t accl_dbg : 1;
     uint32_t steer_dbg : 1;
     uint32_t brake_dbg : 1;
-    uint32_t _reserved1 : 1;
+    uint32_t esp_dbg : 1;
 
     uint32_t emergency : 1;
     uint32_t faultreset : 1;
@@ -155,7 +155,8 @@ struct CobRpdo1 {
 
     uint32_t brake_left : 1;
     uint32_t brake_right : 1;
-    uint32_t _reserved4 : 6;
+    uint32_t tcs_enable : 1;
+    uint32_t _reserved4 : 5;
     
     uint32_t _reserved5 : 16;
 

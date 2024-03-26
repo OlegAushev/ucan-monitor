@@ -22,6 +22,7 @@ private:
     bool _accl_dbg{false};
     bool _steer_dbg{false};
     bool _brake_dbg{false};
+    bool _esp_dbg{false};
 
     bool _emergency{false};
     bool _power_enabled{false};
@@ -33,6 +34,8 @@ private:
 
     bool _brake_left{false};
     bool _brake_right{false};
+
+    bool _tcs_enable{true};
 public:
     Dashboard(std::shared_ptr<::atvvcu::Server> server,
                 const std::string& menu_title,

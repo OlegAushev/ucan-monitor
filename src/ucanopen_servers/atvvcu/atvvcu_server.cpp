@@ -75,6 +75,7 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     brakes._left_pressed.store(tpdo.brake_left);
     brakes._right_pressed.store(tpdo.brake_right);
 
+    esp_system._debug_mode.store(tpdo.esp_dbg);
     esp_system._tcs_enabled.store(tpdo.tcs_enabled);
     esp_system._tcs_triggered.store(tpdo.tcs_triggered);
 }
@@ -184,6 +185,9 @@ ucanopen::can_payload Server::_create_rpdo1() {
     rpdo.brake_dbg = brakes._ref_debug_mode;
     rpdo.brake_left = brakes._ref_left_pressed;
     rpdo.brake_right = brakes._ref_right_pressed;
+
+    rpdo.esp_dbg = esp_system._ref_debug_mode;
+    rpdo.tcs_enable = esp_system._ref_tcs_enable;
 
     rpdo.counter = counter;
     counter = (counter + 1) % 4;

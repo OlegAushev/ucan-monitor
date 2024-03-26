@@ -48,11 +48,11 @@ void Dashboard::_draw_misc_controls() {
 void Dashboard::_draw_debug_controls() {
     if (_server->vcu_debug_mode()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_BUG); 
-        ImGui::PopStyleColor();        
     } else {
-        ImGui::TextUnformatted(ICON_MDI_BUG);           
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
     }
+    ImGui::TextUnformatted(ICON_MDI_BUG); 
+    ImGui::PopStyleColor();        
 
     ImGui::SameLine();
 
@@ -107,6 +107,14 @@ void Dashboard::_draw_debug_controls() {
             ImGui::PopStyleColor();             
         }
 
+        ImGui::Checkbox("ESP", &_esp_dbg);
+        if (_server->esp_system.debug_mode()) {
+            ImGui::SameLine();
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+            ImGui::TextUnformatted(ICON_MDI_BUG); 
+            ImGui::PopStyleColor();             
+        }
+
         ImGui::PopStyleVar();
         ImGui::TreePop();
     }
@@ -117,6 +125,7 @@ void Dashboard::_draw_debug_controls() {
     _server->gear_selector.toggle_debug_mode(_gear_dbg);
     _server->accl_pedal.toggle_debug_mode(_accl_dbg);
     _server->brakes.toggle_debug_mode(_brake_dbg);
+    _server->esp_system.toggle_debug_mode(_esp_dbg);
 }
 
 
@@ -236,7 +245,24 @@ ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.3f, 0.95f)));
     }
     ImGui::TextUnformatted(ICON_MDI_CAR_TRACTION_CONTROL); 
-    ImGui::PopStyleColor();          
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    if (_server->brakes.left_pressed()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.3f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_ALPHA_L "" ICON_MDI_CAR_BRAKE_ALERT); 
+    ImGui::PopStyleColor();             
+    ImGui::SameLine();
+    if (_server->brakes.right_pressed()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.3f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT "" ICON_MDI_ALPHA_R); 
+    ImGui::PopStyleColor();     
 
     // emergency switch
     if (_server->dash.emergency()) {
@@ -346,7 +372,7 @@ void Dashboard::_draw_gear() {
 
 
 void Dashboard::_draw_accl_brakes() {
-    ImGui::SeparatorText(ICON_MDI_SPEEDOMETER" Pedal & Brakes");
+    ImGui::SeparatorText(ICON_MDI_SPEEDOMETER" Pedal & Brakes & ESP");
     ImGui::ProgressBar(_server->accl_pedal.pressure());
     if (!_server->accl_pedal.debug_mode()) { ImGui::BeginDisabled(); }
     ImGui::SliderFloat("##accl_slider", &_accl, 0.0f, 1.0f);
@@ -354,29 +380,19 @@ void Dashboard::_draw_accl_brakes() {
     _server->accl_pedal.set_pressure(_accl);
 
     if (!_server->brakes.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(ICON_MDI_CAR_BRAKE_ALERT" L", _brake_left);
-    if (!_server->brakes.debug_mode()) { ImGui::EndDisabled(); }
-    ImGui::SameLine();
-    if (_server->brakes.left_pressed()) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.3f, 0.3f, 0.95f)));
-    } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
-    }
-    ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT); 
-    ImGui::PopStyleColor();             
-    ImGui::SameLine();
-    if (_server->brakes.right_pressed()) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.3f, 0.3f, 0.95f)));
-    } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
-    }
-    ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT); 
-    ImGui::PopStyleColor();          
+    ToggleButton(" L " ICON_MDI_CAR_BRAKE_ALERT, _brake_left);
+    if (!_server->brakes.debug_mode()) { ImGui::EndDisabled(); }        
     ImGui::SameLine();
     if (!_server->brakes.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(ICON_MDI_CAR_BRAKE_ALERT" R", _brake_right);
+    ToggleButton(ICON_MDI_CAR_BRAKE_ALERT" R ", _brake_right);
     if (!_server->brakes.debug_mode()) { ImGui::EndDisabled(); }
-    _server->brakes.set_brakes(_brake_left, _brake_right);    
+    _server->brakes.set_brakes(_brake_left, _brake_right);
+
+    ImGui::SameLine();
+    if (!_server->esp_system.debug_mode()) { ImGui::BeginDisabled(); }
+    ToggleButton(ICON_MDI_CAR_TRACTION_CONTROL "TCS", _tcs_enable);
+    if (!_server->esp_system.debug_mode()) { ImGui::EndDisabled(); }
+    _server->esp_system.toggle_tcs(_tcs_enable);
 }
 
 
