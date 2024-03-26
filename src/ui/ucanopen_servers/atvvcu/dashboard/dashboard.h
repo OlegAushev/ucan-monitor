@@ -41,7 +41,7 @@ public:
     virtual void draw() override;
 private:
     void _draw_debug_controls();
-    void _draw_controls();
+    void _draw_misc_controls();
     void _draw_status();
     void _read_keyboard();
 

@@ -74,6 +74,9 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     brakes._debug_mode.store(tpdo.brake_dbg);
     brakes._left_pressed.store(tpdo.brake_left);
     brakes._right_pressed.store(tpdo.brake_right);
+
+    esp_system._tcs_enabled.store(tpdo.tcs_enabled);
+    esp_system._tcs_triggered.store(tpdo.tcs_triggered);
 }
 
 

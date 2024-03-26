@@ -16,6 +16,7 @@
 #include "util/drive.h"
 #include "util/gear.h"
 #include "util/pdm.h"
+#include "util/esp.h"
 
 
 namespace atvvcu {
@@ -27,7 +28,7 @@ extern const ucanopen::ObjectDictionaryConfig object_dictionary_config;
 
 class Server : public ucanopen::Server, public ucanopen::SdoSubscriber {
 private:
-    std::atomic<std::string_view> _vcu_state{"n/a"};
+    std::atomic<std::string_view> _vcu_state{"n/a     "};
     std::atomic_bool _vcu_debug_mode;
 public:
     bms::Controller bms;
@@ -37,6 +38,7 @@ public:
     gear::GearSelector gear_selector;
     accl::AcceleratorPedal accl_pedal;
     brk::Brakes brakes;
+    esp::EspSystem esp_system;
 
     std::array<std::atomic_uint32_t, error_domain_count> errors{};
     std::array<std::atomic_uint16_t, error_domain_count> warnings{};

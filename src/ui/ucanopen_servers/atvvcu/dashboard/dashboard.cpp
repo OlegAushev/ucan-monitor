@@ -23,14 +23,14 @@ void Dashboard::draw() {
     _draw_dash();
     _draw_gear();
     _draw_accl_brakes();
-    _draw_controls();
+    _draw_misc_controls();
     _draw_status();
 
     ImGui::End();
 }
 
 
-void Dashboard::_draw_controls() {
+void Dashboard::_draw_misc_controls() {
     // Misc
     ImGui::SeparatorText("");
 
@@ -213,30 +213,39 @@ ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("sys", "uptime").c_str());
 
+    std::string state(_server->vcu_state());
+    ImGui::PushItemWidth(90);
+    ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
+    ImGui::PopItemWidth();
+
+    ImGui::SameLine();
     if (_server->dash.remote_control_enabled()) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_CONTROLLER); 
-        ImGui::PopStyleColor();
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.3f, 0.95f)));
     } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_CONTROLLER_OFF); 
-        ImGui::PopStyleColor();        
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
     }
+    ImGui::TextUnformatted(ICON_MDI_CONTROLLER); 
+    ImGui::PopStyleColor();        
+    
     ImGui::SameLine();
-    ImGui::TextUnformatted(" VCU State:");
-    ImGui::SameLine();
-    ImGui::TextUnformatted(_server->vcu_state().data());
+    if (!_server->esp_system.tcs_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.3f, 0.3f, 0.95f)));
+    } else if (!_server->esp_system.tcs_triggered()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_CAR_TRACTION_CONTROL); 
+    ImGui::PopStyleColor();          
 
     // emergency switch
     if (_server->dash.emergency()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
     ImGui::SameLine();
     if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
     ToggleButton(ICON_MDI_ALERT_OCTAGON_OUTLINE" Emergency   ", _emergency);
@@ -248,13 +257,11 @@ ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
     // power switch
     if (_server->dash.power_enabled()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
     ImGui::SameLine();
     if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
     ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
@@ -266,13 +273,11 @@ ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
     // run switch
     if (_server->dash.run_enabled()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
     ImGui::SameLine();
     if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
     ToggleButton(ICON_MDI_POWER" Run On/Off  ", _run_enabled);
@@ -284,13 +289,11 @@ ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
     // fault reset switch
     if (_server->dash.faultreset_enabled()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
     ImGui::SameLine();
     if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
     ToggleButton(ICON_MDI_CLOSE_CIRCLE_OUTLINE" Fault Reset ", _fault_reset);
@@ -304,13 +307,11 @@ void Dashboard::_draw_gear() {
 
     if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::reverse){
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
     ImGui::SameLine();
     if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); }
     ImGui::RadioButton("R", &_ref_gear, 2);
@@ -318,13 +319,11 @@ void Dashboard::_draw_gear() {
 
     if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::neutral){
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
     ImGui::SameLine();
     if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); }
     ImGui::RadioButton("N", &_ref_gear, 0);
@@ -332,13 +331,11 @@ void Dashboard::_draw_gear() {
 
     if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::forward){
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-        ImGui::PopStyleColor();
     }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
     ImGui::SameLine();
     if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); }
     ImGui::RadioButton("D", &_ref_gear, 1);
@@ -352,7 +349,7 @@ void Dashboard::_draw_accl_brakes() {
     ImGui::SeparatorText(ICON_MDI_SPEEDOMETER" Pedal & Brakes");
     ImGui::ProgressBar(_server->accl_pedal.pressure());
     if (!_server->accl_pedal.debug_mode()) { ImGui::BeginDisabled(); }
-    ImGui::SliderFloat("##", &_accl, 0.0f, 1.0f);
+    ImGui::SliderFloat("##accl_slider", &_accl, 0.0f, 1.0f);
     if (!_server->accl_pedal.debug_mode()) { ImGui::EndDisabled(); }
     _server->accl_pedal.set_pressure(_accl);
 
@@ -361,28 +358,25 @@ void Dashboard::_draw_accl_brakes() {
     if (!_server->brakes.debug_mode()) { ImGui::EndDisabled(); }
     ImGui::SameLine();
     if (_server->brakes.left_pressed()) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT); 
-        ImGui::PopStyleColor();        
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.3f, 0.3f, 0.95f)));
     } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT); 
-        ImGui::PopStyleColor();          
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
     }
+    ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT); 
+    ImGui::PopStyleColor();             
     ImGui::SameLine();
     if (_server->brakes.right_pressed()) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT); 
-        ImGui::PopStyleColor();        
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.3f, 0.3f, 0.95f)));
     } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT); 
-        ImGui::PopStyleColor();          
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
     }
+    ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT); 
+    ImGui::PopStyleColor();          
     ImGui::SameLine();
     if (!_server->brakes.debug_mode()) { ImGui::BeginDisabled(); }
     ToggleButton(ICON_MDI_CAR_BRAKE_ALERT" R", _brake_right);
     if (!_server->brakes.debug_mode()) { ImGui::EndDisabled(); }
+    _server->brakes.set_brakes(_brake_left, _brake_right);    
 }
 
 
