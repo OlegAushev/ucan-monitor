@@ -11,6 +11,7 @@
 
 #include "util/accl.h"
 #include "util/bms.h"
+#include "util/brakes.h"
 #include "util/dash.h"
 #include "util/drive.h"
 #include "util/gear.h"
@@ -35,6 +36,7 @@ public:
     dash::Dashboard dash;
     gear::GearSelector gear_selector;
     accl::AcceleratorPedal accl_pedal;
+    brk::Brakes brakes;
 
     std::array<std::atomic_uint32_t, error_domain_count> errors{};
     std::array<std::atomic_uint16_t, error_domain_count> warnings{};

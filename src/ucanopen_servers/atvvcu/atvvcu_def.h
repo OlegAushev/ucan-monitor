@@ -48,7 +48,8 @@ struct CobTpdo1 {
     uint32_t gear_dbg : 1;
     uint32_t accl_dbg : 1;
     uint32_t steer_dbg : 1;
-    uint32_t _reserved2 : 2;
+    uint32_t brake_dbg : 1;
+    uint32_t _reserved2 : 1;
 
     uint32_t remote_control : 1;
     uint32_t emergency : 1;
@@ -69,10 +70,16 @@ struct CobTpdo1 {
 
     uint32_t accl : 8;
 
-    uint32_t _reserved5 : 16;
+    uint32_t brake_left : 1;
+    uint32_t brake_right : 1;
+    uint32_t tcs_enabled : 1;
+    uint32_t tcs_triggered : 1;
+    uint32_t _reserved5 : 4;
+
+    uint32_t _reserved6 : 4;
 
     uint32_t counter : 2;
-    uint32_t _reserved6 : 6;
+    uint32_t _reserved7 : 6;
 };
 
 
@@ -125,7 +132,8 @@ struct CobRpdo1 {
     uint32_t gear_dbg : 1;
     uint32_t accl_dbg : 1;
     uint32_t steer_dbg : 1;
-    uint32_t _reserved1 : 2;
+    uint32_t brake_dbg : 1;
+    uint32_t _reserved1 : 1;
 
     uint32_t emergency : 1;
     uint32_t faultreset : 1;
@@ -145,10 +153,14 @@ struct CobRpdo1 {
 
     uint32_t accl : 8;
 
-    uint32_t _reserved4 : 24;
+    uint32_t brake_left : 1;
+    uint32_t brake_right : 1;
+    uint32_t _reserved4 : 6;
+    
+    uint32_t _reserved5 : 16;
 
     uint32_t counter : 2;
-    uint32_t _reserved5 : 6;
+    uint32_t _reserved6 : 6;
 };
 
 struct CobRpdo2 {

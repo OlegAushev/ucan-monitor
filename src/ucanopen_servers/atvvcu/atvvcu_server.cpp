@@ -70,6 +70,10 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
 
     accl_pedal._debug_mode.store(tpdo.accl_dbg);
     accl_pedal._pressure.store(tpdo.accl / 100.0f);
+
+    brakes._debug_mode.store(tpdo.brake_dbg);
+    brakes._left_pressed.store(tpdo.brake_left);
+    brakes._right_pressed.store(tpdo.brake_right);
 }
 
 
@@ -173,6 +177,10 @@ ucanopen::can_payload Server::_create_rpdo1() {
 
     rpdo.accl_dbg = accl_pedal._ref_debug_mode;
     rpdo.accl = accl_pedal._ref_pressure * 100.f;
+
+    rpdo.brake_dbg = brakes._ref_debug_mode;
+    rpdo.brake_left = brakes._ref_left_pressed;
+    rpdo.brake_right = brakes._ref_right_pressed;
 
     rpdo.counter = counter;
     counter = (counter + 1) % 4;

@@ -21,6 +21,7 @@ private:
     bool _gear_dbg{false};
     bool _accl_dbg{false};
     bool _steer_dbg{false};
+    bool _brake_dbg{false};
 
     bool _emergency{false};
     bool _power_enabled{false};
@@ -29,6 +30,9 @@ private:
 
     int _ref_gear{0};
     float _accl{0};
+
+    bool _brake_left{false};
+    bool _brake_right{false};
 public:
     Dashboard(std::shared_ptr<::atvvcu::Server> server,
                 const std::string& menu_title,
@@ -40,6 +44,10 @@ private:
     void _draw_controls();
     void _draw_status();
     void _read_keyboard();
+
+    void _draw_dash();
+    void _draw_gear();
+    void _draw_accl_brakes();
 };
 
 
