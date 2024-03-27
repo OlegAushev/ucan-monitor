@@ -258,7 +258,7 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> error
 inline const std::array<std::vector<std::string_view>, error_domain_count> warning_list = {{
     {
         "dclink_disconnected",
-        "dclink_charging"
+        "dclink_charging",
     },
     {
         "can_bus_error",
@@ -271,7 +271,7 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> warni
 
     },
     {
-        
+        "pressed_at_start",
     }
 }};
 
