@@ -174,6 +174,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto pdmpanel = std::make_shared<ui::atvvcu::PdmPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE" PDM", "PDM", true);
         auto motordatapanel = std::make_shared<ui::atvvcu::MotorDataPanel>(atvvcu_server, ICON_MDI_TABLE" Motor Data", "Motor Data", true);
         auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE" Motor Control", "Motor Control", true);
+        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(atvvcu_server, ICON_MDI_TOOLS" Setup", "Setup", false);
 
         views.push_back(watchpanel);
         views.push_back(systempanel);
@@ -181,6 +182,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         views.push_back(pdmpanel);
         views.push_back(motordatapanel);
         views.push_back(motorcontrolpanel);
+        views.push_back(serversetuppanel);
 
         watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 1", "Watch Plot 1", true));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 2", "Watch Plot 2", false));
