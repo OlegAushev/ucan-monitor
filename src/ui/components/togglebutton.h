@@ -2,25 +2,37 @@
 
 
 #include <imgui.h>
+#include <ui_config.h>
+#include <tuple>
 
 
 namespace ui {
 
 
-inline void SetButtonHighlightColor()
-{
-    ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.35f, 0.6f, 0.6f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0.35f, 0.8f, 0.8f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0.35f, 0.7f, 0.7f));
+struct ToggleButtonColors {
+    ImVec4 regular;
+    ImVec4 hovered;
+    ImVec4 active;
+};
+
+
+namespace impl {
+inline void SetButtonColors(const ToggleButtonColors& colors) {
+    ImGui::PushStyleColor(ImGuiCol_Button, colors.regular);
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, colors.hovered);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, colors.active);
+}
 }
 
 
-inline bool ToggleButton(const char* label, bool& toggle)
-{
+inline bool ToggleButton(const char* label, bool& toggle,
+                         const ToggleButtonColors& colors = ToggleButtonColors{ui::colors::green_toggle_button,
+                                                                               ui::colors::green_toggle_button_hovered,
+                                                                               ui::colors::green_toggle_button_active}) {
     bool pressed = false;
     const auto active = toggle;
     if(active) {
-        SetButtonHighlightColor();
+        impl::SetButtonColors(colors);
     }
 
     if(ImGui::Button(label)) {
@@ -36,12 +48,14 @@ inline bool ToggleButton(const char* label, bool& toggle)
 }
 
 
-inline bool ToggleSmallButton(const char* label, bool& toggle)
-{
+inline bool ToggleSmallButton(const char* label, bool& toggle,
+                              const ToggleButtonColors& colors = ToggleButtonColors{ui::colors::green_toggle_button,
+                                                                                    ui::colors::green_toggle_button_hovered,
+                                                                                    ui::colors::green_toggle_button_active}) {
     bool pressed = false;
     const auto active = toggle;
     if(active) {
-        SetButtonHighlightColor();
+        impl::SetButtonColors(colors);
     }
 
     if(ImGui::SmallButton(label)) {
