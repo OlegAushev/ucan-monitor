@@ -74,12 +74,17 @@ struct CobTpdo1 {
     uint32_t brake_right : 1;
     uint32_t tcs_enabled : 1;
     uint32_t tcs_triggered : 1;
-    uint32_t _reserved5 : 4;
+    uint32_t turn_left : 1;
+    uint32_t turn_right : 1;
+    uint32_t _reserved5 : 2;
 
-    uint32_t _reserved6 : 4;
+    uint32_t _reserved6 : 8;
 
     uint32_t counter : 2;
-    uint32_t _reserved7 : 6;
+    uint32_t pump : 1;
+    uint32_t hydrostation : 1;
+    uint32_t fan : 1;
+    uint32_t _reserved7 : 3;
 };
 
 
@@ -156,7 +161,9 @@ struct CobRpdo1 {
     uint32_t brake_left : 1;
     uint32_t brake_right : 1;
     uint32_t tcs_enable : 1;
-    uint32_t _reserved4 : 5;
+    uint32_t turn_left : 1;
+    uint32_t turn_right : 1;
+    uint32_t _reserved4 : 3;
     
     uint32_t _reserved5 : 16;
 

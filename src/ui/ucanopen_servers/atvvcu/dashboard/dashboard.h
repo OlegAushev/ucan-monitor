@@ -29,6 +29,9 @@ private:
     bool _run_enabled{false};
     bool _fault_reset{false};
 
+    bool _turn_left{false};
+    bool _turn_right{false};
+
     int _ref_gear{0};
     float _accl{0};
 

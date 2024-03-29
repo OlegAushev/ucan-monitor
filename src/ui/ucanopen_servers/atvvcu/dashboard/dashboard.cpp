@@ -34,12 +34,30 @@ void Dashboard::_draw_misc_controls() {
     // Misc
     ImGui::SeparatorText("");
 
-    ImGui::TextUnformatted(ICON_MDI_WRENCH);
+    ImGui::TextUnformatted(ICON_MDI_CAR_WRENCH);
     ImGui::SameLine();
-    if (ImGui::TreeNode("Misc Actions")) {
-        if (ImGui::Button("Clear Errors", ImVec2(300, 0))) {
+    if (ImGui::TreeNode("Service Actions")) {
+        if (ImGui::Button(ICON_MDI_SHIELD_REFRESH" Clear Errors       ")) {
             _server->exec("ctl", "sys", "clear_errors");
         }
+
+        if (ImGui::Button(ICON_MDI_PUMP" Toggle Pump        ")) {
+            _server->exec("ctl", "vcu", "toggle_pump");
+        }
+
+        if (ImGui::Button(ICON_MDI_STEERING" Toggle Hydrostation")) {
+            _server->exec("ctl", "vcu", "toggle_hydrostation");
+        }
+
+        if (ImGui::Button(ICON_MDI_FAN" Toggle Fan         ")) {
+            _server->exec("ctl", "vcu", "toggle_fan");
+        }
+
+        if (ImGui::Button(ICON_MDI_RESTART" Reset VCU          ")) {
+            _server->exec("ctl", "sys", "reset_device");
+        }
+
+
         ImGui::TreePop();
     }
 }
@@ -216,18 +234,40 @@ void Dashboard::_read_keyboard() {
 
 
 void Dashboard::_draw_dash() {
-ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
+    ImGui::SeparatorText(ICON_MDI_GAUGE_LOW" Dash");
 
     ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE" Uptime[s]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("sys", "uptime").c_str());
 
+    if (!_server->heartbeat_service.good() || !_server->tpdo_service.good(ucanopen::CobTpdo::tpdo1)) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK_OUTLINE);
+        ImGui::PopStyleColor();
+    } else {
+        static bool icon_active = true;
+        static auto timestamp = std::chrono::steady_clock::now();
+
+        if (icon_active) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+        }
+        ImGui::TextUnformatted(ICON_MDI_CHECK_NETWORK_OUTLINE);
+        ImGui::PopStyleColor();        
+
+        if (std::chrono::steady_clock::now() > timestamp + std::chrono::milliseconds(750)) {
+            icon_active = !icon_active;
+            timestamp = std::chrono::steady_clock::now();
+        }
+    }
+
+    ImGui::SameLine();
     std::string state(_server->vcu_state());
     ImGui::PushItemWidth(90);
     ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
 
-    ImGui::SameLine();
     if (_server->dash.remote_control_enabled()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.3f, 0.95f)));
     } else {
@@ -254,7 +294,8 @@ ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
     }
     ImGui::TextUnformatted(ICON_MDI_ALPHA_L "" ICON_MDI_CAR_BRAKE_ALERT); 
-    ImGui::PopStyleColor();             
+    ImGui::PopStyleColor();
+
     ImGui::SameLine();
     if (_server->brakes.right_pressed()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.3f, 0.3f, 0.95f)));
@@ -262,7 +303,53 @@ ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
     }
     ImGui::TextUnformatted(ICON_MDI_CAR_BRAKE_ALERT "" ICON_MDI_ALPHA_R); 
-    ImGui::PopStyleColor();     
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    if (_server->dash.leftturn_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_ARROW_U_DOWN_LEFT_BOLD);
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    if (_server->dash.rightturn_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_ARROW_U_DOWN_RIGHT_BOLD);
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    if (_server->aux_systems.pump_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_PUMP); 
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    if (_server->aux_systems.hydrostation_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_STEERING); 
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    if (_server->aux_systems.fan_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_FAN); 
+    ImGui::PopStyleColor();
+
 
     // emergency switch
     if (_server->dash.emergency()) {
@@ -322,7 +409,7 @@ ImGui::SeparatorText(ICON_MDI_LIGHT_SWITCH_OFF" Dash");
     ImGui::PopStyleColor();
     ImGui::SameLine();
     if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(ICON_MDI_CLOSE_CIRCLE_OUTLINE" Fault Reset ", _fault_reset);
+    ToggleButton(ICON_MDI_SHIELD_REFRESH" Fault Reset ", _fault_reset);
     _server->dash.toggle_faultreset(_fault_reset);
     if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
 }
@@ -393,6 +480,16 @@ void Dashboard::_draw_accl_brakes() {
     ToggleButton(ICON_MDI_CAR_TRACTION_CONTROL "TCS", _tcs_enable);
     if (!_server->esp_system.debug_mode()) { ImGui::EndDisabled(); }
     _server->esp_system.toggle_tcs(_tcs_enable);
+
+    if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
+    ImGui::SameLine();
+    ToggleButton(ICON_MDI_ARROW_U_DOWN_LEFT_BOLD "", _turn_left);
+    if (_turn_left) { _turn_right = false; }
+    ImGui::SameLine();
+    ToggleButton(ICON_MDI_ARROW_U_DOWN_RIGHT_BOLD "", _turn_right);
+    if (_turn_right) { _turn_left = false; }
+    if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
+    _server->dash.set_turn(_turn_left, _turn_right);
 }
 
 

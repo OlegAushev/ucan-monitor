@@ -39,7 +39,7 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Connection");
         ImGui::TableSetColumnIndex(1);
-        _server->tpdo_service.is_ok(ucanopen::CobTpdo::tpdo1) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
+        _server->tpdo_service.good(ucanopen::CobTpdo::tpdo1) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
@@ -136,7 +136,7 @@ void DataPanel::_draw_tpdo2_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Connection");
         ImGui::TableSetColumnIndex(1);
-        _server->tpdo_service.is_ok(ucanopen::CobTpdo::tpdo2) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
+        _server->tpdo_service.good(ucanopen::CobTpdo::tpdo2) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
@@ -193,7 +193,7 @@ void DataPanel::_draw_tpdo3_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Connection");
         ImGui::TableSetColumnIndex(1);
-        _server->tpdo_service.is_ok(ucanopen::CobTpdo::tpdo3) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
+        _server->tpdo_service.good(ucanopen::CobTpdo::tpdo3) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
@@ -250,7 +250,7 @@ void DataPanel::_draw_tpdo4_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Connection");
         ImGui::TableSetColumnIndex(1);
-        _server->tpdo_service.is_ok(ucanopen::CobTpdo::tpdo4) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
+        _server->tpdo_service.good(ucanopen::CobTpdo::tpdo4) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);

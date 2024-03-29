@@ -24,6 +24,12 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x2000, 0x01}, {"ctl", "sys", "reset_device", "", OD_ACCESS_WO, OD_EXEC}},
 {{0x2000, 0x02}, {"ctl", "sys", "clear_errors", "", OD_ACCESS_WO, OD_EXEC}},
 
+
+{{0x2001, 0x01}, {"ctl", "vcu", "toggle_pump", "", OD_ACCESS_WO, OD_EXEC}},
+{{0x2001, 0x02}, {"ctl", "vcu", "toggle_hydrostation", "", OD_ACCESS_WO, OD_EXEC}},
+{{0x2001, 0x03}, {"ctl", "vcu", "toggle_fan", "", OD_ACCESS_WO, OD_EXEC}},
+
+
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslog_message", "", OD_ACCESS_RO, OD_UINT32}},
 

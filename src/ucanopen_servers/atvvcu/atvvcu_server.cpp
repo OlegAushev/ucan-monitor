@@ -53,6 +53,8 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     dash._faultreset.store(tpdo.faultreset);
     dash._power_enabled.store(tpdo.power);
     dash._run_enabled.store(tpdo.run);
+    dash._leftturn.store(tpdo.turn_left);
+    dash._rightturn.store(tpdo.turn_right);
     
     pdm._debug_mode.store(tpdo.pdm_dbg);
     pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::battery_p)].store(tpdo.pdm_battery_p);
@@ -78,6 +80,10 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     esp_system._debug_mode.store(tpdo.esp_dbg);
     esp_system._tcs_enabled.store(tpdo.tcs_enabled);
     esp_system._tcs_triggered.store(tpdo.tcs_triggered);
+
+    aux_systems._pump_enabled.store(tpdo.pump);
+    aux_systems._hydrostation_enabled.store(tpdo.hydrostation);
+    aux_systems._fan_enabled.store(tpdo.fan);
 }
 
 
@@ -164,6 +170,8 @@ ucanopen::can_payload Server::_create_rpdo1() {
     rpdo.faultreset = dash._ref_faultreset;
     rpdo.power = dash._ref_power_enabled;
     rpdo.run = dash._ref_run_enabled;
+    rpdo.turn_left = dash._ref_leftturn;
+    rpdo.turn_right = dash._ref_rightturn;
 
     rpdo.pdm_dbg = pdm._ref_debug_mode;
     rpdo.pdm_battery_p = pdm._contactor_ref_state[std::to_underlying(pdm::Contactor::battery_p)];

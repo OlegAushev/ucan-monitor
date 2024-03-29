@@ -17,6 +17,7 @@
 #include "util/gear.h"
 #include "util/pdm.h"
 #include "util/esp.h"
+#include "util/aux.h"
 
 
 namespace atvvcu {
@@ -39,6 +40,7 @@ public:
     accl::AcceleratorPedal accl_pedal;
     brk::Brakes brakes;
     esp::EspSystem esp_system;
+    aux::Aux aux_systems;
 
     std::array<std::atomic_uint32_t, error_domain_count> errors{};
     std::array<std::atomic_uint16_t, error_domain_count> warnings{};

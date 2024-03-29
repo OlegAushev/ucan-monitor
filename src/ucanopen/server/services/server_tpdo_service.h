@@ -26,7 +26,7 @@ public:
     void register_tpdo(CobTpdo tpdo, std::chrono::milliseconds timeout, std::function<void(const can_payload&)> handler);
     void update_node_id();
 
-    bool is_ok(CobTpdo tpdo) const {
+    bool good(CobTpdo tpdo) const {
         std::lock_guard<std::mutex> lock(_mtx);
         if (!_tpdo_msgs.contains(tpdo)) { return false; };
         auto now = std::chrono::steady_clock::now();
