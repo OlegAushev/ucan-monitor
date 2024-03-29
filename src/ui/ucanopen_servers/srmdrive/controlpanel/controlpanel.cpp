@@ -81,6 +81,23 @@ void ControlPanel::draw() {
     _server->set_speed(_speed_ref);
     _server->set_ctlmode(::srmdrive::ControlMode(_ctlmode));
 
+    // angle input
+    ImGui::RadioButton("##angle_ctlmode", &_ctlmode, 2);
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+        ImGui::SetTooltip("Angle Mode");
+    }
+    ImGui::SameLine();
+
+    ImGui::PushItemWidth(200);
+    static float angle = 0;
+    if (ImGui::InputFloat("Angle [o]", &angle, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        angle = std::clamp(angle, -10000.0f, 10000.0f);
+    }
+    if (_ctlmode != 2) {
+        angle = 0;
+    }
+    ImGui::PopItemWidth();
+
     ImGui::Separator();
    
     // actions
