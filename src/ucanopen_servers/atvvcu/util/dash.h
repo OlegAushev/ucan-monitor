@@ -27,6 +27,10 @@ private:
 
     std::atomic<bool> _leftturn{false};
     std::atomic<bool> _rightturn{false};
+   
+    std::atomic<bool> _network_charging{false};
+    std::atomic<bool> _genset_charging{false};
+
 
     std::atomic<bool> _ref_emergency{false};
     std::atomic<bool> _ref_faultreset{false};
@@ -35,6 +39,9 @@ private:
 
     std::atomic<bool> _ref_leftturn{false};
     std::atomic<bool> _ref_rightturn{false};
+
+    std::atomic<bool> _ref_network_charging{false};
+    std::atomic<bool> _ref_genset_charging{false};
 public:
     bool debug_mode() const { return _debug_mode.load(); }
     void toggle_debug_mode(bool dbg_enabled) { _ref_debug_mode.store(dbg_enabled); }
@@ -48,6 +55,10 @@ public:
     bool leftturn_enabled() const { return _leftturn.load(); }
     bool rightturn_enabled() const { return _rightturn.load(); }
 
+    bool network_charging_enabled() const { return _network_charging.load(); };
+    bool genset_charging_enabled() const { return _genset_charging.load(); };
+
+
     void toggle_faultreset(bool is_enabled) { _ref_faultreset.store(is_enabled); }
     void toggle_emergency(bool is_enabled) { _ref_emergency.store(is_enabled); }
     void toggle_power(bool is_enabled) { _ref_power_enabled.store(is_enabled); }
@@ -60,6 +71,23 @@ public:
         }
         _ref_leftturn.store(left);
         _ref_rightturn.store(right);
+    }
+
+    void set_charging_mode(int mode) {
+        switch (mode) {
+        case 1:
+            _ref_network_charging.store(true);
+            _ref_genset_charging.store(false);
+            break;
+        case 2:
+            _ref_network_charging.store(false);
+            _ref_genset_charging.store(true);
+            break;
+        default:
+            _ref_network_charging.store(false);
+            _ref_genset_charging.store(false);
+            break;
+        }
     }
 };
 

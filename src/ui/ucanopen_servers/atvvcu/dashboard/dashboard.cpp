@@ -268,6 +268,25 @@ void Dashboard::_draw_dash() {
     ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
 
+    ImGui::SameLine();
+    if (_server->dash.network_charging_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.9f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_EV_STATION); 
+    ImGui::PopStyleColor();
+    
+    ImGui::SameLine();
+    if (_server->dash.genset_charging_enabled()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.9f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_GENERATOR_PORTABLE); 
+    ImGui::PopStyleColor();
+
+
     if (_server->dash.remote_control_enabled()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.9f, 0.9f, 0.3f, 0.95f)));
     } else {
@@ -405,12 +424,22 @@ void Dashboard::_draw_dash() {
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
     }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
     ImGui::PopStyleColor();
     ImGui::SameLine();
     if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
     ToggleButton(ICON_MDI_SHIELD_REFRESH" Fault Reset ", _fault_reset);
     _server->dash.toggle_faultreset(_fault_reset);
+
+    ImGui::TextUnformatted("Charging: ");
+    ImGui::SameLine();
+    ImGui::RadioButton(ICON_MDI_POWER_OFF, &_charging_mode, 0);
+    ImGui::SameLine();
+    ImGui::RadioButton(ICON_MDI_EV_STATION, &_charging_mode, 1);
+    ImGui::SameLine();
+    ImGui::RadioButton(ICON_MDI_GENERATOR_PORTABLE, &_charging_mode, 2);
+    _server->dash.set_charging_mode(_charging_mode);
+
     if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
 }
 

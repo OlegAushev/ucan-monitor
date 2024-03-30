@@ -55,6 +55,8 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     dash._run_enabled.store(tpdo.run);
     dash._leftturn.store(tpdo.turn_left);
     dash._rightturn.store(tpdo.turn_right);
+    dash._network_charging.store(tpdo.network_charging);
+    dash._genset_charging.store(tpdo.genset_charging);
     
     pdm._debug_mode.store(tpdo.pdm_dbg);
     pdm._contactor_feedback_state[std::to_underlying(pdm::Contactor::battery_p)].store(tpdo.pdm_battery_p);
@@ -172,6 +174,8 @@ ucanopen::can_payload Server::_create_rpdo1() {
     rpdo.run = dash._ref_run_enabled;
     rpdo.turn_left = dash._ref_leftturn;
     rpdo.turn_right = dash._ref_rightturn;
+    rpdo.network_charging = dash._ref_network_charging;
+    rpdo.genset_charging = dash._ref_genset_charging;
 
     rpdo.pdm_dbg = pdm._ref_debug_mode;
     rpdo.pdm_battery_p = pdm._contactor_ref_state[std::to_underlying(pdm::Contactor::battery_p)];

@@ -85,7 +85,9 @@ struct CobTpdo1 {
     uint32_t pump : 1;
     uint32_t hydrostation : 1;
     uint32_t fan : 1;
-    uint32_t _reserved7 : 3;
+    uint32_t network_charging : 1;
+    uint32_t genset_charging : 1;
+    uint32_t _reserved7 : 1;
 };
 
 
@@ -169,7 +171,9 @@ struct CobRpdo1 {
     uint32_t _reserved5 : 16;
 
     uint32_t counter : 2;
-    uint32_t _reserved6 : 6;
+    uint32_t network_charging : 1;
+    uint32_t genset_charging : 1;
+    uint32_t _reserved6 : 4;
 };
 
 struct CobRpdo2 {
