@@ -33,7 +33,8 @@ inline const std::vector<std::string> vcu_states = {
     "START   ",
     "RUN     ",
     "STOP    ",
-    "POWEROFF"
+    "POWEROFF",
+    "CHARGING"
 };
 
 
