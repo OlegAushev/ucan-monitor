@@ -284,6 +284,7 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> warni
     },
     {
         "pressed_at_start",
+        "pressed_at_turn_start"
     }
 }};
 

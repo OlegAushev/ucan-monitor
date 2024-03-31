@@ -29,10 +29,10 @@ private:
     std::array<std::string_view, ::atvvcu::pdm::contactor_count> _contactor_labels = {
         ICON_MDI_BATTERY_POSITIVE" Battery +",
         ICON_MDI_BATTERY_NEGATIVE" Battery -",
-        ICON_MDI_NUMERIC_1_BOX_OUTLINE" Front Bypass",
-        ICON_MDI_NUMERIC_2_BOX_OUTLINE" Back Bypass",
-        ICON_MDI_NUMERIC_3_BOX_OUTLINE" Aux Bypass",
-        ICON_MDI_EV_STATION" Allow Charge",
+        ICON_MDI_NUMERIC_1_BOX_OUTLINE" Front Drives",
+        ICON_MDI_NUMERIC_2_BOX_OUTLINE" Back Drives",
+        ICON_MDI_NUMERIC_3_BOX_OUTLINE" Aux",
+        ICON_MDI_EV_STATION" Allow Charging",
         ICON_MDI_STAR_THREE_POINTS_OUTLINE" 3ph Charge"
     };
 };

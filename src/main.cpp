@@ -173,7 +173,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto bmspanel = std::make_shared<ui::atvvcu::BmsPanel>(atvvcu_server, ICON_MDI_CAR_BATTERY" BMS", "BMS", true);
         auto pdmpanel = std::make_shared<ui::atvvcu::PdmPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE" PDM", "PDM", true);
         auto motordatapanel = std::make_shared<ui::atvvcu::MotorDataPanel>(atvvcu_server, ICON_MDI_TABLE" Motor Data", "Motor Data", true);
-        auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE" Motor Control", "Motor Control", true);
+        auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE" Motor Control", "Motor Control", false);
         serversetuppanel = std::make_shared<ui::ServerSetupPanel>(atvvcu_server, ICON_MDI_TOOLS" Setup", "Setup", false);
 
         views.push_back(watchpanel);
