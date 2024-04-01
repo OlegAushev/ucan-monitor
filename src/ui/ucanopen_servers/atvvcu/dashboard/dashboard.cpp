@@ -519,6 +519,69 @@ void Dashboard::_draw_accl_brakes() {
     if (_turn_right) { _turn_left = false; }
     if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
     _server->dash.set_turn(_turn_left, _turn_right);
+
+    auto drive_enabled = _server->esp_system.drive_enabled();
+
+    if (!_server->esp_system.debug_mode()) { ImGui::BeginDisabled(); }
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+    // LF
+    ImGui::TextUnformatted("LF");
+    ImGui::SameLine();
+    ImGui::Checkbox("##LF", &_drive_enable[0]);
+    ImGui::SameLine();
+    if (drive_enabled[0]) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
+   
+
+    // RF
+    ImGui::SameLine();
+    if (drive_enabled[2]) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();   
+    ImGui::SameLine();
+    ImGui::Checkbox("##RF", &_drive_enable[2]);
+    ImGui::SameLine();
+    ImGui::TextUnformatted("RF");
+
+    // LB
+    ImGui::TextUnformatted("LB");
+    ImGui::SameLine();
+    ImGui::Checkbox("##LB", &_drive_enable[1]);
+    ImGui::SameLine();
+    if (drive_enabled[1]) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
+    
+    // RB
+    ImGui::SameLine();
+    if (drive_enabled[3]) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor(); 
+    ImGui::SameLine();
+    ImGui::Checkbox("##RB", &_drive_enable[3]);
+    ImGui::SameLine();
+    ImGui::TextUnformatted("RB");
+    ImGui::PopStyleVar();
+    if (!_server->esp_system.debug_mode()) { ImGui::EndDisabled(); }
+
+    _server->esp_system.set_ref_drive_enable(_drive_enable);
 }
 
 

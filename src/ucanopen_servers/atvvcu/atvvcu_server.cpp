@@ -83,6 +83,11 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     esp_system._tcs_enabled.store(tpdo.tcs_enabled);
     esp_system._tcs_triggered.store(tpdo.tcs_triggered);
 
+    esp_system._drive_enabled[0].store(tpdo.drive_lf_en);
+    esp_system._drive_enabled[1].store(tpdo.drive_lb_en);
+    esp_system._drive_enabled[2].store(tpdo.drive_rf_en);
+    esp_system._drive_enabled[3].store(tpdo.drive_rb_en);
+
     aux_systems._pump_enabled.store(tpdo.pump);
     aux_systems._hydrostation_enabled.store(tpdo.hydrostation);
     aux_systems._fan_enabled.store(tpdo.fan);
@@ -200,6 +205,11 @@ ucanopen::can_payload Server::_create_rpdo1() {
 
     rpdo.esp_dbg = esp_system._ref_debug_mode;
     rpdo.tcs_enable = esp_system._ref_tcs_enable;
+
+    rpdo.drive_lf_en = esp_system._ref_drive_enable[0];
+    rpdo.drive_lb_en = esp_system._ref_drive_enable[1];
+    rpdo.drive_rf_en = esp_system._ref_drive_enable[2];
+    rpdo.drive_rb_en = esp_system._ref_drive_enable[3];
 
     rpdo.counter = counter;
     counter = (counter + 1) % 4;

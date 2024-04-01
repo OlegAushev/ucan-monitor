@@ -41,6 +41,7 @@ private:
     bool _brake_right{false};
 
     bool _tcs_enable{true};
+    std::array<bool, 4> _drive_enable{true, true, true, true};
 public:
     Dashboard(std::shared_ptr<::atvvcu::Server> server,
                 const std::string& menu_title,

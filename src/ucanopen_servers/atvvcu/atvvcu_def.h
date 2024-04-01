@@ -79,7 +79,11 @@ struct CobTpdo1 {
     uint32_t turn_right : 1;
     uint32_t _reserved5 : 2;
 
-    uint32_t _reserved6 : 8;
+    uint32_t drive_lf_en : 1;
+    uint32_t drive_lb_en : 1;
+    uint32_t drive_rf_en : 1;
+    uint32_t drive_rb_en : 1;
+    uint32_t _reserved6 : 4;
 
     uint32_t counter : 2;
     uint32_t pump : 1;
@@ -168,12 +172,18 @@ struct CobRpdo1 {
     uint32_t turn_right : 1;
     uint32_t _reserved4 : 3;
     
-    uint32_t _reserved5 : 16;
+    uint32_t drive_lf_en : 1;
+    uint32_t drive_lb_en : 1;
+    uint32_t drive_rf_en : 1;
+    uint32_t drive_rb_en : 1;
+    uint32_t _reserved5 : 4;
+    
+    uint32_t _reserved6 : 8;
 
     uint32_t counter : 2;
     uint32_t network_charging : 1;
     uint32_t genset_charging : 1;
-    uint32_t _reserved6 : 4;
+    uint32_t _reserved7 : 4;
 };
 
 struct CobRpdo2 {
