@@ -28,11 +28,11 @@ void MotorControlPanel::draw() {
 
         ImGui::SeparatorText(ICON_MDI_CAR_SHIFT_PATTERN" Gear");
 
-        if (_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); }
+        //if (_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); }
         ImGui::RadioButton("R", &_ref_gear[i], 2);
         ImGui::RadioButton("N", &_ref_gear[i], 0);
         ImGui::RadioButton("D", &_ref_gear[i], 1);
-        if (_server->gear_selector.debug_mode()) { ImGui::EndDisabled(); }
+        //if (_server->gear_selector.debug_mode()) { ImGui::EndDisabled(); }
 
         ImGui::SeparatorText("");
         ui::ToggleButton(ICON_MDI_ELECTRIC_SWITCH" Relay ", _ref_mainrelay[i]);
