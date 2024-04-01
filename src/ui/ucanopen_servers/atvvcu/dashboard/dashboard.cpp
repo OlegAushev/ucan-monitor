@@ -525,7 +525,7 @@ void Dashboard::_draw_accl_brakes() {
     if (!_server->esp_system.debug_mode()) { ImGui::BeginDisabled(); }
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
     // LF
-    ImGui::TextUnformatted("LF");
+    ImGui::TextUnformatted(ICON_MDI_POWER "LF");
     ImGui::SameLine();
     ImGui::Checkbox("##LF", &_drive_enable[0]);
     ImGui::SameLine();
@@ -550,10 +550,10 @@ void Dashboard::_draw_accl_brakes() {
     ImGui::SameLine();
     ImGui::Checkbox("##RF", &_drive_enable[2]);
     ImGui::SameLine();
-    ImGui::TextUnformatted("RF");
+    ImGui::TextUnformatted(ICON_MDI_POWER "RF");
 
     // LB
-    ImGui::TextUnformatted("LB");
+    ImGui::TextUnformatted(ICON_MDI_POWER "LB");
     ImGui::SameLine();
     ImGui::Checkbox("##LB", &_drive_enable[1]);
     ImGui::SameLine();
@@ -577,7 +577,7 @@ void Dashboard::_draw_accl_brakes() {
     ImGui::SameLine();
     ImGui::Checkbox("##RB", &_drive_enable[3]);
     ImGui::SameLine();
-    ImGui::TextUnformatted("RB");
+    ImGui::TextUnformatted(ICON_MDI_POWER "RB");
     ImGui::PopStyleVar();
     if (!_server->esp_system.debug_mode()) { ImGui::EndDisabled(); }
 
