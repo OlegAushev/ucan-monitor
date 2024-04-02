@@ -1,5 +1,5 @@
 #include "watchpanel.h"
-#include <ui/components/checkbox_tristate.h>
+#include <ui/util/checkbox_tristate.h>
 
 
 namespace ui {

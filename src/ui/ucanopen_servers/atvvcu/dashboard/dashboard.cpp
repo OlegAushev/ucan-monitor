@@ -1,5 +1,6 @@
 #include "dashboard.h"
-#include <ui/components/togglebutton.h>
+#include <ui/util/togglebutton.h>
+#include <ui/util/util.h>
 
 
 namespace ui {
@@ -379,12 +380,13 @@ void Dashboard::_draw_dash() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(ICON_MDI_ALERT_OCTAGON_OUTLINE" Emergency   ", _emergency);
-    ImGui::SameLine();
-    ImGui::TextDisabled("(F2)");
-    _server->dash.toggle_emergency(_emergency);
-    if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
+    {
+        ui::util::DisableGuard dg(!_server->dash.debug_mode());
+        ToggleButton(ICON_MDI_ALERT_OCTAGON_OUTLINE" Emergency   ", _emergency);
+        ImGui::SameLine();
+        ImGui::TextDisabled("(F2)");
+        _server->dash.toggle_emergency(_emergency);
+    }
 
     // power switch
     if (_server->dash.power_enabled()) {
@@ -395,12 +397,13 @@ void Dashboard::_draw_dash() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
-    ImGui::SameLine();
-    ImGui::TextDisabled("(F3)");
-    _server->dash.toggle_power(_power_enabled);
-    if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
+    {   
+        ui::util::DisableGuard dg(!_server->dash.debug_mode());
+        ToggleButton(ICON_MDI_CAR_BATTERY" Power On/Off", _power_enabled);
+        ImGui::SameLine();
+        ImGui::TextDisabled("(F3)");
+        _server->dash.toggle_power(_power_enabled);
+    }
     
     // run switch
     if (_server->dash.run_enabled()) {
@@ -411,12 +414,13 @@ void Dashboard::_draw_dash() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(ICON_MDI_POWER" Run On/Off  ", _run_enabled);
-    ImGui::SameLine();
-    ImGui::TextDisabled("(F4)");
-    _server->dash.toggle_run(_run_enabled);
-    if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
+    {
+        ui::util::DisableGuard dg(!_server->dash.debug_mode());
+        ToggleButton(ICON_MDI_POWER" Run On/Off  ", _run_enabled);
+        ImGui::SameLine();
+        ImGui::TextDisabled("(F4)");
+        _server->dash.toggle_run(_run_enabled);
+    }
 
     // fault reset switch
     if (_server->dash.faultreset_enabled()) {
@@ -427,20 +431,20 @@ void Dashboard::_draw_dash() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(ICON_MDI_SHIELD_REFRESH" Fault Reset ", _fault_reset);
-    _server->dash.toggle_faultreset(_fault_reset);
+    {
+        ui::util::DisableGuard dg(!_server->dash.debug_mode());
+        ToggleButton(ICON_MDI_SHIELD_REFRESH" Fault Reset ", _fault_reset);
+        _server->dash.toggle_faultreset(_fault_reset);
 
-    ImGui::TextUnformatted("Charging: ");
-    ImGui::SameLine();
-    ImGui::RadioButton(ICON_MDI_POWER_OFF, &_charging_mode, 0);
-    ImGui::SameLine();
-    ImGui::RadioButton(ICON_MDI_EV_STATION, &_charging_mode, 1);
-    ImGui::SameLine();
-    ImGui::RadioButton(ICON_MDI_GENERATOR_PORTABLE, &_charging_mode, 2);
-    _server->dash.set_charging_mode(_charging_mode);
-
-    if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
+        ImGui::TextUnformatted("Charging: ");
+        ImGui::SameLine();
+        ImGui::RadioButton(ICON_MDI_POWER_OFF, &_charging_mode, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton(ICON_MDI_EV_STATION, &_charging_mode, 1);
+        ImGui::SameLine();
+        ImGui::RadioButton(ICON_MDI_GENERATOR_PORTABLE, &_charging_mode, 2);
+        _server->dash.set_charging_mode(_charging_mode);
+    }
 }
 
 
@@ -455,9 +459,10 @@ void Dashboard::_draw_gear() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); }
-    ImGui::RadioButton("R", &_ref_gear, 2);
-    if (!_server->gear_selector.debug_mode()) { ImGui::EndDisabled(); }
+    {
+        ui::util::DisableGuard dg(!_server->gear_selector.debug_mode());
+        ImGui::RadioButton("R", &_ref_gear, 2);
+    }
 
     if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::neutral){
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
@@ -467,9 +472,10 @@ void Dashboard::_draw_gear() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); }
-    ImGui::RadioButton("N", &_ref_gear, 0);
-    if (!_server->gear_selector.debug_mode()) { ImGui::EndDisabled(); }
+    {
+        ui::util::DisableGuard dg(!_server->gear_selector.debug_mode());
+        ImGui::RadioButton("N", &_ref_gear, 0);
+    }
 
     if (_server->gear_selector.gear() == ::atvvcu::gear::Gear::forward){
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
@@ -479,109 +485,111 @@ void Dashboard::_draw_gear() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    if (!_server->gear_selector.debug_mode()) { ImGui::BeginDisabled(); }
-    ImGui::RadioButton("D", &_ref_gear, 1);
-    if (!_server->gear_selector.debug_mode()) { ImGui::EndDisabled(); }
+    {
+        ui::util::DisableGuard dg(!_server->gear_selector.debug_mode());
+        ImGui::RadioButton("D", &_ref_gear, 1);
+        _server->gear_selector.set_gear(::atvvcu::gear::Gear(_ref_gear));
+    }
 
-    _server->gear_selector.set_gear(::atvvcu::gear::Gear(_ref_gear));
 }
 
 
 void Dashboard::_draw_accl_brakes() {
     ImGui::SeparatorText(ICON_MDI_SPEEDOMETER" Pedal & Brakes & ESP");
     ImGui::ProgressBar(_server->accl_pedal.pressure());
-    if (!_server->accl_pedal.debug_mode()) { ImGui::BeginDisabled(); }
-    ImGui::SliderFloat("##accl_slider", &_accl, 0.0f, 1.0f);
-    if (!_server->accl_pedal.debug_mode()) { ImGui::EndDisabled(); }
-    _server->accl_pedal.set_pressure(_accl);
-
-    if (!_server->brakes.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(" L " ICON_MDI_CAR_BRAKE_ALERT, _brake_left);
-    if (!_server->brakes.debug_mode()) { ImGui::EndDisabled(); }        
-    ImGui::SameLine();
-    if (!_server->brakes.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(ICON_MDI_CAR_BRAKE_ALERT" R ", _brake_right);
-    if (!_server->brakes.debug_mode()) { ImGui::EndDisabled(); }
-    _server->brakes.set_brakes(_brake_left, _brake_right);
-
-    ImGui::SameLine();
-    if (!_server->esp_system.debug_mode()) { ImGui::BeginDisabled(); }
-    ToggleButton(ICON_MDI_CAR_TRACTION_CONTROL "TCS", _tcs_enable);
-    if (!_server->esp_system.debug_mode()) { ImGui::EndDisabled(); }
-    _server->esp_system.toggle_tcs(_tcs_enable);
-
-    if (!_server->dash.debug_mode()) { ImGui::BeginDisabled(); }
-    ImGui::SameLine();
-    ToggleButton(ICON_MDI_ARROW_U_DOWN_LEFT_BOLD "", _turn_left);
-    if (_turn_left) { _turn_right = false; }
-    ImGui::SameLine();
-    ToggleButton(ICON_MDI_ARROW_U_DOWN_RIGHT_BOLD "", _turn_right);
-    if (_turn_right) { _turn_left = false; }
-    if (!_server->dash.debug_mode()) { ImGui::EndDisabled(); }
-    _server->dash.set_turn(_turn_left, _turn_right);
-
-    auto drive_enabled = _server->esp_system.drive_enabled();
-
-    if (!_server->esp_system.debug_mode()) { ImGui::BeginDisabled(); }
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-    // LF
-    ImGui::TextUnformatted(ICON_MDI_POWER "LF");
-    ImGui::SameLine();
-    ImGui::Checkbox("##LF", &_drive_enable[0]);
-    ImGui::SameLine();
-    if (drive_enabled[0]) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-    } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+    {
+        ui::util::DisableGuard dg(!_server->accl_pedal.debug_mode());
+        ImGui::SliderFloat("##accl_slider", &_accl, 0.0f, 1.0f);
+        _server->accl_pedal.set_pressure(_accl);
     }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-    ImGui::PopStyleColor();
-   
 
-    // RF
-    ImGui::SameLine();
-    if (drive_enabled[2]) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-    } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+    {
+        ui::util::DisableGuard dg(!_server->brakes.debug_mode());
+        ToggleButton(" L " ICON_MDI_CAR_BRAKE_ALERT, _brake_left);
+        ImGui::SameLine();
+        ToggleButton(ICON_MDI_CAR_BRAKE_ALERT" R ", _brake_right);
+        _server->brakes.set_brakes(_brake_left, _brake_right);
     }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-    ImGui::PopStyleColor();   
-    ImGui::SameLine();
-    ImGui::Checkbox("##RF", &_drive_enable[2]);
-    ImGui::SameLine();
-    ImGui::TextUnformatted(ICON_MDI_POWER "RF");
 
-    // LB
-    ImGui::TextUnformatted(ICON_MDI_POWER "LB");
     ImGui::SameLine();
-    ImGui::Checkbox("##LB", &_drive_enable[1]);
-    ImGui::SameLine();
-    if (drive_enabled[1]) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-    } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+    {
+        ui::util::DisableGuard dg(!_server->esp_system.debug_mode());
+        ToggleButton(ICON_MDI_CAR_TRACTION_CONTROL "TCS", _tcs_enable);
+        _server->esp_system.toggle_tcs(_tcs_enable);
     }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    {
+        ui::util::DisableGuard dg(!_server->dash.debug_mode());
+        ToggleButton(ICON_MDI_ARROW_U_DOWN_LEFT_BOLD "", _turn_left);
+        if (_turn_left) { _turn_right = false; }
+        ImGui::SameLine();
+        ToggleButton(ICON_MDI_ARROW_U_DOWN_RIGHT_BOLD "", _turn_right);
+        if (_turn_right) { _turn_left = false; }
+        _server->dash.set_turn(_turn_left, _turn_right);
+    }
+
+    {
+        ui::util::DisableGuard dg(!_server->esp_system.debug_mode());
+        auto drive_enabled = _server->esp_system.drive_enabled();
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+        // LF
+        ImGui::TextUnformatted(ICON_MDI_POWER "LF");
+        ImGui::SameLine();
+        ImGui::Checkbox("##LF", &_drive_enable[0]);
+        ImGui::SameLine();
+        if (drive_enabled[0]) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
     
-    // RB
-    ImGui::SameLine();
-    if (drive_enabled[3]) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
-    } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-    }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
-    ImGui::PopStyleColor(); 
-    ImGui::SameLine();
-    ImGui::Checkbox("##RB", &_drive_enable[3]);
-    ImGui::SameLine();
-    ImGui::TextUnformatted(ICON_MDI_POWER "RB");
-    ImGui::PopStyleVar();
-    if (!_server->esp_system.debug_mode()) { ImGui::EndDisabled(); }
 
-    _server->esp_system.set_ref_drive_enable(_drive_enable);
+        // RF
+        ImGui::SameLine();
+        if (drive_enabled[2]) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();   
+        ImGui::SameLine();
+        ImGui::Checkbox("##RF", &_drive_enable[2]);
+        ImGui::SameLine();
+        ImGui::TextUnformatted(ICON_MDI_POWER "RF");
+
+        // LB
+        ImGui::TextUnformatted(ICON_MDI_POWER "LB");
+        ImGui::SameLine();
+        ImGui::Checkbox("##LB", &_drive_enable[1]);
+        ImGui::SameLine();
+        if (drive_enabled[1]) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor();
+        
+        // RB
+        ImGui::SameLine();
+        if (drive_enabled[3]) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.95f)));
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+        ImGui::PopStyleColor(); 
+        ImGui::SameLine();
+        ImGui::Checkbox("##RB", &_drive_enable[3]);
+        ImGui::SameLine();
+        ImGui::TextUnformatted(ICON_MDI_POWER "RB");
+        ImGui::PopStyleVar();
+        _server->esp_system.set_ref_drive_enable(_drive_enable);
+    }
 }
 
 

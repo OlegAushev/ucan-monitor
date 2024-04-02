@@ -1,5 +1,5 @@
 #include "pdmpanel.h"
-#include <ui/components/togglebutton.h>
+#include <ui/util/togglebutton.h>
 
 
 namespace ui {
