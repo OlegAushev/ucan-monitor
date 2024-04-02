@@ -68,7 +68,7 @@ void Dashboard::_draw_debug_controls() {
     if (_server->vcu_debug_mode()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
     } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
     }
     ImGui::TextUnformatted(ICON_MDI_BUG); 
     ImGui::PopStyleColor();        
