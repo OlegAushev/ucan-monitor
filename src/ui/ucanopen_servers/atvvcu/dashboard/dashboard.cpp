@@ -243,7 +243,7 @@ void Dashboard::_draw_dash() {
 
     if (!_server->heartbeat_service.good() || !_server->tpdo_service.good(ucanopen::CobTpdo::tpdo1)) {
         ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.95f)));
-        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK_OUTLINE);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
         ImGui::PopStyleColor();
     } else {
         static bool icon_active = true;
@@ -254,7 +254,7 @@ void Dashboard::_draw_dash() {
         } else {
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.3f, 0.95f)));
         }
-        ImGui::TextUnformatted(ICON_MDI_CHECK_NETWORK_OUTLINE);
+        ImGui::TextUnformatted(ICON_MDI_NETWORK);
         ImGui::PopStyleColor();        
 
         if (std::chrono::steady_clock::now() > timestamp + std::chrono::milliseconds(750)) {
