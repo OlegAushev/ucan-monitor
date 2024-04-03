@@ -232,9 +232,9 @@ inline const std::vector<std::string> syslog_messages = {
 };
 
 
-inline constexpr size_t error_domain_count = 4;
+inline constexpr size_t error_domain_count = 5;
 inline const std::array<std::string_view, error_domain_count> error_domains = {
-    "sys", "ucanopen", "pdm", "accl"
+    "sys", "ucanopen", "pdm", "accl", "drive"
 };
 
 
@@ -273,6 +273,10 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> error
         "accl2_low",
         "accl2_high",
         "accl12_ratio"
+    },
+    {
+        "module_overtemp",
+        "motor_overtemp"
     }
 }};
 
@@ -295,6 +299,9 @@ inline const std::array<std::vector<std::string_view>, error_domain_count> warni
     {
         "pressed_at_start",
         "pressed_at_turn_start"
+    },
+    {
+        
     }
 }};
 
