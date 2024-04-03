@@ -74,6 +74,11 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5010, 0x09}, {"watch", "bms", "discrete_inputs_1", "", OD_ACCESS_RO, OD_UINT32}},
 {{0x5010, 0x0A}, {"watch", "bms", "discrete_inputs_2", "", OD_ACCESS_RO, OD_UINT32}},
 
+{{0x5011, 0x01}, {"watch", "esp", "torqueref_lf", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5011, 0x02}, {"watch", "esp", "torqueref_lb", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5011, 0x03}, {"watch", "esp", "torqueref_rf", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5011, 0x04}, {"watch", "esp", "torqueref_rb", "Nm", OD_ACCESS_RO, OD_FLOAT32}},
+
 
 {{0x3002, 0x01}, {"config", "drive", "torque_max", "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3002, 0x02}, {"config", "drive", "slip_threshold", "", OD_ACCESS_RW, OD_FLOAT32}},
