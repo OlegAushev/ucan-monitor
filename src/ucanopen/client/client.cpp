@@ -116,7 +116,8 @@ SetupStatus Client::set_server_node_id(std::string_view name, NodeId node_id) {
 void Client::_run(std::future<void> signal_exit) {
     bsclog::info("Started aux uCANopen thread.");
 
-    while (signal_exit.wait_for(std::chrono::milliseconds(0)) == std::future_status::timeout) {
+    while (signal_exit.wait_for(_socket->good() ? std::chrono::milliseconds(0) : std::chrono::milliseconds(1))
+            == std::future_status::timeout) {
         auto now = std::chrono::steady_clock::now();
 
         /* SYNC */

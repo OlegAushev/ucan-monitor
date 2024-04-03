@@ -79,7 +79,8 @@ public:
 
     Status send(const can_frame& frame);
     Status recv(can_frame& frame);
-
+    
+    bool good() const { return _socket >= 0; }
 private:
     Status _create_socket(const std::string& interface);
     std::filesystem::path _find_script(std::filesystem::path name);
