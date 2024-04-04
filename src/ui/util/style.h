@@ -2,6 +2,7 @@
 
 
 #include <imgui.h>
+#include <imgui_internal.h>
 
 
 namespace ui {
@@ -69,6 +70,30 @@ inline constexpr auto dark_3    = IM_COL32(61, 56, 70, 255);
 inline constexpr auto dark_4    = IM_COL32(36, 31, 49, 255);
 inline constexpr auto dark_5    = IM_COL32(0, 0, 0, 255);
 
+// Adwaita Palette 
+inline constexpr auto window_bg_light = IM_COL32(250, 250, 250, 255);
+inline constexpr auto window_bg_dark = IM_COL32(36, 36, 36, 255);
+inline constexpr auto window_fg_light = IM_COL32(0, 0, 0, 204);
+inline constexpr auto window_fg_dark = IM_COL32(255, 255, 255, 255);
+
+inline constexpr auto view_bg_light = IM_COL32(255, 255, 255, 255);
+inline constexpr auto view_bg_dark = IM_COL32(30, 30, 30, 255);
+inline constexpr auto view_fg_light = IM_COL32(0, 0, 0, 204);
+inline constexpr auto view_fg_dark = IM_COL32(255, 255, 255, 255);
+
+inline constexpr auto headerbar_bg_dark = IM_COL32(48, 48, 48, 255);
+inline constexpr auto headerbar_backdrop_dark = IM_COL32(36, 36, 36, 255);
+inline constexpr auto headerbar_shade_dark = IM_COL32(0, 0, 0, 92);
+
+inline constexpr auto dialog_bg_dark = IM_COL32(56, 56, 56, 255);
+inline constexpr auto popover_bg_dark = IM_COL32(56, 56, 56, 255);
+
+
 
 } // namespace colors
+
+
+extern void apply_gnome_dark_palette();
+
+
 } // namespace ui

@@ -7,6 +7,8 @@
 //#include <icons_font_awesome/IconsFontAwesome6.h>
 #include <icons/IconsMaterialDesignIcons.h>
 
+#include <ui/util/style.h>
+
 #include <memory>
 #include <ucanopen/client/client.h>
 
@@ -76,6 +78,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;       // Enable Docking
 
     // Style
+    ui::apply_gnome_dark_palette();
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 0.0f;
     style.WindowBorderSize = 1.0f;
