@@ -13,7 +13,12 @@ inline const ImVec4 green_toggle_button         = (ImVec4)ImColor::HSV(0.35f, 0.
 inline const ImVec4 green_toggle_button_hovered = (ImVec4)ImColor::HSV(0.35f, 0.8f, 0.8f);
 inline const ImVec4 green_toggle_button_active  = (ImVec4)ImColor::HSV(0.35f, 0.7f, 0.7f);
 
-inline const ImVec4 icon_inactive               = (ImVec4)ImColor::HSV(0.0f, 0.0f, 0.25f);
+inline constexpr auto icon_inactive     = IM_COL32(127, 127, 127, 127);
+
+inline constexpr auto table_bg_red      = IM_COL32(250, 66, 66, 102);
+inline constexpr auto table_bg_green    = IM_COL32(121, 250, 66, 102);
+inline constexpr auto table_bg_yellow   = IM_COL32(250, 222, 66, 102);
+inline constexpr auto table_bg_blue     = IM_COL32(66, 150, 250, 102);
 
 // GNOME Palette
 inline constexpr auto blue_1    = IM_COL32(153, 193, 241, 255);

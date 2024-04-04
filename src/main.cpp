@@ -78,7 +78,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;       // Enable Docking
 
     // Style
-    ui::apply_gnome_dark_palette();
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowRounding = 0.0f;
     style.WindowBorderSize = 1.0f;

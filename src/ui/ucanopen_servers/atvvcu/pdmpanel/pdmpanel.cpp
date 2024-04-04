@@ -59,13 +59,11 @@ void PdmPanel::_draw_contactor_states() {
 
             ImGui::TableSetColumnIndex(1);
             if (_contactor_feedback_state[row]) {
-                ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH_CLOSED" On");
-                ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.65f));
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH_CLOSED" ON");
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
             } else {
-                ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH" Off");
-                ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.65f));
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH" OFF");
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
             }
         }
 

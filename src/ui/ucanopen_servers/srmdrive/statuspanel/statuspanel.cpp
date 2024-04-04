@@ -1,4 +1,5 @@
 #include "statuspanel.h"
+#include <ui/util/style.h>
 
 
 namespace ui {
@@ -35,8 +36,7 @@ void StatusPanel::_draw_error_table() {
             ImGui::Text("%s", error_list[row].c_str());
             
             if ((errors & (1 << row)) != 0) {
-                ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.65f));
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
             }
         }
 
@@ -57,8 +57,7 @@ void StatusPanel::_draw_warning_table() {
             ImGui::Text("%s", warning_list[row].c_str());
             
             if ((warnings & (1 << row)) != 0) {
-                ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.7f, 0.3f, 0.65f));
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
             }
         }
 

@@ -77,8 +77,7 @@ void BmsPanel::draw() {
                 ImGui::Text("%s", ::atvvcu::bms_internal_states[row].data());
                 
                 if ((state & (1 << row)) != 0) {
-                    ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.7f, 0.65f));
-                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_blue);
                 }
             }
 
@@ -111,8 +110,7 @@ void BmsPanel::draw() {
                 ImGui::Text("%s", ::atvvcu::bms_error_register_1[row].data());
                 
                 if ((error & (1 << row)) != 0) {
-                    ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.65f));
-                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
                 }
             }
 
@@ -145,8 +143,7 @@ void BmsPanel::draw() {
                 ImGui::Text("%s", ::atvvcu::bms_error_register_2[row].data());
                 
                 if ((error & (1 << row)) != 0) {
-                    ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.65f));
-                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
                 }
             }
 
@@ -179,8 +176,7 @@ void BmsPanel::draw() {
                 ImGui::Text("%s", ::atvvcu::bms_discrete_inputs_1[row].data());
                 
                 if ((inputs & (1 << row)) != 0) {
-                    ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.7f, 0.65f));
-                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_blue);
                 }
             }
 
@@ -213,8 +209,7 @@ void BmsPanel::draw() {
                 ImGui::Text("%s", ::atvvcu::bms_discrete_inputs_2[row].data());
                 
                 if ((inputs & (1 << row)) != 0) {
-                    ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.3f, 0.3f, 0.7f, 0.65f));
-                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_blue);
                 }
             }
 

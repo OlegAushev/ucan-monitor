@@ -1,5 +1,6 @@
 #include "motordatapanel.h"
 #include "imgui.h"
+#include <ui/util/style.h>
 
 
 namespace ui {
@@ -40,11 +41,9 @@ void MotorDataPanel::draw() {
             ImGui::TableSetColumnIndex(1);
             ImGui::Text("%d", data[i].enabled);
             if (data[i].enabled) {
-                ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.3f, 0.7f, 0.3f, 0.65f));
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
             } else {
-                ImU32 cell_bg_color = ImGui::GetColorU32(ImVec4(0.7f, 0.3f, 0.3f, 0.65f));
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
             }
 
             ImGui::TableNextRow();
