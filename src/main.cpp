@@ -29,13 +29,15 @@
 #include <ui/ucanopen_servers/atvvcu/motorcontrolpanel/motorcontrolpanel.h>
 #include <ui/ucanopen_servers/atvvcu/motordatapanel/motordatapanel.h>
 
+#include <ucanopen_servers/brkdrive/brkdrive_server.h>
+
 #include <iostream>
 #include <fstream>
 
 #include <csv_writer/csv_writer.h>
 
 
-const std::vector<std::string> server_names = {"srmdrive", "atv-vcu"};
+const std::vector<std::string> server_names = {"srmdrive", "atv-vcu", "brake-drive"};
 
 
 static void glfw_error_callback(int error, const char* description) {
@@ -191,6 +193,18 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 3", "Watch Plot 3", false));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 4", "Watch Plot 4", false));
     
+    } else if (server_name == "brake-drive") {
+        auto brkdrive_server = std::make_shared<brkdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
+        ucanopen_client->register_server(brkdrive_server);
+
+        watchpanel = std::make_shared<ui::WatchPanel>(brkdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
+        
+        views.push_back(watchpanel);
+        
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 1", "Watch Plot 1", true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 2", "Watch Plot 2", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 3", "Watch Plot 3", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 4", "Watch Plot 4", false));
     } else {
         // TODO Error
     }
