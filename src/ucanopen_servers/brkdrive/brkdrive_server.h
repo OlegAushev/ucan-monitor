@@ -22,8 +22,13 @@ protected:
                                                      ucanopen::SdoType sdo_type,
                                                      ucanopen::ExpeditedSdoData data) override final;
 private:
-    std::atomic<uint32_t> _errors = 0;
-    std::atomic<uint16_t> _warnings = 0;
+    std::atomic<uint32_t> _errors{0};
+    std::atomic<uint16_t> _warnings{0};
+
+    std::atomic_bool _wakeup_ref{false};
+    std::
+
+
 
     std::atomic<bool> _power_enabled{false};
     std::atomic<bool> _run_enabled{false};

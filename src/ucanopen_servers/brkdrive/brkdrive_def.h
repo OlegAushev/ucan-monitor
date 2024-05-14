@@ -11,19 +11,23 @@
 namespace brkdrive {
 
 struct CobTpdo1 {
-    uint16_t run : 1;
-    uint16_t error : 1;
-    uint16_t warning : 1;
-    uint16_t overheat : 1;
-    uint16_t ctlmode : 1;
-    uint16_t ctlloop : 2;
-    uint16_t _reserved : 1;
-    uint16_t drive_state : 8;
+    uint8_t run : 1;
+    uint8_t error : 1;
+    uint8_t warning : 1;
+    uint8_t opmode : 2;
+    uint8_t ctlmode : 1;
+    uint8_t ctlloop : 2;
+    
+    uint8_t drive_state : 8;
+    
     int16_t torque : 16;
+    
     int16_t speed : 16;
+    
+    uint8_t _reserved1 : 8;
+    
     uint16_t counter : 2;
     uint16_t _reserved2 : 6;
-    uint16_t checksum : 8;
 };
 
 
@@ -63,30 +67,43 @@ struct CobTpdo4 {
 
 //----------------------------------------------------------------------------------------------------------------------
 struct CobRpdo1 {
-    uint16_t power : 1;
-    uint16_t run : 1;
-    uint16_t ctlmode : 1;
-    uint16_t disable_isotest : 1;
-    uint16_t emergency_stop : 1;
-    uint16_t _reserved1 : 11;
-    int16_t torque_ref;
-    int16_t speed_ref;
-    uint16_t counter : 2;
-    uint16_t _reserved2 : 6;
-    uint16_t checksum : 8;
+    uint8_t wakeup : 1;
+    uint8_t _reserved1 : 7;
+    
+    uint8_t _reserved2;
+    
+    uint16_t brake_ref;
+    
+    uint8_t _reserved3;
+    
+    uint8_t _reserved4;
+    
+    uint8_t _reserved5;
+    
+    uint8_t counter : 2;
+    uint8_t _reserved6 : 6;
 };
 
 
 struct CobRpdo2 {
-    uint16_t manual_fieldctl : 1;
-    uint16_t ctlloop : 2;
-    uint16_t _reserved1 : 4;
-    uint16_t openloop_angle : 9;
-    uint16_t field_current_ref;
-    int16_t d_current_ref;
-    uint16_t counter : 2;
-    uint16_t _reserved2 : 6;
-    uint16_t checksum : 8;
+    int16_t torque_ref;
+    int16_t speed_ref;
+    int16_t dcurr_ref;
+    uint8_t _reserved1;
+    uint8_t counter : 2;
+    uint8_t opmode : 2;
+    uint8_t ctlmode : 1;
+    uint8_t ctlloop : 2;
+    uint8_t run : 1;
+};
+
+
+struct CobRpdo3 {
+    int32_t angle_ref;
+    uint16_t track_speed;
+    uint8_t _reserved1;
+    uint8_t counter : 2;
+    uint8_t _reserved2 : 6;
 };
 
 
