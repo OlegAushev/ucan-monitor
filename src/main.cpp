@@ -29,7 +29,7 @@
 #include <ui/ucanopen_servers/atvvcu/motorcontrolpanel/motorcontrolpanel.h>
 #include <ui/ucanopen_servers/atvvcu/motordatapanel/motordatapanel.h>
 
-#include <ucanopen_servers/brkdrive/brkdrive_server.h>
+#include <ui/ucanopen_servers/brkdrive/datapanel/datapanel.h>
 
 #include <iostream>
 #include <fstream>
@@ -198,8 +198,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         ucanopen_client->register_server(brkdrive_server);
 
         watchpanel = std::make_shared<ui::WatchPanel>(brkdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
+        auto datapanel = std::make_shared<ui::brkdrive::DataPanel>(brkdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
         
         views.push_back(watchpanel);
+        views.push_back(datapanel);
         
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 1", "Watch Plot 1", true));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 2", "Watch Plot 2", false));

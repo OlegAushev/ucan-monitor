@@ -3,7 +3,7 @@
 
 #include <imgui.h>
 #include <ui/view/view.h>
-#include <ucanopen_servers/srmdrive/srmdrive_server.h>
+#include <ucanopen_servers/brkdrive/brkdrive_server.h>
 #include <memory>
 
 
@@ -12,9 +12,9 @@ namespace brkdrive {
 
 class DataPanel : public View {
 private:
-    std::shared_ptr<::srmdrive::Server> _server;
+    std::shared_ptr<::brkdrive::Server> _server;
 public:
-    DataPanel(std::shared_ptr<::srmdrive::Server> server,
+    DataPanel(std::shared_ptr<::brkdrive::Server> server,
               const std::string& menu_title,
               const std::string& window_title,
               bool open);

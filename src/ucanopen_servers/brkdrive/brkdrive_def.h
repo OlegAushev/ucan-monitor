@@ -20,13 +20,13 @@ struct CobTpdo1 {
     uint8_t ctlmode : 1;
     uint8_t ctlloop : 2;
     
-    uint8_t drive_state : 8;
+    uint8_t drive_state;
     
-    int16_t torque : 16;
+    int16_t torque;
     
-    int16_t speed : 16;
+    int16_t speed;
     
-    uint8_t _reserved1 : 8;
+    uint8_t _reserved1;
     
     uint16_t counter : 2;
     uint16_t _reserved2 : 6;
@@ -61,9 +61,9 @@ struct CobTpdo3 {
 struct CobTpdo4 {
     uint32_t errors;
     uint16_t warnings;
-    uint16_t counter : 2;
-    uint16_t _reserved : 6;
-    uint16_t checksum : 8;
+    uint8_t _reserved1;
+    uint8_t counter : 2;
+    uint8_t _reserved2 : 6;
 };
 
 

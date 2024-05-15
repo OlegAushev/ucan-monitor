@@ -51,8 +51,8 @@ private:
         std::atomic<std::string_view> ctlmode{"n/a"};
         std::atomic<std::string_view> ctlloop{"n/a"};
         std::atomic<std::string_view> drive_state{"n/a"};
-        std::atomic<float> torque{0.0f};
-        std::atomic<int16_t> speed{0};
+        std::atomic<std::optional<float>> torque{std::nullopt};
+        std::atomic<std::optional<int16_t>> speed{std::nullopt};
     } _tpdo1;
 
     struct {
@@ -82,6 +82,9 @@ public:
     std::string_view opmode() const { return _tpdo1.opmode.load(); }
     std::string_view ctlmode() const { return _tpdo1.ctlmode.load(); }
     std::string_view ctlloop() const { return _tpdo1.ctlloop.load(); }
+    std::string_view drive_state() const { return _tpdo1.drive_state.load(); }
+    std::optional<float> torque() const { return _tpdo1.torque.load(); }
+    std::optional<int16_t> speed() const { return _tpdo1.speed.load(); }
 
     std::optional<uint32_t> errors() const { return _tpdo4.errors.load(); }
     std::optional<uint16_t> warnings() const { return _tpdo4.warnings.load(); }
