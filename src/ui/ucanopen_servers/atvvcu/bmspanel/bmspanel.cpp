@@ -16,7 +16,7 @@ BmsPanel::BmsPanel(std::shared_ptr<::atvvcu::Server> server,
 
 
 void BmsPanel::draw() {
-    ImGui::Begin(_window_title.c_str(), &is_open);
+    ImGui::Begin(_window_title.c_str(), &_opened);
 
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("contactor_table", 2, flags)) {

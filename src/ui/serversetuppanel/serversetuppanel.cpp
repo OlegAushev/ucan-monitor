@@ -14,7 +14,7 @@ ServerSetupPanel::ServerSetupPanel(std::shared_ptr<ucanopen::Server> server,
 
 
 void ServerSetupPanel::draw() {
-    ImGui::Begin(_window_title.c_str(), &is_open);
+    ImGui::Begin(_window_title.c_str(), &_opened);
 
     _draw_about();
     _draw_setup();

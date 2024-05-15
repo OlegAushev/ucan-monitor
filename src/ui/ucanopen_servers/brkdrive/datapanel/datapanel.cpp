@@ -4,7 +4,7 @@
 
 
 namespace ui {
-namespace srmdrive {
+namespace brkdrive {
 
 
 DataPanel::DataPanel(std::shared_ptr<::srmdrive::Server> server,

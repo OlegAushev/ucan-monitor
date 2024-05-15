@@ -21,7 +21,7 @@ void MotorDataPanel::draw() {
 
 
     for (size_t i = 0; i < 4; ++i) {
-        ImGui::Begin(_window_titles[i].c_str(), &is_open);
+        ImGui::Begin(_window_titles[i].c_str(), &_opened);
 
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
         if (ImGui::BeginTable("data_table", 2, flags)) {

@@ -43,19 +43,19 @@ void MainView::draw() {
     _draw_menubar();
 
     for (auto& view : _views) {
-        if (view->is_open) {
+        if (view->opened()) {
             view->draw();
         }
     }
 
     for (auto& tool : _tools) {
-        if (tool->is_open) {
+        if (tool->opened()) {
             tool->draw();
         }
     }
 
     for (auto& watchplot : _watchplots) {
-        if (watchplot->is_open) {
+        if (watchplot->opened()) {
             watchplot->draw();
         }
     }
@@ -81,14 +81,18 @@ void MainView::_draw_menubar() {
 
         if (ImGui::BeginMenu("View")) {
             for (auto& view : _views) {
-                ImGui::MenuItem(view->menu_title().c_str(), nullptr, &view->is_open);
+                auto opened = view->opened();
+                ImGui::MenuItem(view->menu_title().c_str(), nullptr, &opened);
+                view->toggle(opened);
             }
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Tools")) {
             for (auto& tool : _tools) {
-                ImGui::MenuItem(tool->menu_title().c_str(), nullptr, &tool->is_open);
+                auto opened = tool->opened();
+                ImGui::MenuItem(tool->menu_title().c_str(), nullptr, &opened);
+                tool->toggle(opened);
             }
             ImGui::MenuItem(ICON_MDI_HELP" Example", nullptr, &_show_demo);
             ImGui::EndMenu();
@@ -97,7 +101,9 @@ void MainView::_draw_menubar() {
         if (ImGui::BeginMenu("Plots")) {
             if (ImGui::BeginMenu(ICON_MDI_CHART_LINE" Watch")) {
                 for (auto& watchplot : _watchplots) {
-                    ImGui::MenuItem(watchplot->menu_title().c_str(), nullptr, &watchplot->is_open);
+                    auto opened = watchplot->opened();
+                    ImGui::MenuItem(watchplot->menu_title().c_str(), nullptr, &opened);
+                    watchplot->toggle(opened);
                 }
                 // ImGui::Checkbox("Enabled##", &_show_watchplots);
                 // ImGui::PushItemWidth(80);

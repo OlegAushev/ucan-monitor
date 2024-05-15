@@ -16,7 +16,7 @@ PdmPanel::PdmPanel(std::shared_ptr<::atvvcu::Server> server,
 
 
 void PdmPanel::draw() {
-    ImGui::Begin(_window_title.c_str(), &is_open);
+    ImGui::Begin(_window_title.c_str(), &_opened);
 
     // ToggleButton(ICON_MDI_BATTERY_POSITIVE      " Battery +   ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::battery_p)]);
     // ToggleButton(ICON_MDI_BATTERY_NEGATIVE      " Battery -   ", _contactor_ref_state[std::to_underlying(::atvvcu::PdmContactor::battery_n)]);

@@ -17,7 +17,7 @@ Dashboard::Dashboard(std::shared_ptr<::atvvcu::Server> server,
 
 
 void Dashboard::draw() {
-    ImGui::Begin(_window_title.c_str(), &is_open);
+    ImGui::Begin(_window_title.c_str(), &_opened);
 
     _read_keyboard();
     _draw_debug_controls();
