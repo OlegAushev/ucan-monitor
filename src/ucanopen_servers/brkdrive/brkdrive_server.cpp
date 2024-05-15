@@ -9,10 +9,10 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
         , ucanopen::SdoSubscriber(sdo_service) {
     tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo1, std::chrono::milliseconds(1000),
                                [this](ucanopen::can_payload payload) { this->_handle_tpdo1(payload); });
-    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1000),
-                               [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
-    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1000),
-                               [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
+    // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1000),
+    //                            [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
+    // tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1000),
+    //                            [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
     tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1000),
                                [this](ucanopen::can_payload payload) { this->_handle_tpdo4(payload); });
 
@@ -20,6 +20,8 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
                                [this](){ return this->_create_rpdo1(); });
     rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2, std::chrono::milliseconds(100),
                                [this](){ return this->_create_rpdo2(); });
+    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3, std::chrono::milliseconds(100),
+                               [this](){ return this->_create_rpdo3(); });
 }
 
 
@@ -42,69 +44,37 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
     static_assert(sizeof(CobTpdo1) == 8);
     CobTpdo1 tpdo = ucanopen::from_payload<CobTpdo1>(payload);
 
-    Tpdo1 tpdo1_{};
-    tpdo1_.run = tpdo.run;
-    tpdo1_.error = tpdo.error;
-    tpdo1_.warning = tpdo.warning;
-    tpdo1_.overheat = tpdo.overheat;
-    
-    tpdo1_.ctlmode = (tpdo.ctlmode == 0) ? "torque" : "speed";
-    
-    switch (tpdo.ctlloop) {
-    case std::to_underlying(ControlLoop::closed):
-        tpdo1_.ctlloop = "closed";
-        break;
-    case std::to_underlying(ControlLoop::open):
-        tpdo1_.ctlloop = "open";
-        break;
-    case std::to_underlying(ControlLoop::semiclosed):
-        tpdo1_.ctlloop = "semi-closed";
-        break;
-    default:
-        tpdo1_.ctlloop = "unknown";
-        break;
-    }
+    _tpdo1.run.store(static_cast<bool>(tpdo.run));
+    _tpdo1.error.store(static_cast<bool>(tpdo.error));
+    _tpdo1.warning.store(static_cast<bool>(tpdo.warning));
 
-    if (tpdo.drive_state >= drive_states.size()) {
-        tpdo1_.drive_state = "n/a";
+
+    if (opmode_map.contains(tpdo.opmode)) {
+        _tpdo1.opmode.store(opmode_map.at(tpdo.opmode));
     } else {
-        tpdo1_.drive_state = drive_states[tpdo.drive_state];
+        _tpdo1.opmode.store("unknown");
     }
 
-    tpdo1_.torque = tpdo.torque;
-    tpdo1_.speed = tpdo.speed;
+    if (ctlmode_map.contains(tpdo.ctlmode)) {
+        _tpdo1.ctlmode.store(ctlmode_map.at(tpdo.ctlmode));
+    } else {
+        _tpdo1.ctlmode.store("unknown");
+    }
 
-    _tpdo1 = tpdo1_;
-}
+    if (ctlloop_map.contains(tpdo.ctlloop)) {
+        _tpdo1.ctlloop.store(ctlloop_map.at(tpdo.ctlloop));
+    } else {
+        _tpdo1.ctlloop.store("unknown");
+    }
 
+    if (tpdo.drive_state < drive_states.size()) {
+        _tpdo1.drive_state = drive_states[tpdo.drive_state];
+    } else {
+        _tpdo1.drive_state.store("unknown");
+    }
 
-void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
-    static_assert(sizeof(CobTpdo2) == 8);
-    CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
-
-    Tpdo2 tpdo2_{};
-    tpdo2_.dc_voltage = tpdo.dc_voltage;
-    tpdo2_.stator_current = tpdo.stator_current;
-    tpdo2_.field_current = float(tpdo.field_current);
-    tpdo2_.mech_power = tpdo.mech_power;
-    tpdo2_.manual_field_current = tpdo.manual_field_current;
-
-    _tpdo2 = tpdo2_;
-}
-
-
-void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
-    static_assert(sizeof(CobTpdo3) == 8);
-    CobTpdo3 tpdo = ucanopen::from_payload<CobTpdo3>(payload);
-    
-    Tpdo3 tpdo3_{};
-    tpdo3_.pwrmodule_temp = int(tpdo.pwrmodule_temp) - 40;
-    tpdo3_.excmodule_temp = int(tpdo.excmodule_temp) - 40;
-    tpdo3_.pcb_temp = int(tpdo.pcb_temp) - 40;
-    tpdo3_.aw_temp = int(tpdo.aw_temp) - 40;
-    tpdo3_.fw_temp = int(tpdo.fw_temp) - 40;
-
-    _tpdo3 = tpdo3_;
+    _tpdo1.torque.store(static_cast<float>(tpdo.torque) / 10000.0f);
+    _tpdo1.speed.store(tpdo.speed);
 }
 
 
@@ -112,8 +82,8 @@ void Server::_handle_tpdo4(const ucanopen::can_payload& payload){
     static_assert(sizeof(CobTpdo4) == 8);
     CobTpdo4 tpdo = ucanopen::from_payload<CobTpdo4>(payload);
 
-    _errors = tpdo.errors;
-    _warnings = tpdo.warnings;
+    _tpdo4.errors.store(tpdo.errors);
+    _tpdo4.warnings.store(tpdo.warnings);
 }
 
 
@@ -124,23 +94,12 @@ ucanopen::can_payload Server::_create_rpdo1() {
     
     CobRpdo1 rpdo{};
 
-    rpdo.power = _power_enabled;
-    rpdo.run = _run_enabled;
-    rpdo.ctlmode = std::to_underlying(_ctlmode.load());
-    rpdo.emergency_stop = _emergency_enabled;
-    rpdo.torque_ref = 10000.0f * _torque_perunit_ref;
-    rpdo.speed_ref = _speed_rpm_ref;
+    rpdo.wakeup = _rpdo1.wakeup.load();
+    rpdo.brake_ref = 10000.0f * _rpdo1.brake_ref.load();
 
-    rpdo.counter = counter;
-    counter = (counter + 1) & 0x3;
+    rpdo.counter = counter++;
 
-    auto payload = ucanopen::to_payload<CobRpdo1>(rpdo);
-
-    boost::crc_basic<8> crc8(0x7, 0x0, 0x0, false, false);
-    crc8.process_bytes(payload.data(), 7);
-    payload[7] = crc8.checksum();
-
-    return payload;
+    return ucanopen::to_payload<CobRpdo1>(rpdo);
 }
 
 
@@ -150,22 +109,34 @@ ucanopen::can_payload Server::_create_rpdo2() {
 
     CobRpdo2 rpdo{};
 
-    rpdo.manual_fieldctl = _manual_fieldctl;
-    rpdo.ctlloop = std::to_underlying(_ctlloop.load());
-    rpdo.openloop_angle = _openloop_angle;
-    rpdo.field_current_ref = 10.0f * _field_current_ref;
-    rpdo.d_current_ref = 10000.0f * _d_current_perunit_ref;
+    rpdo.torque_ref = 10000.0f * _rpdo2.torque_ref.load();
+    rpdo.speed_ref = _rpdo2.speed_ref.load();
+    rpdo.dcurr_ref = 10000.0f * _rpdo2.dcurr_ref.load();
 
-    rpdo.counter = counter;
-    counter = (counter + 1) & 0x3;
+    rpdo.opmode = std::to_underlying(_rpdo2.opmode.load());
+    rpdo.ctlmode = std::to_underlying(_rpdo2.ctlmode.load());
+    rpdo.ctlloop = std::to_underlying(_rpdo2.ctlloop.load());
+    rpdo.run = _rpdo2.run.load();
 
-    auto payload = ucanopen::to_payload<CobRpdo2>(rpdo);
+    rpdo.counter = counter++;
 
-    boost::crc_basic<8> crc8(0x7, 0x0, 0x0, false, false);
-    crc8.process_bytes(payload.data(), 7);
-    payload[7] = crc8.checksum();
+    return ucanopen::to_payload<CobRpdo2>(rpdo);
+}
 
-    return payload;
+
+ucanopen::can_payload Server::_create_rpdo3() {
+    static_assert(sizeof(CobRpdo3) == 8);
+    static unsigned int counter = 0;
+
+    CobRpdo3 rpdo{};
+
+    rpdo.openloop_angle_ref = _rpdo3.openloop_angle_ref.load();
+    rpdo.angle_ref = _rpdo3.angle_ref.load();
+    rpdo.track_speed = _rpdo3.track_speed.load();
+
+    rpdo.counter = counter++;
+
+    return ucanopen::to_payload<CobRpdo3>(rpdo);
 }
 
 

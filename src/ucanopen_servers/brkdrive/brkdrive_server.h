@@ -50,6 +50,9 @@ private:
         std::atomic<std::string_view> opmode{"n/a"};
         std::atomic<std::string_view> ctlmode{"n/a"};
         std::atomic<std::string_view> ctlloop{"n/a"};
+        std::atomic<std::string_view> drive_state{"n/a"};
+        std::atomic<float> torque{0.0f};
+        std::atomic<int16_t> speed{0};
     } _tpdo1;
 
     struct {
@@ -58,30 +61,30 @@ private:
     } _tpdo4;
 
 public:
-    void toggle_wakeup(bool value) { _rpdo1.wakeup = value; }
-    void set_brake_ref(float value) { _rpdo1.brake_ref = std::clamp(value, -1.0f, 1.0f); }
+    void toggle_wakeup(bool value) { _rpdo1.wakeup.store(value); }
+    void set_brake_ref(float value) { _rpdo1.brake_ref.store(std::clamp(value, -1.0f, 1.0f)); }
 
-    void set_torque_ref(float value) { _rpdo2.torque_ref = std::clamp(value, -1.0f, 1.0f); }
-    void set_speed_ref(int16_t value) { _rpdo2.speed_ref = value; }
-    void set_dcurr_ref(float value) { _rpdo2.dcurr_ref = std::clamp(value, -1.0f, 1.0f); }
-    void set_opmode(OperationMode mode) { _rpdo2.opmode = mode; }
-    void set_ctlmode(ControlMode mode) { _rpdo2.ctlmode = mode; }
-    void set_ctlloop(ControlLoop loop) { _rpdo2.ctlloop = loop; }
-    void toggle_run(bool value) { _rpdo2.run = value; }
+    void set_torque_ref(float value) { _rpdo2.torque_ref.store(std::clamp(value, -1.0f, 1.0f)); }
+    void set_speed_ref(int16_t value) { _rpdo2.speed_ref.store(value); }
+    void set_dcurr_ref(float value) { _rpdo2.dcurr_ref.store(std::clamp(value, -1.0f, 1.0f)); }
+    void set_opmode(OperationMode mode) { _rpdo2.opmode.store(mode); }
+    void set_ctlmode(ControlMode mode) { _rpdo2.ctlmode.store(mode); }
+    void set_ctlloop(ControlLoop loop) { _rpdo2.ctlloop.store(loop); }
+    void toggle_run(bool value) { _rpdo2.run.store(value); }
 
-    void set_openloop_angle_ref(int16_t value) { _rpdo3.openloop_angle_ref = value; }
-    void set_angle_ref(int16_t value) { _rpdo3.angle_ref = value; }
-    void set_track_speed(uint16_t value) { _rpdo3.track_speed = value; }
+    void set_openloop_angle_ref(int16_t value) { _rpdo3.openloop_angle_ref.store(value); }
+    void set_angle_ref(int16_t value) { _rpdo3.angle_ref.store(value); }
+    void set_track_speed(uint16_t value) { _rpdo3.track_speed.store(value); }
 
-    std::optional<bool> is_running() const { return _tpdo1.run; }
-    std::optional<bool> has_error() const { return _tpdo1.error; }
-    std::optional<bool> has_warning() const { return _tpdo1.warning; }
-    std::string_view opmode() const { return _tpdo1.opmode; }
-    std::string_view ctlmode() const { return _tpdo1.ctlmode; }
-    std::string_view ctlloop() const { return _tpdo1.ctlloop; }
+    std::optional<bool> is_running() const { return _tpdo1.run.load(); }
+    std::optional<bool> has_error() const { return _tpdo1.error.load(); }
+    std::optional<bool> has_warning() const { return _tpdo1.warning.load(); }
+    std::string_view opmode() const { return _tpdo1.opmode.load(); }
+    std::string_view ctlmode() const { return _tpdo1.ctlmode.load(); }
+    std::string_view ctlloop() const { return _tpdo1.ctlloop.load(); }
 
-    std::optional<uint32_t> errors() const { return _tpdo4.errors; }
-    std::optional<uint16_t> warnings() const { return _tpdo4.warnings; }
+    std::optional<uint32_t> errors() const { return _tpdo4.errors.load(); }
+    std::optional<uint16_t> warnings() const { return _tpdo4.warnings.load(); }
 
     const auto& error_list() const { return ::brkdrive::error_list; }
     const auto& warning_list() const { return ::brkdrive::warning_list; }

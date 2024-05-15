@@ -3,9 +3,11 @@
 
 #include <cstdint>
 #include <cstring>
-#include <vector>
-#include <string_view>
+#include <map>
 #include <string>
+#include <string_view>
+#include <utility>
+#include <vector>
 
 
 namespace brkdrive {
@@ -135,21 +137,15 @@ inline const std::vector<std::string> syslog_messages = {
 
 
 inline const std::vector<std::string> drive_states = {
-    "idle",
     "wait",
     "standby",
-    "startup",
+    "powerup",
     "ready",
-    "prepare",
-    "start",
+    "braking",
+    "release",
     "run",
-    "stop",
-    "shutdown",
-    "cal_start",
-    "cal_stage1",
-    "cal_stage2",
-    "cal_stage3",
-    "cal_stop"
+    "tracking",
+    "powerdown"
 };
 
 
@@ -200,9 +196,23 @@ enum class OperationMode {
 };
 
 
+inline const std::map<int, std::string_view> opmode_map = {
+    {std::to_underlying(OperationMode::normal), "normal"},
+    {std::to_underlying(OperationMode::run), "run"},
+    {std::to_underlying(OperationMode::track), "track"},
+    {std::to_underlying(OperationMode::hwtest), "hwtest"},
+};
+
+
 enum class ControlMode {
     torque,
     speed
+};
+
+
+inline const std::map<int, std::string_view> ctlmode_map = {
+    {std::to_underlying(ControlMode::torque), "torque"},
+    {std::to_underlying(ControlMode::speed), "speed"}
 };
 
 
@@ -210,6 +220,13 @@ enum class ControlLoop {
     closed,
     open,
     semiclosed
+};
+
+
+inline const std::map<int, std::string_view> ctlloop_map = {
+    {std::to_underlying(ControlLoop::closed), "closed"},
+    {std::to_underlying(ControlLoop::open), "open"},
+    {std::to_underlying(ControlLoop::semiclosed), "semiclosed"}
 };
 
 
