@@ -22,93 +22,79 @@ protected:
                                                      ucanopen::SdoType sdo_type,
                                                      ucanopen::ExpeditedSdoData data) override final;
 private:
-    std::atomic<uint32_t> _errors{0};
-    std::atomic<uint16_t> _warnings{0};
+    struct {
+        std::atomic<bool> wakeup{false};
+        std::atomic<float> brake_ref{0.0f};
+    } _rpdo1;
 
-    std::atomic_bool _wakeup_ref{false};
-    std::
+    struct {
+        std::atomic<float> torque_ref{0.f};
+        std::atomic<int16_t> speed_ref{0};
+        std::atomic<float> dcurr_ref{0.f};
+        std::atomic<OperationMode> opmode{OperationMode::normal};
+        std::atomic<ControlMode> ctlmode{ControlMode::torque};
+        std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
+        std::atomic<bool> run{false};
+    } _rpdo2;
 
+    struct {
+        std::atomic<int16_t> openloop_angle_ref{0};
+        std::atomic<int16_t> angle_ref{0};
+        std::atomic<uint16_t> track_speed{0};
+    } _rpdo3;
 
+    struct {
+        std::atomic<std::optional<bool>> run{std::nullopt};
+        std::atomic<std::optional<bool>> error{std::nullopt};
+        std::atomic<std::optional<bool>> warning{std::nullopt};
+        std::atomic<std::string_view> opmode{"n/a"};
+        std::atomic<std::string_view> ctlmode{"n/a"};
+        std::atomic<std::string_view> ctlloop{"n/a"};
+    } _tpdo1;
 
-    std::atomic<bool> _power_enabled{false};
-    std::atomic<bool> _run_enabled{false};
-    std::atomic<ControlMode> _ctlmode{ControlMode::torque};
-    std::atomic<bool> _emergency_enabled{false};
-    std::atomic<float> _torque_perunit_ref{0};
-    std::atomic<float> _speed_rpm_ref{0};
-
-    std::atomic<bool> _manual_fieldctl{false};
-    std::atomic<ControlLoop> _ctlloop{ControlLoop::closed};
-    std::atomic<uint16_t> _openloop_angle{0};
-    std::atomic<float> _field_current_ref{0};
-    std::atomic<float> _d_current_perunit_ref{0};
+    struct {
+        std::atomic<std::optional<uint32_t>> errors{std::nullopt};
+        std::atomic<std::optional<uint16_t>> warnings{std::nullopt};
+    } _tpdo4;
 
 public:
-    uint32_t errors() const { return _errors; }
-    uint16_t warnings() const { return _warnings; }
+    void toggle_wakeup(bool value) { _rpdo1.wakeup = value; }
+    void set_brake_ref(float value) { _rpdo1.brake_ref = std::clamp(value, -1.0f, 1.0f); }
+
+    void set_torque_ref(float value) { _rpdo2.torque_ref = std::clamp(value, -1.0f, 1.0f); }
+    void set_speed_ref(int16_t value) { _rpdo2.speed_ref = value; }
+    void set_dcurr_ref(float value) { _rpdo2.dcurr_ref = std::clamp(value, -1.0f, 1.0f); }
+    void set_opmode(OperationMode mode) { _rpdo2.opmode = mode; }
+    void set_ctlmode(ControlMode mode) { _rpdo2.ctlmode = mode; }
+    void set_ctlloop(ControlLoop loop) { _rpdo2.ctlloop = loop; }
+    void toggle_run(bool value) { _rpdo2.run = value; }
+
+    void set_openloop_angle_ref(int16_t value) { _rpdo3.openloop_angle_ref = value; }
+    void set_angle_ref(int16_t value) { _rpdo3.angle_ref = value; }
+    void set_track_speed(uint16_t value) { _rpdo3.track_speed = value; }
+
+    std::optional<bool> is_running() const { return _tpdo1.run; }
+    std::optional<bool> has_error() const { return _tpdo1.error; }
+    std::optional<bool> has_warning() const { return _tpdo1.warning; }
+    std::string_view opmode() const { return _tpdo1.opmode; }
+    std::string_view ctlmode() const { return _tpdo1.ctlmode; }
+    std::string_view ctlloop() const { return _tpdo1.ctlloop; }
+
+    std::optional<uint32_t> errors() const { return _tpdo4.errors; }
+    std::optional<uint16_t> warnings() const { return _tpdo4.warnings; }
 
     const auto& error_list() const { return ::brkdrive::error_list; }
     const auto& warning_list() const { return ::brkdrive::warning_list; }
 
-    void set_power_enabled(bool enabled) { _power_enabled = enabled; }
-    void set_run_enabled(bool enabled) { _run_enabled = enabled; }
-    void set_ctlmode(ControlMode mode) { _ctlmode = mode; }
-    void set_emergency_enabled(bool enabled) { _emergency_enabled = enabled; }
-    void set_torque(float value_perunit) { _torque_perunit_ref = std::clamp(value_perunit, -1.0f, 1.0f); }
-    void set_speed(float value_rpm) { _speed_rpm_ref = value_rpm; }
-
-    void set_manual_fieldctl_enabled(bool enabled) { _manual_fieldctl = enabled; }
-    void set_ctlloop(ControlLoop ctlloop) { _ctlloop = ctlloop; }
-    void set_openloop_angle(uint16_t value) { _openloop_angle = value % 360; }
-    void set_field_current(float val) { _field_current_ref = std::clamp(val, 0.0f, 100.0f); }
-    void set_d_current(float val_perunit) { _d_current_perunit_ref = std::clamp(val_perunit, -1.0f, 1.0f); }
 private:
     void _handle_tpdo1(const ucanopen::can_payload& payload);
-    void _handle_tpdo2(const ucanopen::can_payload& payload);
-    void _handle_tpdo3(const ucanopen::can_payload& payload);
+    // void _handle_tpdo2(const ucanopen::can_payload& payload);
+    // void _handle_tpdo3(const ucanopen::can_payload& payload);
     void _handle_tpdo4(const ucanopen::can_payload& payload);
 
     ucanopen::can_payload _create_rpdo1();
     ucanopen::can_payload _create_rpdo2();
-
-public:
-    struct Tpdo1 {
-        bool run;
-        bool error;
-        bool warning;
-        bool overheat;
-        std::string_view ctlmode;
-        std::string_view ctlloop;
-        std::string_view drive_state;
-        int torque;
-        int speed;
-    };
-
-    struct Tpdo2 {
-        unsigned int dc_voltage;
-        unsigned int stator_current;
-        float field_current;
-        unsigned int mech_power;
-        bool manual_field_current;
-    };
-
-    struct Tpdo3 {
-        int pwrmodule_temp;
-        int excmodule_temp;
-        int pcb_temp;
-        int aw_temp;
-        int fw_temp;
-    };
-
-private:
-    std::atomic<Tpdo1> _tpdo1{};
-    std::atomic<Tpdo2> _tpdo2{};
-    std::atomic<Tpdo3> _tpdo3{};
-
-public:
-    Tpdo1 tpdo1() const { return _tpdo1.load(); }
-    Tpdo2 tpdo2() const { return _tpdo2.load(); }
-    Tpdo3 tpdo3() const { return _tpdo3.load(); }
+    ucanopen::can_payload _create_rpdo3();
 };
 
 } // namespace brkdrive

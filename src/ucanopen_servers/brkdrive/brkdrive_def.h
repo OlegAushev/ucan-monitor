@@ -99,7 +99,8 @@ struct CobRpdo2 {
 
 
 struct CobRpdo3 {
-    int32_t angle_ref;
+    int16_t openloop_angle_ref;
+    int16_t angle_ref;
     uint16_t track_speed;
     uint8_t _reserved1;
     uint8_t counter : 2;
@@ -191,7 +192,15 @@ inline const std::vector<std::string> warning_list = {
 };
 
 
-enum class ControlMode : uint32_t {
+enum class OperationMode {
+    normal,
+    run,
+    track,
+    hwtest
+};
+
+
+enum class ControlMode {
     torque,
     speed
 };
