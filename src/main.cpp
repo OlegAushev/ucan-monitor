@@ -29,6 +29,7 @@
 #include <ui/ucanopen_servers/atvvcu/motorcontrolpanel/motorcontrolpanel.h>
 #include <ui/ucanopen_servers/atvvcu/motordatapanel/motordatapanel.h>
 
+#include <ui/ucanopen_servers/brkdrive/controlpanel/controlpanel.h>
 #include <ui/ucanopen_servers/brkdrive/datapanel/datapanel.h>
 
 #include <iostream>
@@ -197,9 +198,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto brkdrive_server = std::make_shared<brkdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
         ucanopen_client->register_server(brkdrive_server);
 
+        auto controlpanel = std::make_shared<ui::brkdrive::ControlPanel>(brkdrive_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
         watchpanel = std::make_shared<ui::WatchPanel>(brkdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
         auto datapanel = std::make_shared<ui::brkdrive::DataPanel>(brkdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
         
+        views.push_back(controlpanel);
         views.push_back(watchpanel);
         views.push_back(datapanel);
         

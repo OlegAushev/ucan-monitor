@@ -62,7 +62,7 @@ private:
 
 public:
     void toggle_wakeup(bool value) { _rpdo1.wakeup.store(value); }
-    void set_brake_ref(float value) { _rpdo1.brake_ref.store(std::clamp(value, -1.0f, 1.0f)); }
+    void set_brake_ref(float value) { _rpdo1.brake_ref.store(std::clamp(value, 0.0f, 1.0f)); }
 
     void set_torque_ref(float value) { _rpdo2.torque_ref.store(std::clamp(value, -1.0f, 1.0f)); }
     void set_speed_ref(int16_t value) { _rpdo2.speed_ref.store(value); }
