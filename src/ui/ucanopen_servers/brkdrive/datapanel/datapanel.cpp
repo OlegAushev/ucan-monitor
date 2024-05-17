@@ -1,6 +1,7 @@
 #include "datapanel.h"
 #include <ui/util/checkbox_tristate.h>
 #include <ui/util/style.h>
+#include <ui/util/util.h>
 
 
 namespace ui {
@@ -30,17 +31,23 @@ void DataPanel::draw() {
 
 
 void DataPanel::_draw_tpdo1_table() {
+    if (_server->tpdo_service.good(ucanopen::CobTpdo::tpdo1)) {
+        ui::util::BlinkingText(ICON_MDI_NETWORK, std::chrono::milliseconds{750},
+                               ui::colors::icon_green, ui::colors::icon_inactive);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+    
+    ImGui::SameLine();
+    ImGui::SeparatorText("TPDO1");
+
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo1_table", 2, flags)) {
         ImGui::TableSetupColumn("Parameter");
         ImGui::TableSetupColumn("Value");
         ImGui::TableHeadersRow();
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Connection");
-        ImGui::TableSetColumnIndex(1);
-        _server->tpdo_service.good(ucanopen::CobTpdo::tpdo1) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
@@ -139,6 +146,18 @@ void DataPanel::_draw_tpdo1_table() {
 
 
 void DataPanel::_draw_tpdo2_table() {
+    if (_server->tpdo_service.good(ucanopen::CobTpdo::tpdo2)) {
+        ui::util::BlinkingText(ICON_MDI_NETWORK, std::chrono::milliseconds{750},
+                               ui::colors::icon_green, ui::colors::icon_inactive);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+    
+    ImGui::SameLine();
+    ImGui::SeparatorText("TPDO2");
+
     // static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     // if (ImGui::BeginTable("tpdo2_table", 2, flags)) {
     //     ImGui::TableSetupColumn("Parameter");
@@ -196,6 +215,18 @@ void DataPanel::_draw_tpdo2_table() {
 
 
 void DataPanel::_draw_tpdo3_table() {
+    if (_server->tpdo_service.good(ucanopen::CobTpdo::tpdo3)) {
+        ui::util::BlinkingText(ICON_MDI_NETWORK, std::chrono::milliseconds{750},
+                               ui::colors::icon_green, ui::colors::icon_inactive);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+    
+    ImGui::SameLine();
+    ImGui::SeparatorText("TPDO3");
+
     // static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     // if (ImGui::BeginTable("tpdo3_table", 2, flags)) {
     //     ImGui::TableSetupColumn("Parameter");
@@ -253,17 +284,23 @@ void DataPanel::_draw_tpdo3_table() {
 
 
 void DataPanel::_draw_tpdo4_table() {
+    if (_server->tpdo_service.good(ucanopen::CobTpdo::tpdo4)) {
+        ui::util::BlinkingText(ICON_MDI_NETWORK, std::chrono::milliseconds{750},
+                               ui::colors::icon_green, ui::colors::icon_inactive);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+    
+    ImGui::SameLine();
+    ImGui::SeparatorText("TPDO4");
+
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo4_table", 2, flags)) {
         ImGui::TableSetupColumn("Parameter");
         ImGui::TableSetupColumn("Value");
         ImGui::TableHeadersRow();
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Connection");
-        ImGui::TableSetColumnIndex(1);
-        _server->tpdo_service.good(ucanopen::CobTpdo::tpdo4) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);

@@ -8,13 +8,13 @@ namespace ucanopen {
 ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher)
         : SdoSubscriber(sdo_publisher)
         , _server(server) {
-    _acq_timepoint = std::chrono::steady_clock::now();
+    _daq_timepoint = std::chrono::steady_clock::now();
 
     for (const auto& [key, object] : _server.dictionary().entries) {
         // create watch object list and data map
         if (object.category == _server.dictionary().config.watch_category) {
             _objects.push_back(&object);
-            _object_acq_enabled.push_back(true);
+            _object_daq_enabled.push_back(true);
             _data.insert({WatchKey{object.subcategory, object.name}, {ExpeditedSdoData{}, "n/a"}});
         }
     }
@@ -25,13 +25,13 @@ void ServerWatchService::send() {
     std::shared_lock lock(_objects_mtx);
     if (_enabled && !_objects.empty()) {
         auto now = std::chrono::steady_clock::now();
-        if (now - _acq_timepoint >= _period) {
+        if (now - _daq_timepoint >= _period) {
             static size_t i = 0;
-            if (_object_acq_enabled[i]) {
+            if (_object_daq_enabled[i]) {
                 _server.read(_server.dictionary().config.watch_category,
                             _objects[i]->subcategory,
                             _objects[i]->name);
-                _acq_timepoint = now;
+                _daq_timepoint = now;
             }
             i = (i + 1) % _objects.size();
         }

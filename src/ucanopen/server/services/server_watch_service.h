@@ -19,11 +19,11 @@ private:
     impl::Server& _server;
     bool _enabled{false};
     std::chrono::milliseconds _period{1000};
-    std::chrono::time_point<std::chrono::steady_clock> _acq_timepoint;
+    std::chrono::time_point<std::chrono::steady_clock> _daq_timepoint;
     
     // sdo watch objects
     std::vector<const ODObject*> _objects;
-    std::vector<bool> _object_acq_enabled;
+    std::vector<bool> _object_daq_enabled;
     mutable std::shared_mutex _objects_mtx;
 
     using WatchKey = std::pair<std::string_view, std::string_view>;
@@ -52,16 +52,16 @@ public:
         return _objects;
     }
 
-    bool acq_enabled(size_t idx) {
+    bool daq_enabled(size_t idx) {
         std::shared_lock lock(_objects_mtx);
-        if (idx >= _object_acq_enabled.size()) { return false; }
-        return _object_acq_enabled[idx];
+        if (idx >= _object_daq_enabled.size()) { return false; }
+        return _object_daq_enabled[idx];
     }
 
-    void enable_acq(size_t idx, bool value) {
+    void toggle_daq(size_t idx, bool value) {
         std::unique_lock lock(_objects_mtx);
-        if (idx >= _object_acq_enabled.size()) { return;}
-        _object_acq_enabled[idx] = value;
+        if (idx >= _object_daq_enabled.size()) { return;}
+        _object_daq_enabled[idx] = value;
     }
 
     std::string string_value(std::string_view watch_subcategory, std::string_view watch_name) const {
