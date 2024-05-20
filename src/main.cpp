@@ -31,6 +31,7 @@
 
 #include <ui/ucanopen_servers/brkdrive/controlpanel/controlpanel.h>
 #include <ui/ucanopen_servers/brkdrive/datapanel/datapanel.h>
+#include <ui/ucanopen_servers/brkdrive/statuspanel/statuspanel.h>
 
 #include <iostream>
 #include <fstream>
@@ -201,10 +202,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto controlpanel = std::make_shared<ui::brkdrive::ControlPanel>(brkdrive_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
         watchpanel = std::make_shared<ui::WatchPanel>(brkdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
         auto datapanel = std::make_shared<ui::brkdrive::DataPanel>(brkdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
+        auto statuspanel = std::make_shared<ui::brkdrive::StatusPanel>(brkdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", true);
         
         views.push_back(controlpanel);
         views.push_back(watchpanel);
         views.push_back(datapanel);
+        views.push_back(statuspanel);
         
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 1", "Watch Plot 1", true));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 2", "Watch Plot 2", false));

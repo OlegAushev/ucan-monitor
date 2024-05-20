@@ -35,10 +35,12 @@ void ControlPanel::draw() {
 
 
 void ControlPanel::_draw_dash() {
+    // Uptime
     ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE" Uptime[s]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("sys", "uptime").c_str());
 
+    // Heartbeat indicator
     if (_server->heartbeat_service.good()) {
         ui::util::BlinkingText(ICON_MDI_NETWORK, std::chrono::milliseconds{750},
                                ui::colors::icon_green, ui::colors::icon_inactive);
@@ -48,12 +50,14 @@ void ControlPanel::_draw_dash() {
         ImGui::PopStyleColor();
     }
 
+    // Drive state indicator
     ImGui::SameLine();
     std::string state(_server->drive_state());
     ImGui::PushItemWidth(90);
     ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
 
+    // Operation mode selection
     ImGui::PushItemWidth(132);
     auto opmode_preview = ::brkdrive::opmode_map.at(_opmode).data();
     if (ImGui::BeginCombo("Operation Mode", opmode_preview)) {
@@ -74,6 +78,7 @@ void ControlPanel::_draw_dash() {
         ImGui::EndCombo();
     }
     ImGui::PopItemWidth();
+    _server->set_opmode(static_cast<::brkdrive::OperationMode>(_opmode));
 
     // wakeup
     ToggleButton(ICON_MDI_POWER" On/Off    ", _wakeup);

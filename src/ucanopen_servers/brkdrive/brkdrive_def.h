@@ -151,24 +151,17 @@ inline const std::vector<std::string> drive_states = {
 
 inline const std::vector<std::string> error_list = {
     "emergency_stop",
-    "can_bus_connection_lost",
-    "dclink_charge_failure",
-    "dclink_discharge_failure",
+    "can_bus_no_conn",
     "dc_undervoltage",
     "dc_overvoltage",
-    "pwr_module_fault",
-    "exc_module_fault",
-    "pwr_overcurrent",
-    "exc_overcurrent",
-    "pwr_overtemp",
-    "exc_overtemp",
-    "pcb_overtemp",
-    "aw_overtemp",
-    "fw_overtemp",
-    "ia_sensor_fault",
-    "if_sensor_fault",
+    "module_fault",
+    "ph_overcurrent",
+    "module_overtemp",
+    "motor_overtemp",
+    "vdc_sensor_fault",
+    "iph_sensor_fault",
     "eeprom_error",
-    "resolver_failure"
+    "invalid_config",
 };
 
 
@@ -178,13 +171,9 @@ inline const std::vector<std::string> warning_list = {
     "can_bus_connection_lost",
     "can_bus_checksum_mismatch",
     "can_bus_counter_freeze",
-    "dclink_disconnected",
-    "dclink_charging",
     "converter_overheat",
     "motor_overheat",
     "flux_weakening",
-    "insulation_low",
-    "insulation_na",
 };
 
 
