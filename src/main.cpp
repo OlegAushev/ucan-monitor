@@ -203,11 +203,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         watchpanel = std::make_shared<ui::WatchPanel>(brkdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
         auto datapanel = std::make_shared<ui::brkdrive::DataPanel>(brkdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
         auto statuspanel = std::make_shared<ui::brkdrive::StatusPanel>(brkdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", true);
+        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(brkdrive_server, ICON_MDI_TOOLS" Setup", "Setup", false);
         
         views.push_back(controlpanel);
         views.push_back(watchpanel);
         views.push_back(datapanel);
         views.push_back(statuspanel);
+        views.push_back(serversetuppanel);
         
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 1", "Watch Plot 1", true));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 2", "Watch Plot 2", false));
