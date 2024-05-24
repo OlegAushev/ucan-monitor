@@ -77,9 +77,7 @@ void ServerSetupPanel::_draw_setup() {
         should_read = true;
     }
 
-    auto category_preview = selected_category_iter->first;
-
-    if (ImGui::BeginCombo("Category", category_preview.data())) {
+    if (ImGui::BeginCombo("Category", selected_category_iter->first.data())) {
         for (auto iter = objects.begin(); iter != objects.end(); ++iter) {
             auto is_selected = (iter == selected_category_iter);
             if (ImGui::Selectable(iter->first.data(), is_selected)) {
@@ -91,12 +89,15 @@ void ServerSetupPanel::_draw_setup() {
         ImGui::EndCombo();
     }
 
-    auto object_preview = selected_category_iter->second[selected_object_idx]->name;
+    const std::string object_preview = selected_category_iter->second[selected_object_idx]->name
+                                     + "[" + selected_category_iter->second[selected_object_idx]->unit + "]";
 
     if (ImGui::BeginCombo("Object", object_preview.c_str())) {
         for (size_t i = 0; i < selected_category_iter->second.size(); ++i) {
             auto is_selected = (i == selected_object_idx);
-            if (ImGui::Selectable(selected_category_iter->second[i]->name.c_str(), is_selected)) {
+            const auto& obj = selected_category_iter->second[i];
+            const std::string obj_ = obj->name + "[" + obj->unit + "]";
+            if (ImGui::Selectable(obj_.c_str(), is_selected)) {
                 selected_object_idx = i;
                 should_read = true;
             }

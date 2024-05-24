@@ -31,12 +31,12 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslog_message", "", OD_ACCESS_RO, OD_UINT32}},
 
-{{0x5000, 0x10}, {"watch", "converter", "vDC", "", OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x11}, {"watch", "converter", "iA", "", OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x12}, {"watch", "converter", "iB", "", OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x13}, {"watch", "converter", "iC", "", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x10}, {"watch", "converter", "vDC", "V", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x11}, {"watch", "converter", "iA", "A", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x12}, {"watch", "converter", "iB", "A", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x13}, {"watch", "converter", "iC", "A", OD_ACCESS_RO, OD_FLOAT32}},
 
-{{0x5000, 0x20}, {"watch", "model", "iS", "", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x20}, {"watch", "model", "iS", "A", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x21}, {"watch", "model",     "iD",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x22}, {"watch", "model",     "iQ",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
 
