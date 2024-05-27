@@ -124,8 +124,8 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TextUnformatted("Torque [%]");
         ImGui::TableSetColumnIndex(1);
         if (_server->torque().has_value()) {
-            int torque_pct = _server->torque().value() * 100.0f;
-            ImGui::Text("%d", torque_pct);
+            float torque_pct = _server->torque().value() * 100.0f;
+            ImGui::Text("%.2f", torque_pct);
         } else {
             ImGui::TextUnformatted("n/a");
         }
@@ -158,59 +158,32 @@ void DataPanel::_draw_tpdo2_table() {
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO2");
 
-    // static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-    // if (ImGui::BeginTable("tpdo2_table", 2, flags)) {
-    //     ImGui::TableSetupColumn("Parameter");
-    //     ImGui::TableSetupColumn("Value");
-    //     ImGui::TableHeadersRow();
+    static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+    if (ImGui::BeginTable("tpdo2_table", 2, flags)) {
+        ImGui::TableSetupColumn("Parameter");
+        ImGui::TableSetupColumn("Value");
+        ImGui::TableHeadersRow();
 
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("Connection");
-    //     ImGui::TableSetColumnIndex(1);
-    //     _server->tpdo_service.good(ucanopen::CobTpdo::tpdo2) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Raw Data [hex]");
+        ImGui::TableSetColumnIndex(1);
+        auto payload = _server->tpdo_service.data(ucanopen::CobTpdo::tpdo2);
+        ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X", payload[0], payload[1], payload[2], payload[3], payload[4], payload[5], payload[6], payload[7]);
 
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("Raw Data [hex]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     auto payload = _server->tpdo_service.data(ucanopen::CobTpdo::tpdo2);
-    //     ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X", payload[0], payload[1], payload[2], payload[3], payload[4], payload[5], payload[6], payload[7]);
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Braking Force [%]");
+        ImGui::TableSetColumnIndex(1);
+        if (_server->torque().has_value()) {
+            float braking_pct = _server->braking_force().value() * 100.0f;
+            ImGui::Text("%.2f", braking_pct);
+        } else {
+            ImGui::TextUnformatted("n/a");
+        }
 
-    //     auto tpdo2 = _server->tpdo2();
-
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("DC Voltage [V]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%d", tpdo2.dc_voltage);
-
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("Stator Current [A]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%d", tpdo2.stator_current);
-
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("Field Current [A]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%.0f", tpdo2.field_current);
-
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("Mech Power [kW]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%d", tpdo2.mech_power);
-
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("Manual Field Current [bool]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%d", tpdo2.manual_field_current);
-
-    //     ImGui::EndTable();
-    // }
+        ImGui::EndTable();
+    }
 }
 
 

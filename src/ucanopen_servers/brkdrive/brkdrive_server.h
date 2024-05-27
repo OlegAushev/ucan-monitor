@@ -90,6 +90,8 @@ public:
     std::optional<float> torque() const { return _tpdo1.torque.load(); }
     std::optional<int16_t> speed() const { return _tpdo1.speed.load(); }
 
+    std::optional<float> braking_force() const { return _tpdo2.braking.load(); }
+
     std::optional<uint32_t> errors() const { return _tpdo4.errors.load(); }
     std::optional<uint16_t> warnings() const { return _tpdo4.warnings.load(); }
 

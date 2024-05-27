@@ -121,9 +121,9 @@ void ControlPanel::_draw_normal_mode_controls() {
 
     ui::util::Switchable normal_mode_controls(enabled, [this](){
         ImGui::PushItemWidth(200);
-        ImGui::SliderFloat("Brake Pressure", &this->_brake_ref_pu, 0.0f, 1.0f);
+        ImGui::SliderFloat("Brake Pressure [%]", &this->_brake_ref_pu, 0.0f, 100.0f, "%.2f");
         ImGui::PopItemWidth();
-        _server->set_brake_ref(_brake_ref_pu);
+        _server->set_brake_ref(_brake_ref_pu/100.0f);
     });
 }
 
