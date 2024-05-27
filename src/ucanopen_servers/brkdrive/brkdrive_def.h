@@ -28,20 +28,26 @@ struct CobTpdo1 {
     
     uint8_t _reserved1;
     
-    uint16_t counter : 2;
-    uint16_t _reserved2 : 6;
+    uint8_t counter : 2;
+    uint8_t _reserved2 : 6;
 };
 
 
 struct CobTpdo2 {
-    uint16_t dc_voltage : 16;
-    uint16_t stator_current : 16;
-    uint16_t field_current : 8;
-    uint16_t mech_power : 8;
-    uint16_t counter : 2;
-    uint16_t manual_field_current : 1;
-    uint16_t _reserved : 5;
-    uint16_t checksum : 8;
+    uint16_t braking;
+
+    uint8_t _reserved1;
+
+    uint8_t _reserved2;
+
+    uint8_t _reserved3;
+
+    uint8_t _reserved4;
+
+    uint8_t _reserved5;
+
+    uint8_t counter : 2;
+    uint8_t _reserved6 : 6;
 };
 
 

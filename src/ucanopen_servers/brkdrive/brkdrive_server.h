@@ -56,6 +56,10 @@ private:
     } _tpdo1;
 
     struct {
+        std::atomic<std::optional<float>> braking{std::nullopt};
+    } _tpdo2;
+
+    struct {
         std::atomic<std::optional<uint32_t>> errors{std::nullopt};
         std::atomic<std::optional<uint16_t>> warnings{std::nullopt};
     } _tpdo4;
@@ -94,7 +98,7 @@ public:
 
 private:
     void _handle_tpdo1(const ucanopen::can_payload& payload);
-    // void _handle_tpdo2(const ucanopen::can_payload& payload);
+    void _handle_tpdo2(const ucanopen::can_payload& payload);
     // void _handle_tpdo3(const ucanopen::can_payload& payload);
     void _handle_tpdo4(const ucanopen::can_payload& payload);
 
