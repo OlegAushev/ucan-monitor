@@ -236,7 +236,7 @@ void ControlPanel::_draw_track_mode_controls() {
     ui::util::Switchable track_mode_controls(_opmode == std::to_underlying(::brkdrive::OperationMode::track), [this](){
         ImGui::PushItemWidth(200);
         if (ImGui::InputInt("Angle [deg]", &_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _openloop_angle_ref = std::clamp(_angle_ref, 0, 10000);
+            _angle_ref = std::clamp(_angle_ref, 0, 10000);
         }
         ImGui::PopItemWidth();
 
@@ -246,7 +246,7 @@ void ControlPanel::_draw_track_mode_controls() {
         }
         ImGui::PopItemWidth();
         
-        _server->set_angle_ref(_openloop_angle_ref);
+        _server->set_angle_ref(_angle_ref);
         _server->set_track_speed(_track_speed);
     });
 }

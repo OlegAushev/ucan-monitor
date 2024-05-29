@@ -28,7 +28,7 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
 ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
                                                  [[maybe_unused]] ucanopen::SdoType sdo_type,
                                                  ucanopen::ExpeditedSdoData data) {
-    if (entry->second.name == "syslogmsg") {
+    if (entry->second.name == "syslog_message") {
         auto message_id = data.u32();
         if ((message_id != 0) && (message_id < syslog_messages.size())) {
             bsclog::info("{}", syslog_messages[message_id]);
