@@ -113,7 +113,14 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 //#######################################################################
 {{0x3007, 0x01}, {"config", "mras", "kp", "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3007, 0x02}, {"config", "mras", "ki", "", OD_ACCESS_RW, OD_FLOAT32}},
-
+//#############################################################################################
+{{0x3008, 0x01}, {"config", "ac_currsens", "phase_a_gain",      "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3008, 0x02}, {"config", "ac_currsens", "phase_b_gain",      "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3008, 0x03}, {"config", "ac_currsens", "phase_c_gain",      "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3008, 0x04}, {"config", "ac_currsens", "phase_a_offset",    "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3008, 0x05}, {"config", "ac_currsens", "phase_b_offset",    "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3008, 0x06}, {"config", "ac_currsens", "phase_c_offset",    "A",    OD_ACCESS_RW, OD_FLOAT32}},
+//##########################################################################################################################################################################################################################################################################################################
 {{0x1A00, 0x00}, {}},
 {{0x1A01, 0x00}, {}},
 {{0x1A01, 0x01}, {"tpdo2", "converter", "vDC", "V", OD_ACCESS_RO, OD_UINT16}},
