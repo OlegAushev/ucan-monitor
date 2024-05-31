@@ -20,7 +20,7 @@ private:
     float _torque_ref_pct{0.0f};
     float _speed_ref{0.0f};
     float _dcurr_ref_pu{0.0f};
-    int _opmode{std::to_underlying(::brkdrive::OperationMode::normal)};
+    ::brkdrive::OperationMode _opmode{::brkdrive::OperationMode::normal};
     int _ctlmode{std::to_underlying(::brkdrive::ControlMode::torque)};
     int _ctlloop{std::to_underlying(::brkdrive::ControlLoop::closed)};
     bool _run{false};

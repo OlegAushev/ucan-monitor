@@ -211,11 +211,23 @@ enum class OperationMode {
 };
 
 
-inline const std::map<int, std::string_view> opmode_map = {
-    {std::to_underlying(OperationMode::normal), "normal"},
-    {std::to_underlying(OperationMode::run), "run"},
-    {std::to_underlying(OperationMode::track), "track"},
-    {std::to_underlying(OperationMode::hwtest), "hwtest"},
+inline constexpr bool is_opmode(int v) {
+    switch (static_cast<OperationMode>(v)) {
+    case OperationMode::normal:
+    case OperationMode::run:
+    case OperationMode::track:
+    case OperationMode::hwtest:
+        return true;
+    }
+    return false;
+}
+
+
+inline const std::map<OperationMode, std::string_view> opmode_string_map = {
+    {OperationMode::normal, "normal"},
+    {OperationMode::run, "run"},
+    {OperationMode::track, "track"},
+    {OperationMode::hwtest, "hwtest"},
 };
 
 

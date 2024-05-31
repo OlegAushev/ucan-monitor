@@ -47,7 +47,7 @@ private:
         std::atomic<std::optional<bool>> run{std::nullopt};
         std::atomic<std::optional<bool>> error{std::nullopt};
         std::atomic<std::optional<bool>> warning{std::nullopt};
-        std::atomic<std::string_view> opmode{"n/a"};
+        std::atomic<std::optional<::brkdrive::OperationMode>> opmode{std::nullopt};
         std::atomic<std::string_view> ctlmode{"n/a"};
         std::atomic<std::string_view> ctlloop{"n/a"};
         std::atomic<std::string_view> drive_state{"n/a"};
@@ -83,7 +83,7 @@ public:
     std::optional<bool> is_running() const { return _tpdo1.run.load(); }
     std::optional<bool> has_error() const { return _tpdo1.error.load(); }
     std::optional<bool> has_warning() const { return _tpdo1.warning.load(); }
-    std::string_view opmode() const { return _tpdo1.opmode.load(); }
+    std::optional<::brkdrive::OperationMode> opmode() const { return _tpdo1.opmode.load(); }
     std::string_view ctlmode() const { return _tpdo1.ctlmode.load(); }
     std::string_view ctlloop() const { return _tpdo1.ctlloop.load(); }
     std::string_view drive_state() const { return _tpdo1.drive_state.load(); }

@@ -48,11 +48,8 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
     _tpdo1.error.store(static_cast<bool>(tpdo.error));
     _tpdo1.warning.store(static_cast<bool>(tpdo.warning));
 
-
-    if (opmode_map.contains(tpdo.opmode)) {
-        _tpdo1.opmode.store(opmode_map.at(tpdo.opmode));
-    } else {
-        _tpdo1.opmode.store("unknown");
+    if (::brkdrive::is_opmode(tpdo.opmode)) {
+        _tpdo1.opmode.store(static_cast<::brkdrive::OperationMode>(tpdo.opmode));
     }
 
     if (ctlmode_map.contains(tpdo.ctlmode)) {

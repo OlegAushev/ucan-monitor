@@ -105,7 +105,12 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Operation Mode");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(_server->opmode().data());
+        auto opmode = _server->opmode();
+        if (opmode.has_value()) {
+            ImGui::TextUnformatted(::brkdrive::opmode_string_map.at(opmode.value()).data());
+        } else {
+            ImGui::TextUnformatted("n/a");
+        }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);

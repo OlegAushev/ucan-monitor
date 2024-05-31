@@ -22,7 +22,7 @@ void ControlPanel::draw() {
 
     _read_keyboard();
 
-    _draw_dash();    
+    _draw_dash();
     _draw_normal_mode_controls();
     _draw_run_mode_controls();
     _draw_track_mode_controls();
@@ -59,9 +59,9 @@ void ControlPanel::_draw_dash() {
 
     // Operation mode selection
     ImGui::PushItemWidth(132);
-    auto opmode_preview = ::brkdrive::opmode_map.at(_opmode).data();
+    auto opmode_preview = ::brkdrive::opmode_string_map.at(_opmode).data();
     if (ImGui::BeginCombo("Operation Mode", opmode_preview)) {
-        for (const auto& mode : ::brkdrive::opmode_map) {
+        for (const auto& mode : ::brkdrive::opmode_string_map) {
             bool is_selected = (mode.first == _opmode);
             if (ImGui::Selectable(mode.second.data(), is_selected)) {
                 _opmode = mode.first;
@@ -87,7 +87,7 @@ void ControlPanel::_draw_dash() {
     _server->toggle_wakeup(_wakeup);
 
     // start/stop
-    ui::util::Switchable run_button(_opmode != std::to_underlying(::brkdrive::OperationMode::normal), [this](){
+    ui::util::Switchable run_button(_opmode != ::brkdrive::OperationMode::normal, [this](){
         ToggleButton(ICON_MDI_POWER" Start/Stop", _run);
         ImGui::SameLine();
         ImGui::TextDisabled("(F4)");
@@ -108,7 +108,7 @@ void ControlPanel::_read_keyboard() {
 
 
 void ControlPanel::_draw_normal_mode_controls() {
-    bool enabled = _opmode == std::to_underlying(::brkdrive::OperationMode::normal);
+    bool enabled = _opmode == ::brkdrive::OperationMode::normal;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -117,9 +117,9 @@ void ControlPanel::_draw_normal_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    ImGui::SeparatorText("Normal Mode");
 
     ui::util::Switchable normal_mode_controls(enabled, [this](){
+        ImGui::SeparatorText("Normal Mode");
         ImGui::PushItemWidth(200);
         ImGui::SliderFloat("Brake Pressure [%]", &this->_brake_ref_pu, 0.0f, 100.0f, "%.2f");
         ImGui::PopItemWidth();
@@ -129,7 +129,7 @@ void ControlPanel::_draw_normal_mode_controls() {
 
 
 void ControlPanel::_draw_run_mode_controls() {
-    bool enabled = _opmode == std::to_underlying(::brkdrive::OperationMode::run);
+    bool enabled = _opmode == ::brkdrive::OperationMode::run;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -138,9 +138,9 @@ void ControlPanel::_draw_run_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    ImGui::SeparatorText("Run Mode");
 
-    ui::util::Switchable run_mode_controls(_opmode == std::to_underlying(::brkdrive::OperationMode::run), [this](){
+    ui::util::Switchable run_mode_controls(enabled, [this](){
+        ImGui::SeparatorText("Run Mode");
         // torque input
         ImGui::RadioButton("##torque_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
@@ -222,7 +222,7 @@ void ControlPanel::_draw_run_mode_controls() {
 
 
 void ControlPanel::_draw_track_mode_controls() {
-    bool enabled = _opmode == std::to_underlying(::brkdrive::OperationMode::track);
+    bool enabled = _opmode == ::brkdrive::OperationMode::track;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -231,9 +231,9 @@ void ControlPanel::_draw_track_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    ImGui::SeparatorText("Track Mode");
 
-    ui::util::Switchable track_mode_controls(_opmode == std::to_underlying(::brkdrive::OperationMode::track), [this](){
+    ui::util::Switchable track_mode_controls(enabled, [this](){
+        ImGui::SeparatorText("Track Mode");
         ImGui::PushItemWidth(200);
         if (ImGui::InputInt("Angle [deg]", &_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
             _angle_ref = std::clamp(_angle_ref, 0, 10000);
@@ -253,7 +253,7 @@ void ControlPanel::_draw_track_mode_controls() {
 
 
 void ControlPanel::_draw_hwtest_mode_controls() {
-    bool enabled = _opmode == std::to_underlying(::brkdrive::OperationMode::hwtest);
+    bool enabled = _opmode == ::brkdrive::OperationMode::hwtest;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -262,9 +262,9 @@ void ControlPanel::_draw_hwtest_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
     ImGui::SameLine();
-    ImGui::SeparatorText("Hardware Test Mode");
 
-    ui::util::Switchable hwtest_mode_controls(_opmode == std::to_underlying(::brkdrive::OperationMode::hwtest), [this](){
+    ui::util::Switchable hwtest_mode_controls(enabled, [this](){
+        ImGui::SeparatorText("Hardware Test Mode");
     });
 }
 
@@ -279,7 +279,7 @@ void ControlPanel::_draw_actions() {
             _server->exec("ctl", "sys", "clear_errors");
         }
 
-        if (ImGui::Button(ICON_MDI_RESTART" Reset VCU          ")) {
+        if (ImGui::Button(ICON_MDI_RESTART" Reset MCU          ")) {
             _server->exec("ctl", "sys", "reset_device");
         }
 
