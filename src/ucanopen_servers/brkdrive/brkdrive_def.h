@@ -171,7 +171,8 @@ inline const std::vector<std::string> drive_states = {
     "release",
     "run",
     "tracking",
-    "powerdown"
+    "powerdown",
+    "hwtest"
 };
 
 
