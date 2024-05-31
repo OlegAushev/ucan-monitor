@@ -48,9 +48,12 @@ void ControlPanel::draw() {
 
 void ControlPanel::_draw_dash() {
     // Uptime
-    ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE" Uptime[s]:");
+    ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE);
     ImGui::SameLine();
-    ImGui::TextUnformatted(_server->watch_service.string_value("sys", "uptime").c_str());
+    ImGui::PushItemWidth(120);
+    auto uptime = _server->watch_service.string_value("sys", "uptime");
+    ImGui::InputText("##uptime", uptime.data(), uptime.size(), ImGuiInputTextFlags_ReadOnly);
+    ImGui::PopItemWidth();
 
     // Heartbeat indicator
     if (_server->heartbeat_service.good()) {
@@ -65,47 +68,31 @@ void ControlPanel::_draw_dash() {
     // Drive state indicator
     ImGui::SameLine();
     std::string state(_server->drive_state());
-    ImGui::PushItemWidth(90);
+    ImGui::PushItemWidth(120);
     ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
 
     // Operation mode selection
-    // ImGui::PushItemWidth(132);
-    // auto opmode_preview = ::brkdrive::opmode_string_map.at(_opmode).data();
-    // if (ImGui::BeginCombo("Operation Mode", opmode_preview)) {
-    //     for (const auto& mode : ::brkdrive::opmode_string_map) {
-    //         bool is_selected = (mode.first == _opmode);
-    //         if (ImGui::Selectable(mode.second.data(), is_selected)) {
-    //             _opmode = mode.first;
-    //             _brake_ref_pu = 0;
-    //             _torque_ref_pct = 0;
-    //             _speed_ref = 0;
-    //             _dcurr_ref_pu = 0;
-    //             _openloop_angle_ref = 0;
-    //             _angle_ref = 0;
-    //             _track_speed = 0;
-    //             _run = false;
-    //         }
-    //     }
-    //     ImGui::EndCombo();
-    // }
-    // ImGui::PopItemWidth();
-    _opmode = static_cast<::brkdrive::OperationMode>(_opmode_idx);
+    ImGui::PushItemWidth(160);
+    auto opmode_preview = ::brkdrive::opmode_string_map.at(_opmode).data();
+    if (ImGui::BeginCombo("Operation Mode", opmode_preview)) {
+        for (const auto& mode : ::brkdrive::opmode_string_map) {
+            bool is_selected = (mode.first == _opmode);
+            if (ImGui::Selectable(mode.second.data(), is_selected)) {
+                _opmode = mode.first;
+                _reset_refs();
+            }
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::PopItemWidth();
     _server->set_opmode(_opmode);
 
     // wakeup
-    ToggleButton(ICON_MDI_POWER" On/Off    ", _wakeup);
+    ToggleButton(ICON_MDI_POWER" On/Off       ", _wakeup);
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
     _server->toggle_wakeup(_wakeup);
-
-    // start/stop
-    ui::util::Switchable run_button(_opmode != ::brkdrive::OperationMode::normal, [this](){
-        ToggleButton(ICON_MDI_POWER" Start/Stop", _run);
-        ImGui::SameLine();
-        ImGui::TextDisabled("(F4)");
-    });
-    _server->toggle_run(_run);
 }
 
 
@@ -121,10 +108,7 @@ void ControlPanel::_read_keyboard() {
 
 
 void ControlPanel::_draw_normal_mode_controls() {
-    ImGui::RadioButton("##normal_mode_selector", &_opmode_idx, std::to_underlying(::brkdrive::OperationMode::normal));
-    ImGui::SameLine();
-
-    bool enabled = _opmode == ::brkdrive::OperationMode::normal;
+    bool enabled = _server->opmode() == ::brkdrive::OperationMode::normal;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -149,10 +133,7 @@ void ControlPanel::_draw_normal_mode_controls() {
 
 
 void ControlPanel::_draw_run_mode_controls() {
-    ImGui::RadioButton("##run_mode_selector", &_opmode_idx, std::to_underlying(::brkdrive::OperationMode::run));
-    ImGui::SameLine();
-    
-    bool enabled = _opmode == ::brkdrive::OperationMode::run;
+    bool enabled = _server->opmode() == ::brkdrive::OperationMode::run;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -169,6 +150,12 @@ void ControlPanel::_draw_run_mode_controls() {
 
 
     if (selected) {
+        // start/stop
+        ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run);
+        ImGui::SameLine();
+        ImGui::TextDisabled("(F4)");
+        _server->toggle_run(_run);
+
         // torque input
         ImGui::RadioButton("##torque_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
@@ -250,10 +237,7 @@ void ControlPanel::_draw_run_mode_controls() {
 
 
 void ControlPanel::_draw_track_mode_controls() {
-    ImGui::RadioButton("##track_mode_selector", &_opmode_idx, std::to_underlying(::brkdrive::OperationMode::track));
-    ImGui::SameLine();
-
-    bool enabled = _opmode == ::brkdrive::OperationMode::track;
+    bool enabled = _server->opmode() == ::brkdrive::OperationMode::track;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -269,6 +253,12 @@ void ControlPanel::_draw_track_mode_controls() {
     });
 
     if (selected) {
+        // start/stop
+        ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run);
+        ImGui::SameLine();
+        ImGui::TextDisabled("(F4)");
+        _server->toggle_run(_run);
+
         ImGui::PushItemWidth(200);
         if (ImGui::InputInt("Angle [deg]", &_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
             _angle_ref = std::clamp(_angle_ref, 0, 10000);
@@ -288,10 +278,7 @@ void ControlPanel::_draw_track_mode_controls() {
 
 
 void ControlPanel::_draw_hwtest_mode_controls() {
-    ImGui::RadioButton("##hwtest_mode_selector", &_opmode_idx, std::to_underlying(::brkdrive::OperationMode::hwtest));
-    ImGui::SameLine();
-
-    bool enabled = _opmode == ::brkdrive::OperationMode::hwtest;
+    bool enabled = _server->opmode() == ::brkdrive::OperationMode::hwtest;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -305,6 +292,14 @@ void ControlPanel::_draw_hwtest_mode_controls() {
         ImGui::SameLine();
         ImGui::SeparatorText("Hardware Test Mode");
     });
+
+    if (selected) {
+        // start/stop
+        ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run);
+        ImGui::SameLine();
+        ImGui::TextDisabled("(F4)");
+        _server->toggle_run(_run);
+    }
 }
 
 
