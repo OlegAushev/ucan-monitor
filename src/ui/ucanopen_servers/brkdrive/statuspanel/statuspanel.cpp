@@ -25,9 +25,7 @@ void StatusPanel::draw() {
 
 void StatusPanel::_draw_error_table() {
     auto errors = _server->errors();
-    if (!errors.has_value()) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
-    } else if (errors.value() != 0) {
+    if (errors != 0) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
@@ -41,14 +39,13 @@ void StatusPanel::_draw_error_table() {
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
         if (ImGui::BeginTable("error_table", 1, flags)) {
             const auto& error_list = _server->error_list();
-            auto errors_val = errors.value_or(0);
 
             for (size_t row = 0; row < error_list.size(); ++row) {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
                 ImGui::Text("%s", error_list[row].c_str());
                 
-                if ((errors_val & (1 << row)) != 0) {
+                if ((errors & (1 << row)) != 0) {
                     ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
                 }
             }
@@ -63,9 +60,7 @@ void StatusPanel::_draw_error_table() {
 
 void StatusPanel::_draw_warning_table() {
     auto warnings = _server->warnings();
-    if (!warnings.has_value()) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
-    } else if (warnings.value() != 0) {
+    if (warnings != 0) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
@@ -79,14 +74,13 @@ void StatusPanel::_draw_warning_table() {
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
         if (ImGui::BeginTable("warning_table", 1, flags)) {
             const auto& warning_list = _server->warning_list();
-            auto warnings_val = warnings.value_or(0);
 
             for (size_t row = 0; row < warning_list.size(); ++row) {
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
                 ImGui::Text("%s", warning_list[row].c_str());
                 
-                if ((warnings_val & (1 << row)) != 0) {
+                if ((warnings & (1 << row)) != 0) {
                     ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
                 }
             }

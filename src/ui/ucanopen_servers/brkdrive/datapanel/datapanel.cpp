@@ -66,51 +66,34 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Run [bool]");
         ImGui::TableSetColumnIndex(1);
-        if (_server->is_running().has_value()) {
-            ImGui::Text("%d", _server->is_running().value());
-            if (_server->is_running().value()) {
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
-            }
-        } else {
-            ImGui::TextUnformatted("n/a");
+        ImGui::Text("%d", _server->is_running());
+        if (_server->is_running()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
         }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Error [bool]");
         ImGui::TableSetColumnIndex(1);
-        if (_server->has_error().has_value()) {
-            ImGui::Text("%d", _server->has_error().value());
-            if (_server->has_error().value()) {
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
-            }
-        } else {
-            ImGui::TextUnformatted("n/a");
+        ImGui::Text("%d", _server->has_error());
+        if (_server->has_error()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
         }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Warning [bool]");
         ImGui::TableSetColumnIndex(1);
-        if (_server->has_warning().has_value()) {
-            ImGui::Text("%d", _server->has_warning().value());
-            if (_server->has_warning().value()) {
-                ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
-            }
-        } else {
-            ImGui::TextUnformatted("n/a");
+        ImGui::Text("%d", _server->has_warning());
+        if (_server->has_warning()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
         }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Operation Mode");
         ImGui::TableSetColumnIndex(1);
-        auto opmode = _server->opmode();
-        if (opmode.has_value()) {
-            ImGui::TextUnformatted(::brkdrive::opmode_string_map.at(opmode.value()).data());
-        } else {
-            ImGui::TextUnformatted("n/a");
-        }
+        ImGui::TextUnformatted(::brkdrive::opmode_string_map.at(_server->opmode()).data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
@@ -128,22 +111,14 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Torque [%]");
         ImGui::TableSetColumnIndex(1);
-        if (_server->torque().has_value()) {
-            float torque_pct = _server->torque().value() * 100.0f;
-            ImGui::Text("%.2f", torque_pct);
-        } else {
-            ImGui::TextUnformatted("n/a");
-        }
+        float torque_pct = _server->torque() * 100.0f;
+        ImGui::Text("%.2f", torque_pct);
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Speed [rpm]");
         ImGui::TableSetColumnIndex(1);
-        if (_server->speed().has_value()) {
-            ImGui::Text("%d", _server->speed().value());
-        } else {
-            ImGui::TextUnformatted("n/a");
-        }
+        ImGui::Text("%d", _server->speed());
 
         ImGui::EndTable();
     }
@@ -180,12 +155,8 @@ void DataPanel::_draw_tpdo2_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Braking Force [%]");
         ImGui::TableSetColumnIndex(1);
-        if (_server->torque().has_value()) {
-            float braking_pct = _server->braking_force().value() * 100.0f;
-            ImGui::Text("%.2f", braking_pct);
-        } else {
-            ImGui::TextUnformatted("n/a");
-        }
+        float braking_pct = _server->braking_force() * 100.0f;
+        ImGui::Text("%.2f", braking_pct);
 
         ImGui::EndTable();
     }
@@ -291,21 +262,13 @@ void DataPanel::_draw_tpdo4_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Errors");
         ImGui::TableSetColumnIndex(1);
-        if (_server->errors().has_value()) {
-            ImGui::Text("%d",_server->errors().value());
-        } else {
-            ImGui::TextUnformatted("n/a");
-        }
+        ImGui::Text("%d",_server->errors());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Warnings");
         ImGui::TableSetColumnIndex(1);
-        if (_server->warnings().has_value()) {
-            ImGui::Text("%d",_server->warnings().value());
-        } else {
-            ImGui::TextUnformatted("n/a");
-        }
+        ImGui::Text("%d",_server->warnings());
 
         ImGui::EndTable();
     }  
