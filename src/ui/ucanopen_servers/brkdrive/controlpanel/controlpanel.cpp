@@ -29,6 +29,26 @@ void ControlPanel::_reset_refs() {
 }
 
 
+void ControlPanel::_update_refs() {
+    _server->set_opmode(_opmode);
+    
+    _server->toggle_wakeup(_wakeup);
+    _server->set_brake_ref(_brake_ref_pu/100.0f);
+    
+    _server->toggle_run(_run);
+
+    _server->set_torque_ref(_torque_ref_pct / 100.0f);
+    _server->set_speed_ref(_speed_ref);
+    _server->set_ctlmode(::brkdrive::ControlMode(_ctlmode));
+    _server->set_ctlloop(::brkdrive::ControlLoop(_ctlloop));
+    _server->set_dcurr_ref(_dcurr_ref_pu / 100.0f);
+    _server->set_openloop_angle_ref(_openloop_angle_ref);
+        
+    _server->set_angle_ref(_angle_ref);
+    _server->set_track_speed(_track_speed);
+}
+
+
 void ControlPanel::draw() {
     ImGui::Begin(_window_title.c_str(), &_opened);
 
@@ -41,6 +61,8 @@ void ControlPanel::draw() {
     _draw_hwtest_mode_controls();
 
     _draw_actions();
+    
+    _update_refs();
 
     ImGui::End();
 }
@@ -86,13 +108,11 @@ void ControlPanel::_draw_dash() {
         ImGui::EndCombo();
     }
     ImGui::PopItemWidth();
-    _server->set_opmode(_opmode);
 
     // wakeup
     ToggleButton(ICON_MDI_POWER" On/Off       ", _wakeup);
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
-    _server->toggle_wakeup(_wakeup);
 }
 
 
@@ -127,7 +147,6 @@ void ControlPanel::_draw_normal_mode_controls() {
         ImGui::PushItemWidth(200);
         ImGui::SliderFloat("Brake Pressure [%]", &this->_brake_ref_pu, 0.0f, 100.0f, "%.2f");
         ImGui::PopItemWidth();
-        _server->set_brake_ref(_brake_ref_pu/100.0f);
     }
 }
 
@@ -154,7 +173,6 @@ void ControlPanel::_draw_run_mode_controls() {
         ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run);
         ImGui::SameLine();
         ImGui::TextDisabled("(F4)");
-        _server->toggle_run(_run);
 
         // torque input
         ImGui::RadioButton("##torque_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
@@ -225,13 +243,6 @@ void ControlPanel::_draw_run_mode_controls() {
             ImGui::PopItemWidth();
             ImGui::TreePop();
         }
-
-        _server->set_torque_ref(_torque_ref_pct / 100.0f);
-        _server->set_speed_ref(_speed_ref);
-        _server->set_ctlmode(::brkdrive::ControlMode(_ctlmode));
-        _server->set_ctlloop(::brkdrive::ControlLoop(_ctlloop));
-        _server->set_dcurr_ref(_dcurr_ref_pu / 100.0f);
-        _server->set_openloop_angle_ref(_openloop_angle_ref);
     }
 }
 
@@ -257,11 +268,10 @@ void ControlPanel::_draw_track_mode_controls() {
         ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run);
         ImGui::SameLine();
         ImGui::TextDisabled("(F4)");
-        _server->toggle_run(_run);
 
         ImGui::PushItemWidth(200);
         if (ImGui::InputInt("Angle [deg]", &_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _angle_ref = std::clamp(_angle_ref, 0, 10000);
+            _angle_ref = std::clamp(_angle_ref, -10000, 10000);
         }
         ImGui::PopItemWidth();
 
@@ -270,9 +280,6 @@ void ControlPanel::_draw_track_mode_controls() {
             _track_speed = std::clamp(_track_speed, 0.0f, 5000.0f);
         }
         ImGui::PopItemWidth();
-        
-        _server->set_angle_ref(_angle_ref);
-        _server->set_track_speed(_track_speed);
     }
 }
 
@@ -298,7 +305,6 @@ void ControlPanel::_draw_hwtest_mode_controls() {
         ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run);
         ImGui::SameLine();
         ImGui::TextDisabled("(F4)");
-        _server->toggle_run(_run);
     }
 }
 

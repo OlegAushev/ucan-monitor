@@ -47,6 +47,7 @@ private:
     void _read_keyboard();
 
     void _reset_refs();
+    void _update_refs();
 };
 
 
