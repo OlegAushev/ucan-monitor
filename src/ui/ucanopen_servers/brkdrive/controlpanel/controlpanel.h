@@ -29,6 +29,13 @@ private:
     int _angle_ref{0};
     float _track_speed{0.0f};
 
+    enum class RefControl {
+        manual,
+        program
+    };
+    RefControl _run_ref_control{RefControl::manual};
+    RefControl _track_ref_control{RefControl::manual};
+
 public:
     ControlPanel(std::shared_ptr<::brkdrive::Server> server,
                  const std::string& menu_title,

@@ -26,6 +26,7 @@ inline void SetButtonColors(const ToggleButtonColors& colors) {
 
 
 inline bool ToggleButton(const char* label, bool& toggle,
+                         const ImVec2& size = ImVec2(0, 0),
                          const ToggleButtonColors& colors = ToggleButtonColors{ui::colors::green_toggle_button,
                                                                                ui::colors::green_toggle_button_hovered,
                                                                                ui::colors::green_toggle_button_active}) {
@@ -35,7 +36,7 @@ inline bool ToggleButton(const char* label, bool& toggle,
         impl::SetButtonColors(colors);
     }
 
-    if(ImGui::Button(label)) {
+    if(ImGui::Button(label, size)) {
         toggle = !toggle;
         pressed = true;
     }

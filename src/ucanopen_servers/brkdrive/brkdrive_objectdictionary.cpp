@@ -99,7 +99,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 //#####################################################################################
 {{0x3004, 0x01}, {"config", "converter", "uvp_dc",  "V",    OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3004, 0x02}, {"config", "converter", "ovp_dc",  "V",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3004, 0x03}, {"config", "converter", "ocp_ph",  "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x03}, {"config", "converter", "ocp_ac",  "A",    OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3004, 0x04}, {"config", "converter", "otp_ph",  "oC",   OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3004, 0x05}, {"config", "converter", "otp_pcb", "oC",   OD_ACCESS_RW, OD_FLOAT32}},
 //#####################################################################################################
