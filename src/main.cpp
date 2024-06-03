@@ -37,6 +37,7 @@
 #include <fstream>
 
 #include <csv_writer/csv_writer.h>
+#include <reference_manager/reference_manager.h>
 
 
 const std::vector<std::string> server_names = {"srmdrive", "atv-vcu", "brake-drive"};
@@ -55,6 +56,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     bsclog::add_sink(gui_log->stream());
     bsclog::success("Initialized bsclog. Sink count: {}", bsclog::sink_count());  
 
+
+
+
+    ReferenceManager refman({});
+    refman.read_file(std::filesystem::absolute("test.csv"));
+    
+    
+    
+    
     glfwSetErrorCallback(glfw_error_callback);
     if(!glfwInit()){
         return 1;

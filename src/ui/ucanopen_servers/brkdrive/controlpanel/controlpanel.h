@@ -5,6 +5,7 @@
 #include <ui/view/view.h>
 #include <ucanopen_servers/brkdrive/brkdrive_server.h>
 #include <memory>
+#include <reference_manager/reference_manager.h>
 
 
 namespace ui {
@@ -29,13 +30,13 @@ private:
     int _angle_ref{0};
     float _track_speed{0.0f};
 
-    enum class RefControl {
+    enum class ReferenceControl {
         manual,
         program
     };
-    RefControl _run_ref_control{RefControl::manual};
-    RefControl _track_ref_control{RefControl::manual};
-
+    ReferenceControl _run_ref_control{ReferenceControl::manual};
+    ReferenceControl _track_ref_control{ReferenceControl::manual};
+    ReferenceManager _refmanager;
 public:
     ControlPanel(std::shared_ptr<::brkdrive::Server> server,
                  const std::string& menu_title,

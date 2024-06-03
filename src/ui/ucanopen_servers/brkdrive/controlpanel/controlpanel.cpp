@@ -28,8 +28,8 @@ void ControlPanel::_reset_refs() {
     _track_speed = 0;
     _run = false;
 
-    _run_ref_control = RefControl::manual;
-    _track_ref_control = RefControl::manual;
+    _run_ref_control = ReferenceControl::manual;
+    _track_ref_control = ReferenceControl::manual;
 }
 
 
@@ -182,9 +182,9 @@ void ControlPanel::_draw_run_mode_controls() {
         ImGui::PushItemWidth(200);
         ImGui::Combo("Ref Control##run_ref_control", &ref_control, "manual\0program\0\0");
         ImGui::PopItemWidth();
-        _run_ref_control = static_cast<RefControl>(ref_control);
+        _run_ref_control = static_cast<ReferenceControl>(ref_control);
         
-        if (_run_ref_control == RefControl::manual) {
+        if (_run_ref_control == ReferenceControl::manual) {
             // torque input
             ImGui::RadioButton("##torque_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
             if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
@@ -258,21 +258,25 @@ void ControlPanel::_draw_run_mode_controls() {
             _openloop_angle_ref = 0;
             _dcurr_ref_pu = 0;
             _ctlloop = std::to_underlying(::brkdrive::ControlLoop::closed);
+            
             if (ImGui::Button("Open")) {
-                IGFD::FileDialogConfig config;
-	            config.path = ".";
-                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".cpp,.h,.hpp", config);
+                IGFD::FileDialogConfig filedialog_config;
+	            filedialog_config.path = ".";
+                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".csv", filedialog_config);
             }
             // display
             if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
                 if (ImGuiFileDialog::Instance()->IsOk()) { // action if OK
-                std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-                std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
-                // action
+                std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
+                    _refmanager.read_file(file_path);
                 }
                 
                 // close
                 ImGuiFileDialog::Instance()->Close();
+            }
+
+            if (_run) {
+                _torque_ref_pct = 100.f * _refmanager.get();
             }
         }
     }
