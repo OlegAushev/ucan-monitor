@@ -4,3 +4,6 @@
 [submodule "include/implot"]
 	path = include/implot
 	url = git@github.com:epezent/implot.git
+[submodule "include/imguifiledialog"]
+	path = include/imguifiledialog
+	url = git@github.com:aiekick/ImGuiFileDialog.git

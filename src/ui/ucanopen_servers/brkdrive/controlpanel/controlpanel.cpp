@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include <ui/util/togglebutton.h>
 #include <ui/util/util.h>
+#include <imguifiledialog/ImGuiFileDialog.h>
 
 
 namespace ui {
@@ -257,6 +258,22 @@ void ControlPanel::_draw_run_mode_controls() {
             _openloop_angle_ref = 0;
             _dcurr_ref_pu = 0;
             _ctlloop = std::to_underlying(::brkdrive::ControlLoop::closed);
+            if (ImGui::Button("Open")) {
+                IGFD::FileDialogConfig config;
+	            config.path = ".";
+                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".cpp,.h,.hpp", config);
+            }
+            // display
+            if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
+                if (ImGuiFileDialog::Instance()->IsOk()) { // action if OK
+                std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+                std::string filePath = ImGuiFileDialog::Instance()->GetCurrentPath();
+                // action
+                }
+                
+                // close
+                ImGuiFileDialog::Instance()->Close();
+            }
         }
     }
 }

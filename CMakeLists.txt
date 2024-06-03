@@ -37,7 +37,8 @@ find_package(OpenGL REQUIRED)
 
 file(GLOB imgui_sources CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/include/imgui/*.cpp
-    ${PROJECT_SOURCE_DIR}/include/implot/*.cpp    
+    ${PROJECT_SOURCE_DIR}/include/implot/*.cpp
+    ${PROJECT_SOURCE_DIR}/include/imguifiledialog/*.cpp 
 )
 file(GLOB imgui_backend_sources CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/include/imgui/backends/*glfw*.cpp
