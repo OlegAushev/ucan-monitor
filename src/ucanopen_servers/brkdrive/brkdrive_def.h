@@ -141,22 +141,22 @@ inline const std::vector<std::string> syslog_messages = {
 
     "@syslog: [  ok  ] Load ucanopen server config - ok.",
     "@syslog: [ fail ] Load ucanopen server config - fail.",
-    "@syslog: [  ok  ] Load syslog config - ok",
-    "@syslog: [ fail ] Load syslog config - fail",
-    "@syslog: [  ok  ] Load drive config - ok",
-    "@syslog: [ fail ] Load drive config - fail",
-    "@syslog: [  ok  ] Load motor config - ok",
-    "@syslog: [ fail ] Load motor config - fail",
-    "@syslog: [  ok  ] Load converter config - ok",
-    "@syslog: [ fail ] Load converter config - fail",
-    "@syslog: [  ok  ] Load model basic config - ok",
-    "@syslog: [ fail ] Load model basic config - fail",
-    "@syslog: [  ok  ] Load model controllers config - ok",
-    "@syslog: [ fail ] Load model controllers config - fail",
-    "@syslog: [  ok  ] Load mras config - ok",
-    "@syslog: [ fail ] Load mras config - fail",
-    "@syslog: [  ok  ] Load ac currsens config - ok",
-    "@syslog: [ fail ] Load ac currsens config - fail",
+    "@syslog: [  ok  ] Load syslog config - ok.",
+    "@syslog: [ fail ] Load syslog config - fail.",
+    "@syslog: [  ok  ] Load drive config - ok.",
+    "@syslog: [ fail ] Load drive config - fail.",
+    "@syslog: [  ok  ] Load motor config - ok.",
+    "@syslog: [ fail ] Load motor config - fail.",
+    "@syslog: [  ok  ] Load converter config - ok.",
+    "@syslog: [ fail ] Load converter config - fail.",
+    "@syslog: [  ok  ] Load model basic config - ok.",
+    "@syslog: [ fail ] Load model basic config - fail.",
+    "@syslog: [  ok  ] Load model controllers config - ok.",
+    "@syslog: [ fail ] Load model controllers config - fail.",
+    "@syslog: [  ok  ] Load mras config - ok.",
+    "@syslog: [ fail ] Load mras config - fail.",
+    "@syslog: [  ok  ] Load ac currsens config - ok.",
+    "@syslog: [ fail ] Load ac currsens config - fail.",
 
     "@syslog: [  ok  ] Calibration completed successfully."	
 };
@@ -202,6 +202,9 @@ inline const std::vector<std::string> warning_list = {
     "converter_overheat",
     "motor_overheat",
     "flux_weakening",
+    "pcbtemp_a_no_conn",
+    "pcbtemp_b_no_conn",
+    "pcbtemp_c_no_conn",
 };
 
 
