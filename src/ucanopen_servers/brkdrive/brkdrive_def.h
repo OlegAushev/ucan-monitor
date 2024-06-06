@@ -155,8 +155,10 @@ inline const std::vector<std::string> syslog_messages = {
     "@syslog: [ fail ] Load model controllers config - fail.",
     "@syslog: [  ok  ] Load mras config - ok.",
     "@syslog: [ fail ] Load mras config - fail.",
-    "@syslog: [  ok  ] Load ac currsens config - ok.",
-    "@syslog: [ fail ] Load ac currsens config - fail.",
+    "@syslog: [  ok  ] Load ac current sensors config - ok.",
+    "@syslog: [ fail ] Load ac current sensors config - fail.",
+    "@syslog: [  ok  ] Load angle sensor config - ok.",
+    "@syslog: [ fail ] Load angle sensor config - fail.",
 
     "@syslog: [  ok  ] Calibration completed successfully."	
 };
@@ -190,6 +192,7 @@ inline const std::vector<std::string> error_list = {
     "iph_sensor_fault",
     "eeprom_error",
     "invalid_config",
+    "watchdog_timeout",
 };
 
 
