@@ -113,12 +113,13 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3005, 0x03}, {"config", "model_basic", "speed_limit",           "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x04}, {"config", "model_basic", "flux_weakening_limit",  "A",    OD_ACCESS_RW, OD_FLOAT32}},
 //#############################################################################################
-{{0x3006, 0x01}, {"config", "model_controllers", "speed_kp",    "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x02}, {"config", "model_controllers", "speed_ki",    "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x03}, {"config", "model_controllers", "id_kp",       "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x04}, {"config", "model_controllers", "id_ki",       "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x05}, {"config", "model_controllers", "iq_kp",       "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x06}, {"config", "model_controllers", "iq_ki",       "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x01}, {"config", "model_controllers", "speed_kp",        "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x02}, {"config", "model_controllers", "speed_ki",        "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x03}, {"config", "model_controllers", "speed_limit_kp",  "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x04}, {"config", "model_controllers", "id_kp",           "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x05}, {"config", "model_controllers", "id_ki",           "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x06}, {"config", "model_controllers", "iq_kp",           "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x07}, {"config", "model_controllers", "iq_ki",           "", OD_ACCESS_RW, OD_FLOAT32}},
 //#######################################################################
 {{0x3007, 0x01}, {"config", "mras", "kp", "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3007, 0x02}, {"config", "mras", "ki", "", OD_ACCESS_RW, OD_FLOAT32}},
@@ -130,8 +131,10 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3008, 0x05}, {"config", "ac_current_sensors", "phase_b_offset",    "A",    OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3008, 0x06}, {"config", "ac_current_sensors", "phase_c_offset",    "A",    OD_ACCESS_RW, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
-{{0x3009, 0x01}, {"config", "angle_sensor", "install_direction",    "",         OD_ACCESS_RW, OD_INT32}},
-{{0x3009, 0x02}, {"config", "angle_sensor", "install_offset",       "rad",      OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3009, 0x01}, {"config", "angle_sensor", "install_direction",                "",     OD_ACCESS_RW, OD_INT32}},
+{{0x3009, 0x02}, {"config", "angle_sensor", "install_offset",                   "rad",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3009, 0x03}, {"config", "angle_sensor", "spi_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3009, 0x04}, {"config", "angle_sensor", "adc_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
 // {{0x1A00, 0x00}, {}},
 // {{0x1A01, 0x00}, {}},
