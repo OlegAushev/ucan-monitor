@@ -259,7 +259,10 @@ void ControlPanel::_draw_run_mode_controls() {
             _dcurr_ref_pu = 0;
             _ctlloop = std::to_underlying(::brkdrive::ControlLoop::closed);
             
-            if (ImGui::Button("Open")) {
+            ImGui::RadioButton("Torque Mode##torque_ctlmode_program", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
+            ImGui::RadioButton("Speed Mode##speed_ctlmode_program", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::speed));
+
+            if (ImGui::Button("Load Test Program")) {
                 IGFD::FileDialogConfig filedialog_config;
 	            filedialog_config.path = ".";
                 ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".csv", filedialog_config);
@@ -276,6 +279,7 @@ void ControlPanel::_draw_run_mode_controls() {
             }
 
             if (_run) {
+                ImGui::ProgressBar(_refmanager.progress());
                 _torque_ref_pct = 100.f * _refmanager.get();
             }
         }

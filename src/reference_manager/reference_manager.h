@@ -25,6 +25,13 @@ public:
 
     bool read_file(const std::filesystem::path& file);
 
+    float progress() const {
+        if (_ref.size() == 0) {
+            return 0;
+        }
+        return float(_idx)/float(_ref.size());
+    }
+
     float get() const {
         if (!_timepoint.has_value()) {
             _timepoint = std::chrono::steady_clock::now();
