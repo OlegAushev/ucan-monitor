@@ -53,9 +53,13 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x3B}, {"watch", "angsens",  "speed_a",           "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x3C}, {"watch", "angsens",  "turns_a",           "",     OD_ACCESS_RO, OD_INT32}},
 
-{{0x5000, 0x41}, {"watch", "temp",  "phase_a",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x42}, {"watch", "temp",  "phase_b",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x43}, {"watch", "temp",  "phase_c",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x41}, {"watch", "temp",  "pcb_a",    "oC",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x42}, {"watch", "temp",  "pcb_b",    "oC",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x43}, {"watch", "temp",  "pcb_c",    "oC",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x44}, {"watch", "temp",  "motor_a",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x45}, {"watch", "temp",  "motor_b",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x46}, {"watch", "temp",  "motor_c",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x47}, {"watch", "temp",  "mcu",      "oC",    OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5000, 0xF1}, {"watch", "ref",   "torque", "pu",     OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0xF2}, {"watch", "ref",   "speed",  "rpm",    OD_ACCESS_RO, OD_FLOAT32}},
