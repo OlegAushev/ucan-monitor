@@ -25,5 +25,8 @@ bool ReferenceManager::read_file(const std::filesystem::path& file) {
         bsclog::error("{}", e.what());
         return false;
     }
+
+    _label = file.stem();
+
     return true;
 }

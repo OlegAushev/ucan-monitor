@@ -97,6 +97,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3002, 0x0A}, {"config", "drive", "trk_speed_limit",         "rpm",      OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3002, 0x0B}, {"config", "drive", "trk_angle_kp",            "",         OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3002, 0x0C}, {"config", "drive", "watchdog_timeout",        "ms",       OD_ACCESS_RW, OD_UINT32}},
+{{0x3002, 0x0D}, {"config", "drive", "torque_slope",            "pu/s",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3002, 0x0E}, {"config", "drive", "speed_slope",             "rpm/s",    OD_ACCESS_RW, OD_FLOAT32}},
 //#################################################################################################
 {{0x3003, 0x01}, {"config", "motor", "parameters_specified",    "",     OD_ACCESS_RO, OD_BOOL}},
 {{0x3003, 0x02}, {"config", "motor", "pole_pairs",              "",     OD_ACCESS_RW, OD_INT32}},
@@ -139,6 +141,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3009, 0x02}, {"config", "angle_sensor", "install_offset",                   "rad",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3009, 0x03}, {"config", "angle_sensor", "spi_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3009, 0x04}, {"config", "angle_sensor", "adc_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3009, 0x05}, {"config", "angle_sensor", "spi_raw_filter_time_constant",     "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3009, 0x06}, {"config", "angle_sensor", "adc_raw_filter_time_constant",     "",     OD_ACCESS_RW, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
 // {{0x1A00, 0x00}, {}},
 // {{0x1A01, 0x00}, {}},

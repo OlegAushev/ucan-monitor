@@ -184,89 +184,20 @@ void ControlPanel::_draw_run_mode_controls() {
         ImGui::PopItemWidth();
         _run_ref_control = static_cast<ReferenceControl>(ref_control);
         
-        if (_run_ref_control == ReferenceControl::manual) {
-            // torque input
-            ImGui::RadioButton("##torque_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-                ImGui::SetTooltip("Torque Mode");
-            }
-            ImGui::SameLine();
-
+        if (_run_ref_control == ReferenceControl::program) {
             ImGui::PushItemWidth(200);
-            if (ImGui::InputFloat("Torque [%]", &_torque_ref_pct, 1.0f, 100.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _torque_ref_pct = std::clamp(_torque_ref_pct, -100.0f, 100.0f);
-            }
-            if (_ctlmode != std::to_underlying(::brkdrive::ControlMode::torque)) {
-                _torque_ref_pct = 0;
-            }
+            std::string test_name = _refmanager.label();
+            ImGui::InputText("Test Program", test_name.data(), test_name.size(), ImGuiInputTextFlags_ReadOnly);
             ImGui::PopItemWidth();
 
-            // speed input
-            ImGui::RadioButton("##speed_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::speed));
-            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-                ImGui::SetTooltip("Speed Mode");
-            }
-            ImGui::SameLine();
-
-            ImGui::PushItemWidth(200);
-            if (ImGui::InputFloat("Speed [rpm]", &_speed_ref, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _speed_ref = std::clamp(_speed_ref, -5000.0f, 5000.0f);
-            }
-            if (_ctlmode != std::to_underlying(::brkdrive::ControlMode::speed)) {
-                _speed_ref = 0;
-            }
-            ImGui::PopItemWidth();
-
-            // control loop
-            if (ImGui::TreeNode("Control Loop")) {
-                ImGui::RadioButton("Closed Loop", &_ctlloop, std::to_underlying(::brkdrive::ControlLoop::closed));
-                if (ImGui::RadioButton("Open Loop", &_ctlloop, std::to_underlying(::brkdrive::ControlLoop::open))) {
-                    _dcurr_ref_pu = std::clamp(_dcurr_ref_pu, 0.0f, 100.0f);
+            util::Switchable load_test_button(!_run, [](){
+                if (ImGui::Button("Load Test Program", ImVec2{200, 0})) {
+                    IGFD::FileDialogConfig filedialog_config;
+                    filedialog_config.path = ".";
+                    ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".csv", filedialog_config);
                 }
-                ImGui::RadioButton("Semi-Closed Loop", &_ctlloop, std::to_underlying(::brkdrive::ControlLoop::semiclosed));
-                ImGui::PushItemWidth(200);
+            });
 
-                switch (_ctlloop) {
-                case std::to_underlying(::brkdrive::ControlLoop::closed):
-                    // DO NOTHING
-                    break;
-                case std::to_underlying(::brkdrive::ControlLoop::open):
-                    if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                        _dcurr_ref_pu = std::clamp(_dcurr_ref_pu, 0.0f, 100.0f);
-                    }
-
-                    if (_speed_ref == 0) {
-                        ImGui::PushItemWidth(200);
-                        if (ImGui::InputInt("Angle [deg]", &_openloop_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-                            _openloop_angle_ref = std::clamp(_openloop_angle_ref, 0, 360);
-                        }
-                        ImGui::PopItemWidth();
-                    }
-
-                    break;
-                case std::to_underlying(::brkdrive::ControlLoop::semiclosed):
-                    if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                        _dcurr_ref_pu = std::clamp(_dcurr_ref_pu, -100.0f, 100.0f);
-                    }           
-                    break;
-                }
-
-                ImGui::PopItemWidth();
-                ImGui::TreePop();
-            }
-        } else {
-            _openloop_angle_ref = 0;
-            _dcurr_ref_pu = 0;
-            _ctlloop = std::to_underlying(::brkdrive::ControlLoop::closed);
-            
-            ImGui::RadioButton("Torque Mode##torque_ctlmode_program", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
-            ImGui::RadioButton("Speed Mode##speed_ctlmode_program", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::speed));
-
-            if (ImGui::Button("Load Test Program")) {
-                IGFD::FileDialogConfig filedialog_config;
-	            filedialog_config.path = ".";
-                ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".csv", filedialog_config);
-            }
             // display
             if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
                 if (ImGuiFileDialog::Instance()->IsOk()) { // action if OK
@@ -277,11 +208,105 @@ void ControlPanel::_draw_run_mode_controls() {
                 // close
                 ImGuiFileDialog::Instance()->Close();
             }
-
-            if (_run) {
-                ImGui::ProgressBar(_refmanager.progress());
-                _torque_ref_pct = 100.f * _refmanager.get();
+            
+            if (_refmanager.empty()) {
+                _run = false;
             }
+
+            if (_run && !_refmanager.empty()) {
+                ImGui::ProgressBar(_refmanager.progress());
+                auto ref = _refmanager.get();
+
+                switch (_ctlmode) {
+                case std::to_underlying(::brkdrive::ControlMode::torque):
+                    _torque_ref_pct = 100.f * ref.value_or(0);
+                    break;
+                case std::to_underlying(::brkdrive::ControlMode::speed):
+                    _speed_ref = ref.value_or(0);
+                    break;
+                default:
+                    break;
+                }
+
+                if (!ref.has_value()) {
+                    _run = false;
+                    _refmanager.reset();
+                }
+            }
+        }
+
+        // torque input
+        ImGui::RadioButton("##torque_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Torque Mode");
+        }
+        ImGui::SameLine();
+
+        util::Switchable torque_input(_run_ref_control == ReferenceControl::manual, [this](){
+            ImGui::PushItemWidth(200);
+            if (ImGui::InputFloat("Torque [%]", &_torque_ref_pct, 1.0f, 100.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _torque_ref_pct = std::clamp(_torque_ref_pct, -100.0f, 100.0f);
+            }
+            if (_ctlmode != std::to_underlying(::brkdrive::ControlMode::torque)) {
+                _torque_ref_pct = 0;
+            }
+            ImGui::PopItemWidth();
+        });
+
+        // speed input
+        ImGui::RadioButton("##speed_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::speed));
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Speed Mode");
+        }
+        ImGui::SameLine();
+
+        util::Switchable speed_input(_run_ref_control == ReferenceControl::manual, [this](){
+            ImGui::PushItemWidth(200);
+            if (ImGui::InputFloat("Speed [rpm]", &_speed_ref, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _speed_ref = std::clamp(_speed_ref, -5000.0f, 5000.0f);
+            }
+            if (_ctlmode != std::to_underlying(::brkdrive::ControlMode::speed)) {
+                _speed_ref = 0;
+            }
+            ImGui::PopItemWidth();
+        });
+
+        // control loop
+        if (ImGui::TreeNode("Control Loop")) {
+            ImGui::RadioButton("Closed Loop", &_ctlloop, std::to_underlying(::brkdrive::ControlLoop::closed));
+            if (ImGui::RadioButton("Open Loop", &_ctlloop, std::to_underlying(::brkdrive::ControlLoop::open))) {
+                _dcurr_ref_pu = std::clamp(_dcurr_ref_pu, 0.0f, 100.0f);
+            }
+            ImGui::RadioButton("Semi-Closed Loop", &_ctlloop, std::to_underlying(::brkdrive::ControlLoop::semiclosed));
+            ImGui::PushItemWidth(200);
+
+            switch (_ctlloop) {
+            case std::to_underlying(::brkdrive::ControlLoop::closed):
+                // DO NOTHING
+                break;
+            case std::to_underlying(::brkdrive::ControlLoop::open):
+                if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _dcurr_ref_pu = std::clamp(_dcurr_ref_pu, 0.0f, 100.0f);
+                }
+
+                if (_speed_ref == 0) {
+                    ImGui::PushItemWidth(200);
+                    if (ImGui::InputInt("Angle [deg]", &_openloop_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                        _openloop_angle_ref = std::clamp(_openloop_angle_ref, 0, 360);
+                    }
+                    ImGui::PopItemWidth();
+                }
+
+                break;
+            case std::to_underlying(::brkdrive::ControlLoop::semiclosed):
+                if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _dcurr_ref_pu = std::clamp(_dcurr_ref_pu, -100.0f, 100.0f);
+                }           
+                break;
+            }
+
+            ImGui::PopItemWidth();
+            ImGui::TreePop();
         }
     }
 }
