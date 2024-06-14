@@ -20,6 +20,8 @@ bool ReferenceManager::read_file(const std::filesystem::path& file) {
         float reference;
         while(source.read_row(duration, reference)){
             _ref.push_back({std::chrono::milliseconds{duration}, reference});
+            _total_time = _total_time.value_or(std::chrono::milliseconds{0})
+                    + std::chrono::milliseconds{duration};
         }
     } catch(const std::exception& e) {
         bsclog::error("{}", e.what());

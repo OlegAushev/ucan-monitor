@@ -15,6 +15,9 @@ private:
     std::vector<std::pair<std::chrono::milliseconds, float>> _ref;
     mutable size_t _idx{0};
     mutable std::optional<std::chrono::time_point<std::chrono::steady_clock>> _timepoint;
+
+    mutable std::optional<std::chrono::time_point<std::chrono::steady_clock>> _start;
+    std::optional<std::chrono::milliseconds> _total_time{0};
 public:
     ReferenceManager();
 
@@ -25,6 +28,14 @@ public:
         _ref.clear();
         _idx = 0;
         _timepoint.reset();
+        _start.reset();
+        _total_time.reset();
+    }
+
+    void restart() {
+        _idx = 0;
+        _timepoint.reset();
+        _start.reset();
     }
 
     bool read_file(const std::filesystem::path& file);
@@ -32,14 +43,17 @@ public:
     bool empty() const { return _ref.empty(); }
 
     float progress() const {
-        if (_ref.size() == 0) {
+        if (_ref.size() == 0 || !_start.has_value() || !_total_time.has_value()) {
             return 0;
         }
-        return float(_idx)/float(_ref.size());
+        auto elapsed = std::chrono::steady_clock::now() - _start.value();
+        return float(std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count())
+                / float(_total_time.value().count());
     }
 
     std::optional<float> get() const {
         if (!_timepoint.has_value()) {
+            _start = std::chrono::steady_clock::now();
             _timepoint = std::chrono::steady_clock::now();
             _idx = 0;
         }

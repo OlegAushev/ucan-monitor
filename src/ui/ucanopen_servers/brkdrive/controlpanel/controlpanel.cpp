@@ -230,7 +230,7 @@ void ControlPanel::_draw_run_mode_controls() {
 
                 if (!ref.has_value()) {
                     _run = false;
-                    _refmanager.reset();
+                    _refmanager.restart();
                 }
             }
         }
