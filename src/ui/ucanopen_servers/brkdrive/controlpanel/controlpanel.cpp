@@ -185,6 +185,10 @@ void ControlPanel::_draw_run_mode_controls() {
         _run_ref_control = static_cast<ReferenceControl>(ref_control);
         
         if (_run_ref_control == ReferenceControl::program) {
+            ImGui::SameLine();
+            static bool repeat = false;
+            ToggleButton(ICON_MDI_REPEAT, repeat);
+
             ImGui::PushItemWidth(200);
             std::string test_name = _refmanager.label();
             ImGui::InputText("Test Program", test_name.data(), test_name.size(), ImGuiInputTextFlags_ReadOnly);
@@ -229,8 +233,10 @@ void ControlPanel::_draw_run_mode_controls() {
                 }
 
                 if (!ref.has_value()) {
-                    _run = false;
                     _refmanager.restart();
+                    if (!repeat) {
+                        _run = false;
+                    }
                 }
             }
         }
