@@ -193,6 +193,7 @@ inline const std::vector<std::string> error_list = {
     "eeprom_error",
     "invalid_config",
     "watchdog_timeout",
+    "iac_sensor_overcurrent",
 };
 
 

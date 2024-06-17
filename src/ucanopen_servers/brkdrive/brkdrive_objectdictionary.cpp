@@ -61,6 +61,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x46}, {"watch", "temp",  "motor_c",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x47}, {"watch", "temp",  "mcu",      "oC",    OD_ACCESS_RO, OD_FLOAT32}},
 
+{{0x5000, 0x51}, {"watch", "drive", "speed",    "rpm",   OD_ACCESS_RO, OD_FLOAT32}},
+
 {{0x5000, 0xF1}, {"watch", "ref",   "torque", "pu",     OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0xF2}, {"watch", "ref",   "speed",  "rpm",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0xF3}, {"watch", "ref",   "angle",  "o",      OD_ACCESS_RO, OD_FLOAT32}},
@@ -133,9 +135,6 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3008, 0x01}, {"config", "ac_current_sensors", "phase_a_gain",      "",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3008, 0x02}, {"config", "ac_current_sensors", "phase_b_gain",      "",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3008, 0x03}, {"config", "ac_current_sensors", "phase_c_gain",      "",     OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3008, 0x04}, {"config", "ac_current_sensors", "phase_a_offset",    "A",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3008, 0x05}, {"config", "ac_current_sensors", "phase_b_offset",    "A",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3008, 0x06}, {"config", "ac_current_sensors", "phase_c_offset",    "A",    OD_ACCESS_RW, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x3009, 0x01}, {"config", "angle_sensor", "install_direction",                "",     OD_ACCESS_RW, OD_INT32}},
 {{0x3009, 0x02}, {"config", "angle_sensor", "install_offset",                   "rad",  OD_ACCESS_RW, OD_FLOAT32}},
