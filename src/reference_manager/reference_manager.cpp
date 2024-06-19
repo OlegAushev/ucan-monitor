@@ -1,9 +1,8 @@
 #include "reference_manager.h"
 
 
-ReferenceManager::ReferenceManager() {
+ReferenceManager::ReferenceManager(const std::string& ref_unit) : _ref_unit(ref_unit) {}
 
-}
 
 bool ReferenceManager::read_file(const std::filesystem::path& file) {
     if (file.extension() != ".csv") {
@@ -15,7 +14,7 @@ bool ReferenceManager::read_file(const std::filesystem::path& file) {
 
     try {
         io::CSVReader<2> source(file);
-        source.read_header(io::ignore_extra_column, "duration", "reference");
+        source.read_header(io::ignore_extra_column, "duration[ms]", _ref_unit);
         uint64_t duration;
         float reference;
         while(source.read_row(duration, reference)){

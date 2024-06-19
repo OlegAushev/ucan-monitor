@@ -180,17 +180,22 @@ void ControlPanel::_draw_run_mode_controls() {
 
         int ref_control = std::to_underlying(_run_ref_control);
         ImGui::PushItemWidth(200);
-        ImGui::Combo("Ref Control##run_ref_control", &ref_control, "manual\0program\0\0");
+        if (ImGui::Combo("Ref Control##run_ref_control", &ref_control, "manual\0program\0\0")) {
+            _run = false;
+            _ref_torque_manager.reset();
+            _ref_speed_manager.reset();
+            _torque_ref_pct = 0;
+            _speed_ref = 0;
+        }
         ImGui::PopItemWidth();
         _run_ref_control = static_cast<ReferenceControl>(ref_control);
         
         if (_run_ref_control == ReferenceControl::program) {
-            ImGui::SameLine();
-            static bool repeat = false;
-            ToggleButton(ICON_MDI_REPEAT, repeat);
+            ReferenceManager* ref_manager = (_ctlmode == std::to_underlying(::brkdrive::ControlMode::torque)) ?    
+                                            &_ref_torque_manager : &_ref_speed_manager;
 
             ImGui::PushItemWidth(200);
-            std::string test_name = _refmanager.label();
+            std::string test_name = ref_manager->label();
             ImGui::InputText("Test Program", test_name.data(), test_name.size(), ImGuiInputTextFlags_ReadOnly);
             ImGui::PopItemWidth();
 
@@ -202,24 +207,31 @@ void ControlPanel::_draw_run_mode_controls() {
                 }
             });
 
+            ImGui::SameLine();
+            static bool repeat = false;
+            ToggleButton(ICON_MDI_REPEAT, repeat);
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+                ImGui::SetTooltip("Repeat test program");
+            }
+
             // display
             if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
                 if (ImGuiFileDialog::Instance()->IsOk()) { // action if OK
                 std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
-                    _refmanager.read_file(file_path);
+                    ref_manager->read_file(file_path);
                 }
                 
                 // close
                 ImGuiFileDialog::Instance()->Close();
             }
             
-            if (_refmanager.empty()) {
+            if (ref_manager->empty()) {
                 _run = false;
             }
 
-            if (_run && !_refmanager.empty()) {
-                ImGui::ProgressBar(_refmanager.progress());
-                auto ref = _refmanager.get();
+            if (_run && !ref_manager->empty()) {
+                ImGui::ProgressBar(ref_manager->progress());
+                auto ref = ref_manager->get();
 
                 switch (_ctlmode) {
                 case std::to_underlying(::brkdrive::ControlMode::torque):
@@ -233,7 +245,7 @@ void ControlPanel::_draw_run_mode_controls() {
                 }
 
                 if (!ref.has_value()) {
-                    _refmanager.restart();
+                    ref_manager->restart();
                     if (!repeat) {
                         _run = false;
                     }
@@ -244,7 +256,7 @@ void ControlPanel::_draw_run_mode_controls() {
         // torque input
         ImGui::RadioButton("##torque_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-            ImGui::SetTooltip("Torque Mode");
+            ImGui::SetTooltip("Torque mode");
         }
         ImGui::SameLine();
 
@@ -262,7 +274,7 @@ void ControlPanel::_draw_run_mode_controls() {
         // speed input
         ImGui::RadioButton("##speed_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::speed));
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-            ImGui::SetTooltip("Speed Mode");
+            ImGui::SetTooltip("Speed mode");
         }
         ImGui::SameLine();
 

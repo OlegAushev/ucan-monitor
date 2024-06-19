@@ -11,6 +11,8 @@
 
 class ReferenceManager {
 private:
+    std::string _ref_unit;
+
     std::string _label;
     std::vector<std::pair<std::chrono::milliseconds, float>> _ref;
     mutable size_t _idx{0};
@@ -19,7 +21,7 @@ private:
     mutable std::optional<std::chrono::time_point<std::chrono::steady_clock>> _start;
     std::optional<std::chrono::milliseconds> _total_time{0};
 public:
-    ReferenceManager();
+    ReferenceManager(const std::string& ref_unit);
 
     std::string label() const { return _label; }
 
