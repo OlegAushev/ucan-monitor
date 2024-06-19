@@ -3,10 +3,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(ucan-monitor VERSION 0.1)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/git-info)
-include(GitInfo)
-GitInfoSetup()
-
 ################################################################################
 # Threads
 # set(CMAKE_THREAD_PREFER_PTHREAD ON)
@@ -78,15 +74,11 @@ target_include_directories(${executable} PRIVATE
     ${imgui_incdirs}
 )
 
-target_link_libraries(${executable}
+target_link_libraries(${executable} PRIVATE
     atomic
     # Threads::Threads
     glfw
     ${OPENGL_LIBRARIES}
-)
-
-target_link_libraries(${executable}
-    git-info
 )
 
 ################################################################################
@@ -103,6 +95,18 @@ target_compile_options(${executable} PRIVATE
 target_compile_features(${executable} PRIVATE
     c_std_11
     cxx_std_23
+)
+
+################################################################################
+# Git Version Tracking
+add_subdirectory(cmake/git-version-tracking)
+
+target_link_directories(${executable} PRIVATE
+    ${CMAKE_BINARY_DIR}/cmake/git-version-tracking
+)
+
+target_link_libraries(${executable} PRIVATE
+    git-version-tracking
 )
 
 ################################################################################
