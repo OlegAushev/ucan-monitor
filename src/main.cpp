@@ -109,7 +109,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-
+#ifndef SINGLE_SERVER
     // Server Selection Loop
     while (!glfwWindowShouldClose(window) && !ui::ServerSelector::instance().server_is_selected()) {
         // Poll and handle events (inputs, window resize, etc.)
@@ -136,6 +136,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);
     }
+#endif
 
     // Server Creation
     auto can_socket = std::make_shared<can::Socket>();
@@ -149,7 +150,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     std::shared_ptr<ui::WatchPanel> watchpanel;
     std::vector<std::shared_ptr<ui::WatchPlot>> watchplots;
 
-    auto server_name = ui::ServerSelector::instance().selected_server();
+#ifndef SINGLE_SERVER
+    std::string server_name = ui::ServerSelector::instance().selected_server();
+#else
+    std::string  server_name = SINGLE_SERVER;
+#endif
+
     if (server_name == "srmdrive") {
         auto srmdrive_server = std::make_shared<srmdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
         ucanopen_client->register_server(srmdrive_server);

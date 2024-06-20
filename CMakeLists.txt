@@ -1,7 +1,7 @@
 #
 cmake_minimum_required(VERSION 3.12)
 
-project(ucan-monitor VERSION 0.1)
+project(ucan-monitor VERSION 1.0)
 
 ################################################################################
 # Threads
@@ -11,6 +11,20 @@ project(ucan-monitor VERSION 0.1)
 
 ################################################################################
 # Options
+option(MULTI_SERVER "Multi-server build" ON)
+set(servers srmdrive atv-vcu brake-drive)
+set(SERVER "" CACHE STRING "Selected single server")
+
+if (NOT MULTI_SERVER)
+    if(NOT SERVER IN_LIST servers)
+        message(FATAL_ERROR "Selected server must be one of ${servers}")
+    else()
+        message(STATUS "Selected single server: ${SERVER}")
+    endif()
+else()
+    message(STATUS "Multi-server build: ON")
+endif()
+
 option(FLATPAK_BUILD "Flatpak build configuration" OFF)
 
 ################################################################################
@@ -56,6 +70,12 @@ add_executable(${executable}
     ${imgui_sources}
     ${imgui_backend_sources}
 )
+
+if(NOT MULTI_SERVER)
+    target_compile_definitions(${executable} PRIVATE
+        SINGLE_SERVER="${SERVER}"
+    ) 
+endif()
 
 target_compile_definitions(${executable} PRIVATE
     $<$<CONFIG:Debug>:DEBUG>
