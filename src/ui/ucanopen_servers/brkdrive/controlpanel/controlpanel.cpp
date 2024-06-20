@@ -29,7 +29,7 @@ void ControlPanel::_reset_refs() {
     _run = false;
 
     _run_ref_control = ReferenceControl::manual;
-    _track_ref_control = ReferenceControl::manual;
+    _angle_ref_control = ReferenceControl::manual;
 }
 
 
@@ -348,9 +348,69 @@ void ControlPanel::_draw_track_mode_controls() {
 
     if (selected) {
         // start/stop
-        ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run);
+        ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run, ImVec2{200, 0});
         ImGui::SameLine();
         ImGui::TextDisabled("(F4)");
+
+        int ref_control = std::to_underlying(_angle_ref_control);
+        ImGui::PushItemWidth(200);
+        if (ImGui::Combo("Ref Control##angle_ref_control", &ref_control, "manual\0program\0\0")) {
+            _run = false;
+            _ref_angle_manager.reset();
+            _angle_ref = 0;
+        }
+        ImGui::PopItemWidth();
+        _angle_ref_control = static_cast<ReferenceControl>(ref_control);
+
+        if (_angle_ref_control == ReferenceControl::program) {
+            ImGui::PushItemWidth(200);
+            std::string test_name = _ref_angle_manager.label();
+            ImGui::InputText("Test Program", test_name.data(), test_name.size(), ImGuiInputTextFlags_ReadOnly);
+            ImGui::PopItemWidth();
+
+            util::Switchable load_test_button(!_run, [](){
+                if (ImGui::Button("Load Test Program", ImVec2{200, 0})) {
+                    IGFD::FileDialogConfig filedialog_config;
+                    filedialog_config.path = ".";
+                    ImGuiFileDialog::Instance()->OpenDialog("ChooseFileDlgKey", "Choose File", ".csv", filedialog_config);
+                }
+            });
+
+            ImGui::SameLine();
+            static bool repeat = false;
+            ToggleButton(ICON_MDI_REPEAT, repeat);
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+                ImGui::SetTooltip("Repeat test program");
+            }
+
+            // display
+            if (ImGuiFileDialog::Instance()->Display("ChooseFileDlgKey")) {
+                if (ImGuiFileDialog::Instance()->IsOk()) { // action if OK
+                std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
+                    _ref_angle_manager.read_file(file_path);
+                }
+                
+                // close
+                ImGuiFileDialog::Instance()->Close();
+            }
+            
+            if (_ref_angle_manager.empty()) {
+                _run = false;
+            }
+
+            if (_run && !_ref_angle_manager.empty()) {
+                ImGui::ProgressBar(_ref_angle_manager.progress());
+                auto ref = _ref_angle_manager.get();
+                _angle_ref = ref.value_or(0);
+
+                if (!ref.has_value()) {
+                    _ref_angle_manager.restart();
+                    if (!repeat) {
+                        _run = false;
+                    }
+                }
+            }
+        }
 
         ImGui::PushItemWidth(200);
         if (ImGui::InputInt("Angle [deg]", &_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {

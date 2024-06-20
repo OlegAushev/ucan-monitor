@@ -35,7 +35,7 @@ private:
         program
     };
     ReferenceControl _run_ref_control{ReferenceControl::manual};
-    ReferenceControl _track_ref_control{ReferenceControl::manual};
+    ReferenceControl _angle_ref_control{ReferenceControl::manual};
     ReferenceManager _ref_torque_manager{"torque[pu]"};
     ReferenceManager _ref_speed_manager{"speed[rpm]"};
     ReferenceManager _ref_angle_manager{"angle[°]"};
