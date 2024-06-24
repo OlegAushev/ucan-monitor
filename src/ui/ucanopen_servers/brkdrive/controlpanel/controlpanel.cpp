@@ -414,13 +414,13 @@ void ControlPanel::_draw_track_mode_controls() {
 
         ImGui::PushItemWidth(200);
         if (ImGui::InputInt("Angle [deg]", &_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _angle_ref = std::clamp(_angle_ref, -10000, 10000);
+            _angle_ref = std::clamp(_angle_ref, -30000, 30000);
         }
         ImGui::PopItemWidth();
 
         ImGui::PushItemWidth(200);
         if (ImGui::InputFloat("Track Speed [rpm]", &_track_speed, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _track_speed = std::clamp(_track_speed, 0.0f, 5000.0f);
+            _track_speed = std::clamp(_track_speed, 0.0f, 3000.0f);
         }
         ImGui::PopItemWidth();
     }
