@@ -63,6 +63,13 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 
 {{0x5000, 0x51}, {"watch", "drive", "speed",    "rpm",   OD_ACCESS_RO, OD_FLOAT32}},
 
+{{0x5000, 0x61}, {"watch", "mras",  "mech_angle",      "rad",   OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x62}, {"watch", "mras",  "mech_absangle",   "rad",   OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x63}, {"watch", "mras",  "elec_angle",      "rad",   OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x64}, {"watch", "mras",  "elec_absangle",   "rad",   OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x65}, {"watch", "mras",  "speed",           "rpm",   OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x66}, {"watch", "mras",  "turns",           "",      OD_ACCESS_RO, OD_INT32}},
+
 {{0x5000, 0xF1}, {"watch", "ref",   "torque", "pu",     OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0xF2}, {"watch", "ref",   "speed",  "rpm",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0xF3}, {"watch", "ref",   "angle",  "o",      OD_ACCESS_RO, OD_FLOAT32}},
@@ -101,6 +108,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3002, 0x0C}, {"config", "drive", "watchdog_timeout",        "ms",       OD_ACCESS_RW, OD_UINT32}},
 {{0x3002, 0x0D}, {"config", "drive", "torque_slope",            "pu/s",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3002, 0x0E}, {"config", "drive", "speed_slope",             "rpm/s",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3002, 0x0F}, {"config", "drive", "angle_slope",             "deg/s",    OD_ACCESS_RW, OD_FLOAT32}},
 //#################################################################################################
 {{0x3003, 0x01}, {"config", "motor", "parameters_specified",    "",     OD_ACCESS_RO, OD_BOOL}},
 {{0x3003, 0x02}, {"config", "motor", "pole_pairs",              "",     OD_ACCESS_RW, OD_INT32}},
@@ -120,6 +128,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3005, 0x02}, {"config", "model_basic", "gener_current_limit",   "A",    OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x03}, {"config", "model_basic", "speed_limit",           "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x04}, {"config", "model_basic", "flux_weakening_limit",  "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x05}, {"config", "model_basic", "mras_enable_speed",     "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
 //#############################################################################################
 {{0x3006, 0x01}, {"config", "model_controllers", "speed_kp",        "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3006, 0x02}, {"config", "model_controllers", "speed_ki",        "", OD_ACCESS_RW, OD_FLOAT32}},
