@@ -149,8 +149,6 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3009, 0x02}, {"config", "angle_sensor", "install_offset",                   "rad",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3009, 0x03}, {"config", "angle_sensor", "spi_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3009, 0x04}, {"config", "angle_sensor", "adc_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3009, 0x05}, {"config", "angle_sensor", "spi_raw_filter_time_constant",     "",     OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3009, 0x06}, {"config", "angle_sensor", "adc_raw_filter_time_constant",     "",     OD_ACCESS_RW, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
 // {{0x1A00, 0x00}, {}},
 // {{0x1A01, 0x00}, {}},
