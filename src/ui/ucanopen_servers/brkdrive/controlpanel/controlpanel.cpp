@@ -132,7 +132,7 @@ void ControlPanel::_read_keyboard() {
 
 
 void ControlPanel::_draw_normal_mode_controls() {
-    bool enabled = _server->opmode() == ::brkdrive::OperationMode::normal;
+    bool enabled = _server->opmode() == ::brkdrive::OperatingMode::normal;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -141,7 +141,7 @@ void ControlPanel::_draw_normal_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
 
-    bool selected = _opmode == ::brkdrive::OperationMode::normal;
+    bool selected = _opmode == ::brkdrive::OperatingMode::normal;
     ui::util::Switchable normal_mode_header(selected, [](){
         ImGui::SameLine();
         ImGui::SeparatorText("Normal Mode");
@@ -156,7 +156,7 @@ void ControlPanel::_draw_normal_mode_controls() {
 
 
 void ControlPanel::_draw_run_mode_controls() {
-    bool enabled = _server->opmode() == ::brkdrive::OperationMode::run;
+    bool enabled = _server->opmode() == ::brkdrive::OperatingMode::run;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -165,7 +165,7 @@ void ControlPanel::_draw_run_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
 
-    bool selected = _opmode == ::brkdrive::OperationMode::run;
+    bool selected = _opmode == ::brkdrive::OperatingMode::run;
     ui::util::Switchable run_mode_header(selected, []() {
         ImGui::SameLine();
         ImGui::SeparatorText("Run Mode");
@@ -331,7 +331,7 @@ void ControlPanel::_draw_run_mode_controls() {
 
 
 void ControlPanel::_draw_track_mode_controls() {
-    bool enabled = _server->opmode() == ::brkdrive::OperationMode::track;
+    bool enabled = _server->opmode() == ::brkdrive::OperatingMode::track;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -340,7 +340,7 @@ void ControlPanel::_draw_track_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
 
-    bool selected = _opmode == ::brkdrive::OperationMode::track;
+    bool selected = _opmode == ::brkdrive::OperatingMode::track;
     ui::util::Switchable track_mode_header(selected, [](){
         ImGui::SameLine();  
         ImGui::SeparatorText("Track Mode");
@@ -428,7 +428,7 @@ void ControlPanel::_draw_track_mode_controls() {
 
 
 void ControlPanel::_draw_hwtest_mode_controls() {
-    bool enabled = _server->opmode() == ::brkdrive::OperationMode::hwtest;
+    bool enabled = _server->opmode() == ::brkdrive::OperatingMode::hwtest;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -437,7 +437,7 @@ void ControlPanel::_draw_hwtest_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
 
-    bool selected = _opmode == ::brkdrive::OperationMode::hwtest;
+    bool selected = _opmode == ::brkdrive::OperatingMode::hwtest;
     ui::util::Switchable hwtest_mode_header(selected, [](){
         ImGui::SameLine();
         ImGui::SeparatorText("Hardware Test Mode");

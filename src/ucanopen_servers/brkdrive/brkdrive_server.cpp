@@ -49,7 +49,7 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
     _tpdo1.warning.store(static_cast<bool>(tpdo.warning));
 
     if (::brkdrive::is_opmode(tpdo.opmode)) {
-        _tpdo1.opmode.store(static_cast<::brkdrive::OperationMode>(tpdo.opmode));
+        _tpdo1.opmode.store(static_cast<::brkdrive::OperatingMode>(tpdo.opmode));
     }
 
     if (ctlmode_map.contains(tpdo.ctlmode)) {

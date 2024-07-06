@@ -6,25 +6,26 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
 
 namespace brkdrive {
 
+
 struct CobTpdo1 {
-    uint8_t run : 1;
+    float angle;
+
+    uint8_t status : 2;
+    uint8_t drive_state : 6;
+
+    uint8_t pwm_on : 1;
     uint8_t error : 1;
     uint8_t warning : 1;
     uint8_t opmode : 2;
     uint8_t ctlmode : 1;
     uint8_t ctlloop : 2;
-    
-    uint8_t drive_state;
-    
-    int16_t torque;
-    
-    int16_t speed;
     
     uint8_t _reserved1;
     
@@ -34,7 +35,21 @@ struct CobTpdo1 {
 
 
 struct CobTpdo2 {
-    uint16_t braking;
+    float ref_angle;
+    
+    uint8_t ref_brake;
+
+    uint8_t _reserved1;
+
+    uint8_t _reserved2;
+
+    uint8_t counter : 2;
+    uint8_t _reserved5 : 6;
+};
+
+
+struct CobTpdo3 {
+    int16_t speed;
 
     uint8_t _reserved1;
 
@@ -48,19 +63,6 @@ struct CobTpdo2 {
 
     uint8_t counter : 2;
     uint8_t _reserved6 : 6;
-};
-
-
-struct CobTpdo3 {
-    uint16_t pwrmodule_temp : 8;
-    uint16_t excmodule_temp : 8;
-    uint16_t pcb_temp : 8;
-    uint16_t aw_temp : 8;
-    uint16_t fw_temp : 8;
-    uint16_t _reserved : 6;
-    uint16_t counter : 2;
-    uint16_t _reserved2 : 6;
-    uint16_t checksum : 8;
 };
 
 
@@ -75,44 +77,52 @@ struct CobTpdo4 {
 
 //----------------------------------------------------------------------------------------------------------------------
 struct CobRpdo1 {
+    float ref_angle;
+
+    uint16_t track_speed;
+
+    uint8_t master_bad : 1;
     uint8_t wakeup : 1;
-    uint8_t _reserved1 : 7;
-    
-    uint8_t _reserved2;
-    
-    uint16_t brake_ref;
-    
-    uint8_t _reserved3;
-    
-    uint8_t _reserved4;
-    
-    uint8_t _reserved5;
+    uint8_t ref_status : 2;
+    uint8_t _reserved1 : 4;
     
     uint8_t counter : 2;
-    uint8_t _reserved6 : 6;
+    uint8_t _reserved2 : 6;
 };
 
 
 struct CobRpdo2 {
-    int16_t torque_ref;
-    int16_t speed_ref;
-    int16_t dcurr_ref;
-    uint8_t _reserved1;
-    uint8_t counter : 2;
     uint8_t opmode : 2;
     uint8_t ctlmode : 1;
     uint8_t ctlloop : 2;
-    uint8_t run : 1;
+    uint8_t _reserved1 : 3;
+    
+    uint8_t _reserved2;
+
+    int16_t ref_torque;
+    
+    int16_t ref_speed;
+    
+    uint8_t _reserved3;
+    
+    uint8_t counter : 2;
+    uint8_t _reserved4 : 6;
 };
 
 
 struct CobRpdo3 {
-    int16_t openloop_angle_ref;
-    int16_t angle_ref;
-    uint16_t track_speed;
+    int16_t ref_dcurr;
+
+    int16_t openloop_ref_angle;
+    
     uint8_t _reserved1;
+    
+    uint8_t _reserved2;
+    
+    uint8_t _reserved3;
+    
     uint8_t counter : 2;
-    uint8_t _reserved2 : 6;
+    uint8_t _reserved4 : 6;
 };
 
 
@@ -165,15 +175,17 @@ inline const std::vector<std::string> syslog_messages = {
 
 
 inline const std::vector<std::string> drive_states = {
-    "wait",
+    "waiting",
     "standby",
     "powerup",
     "ready",
-    "braking",
-    "release",
-    "run",
+    "working",
+    "running",
     "tracking",
     "powerdown",
+    "cal_stage_1",
+    "cal_stage_2",
+    "cal_stage_3",
     "hwtest"
 };
 
@@ -189,7 +201,7 @@ inline const std::vector<std::string> error_list = {
     "module_overtemp",
     "motor_overtemp",
     "vdc_sensor_fault",
-    "iph_sensor_fault",
+    "iac_sensor_fault",
     "eeprom_error",
     "invalid_config",
     "watchdog_timeout",
@@ -212,7 +224,28 @@ inline const std::vector<std::string> warning_list = {
 };
 
 
-enum class OperationMode {
+enum class OperatingStatus {
+    inoperable,
+    working,
+    calibrating
+};
+
+
+inline const std::unordered_set<int> opstatus_values = {
+    std::to_underlying(OperatingStatus::inoperable),
+    std::to_underlying(OperatingStatus::working),
+    std::to_underlying(OperatingStatus::calibrating)
+};
+
+
+inline const std::map<OperatingStatus, std::string_view> opstatus_names = {
+    {OperatingStatus::inoperable, "inoperable"},
+    {OperatingStatus::working, "working"},
+    {OperatingStatus::calibrating, "calibrating"}
+};
+
+
+enum class OperatingMode {
     normal,
     run,
     track,
@@ -220,23 +253,18 @@ enum class OperationMode {
 };
 
 
-inline constexpr bool is_opmode(int v) {
-    switch (static_cast<OperationMode>(v)) {
-    case OperationMode::normal:
-    case OperationMode::run:
-    case OperationMode::track:
-    case OperationMode::hwtest:
-        return true;
-    }
-    return false;
-}
+inline const std::unordered_set<int> opmode_values = {
+    std::to_underlying(OperatingMode::normal),
+    std::to_underlying(OperatingMode::run),
+    std::to_underlying(OperatingMode::track),
+    std::to_underlying(OperatingMode::hwtest)
+};
 
-
-inline const std::map<OperationMode, std::string_view> opmode_string_map = {
-    {OperationMode::normal, "normal"},
-    {OperationMode::run, "run"},
-    {OperationMode::track, "track"},
-    {OperationMode::hwtest, "hwtest"},
+inline const std::map<OperatingMode, std::string_view> opmode_names = {
+    {OperatingMode::normal, "normal"},
+    {OperatingMode::run, "run"},
+    {OperatingMode::track, "track"},
+    {OperatingMode::hwtest, "hwtest"},
 };
 
 
@@ -246,9 +274,15 @@ enum class ControlMode {
 };
 
 
-inline const std::map<int, std::string_view> ctlmode_map = {
-    {std::to_underlying(ControlMode::torque), "torque"},
-    {std::to_underlying(ControlMode::speed), "speed"}
+inline const std::unordered_set<int> ctlmode_values = {
+    std::to_underlying(ControlMode::torque),
+    std::to_underlying(ControlMode::speed)
+};
+
+
+inline const std::map<ControlMode, std::string_view> ctlmode_names = {
+    {ControlMode::torque, "torque"},
+    {ControlMode::speed, "speed"}
 };
 
 
@@ -259,10 +293,10 @@ enum class ControlLoop {
 };
 
 
-inline const std::map<int, std::string_view> ctlloop_map = {
-    {std::to_underlying(ControlLoop::closed), "closed"},
-    {std::to_underlying(ControlLoop::open), "open"},
-    {std::to_underlying(ControlLoop::semiclosed), "semiclosed"}
+inline const std::map<ControlLoop, std::string_view> ctlloop_names = {
+    {ControlLoop::closed, "closed"},
+    {ControlLoop::open, "open"},
+    {ControlLoop::semiclosed, "semiclosed"}
 };
 
 
