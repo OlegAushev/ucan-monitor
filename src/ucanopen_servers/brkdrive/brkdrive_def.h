@@ -293,7 +293,7 @@ inline const std::unordered_set<int> opmode_values = {
     std::to_underlying(OperatingMode::hwtest)
 };
 
-inline const std::unordered_map<OperatingMode, std::string_view> opmode_names = {
+inline const std::map<OperatingMode, std::string_view> opmode_names = {
     {OperatingMode::normal, "normal"},
     {OperatingMode::run, "run"},
     {OperatingMode::track, "track"},

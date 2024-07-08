@@ -75,7 +75,7 @@ public:
     void set_track_speed(uint16_t value) { _rpdo1.track_speed.store(value); }
     void toggle_master_bad(bool value) { _rpdo1.master_bad = value; }
     void toggle_wakeup(bool value) { _rpdo1.wakeup.store(value); }
-    void set_ref_status(OperatingStatus status) { _rpdo1.cmd_opstatus.store(status); }
+    void set_cmd_status(OperatingStatus status) { _rpdo1.cmd_opstatus.store(status); }
 
     void set_opmode(OperatingMode mode) { _rpdo2.opmode.store(mode); }
     void set_ctlmode(ControlMode mode) { _rpdo2.ctlmode.store(mode); }
@@ -87,7 +87,7 @@ public:
     void set_openloop_ref_angle(int16_t value) { _rpdo3.openloop_ref_angle.store(value); }
 
     float angle() const { return _tpdo1.angle.load(); }
-    OperatingStatus status() const { return _tpdo1.opstatus.load(); }
+    OperatingStatus opstatus() const { return _tpdo1.opstatus.load(); }
     DriveState drive_state() const { return _tpdo1.drive_state.load(); }
     bool is_pwm_on() const { return _tpdo1.pwm_on.load(); }
     bool has_error() const { return _tpdo1.error.load(); }

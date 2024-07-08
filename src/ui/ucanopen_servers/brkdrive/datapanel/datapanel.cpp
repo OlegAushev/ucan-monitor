@@ -58,6 +58,23 @@ void DataPanel::_draw_tpdo1_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Operating Status");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::TextUnformatted(::brkdrive::opstatus_names.at(_server->opstatus()).data());
+        switch (_server->opstatus()) {
+        case ::brkdrive::OperatingStatus::inoperable:
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
+            break;
+        case ::brkdrive::OperatingStatus::calibrating:
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
+            break;
+        case ::brkdrive::OperatingStatus::working:
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
+            break;
+        }
+        
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Drive State");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(::brkdrive::drive_state_names.at(_server->drive_state()).data());
@@ -91,7 +108,7 @@ void DataPanel::_draw_tpdo1_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Operation Mode");
+        ImGui::TextUnformatted("Operating Mode");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(::brkdrive::opmode_names.at(_server->opmode()).data());
 

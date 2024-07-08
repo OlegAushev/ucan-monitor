@@ -5,6 +5,9 @@
 #include <imguifiledialog/ImGuiFileDialog.h>
 
 
+using namespace brkdrive;
+
+
 namespace ui {
 namespace brkdrive {
 
@@ -19,14 +22,14 @@ ControlPanel::ControlPanel(std::shared_ptr<::brkdrive::Server> server,
 
 
 void ControlPanel::_reset_refs() {
-    _brake_ref_pu = 0;
-    _torque_ref_pct = 0;
-    _speed_ref = 0;
-    _dcurr_ref_pu = 0;
-    _openloop_angle_ref = 0;
-    _angle_ref = 0;
-    _track_speed = 0;
     _run = false;
+    _calibrate = false;
+    _ref_angle = 0;
+    _ref_torque_pct = 0;
+    _ref_speed = 0;
+    _ref_dcurr_pu = 0;
+    _openloop_ref_angle = 0;
+    _track_speed = 0;
 
     _run_ref_control = ReferenceControl::manual;
     _angle_ref_control = ReferenceControl::manual;
@@ -37,19 +40,29 @@ void ControlPanel::_update_refs() {
     _server->set_opmode(_opmode);
     
     _server->toggle_wakeup(_wakeup);
-    _server->set_brake_ref(_brake_ref_pu/100.0f);
-    
-    _server->toggle_run(_run);
 
-    _server->set_torque_ref(_torque_ref_pct / 100.0f);
-    _server->set_speed_ref(_speed_ref);
-    _server->set_ctlmode(::brkdrive::ControlMode(_ctlmode));
-    _server->set_ctlloop(::brkdrive::ControlLoop(_ctlloop));
-    _server->set_dcurr_ref(_dcurr_ref_pu / 100.0f);
-    _server->set_openloop_angle_ref(_openloop_angle_ref);
-        
-    _server->set_angle_ref(_angle_ref);
+    if (!_calibrate) {
+        if (_run) {
+            _server->set_cmd_status(OperatingStatus::working);
+        } else {
+            _server->set_cmd_status(OperatingStatus::inoperable);
+        }
+    } else {
+        _server->set_cmd_status(OperatingStatus::calibrating);
+    }
+    
+    _server->set_ref_angle(_ref_angle);
     _server->set_track_speed(_track_speed);
+
+    _ctlmode = static_cast<ControlMode>(_ctlmode_v);
+    _ctlloop = static_cast<ControlLoop>(_ctlloop_v);
+    _server->set_ctlmode(_ctlmode);
+    _server->set_ctlloop(_ctlloop);
+
+    _server->set_ref_torque(_ref_torque_pct / 100.0f);
+    _server->set_ref_speed(_ref_speed);
+    _server->set_ref_dcurr(_ref_dcurr_pu / 100.0f);
+    _server->set_openloop_ref_angle(_openloop_ref_angle);
 }
 
 
@@ -93,16 +106,16 @@ void ControlPanel::_draw_dash() {
 
     // Drive state indicator
     ImGui::SameLine();
-    std::string state(_server->drive_state());
+    std::string state(drive_state_names.at(_server->drive_state()));
     ImGui::PushItemWidth(120);
     ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
 
     // Operation mode selection
     ImGui::PushItemWidth(200);
-    auto opmode_preview = ::brkdrive::opmode_string_map.at(_opmode).data();
-    if (ImGui::BeginCombo("Operation Mode", opmode_preview)) {
-        for (const auto& mode : ::brkdrive::opmode_string_map) {
+    auto opmode_preview = opmode_names.at(_opmode).data();
+    if (ImGui::BeginCombo("Operating Mode", opmode_preview)) {
+        for (const auto& mode : opmode_names) {
             bool is_selected = (mode.first == _opmode);
             if (ImGui::Selectable(mode.second.data(), is_selected)) {
                 _opmode = mode.first;
@@ -117,6 +130,11 @@ void ControlPanel::_draw_dash() {
     ToggleButton(ICON_MDI_POWER" On/Off", _wakeup, ImVec2{200, 0});
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
+
+    // start/stop
+    ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run, ImVec2{200, 0});
+    ImGui::SameLine();
+    ImGui::TextDisabled("(F4)");
 }
 
 
@@ -141,7 +159,7 @@ void ControlPanel::_draw_normal_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
 
-    bool selected = _opmode == ::brkdrive::OperatingMode::normal;
+    bool selected = _opmode == OperatingMode::normal;
     ui::util::Switchable normal_mode_header(selected, [](){
         ImGui::SameLine();
         ImGui::SeparatorText("Normal Mode");
@@ -149,14 +167,20 @@ void ControlPanel::_draw_normal_mode_controls() {
 
     if (selected) {
         ImGui::PushItemWidth(200);
-        ImGui::SliderFloat("Brake Pressure [%]", &this->_brake_ref_pu, 0.0f, 100.0f, "%.2f");
+        ImGui::InputFloat("Angle [deg]", &_ref_angle, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue);
+        ImGui::PopItemWidth();
+
+        ImGui::PushItemWidth(200);
+        if (ImGui::InputScalar("Track Speed [rpm]", ImGuiDataType_U16, &_track_speed, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _track_speed = std::clamp(_track_speed, uint16_t(0), uint16_t(3000));
+        }
         ImGui::PopItemWidth();
     }
 }
 
 
 void ControlPanel::_draw_run_mode_controls() {
-    bool enabled = _server->opmode() == ::brkdrive::OperatingMode::run;
+    bool enabled = _server->opmode() == OperatingMode::run;
     if (enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
     } else {
@@ -165,7 +189,7 @@ void ControlPanel::_draw_run_mode_controls() {
     ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
     ImGui::PopStyleColor();
 
-    bool selected = _opmode == ::brkdrive::OperatingMode::run;
+    bool selected = _opmode == OperatingMode::run;
     ui::util::Switchable run_mode_header(selected, []() {
         ImGui::SameLine();
         ImGui::SeparatorText("Run Mode");
@@ -173,25 +197,20 @@ void ControlPanel::_draw_run_mode_controls() {
 
 
     if (selected) {
-        // start/stop
-        ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run, ImVec2{200, 0});
-        ImGui::SameLine();
-        ImGui::TextDisabled("(F4)");
-
         int ref_control = std::to_underlying(_run_ref_control);
         ImGui::PushItemWidth(200);
         if (ImGui::Combo("Ref Control##run_ref_control", &ref_control, "manual\0program\0\0")) {
             _run = false;
             _ref_torque_manager.reset();
             _ref_speed_manager.reset();
-            _torque_ref_pct = 0;
-            _speed_ref = 0;
+            _ref_torque_pct = 0;
+            _ref_speed = 0;
         }
         ImGui::PopItemWidth();
         _run_ref_control = static_cast<ReferenceControl>(ref_control);
         
         if (_run_ref_control == ReferenceControl::program) {
-            ReferenceManager* ref_manager = (_ctlmode == std::to_underlying(::brkdrive::ControlMode::torque)) ?    
+            ReferenceManager* ref_manager = (_ctlmode == ControlMode::torque) ?    
                                             &_ref_torque_manager : &_ref_speed_manager;
 
             ImGui::PushItemWidth(200);
@@ -234,11 +253,11 @@ void ControlPanel::_draw_run_mode_controls() {
                 auto ref = ref_manager->get();
 
                 switch (_ctlmode) {
-                case std::to_underlying(::brkdrive::ControlMode::torque):
-                    _torque_ref_pct = 100.f * ref.value_or(0);
+                case ControlMode::torque:
+                    _ref_torque_pct = 100.f * ref.value_or(0);
                     break;
-                case std::to_underlying(::brkdrive::ControlMode::speed):
-                    _speed_ref = ref.value_or(0);
+                case ControlMode::speed:
+                    _ref_speed = ref.value_or(0);
                     break;
                 default:
                     break;
@@ -254,7 +273,7 @@ void ControlPanel::_draw_run_mode_controls() {
         }
 
         // torque input
-        ImGui::RadioButton("##torque_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::torque));
+        ImGui::RadioButton("##torque_ctlmode", &_ctlmode_v, std::to_underlying(::brkdrive::ControlMode::torque));
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
             ImGui::SetTooltip("Torque mode");
         }
@@ -262,17 +281,17 @@ void ControlPanel::_draw_run_mode_controls() {
 
         util::Switchable torque_input(_run_ref_control == ReferenceControl::manual, [this](){
             ImGui::PushItemWidth(200);
-            if (ImGui::InputFloat("Torque [%]", &_torque_ref_pct, 1.0f, 100.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _torque_ref_pct = std::clamp(_torque_ref_pct, -100.0f, 100.0f);
+            if (ImGui::InputFloat("Torque [%]", &_ref_torque_pct, 1.0f, 100.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_torque_pct = std::clamp(_ref_torque_pct, -100.0f, 100.0f);
             }
-            if (_ctlmode != std::to_underlying(::brkdrive::ControlMode::torque)) {
-                _torque_ref_pct = 0;
+            if (_ctlmode != ControlMode::torque) {
+                _ref_torque_pct = 0;
             }
             ImGui::PopItemWidth();
         });
 
         // speed input
-        ImGui::RadioButton("##speed_ctlmode", &_ctlmode, std::to_underlying(::brkdrive::ControlMode::speed));
+        ImGui::RadioButton("##speed_ctlmode", &_ctlmode_v, std::to_underlying(::brkdrive::ControlMode::speed));
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
             ImGui::SetTooltip("Speed mode");
         }
@@ -280,45 +299,45 @@ void ControlPanel::_draw_run_mode_controls() {
 
         util::Switchable speed_input(_run_ref_control == ReferenceControl::manual, [this](){
             ImGui::PushItemWidth(200);
-            if (ImGui::InputFloat("Speed [rpm]", &_speed_ref, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _speed_ref = std::clamp(_speed_ref, -5000.0f, 5000.0f);
+            if (ImGui::InputScalar("Speed [rpm]", ImGuiDataType_S16,  &_ref_speed, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_speed = std::clamp(_ref_speed, int16_t(-5000), int16_t(5000));
             }
-            if (_ctlmode != std::to_underlying(::brkdrive::ControlMode::speed)) {
-                _speed_ref = 0;
+            if (_ctlmode != ControlMode::speed) {
+                _ref_speed = 0;
             }
             ImGui::PopItemWidth();
         });
 
         // control loop
         if (ImGui::TreeNode("Control Loop")) {
-            ImGui::RadioButton("Closed Loop", &_ctlloop, std::to_underlying(::brkdrive::ControlLoop::closed));
-            if (ImGui::RadioButton("Open Loop", &_ctlloop, std::to_underlying(::brkdrive::ControlLoop::open))) {
-                _dcurr_ref_pu = std::clamp(_dcurr_ref_pu, 0.0f, 100.0f);
+            ImGui::RadioButton("Closed Loop", &_ctlloop_v, std::to_underlying(::brkdrive::ControlLoop::closed));
+            if (ImGui::RadioButton("Open Loop", &_ctlloop_v, std::to_underlying(::brkdrive::ControlLoop::open))) {
+                _ref_dcurr_pu = std::clamp(_ref_dcurr_pu, 0.0f, 100.0f);
             }
-            ImGui::RadioButton("Semi-Closed Loop", &_ctlloop, std::to_underlying(::brkdrive::ControlLoop::semiclosed));
+            ImGui::RadioButton("Semi-Closed Loop", &_ctlloop_v, std::to_underlying(::brkdrive::ControlLoop::semiclosed));
             ImGui::PushItemWidth(200);
 
             switch (_ctlloop) {
-            case std::to_underlying(::brkdrive::ControlLoop::closed):
+            case ControlLoop::closed:
                 // DO NOTHING
                 break;
-            case std::to_underlying(::brkdrive::ControlLoop::open):
-                if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                    _dcurr_ref_pu = std::clamp(_dcurr_ref_pu, 0.0f, 100.0f);
+            case ControlLoop::open:
+                if (ImGui::InputFloat("D-Current [%]", &_ref_dcurr_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _ref_dcurr_pu = std::clamp(_ref_dcurr_pu, 0.0f, 100.0f);
                 }
 
-                if (_speed_ref == 0) {
+                if (_ref_speed == 0) {
                     ImGui::PushItemWidth(200);
-                    if (ImGui::InputInt("Angle [deg]", &_openloop_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-                        _openloop_angle_ref = std::clamp(_openloop_angle_ref, 0, 360);
+                    if (ImGui::InputInt("Angle [deg]", &_openloop_ref_angle, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                        // _openloop_ref_angle = std::clamp(_openloop_ref_angle, 0, 360);
                     }
                     ImGui::PopItemWidth();
                 }
 
                 break;
-            case std::to_underlying(::brkdrive::ControlLoop::semiclosed):
-                if (ImGui::InputFloat("D-Current [%]", &_dcurr_ref_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                    _dcurr_ref_pu = std::clamp(_dcurr_ref_pu, -100.0f, 100.0f);
+            case ControlLoop::semiclosed:
+                if (ImGui::InputFloat("D-Current [%]", &_ref_dcurr_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _ref_dcurr_pu = std::clamp(_ref_dcurr_pu, -100.0f, 100.0f);
                 }           
                 break;
             }
@@ -357,7 +376,7 @@ void ControlPanel::_draw_track_mode_controls() {
         if (ImGui::Combo("Ref Control##angle_ref_control", &ref_control, "manual\0program\0\0")) {
             _run = false;
             _ref_angle_manager.reset();
-            _angle_ref = 0;
+            _ref_angle = 0;
         }
         ImGui::PopItemWidth();
         _angle_ref_control = static_cast<ReferenceControl>(ref_control);
@@ -401,7 +420,7 @@ void ControlPanel::_draw_track_mode_controls() {
             if (_run && !_ref_angle_manager.empty()) {
                 ImGui::ProgressBar(_ref_angle_manager.progress());
                 auto ref = _ref_angle_manager.get();
-                _angle_ref = ref.value_or(0);
+                _ref_angle = ref.value_or(0);
 
                 if (!ref.has_value()) {
                     _ref_angle_manager.restart();
@@ -413,14 +432,12 @@ void ControlPanel::_draw_track_mode_controls() {
         }
 
         ImGui::PushItemWidth(200);
-        if (ImGui::InputInt("Angle [deg]", &_angle_ref, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _angle_ref = std::clamp(_angle_ref, -30000, 30000);
-        }
+        ImGui::InputFloat("Angle [deg]", &_ref_angle, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue);
         ImGui::PopItemWidth();
 
         ImGui::PushItemWidth(200);
-        if (ImGui::InputFloat("Track Speed [rpm]", &_track_speed, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _track_speed = std::clamp(_track_speed, 0.0f, 3000.0f);
+        if (ImGui::InputScalar("Track Speed [rpm]", ImGuiDataType_U16, &_track_speed, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _track_speed = std::clamp(_track_speed, uint16_t(0), uint16_t(3000));
         }
         ImGui::PopItemWidth();
     }

@@ -16,19 +16,25 @@ private:
     std::shared_ptr<::brkdrive::Server> _server;
 
     bool _wakeup{false};
-    float _brake_ref_pu{false};
-
-    float _torque_ref_pct{0.0f};
-    float _speed_ref{0.0f};
-    float _dcurr_ref_pu{0.0f};
-    ::brkdrive::OperatingMode _opmode{::brkdrive::OperatingMode::normal};
-    int _ctlmode{std::to_underlying(::brkdrive::ControlMode::torque)};
-    int _ctlloop{std::to_underlying(::brkdrive::ControlLoop::closed)};
     bool _run{false};
+    bool _calibrate{false};
 
-    int _openloop_angle_ref{0};
-    int _angle_ref{0};
-    float _track_speed{0.0f};
+    float _ref_angle{0};
+    uint16_t _track_speed{0};
+
+    float _ref_torque_pct{0.0f};
+    int16_t _ref_speed{0};
+    float _ref_dcurr_pu{0.0f};
+
+    ::brkdrive::OperatingMode _opmode{::brkdrive::OperatingMode::normal};
+
+    ::brkdrive::ControlMode _ctlmode{::brkdrive::ControlMode::torque};
+    int _ctlmode_v{std::to_underlying(::brkdrive::ControlMode::torque)};
+
+    ::brkdrive::ControlLoop _ctlloop{::brkdrive::ControlLoop::closed};
+    int _ctlloop_v{std::to_underlying(::brkdrive::ControlLoop::closed)};
+
+    int _openloop_ref_angle{0};
 
     enum class ReferenceControl {
         manual,
