@@ -27,7 +27,7 @@ private:
         std::atomic<uint16_t> track_speed{0};
         std::atomic<bool> master_bad{false};
         std::atomic<bool> wakeup{false};
-        std::atomic<OperatingStatus> ref_status{OperatingStatus::inoperable};
+        std::atomic<OperatingStatus> cmd_opstatus{OperatingStatus::inoperable};
     } _rpdo1;
 
     struct {
@@ -45,8 +45,8 @@ private:
 
     struct {
         std::atomic<float> angle{0};
-        std::atomic<OperatingStatus> status{OperatingStatus::inoperable};
-        std::atomic<std::string_view> drive_state{"n/a"};
+        std::atomic<OperatingStatus> opstatus{OperatingStatus::inoperable};
+        std::atomic<DriveState> drive_state{DriveState::waiting};
 
         std::atomic<bool> pwm_on{false};
         std::atomic<bool> error{false};
@@ -75,7 +75,7 @@ public:
     void set_track_speed(uint16_t value) { _rpdo1.track_speed.store(value); }
     void toggle_master_bad(bool value) { _rpdo1.master_bad = value; }
     void toggle_wakeup(bool value) { _rpdo1.wakeup.store(value); }
-    void set_ref_status(OperatingStatus status) { _rpdo1.ref_status.store(status); }
+    void set_ref_status(OperatingStatus status) { _rpdo1.cmd_opstatus.store(status); }
 
     void set_opmode(OperatingMode mode) { _rpdo2.opmode.store(mode); }
     void set_ctlmode(ControlMode mode) { _rpdo2.ctlmode.store(mode); }
@@ -86,20 +86,20 @@ public:
     void set_ref_dcurr(float value) { _rpdo3.ref_dcurr.store(std::clamp(value, -1.0f, 1.0f)); }
     void set_openloop_ref_angle(int16_t value) { _rpdo3.openloop_ref_angle.store(value); }
 
-
-
-
-    bool is_running() const { return _tpdo1.run.load(); }
+    float angle() const { return _tpdo1.angle.load(); }
+    OperatingStatus status() const { return _tpdo1.opstatus.load(); }
+    DriveState drive_state() const { return _tpdo1.drive_state.load(); }
+    bool is_pwm_on() const { return _tpdo1.pwm_on.load(); }
     bool has_error() const { return _tpdo1.error.load(); }
     bool has_warning() const { return _tpdo1.warning.load(); }
     OperatingMode opmode() const { return _tpdo1.opmode.load(); }
-    std::string_view ctlmode() const { return _tpdo1.ctlmode.load(); }
-    std::string_view ctlloop() const { return _tpdo1.ctlloop.load(); }
-    std::string_view drive_state() const { return _tpdo1.drive_state.load(); }
-    float torque() const { return _tpdo1.torque.load(); }
-    int16_t speed() const { return _tpdo1.speed.load(); }
-
-    float braking_force() const { return _tpdo2.braking.load(); }
+    ControlMode ctlmode() const { return _tpdo1.ctlmode.load(); }
+    ControlLoop ctlloop() const { return _tpdo1.ctlloop.load(); }
+    
+    float ref_angle() const { return _tpdo2.ref_angle.load(); }
+    float ref_brake() const { return _tpdo2.ref_brake.load(); }
+    
+    int16_t speed() const { return _tpdo3.speed.load(); }
 
     uint32_t errors() const { return _tpdo4.errors.load(); }
     uint16_t warnings() const { return _tpdo4.warnings.load(); }
@@ -110,7 +110,7 @@ public:
 private:
     void _handle_tpdo1(const ucanopen::can_payload& payload);
     void _handle_tpdo2(const ucanopen::can_payload& payload);
-    // void _handle_tpdo3(const ucanopen::can_payload& payload);
+    void _handle_tpdo3(const ucanopen::can_payload& payload);
     void _handle_tpdo4(const ucanopen::can_payload& payload);
 
     ucanopen::can_payload _create_rpdo1();

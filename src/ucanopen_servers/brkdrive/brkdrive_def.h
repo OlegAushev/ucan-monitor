@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <unordered_set>
 #include <utility>
 #include <vector>
@@ -17,7 +18,7 @@ namespace brkdrive {
 struct CobTpdo1 {
     float angle;
 
-    uint8_t status : 2;
+    uint8_t opstatus : 2;
     uint8_t drive_state : 6;
 
     uint8_t pwm_on : 1;
@@ -83,7 +84,7 @@ struct CobRpdo1 {
 
     uint8_t master_bad : 1;
     uint8_t wakeup : 1;
-    uint8_t ref_status : 2;
+    uint8_t cmd_opstatus : 2;
     uint8_t _reserved1 : 4;
     
     uint8_t counter : 2;
@@ -174,22 +175,6 @@ inline const std::vector<std::string> syslog_messages = {
 };
 
 
-inline const std::vector<std::string> drive_states = {
-    "waiting",
-    "standby",
-    "powerup",
-    "ready",
-    "working",
-    "running",
-    "tracking",
-    "powerdown",
-    "cal_stage_1",
-    "cal_stage_2",
-    "cal_stage_3",
-    "hwtest"
-};
-
-
 inline const std::vector<std::string> error_list = {
     "emergency_stop",
     "can_bus_no_conn",
@@ -224,6 +209,54 @@ inline const std::vector<std::string> warning_list = {
 };
 
 
+enum class DriveState {
+    waiting,
+    standby,
+    powerup,
+    ready,
+    working,
+    running,
+    tracking,
+    powerdown,
+    cal_stage_1,
+    cal_stage_2,
+    cal_stage_3,
+    hwtest   
+};
+
+
+inline const std::unordered_set<int> drive_state_values {
+    std::to_underlying(DriveState::waiting),
+    std::to_underlying(DriveState::standby),
+    std::to_underlying(DriveState::powerup),
+    std::to_underlying(DriveState::ready),
+    std::to_underlying(DriveState::working),
+    std::to_underlying(DriveState::running),
+    std::to_underlying(DriveState::tracking),
+    std::to_underlying(DriveState::powerdown),
+    std::to_underlying(DriveState::cal_stage_1),
+    std::to_underlying(DriveState::cal_stage_2),
+    std::to_underlying(DriveState::cal_stage_3),
+    std::to_underlying(DriveState::hwtest) 
+};
+
+
+inline const std::unordered_map<DriveState, std::string_view> drive_state_names = {
+    {DriveState::waiting, "waiting"},
+    {DriveState::standby, "standby"},
+    {DriveState::powerup, "powerup"},
+    {DriveState::ready, "ready"},
+    {DriveState::working, "working"},
+    {DriveState::running, "running"},
+    {DriveState::tracking, "tracking"},
+    {DriveState::powerdown, "powerdown"},
+    {DriveState::cal_stage_1, "cal_stage_1"},
+    {DriveState::cal_stage_2, "cal_stage_2"},
+    {DriveState::cal_stage_3, "cal_stage_3"},
+    {DriveState::hwtest, "hwtest"},
+};
+
+
 enum class OperatingStatus {
     inoperable,
     working,
@@ -238,7 +271,7 @@ inline const std::unordered_set<int> opstatus_values = {
 };
 
 
-inline const std::map<OperatingStatus, std::string_view> opstatus_names = {
+inline const std::unordered_map<OperatingStatus, std::string_view> opstatus_names = {
     {OperatingStatus::inoperable, "inoperable"},
     {OperatingStatus::working, "working"},
     {OperatingStatus::calibrating, "calibrating"}
@@ -260,7 +293,7 @@ inline const std::unordered_set<int> opmode_values = {
     std::to_underlying(OperatingMode::hwtest)
 };
 
-inline const std::map<OperatingMode, std::string_view> opmode_names = {
+inline const std::unordered_map<OperatingMode, std::string_view> opmode_names = {
     {OperatingMode::normal, "normal"},
     {OperatingMode::run, "run"},
     {OperatingMode::track, "track"},
@@ -280,7 +313,7 @@ inline const std::unordered_set<int> ctlmode_values = {
 };
 
 
-inline const std::map<ControlMode, std::string_view> ctlmode_names = {
+inline const std::unordered_map<ControlMode, std::string_view> ctlmode_names = {
     {ControlMode::torque, "torque"},
     {ControlMode::speed, "speed"}
 };
@@ -293,7 +326,14 @@ enum class ControlLoop {
 };
 
 
-inline const std::map<ControlLoop, std::string_view> ctlloop_names = {
+inline const std::unordered_set<int> ctlloop_values = {
+    std::to_underlying(ControlLoop::closed),
+    std::to_underlying(ControlLoop::open),
+    std::to_underlying(ControlLoop::semiclosed)
+};
+
+
+inline const std::unordered_map<ControlLoop, std::string_view> ctlloop_names = {
     {ControlLoop::closed, "closed"},
     {ControlLoop::open, "open"},
     {ControlLoop::semiclosed, "semiclosed"}
