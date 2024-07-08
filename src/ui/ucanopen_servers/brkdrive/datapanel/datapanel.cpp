@@ -60,14 +60,14 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Drive State");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(_server->drive_state().data());
+        ImGui::TextUnformatted(::brkdrive::drive_state_names.at(_server->drive_state()).data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Run [bool]");
+        ImGui::TextUnformatted("PWM [bool]");
         ImGui::TableSetColumnIndex(1);
-        ImGui::Text("%d", _server->is_running());
-        if (_server->is_running()) {
+        ImGui::Text("%d", _server->is_pwm_on());
+        if (_server->is_pwm_on()) {
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
         }
 
@@ -93,32 +93,25 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Operation Mode");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(::brkdrive::opmode_string_map.at(_server->opmode()).data());
+        ImGui::TextUnformatted(::brkdrive::opmode_names.at(_server->opmode()).data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Control Mode");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(_server->ctlmode().data());
+        ImGui::TextUnformatted(::brkdrive::ctlmode_names.at(_server->ctlmode()).data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Control Loop");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(_server->ctlloop().data());
-
+        ImGui::TextUnformatted(::brkdrive::ctlloop_names.at(_server->ctlloop()).data());
+        
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Torque [%]");
+        ImGui::TextUnformatted("Angle [rad]");
         ImGui::TableSetColumnIndex(1);
-        float torque_pct = _server->torque() * 100.0f;
-        ImGui::Text("%.2f", torque_pct);
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Speed [rpm]");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::Text("%d", _server->speed());
+        ImGui::Text("%.2f", _server->angle());
 
         ImGui::EndTable();
     }
@@ -153,10 +146,16 @@ void DataPanel::_draw_tpdo2_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Ref Angle [rad]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%.2f", _server->ref_angle());
+        
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Braking Force [%]");
         ImGui::TableSetColumnIndex(1);
-        float braking_pct = _server->braking_force() * 100.0f;
-        ImGui::Text("%.2f", braking_pct);
+        int braking_pct = _server->ref_brake() * 100.0f;
+        ImGui::Text("%d", braking_pct);
 
         ImGui::EndTable();
     }
@@ -176,59 +175,33 @@ void DataPanel::_draw_tpdo3_table() {
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO3");
 
-    // static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-    // if (ImGui::BeginTable("tpdo3_table", 2, flags)) {
-    //     ImGui::TableSetupColumn("Parameter");
-    //     ImGui::TableSetupColumn("Value");
-    //     ImGui::TableHeadersRow();
+    static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+    if (ImGui::BeginTable("tpdo3_table", 2, flags)) {
+        ImGui::TableSetupColumn("Parameter");
+        ImGui::TableSetupColumn("Value");
+        ImGui::TableHeadersRow();
 
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("Connection");
-    //     ImGui::TableSetColumnIndex(1);
-    //     _server->tpdo_service.good(ucanopen::CobTpdo::tpdo3) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Connection");
+        ImGui::TableSetColumnIndex(1);
+        _server->tpdo_service.good(ucanopen::CobTpdo::tpdo3) ? ImGui::TextUnformatted("ok") : ImGui::TextUnformatted("bad");
 
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("Raw Data [hex]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     auto payload = _server->tpdo_service.data(ucanopen::CobTpdo::tpdo3);
-    //     ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X", payload[0], payload[1], payload[2], payload[3], payload[4], payload[5], payload[6], payload[7]);
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Raw Data [hex]");
+        ImGui::TableSetColumnIndex(1);
+        auto payload = _server->tpdo_service.data(ucanopen::CobTpdo::tpdo3);
+        ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X", payload[0], payload[1], payload[2], payload[3], payload[4], payload[5], payload[6], payload[7]);
 
-    //     auto tpdo3 = _server->tpdo3();
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Speed [rpm]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%d", _server->speed());
 
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("PWR Temperature [°C]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%d", tpdo3.pwrmodule_temp);
-
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("EXC Temperature [°C]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%d", tpdo3.excmodule_temp);
-
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("PCB Temperature [°C]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%d", tpdo3.pcb_temp);
-
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("AW Temperature [°C]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%d", tpdo3.aw_temp);
-
-    //     ImGui::TableNextRow();
-    //     ImGui::TableSetColumnIndex(0);
-    //     ImGui::TextUnformatted("FW Temperature [°C]");
-    //     ImGui::TableSetColumnIndex(1);
-    //     ImGui::Text("%d", tpdo3.fw_temp);
-
-    //     ImGui::EndTable();
-    // }    
+        ImGui::EndTable();
+    }    
 }
 
 
