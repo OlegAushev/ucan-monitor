@@ -166,6 +166,8 @@ void ControlPanel::_draw_normal_mode_controls() {
     });
 
     if (selected) {
+        ToggleButton(ICON_MDI_MATH_COMPASS" Calibrate", _calibrate, ImVec2{200, 0});
+
         ImGui::PushItemWidth(200);
         ImGui::InputFloat("Angle [deg]", &_ref_angle, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue);
         ImGui::PopItemWidth();
@@ -327,11 +329,9 @@ void ControlPanel::_draw_run_mode_controls() {
                 }
 
                 if (_ref_speed == 0) {
-                    ImGui::PushItemWidth(200);
                     if (ImGui::InputInt("Angle [deg]", &_openloop_ref_angle, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
                         // _openloop_ref_angle = std::clamp(_openloop_ref_angle, 0, 360);
                     }
-                    ImGui::PopItemWidth();
                 }
 
                 break;
@@ -482,7 +482,6 @@ void ControlPanel::_draw_actions() {
         if (ImGui::Button(ICON_MDI_RESTART" Reset MCU          ")) {
             _server->exec("ctl", "sys", "reset_device");
         }
-
 
         ImGui::TreePop();
     }
