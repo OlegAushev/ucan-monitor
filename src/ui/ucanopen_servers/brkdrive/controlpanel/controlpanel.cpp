@@ -41,14 +41,14 @@ void ControlPanel::_update_refs() {
     
     _server->toggle_wakeup(_wakeup);
 
-    if (!_calibrate) {
+    if (!(_run && _calibrate)) {
         if (_run) {
             _server->set_cmd_status(OperatingStatus::working);
+        } else if (_calibrate) {
+            _server->set_cmd_status(OperatingStatus::calibrating);
         } else {
             _server->set_cmd_status(OperatingStatus::inoperable);
         }
-    } else {
-        _server->set_cmd_status(OperatingStatus::calibrating);
     }
     
     _server->set_ref_angle(_ref_angle);
@@ -395,6 +395,9 @@ void ControlPanel::_draw_track_mode_controls() {
         ImGui::PopItemWidth();
         _angle_ref_control = static_cast<ReferenceControl>(ref_control);
 
+        static int angle_mode = 0;
+        float ref_angle;
+
         if (_angle_ref_control == ReferenceControl::program) {
             ImGui::PushItemWidth(200);
             std::string test_name = _ref_angle_manager.label();
@@ -434,7 +437,7 @@ void ControlPanel::_draw_track_mode_controls() {
             if (_run && !_ref_angle_manager.empty()) {
                 ImGui::ProgressBar(_ref_angle_manager.progress());
                 auto ref = _ref_angle_manager.get();
-                _ref_angle = ref.value_or(0);
+                ref_angle = ref.value_or(0);
 
                 if (!ref.has_value()) {
                     _ref_angle_manager.restart();
@@ -443,14 +446,12 @@ void ControlPanel::_draw_track_mode_controls() {
                     }
                 }
             }
-        }
-
-        static int angle_mode = 0;
-        float ref_angle;
-        if (angle_mode == 0) {
-            ref_angle = _ref_angle;
         } else {
-            ref_angle = (_ref_angle / std::numbers::pi) * 180.f;
+            if (angle_mode == 0) {
+                ref_angle = _ref_angle;
+            } else {
+                ref_angle = (_ref_angle / std::numbers::pi) * 180.f;
+            }
         }
 
         ImGui::PushItemWidth(200);

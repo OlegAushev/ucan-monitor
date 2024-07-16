@@ -44,7 +44,7 @@ private:
     ReferenceControl _angle_ref_control{ReferenceControl::manual};
     ReferenceManager _ref_torque_manager{"torque[pu]"};
     ReferenceManager _ref_speed_manager{"speed[rpm]"};
-    ReferenceManager _ref_angle_manager{"angle[°]"};
+    ReferenceManager _ref_angle_manager{"angle[]"};
 public:
     ControlPanel(std::shared_ptr<::brkdrive::Server> server,
                  const std::string& menu_title,
