@@ -4,6 +4,9 @@
 #include <ui/util/util.h>
 
 
+using namespace brkdrive;
+
+
 namespace ui {
 namespace brkdrive {
 
@@ -78,6 +81,35 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TextUnformatted("Drive State");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(::brkdrive::drive_state_names.at(_server->drive_state()).data());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Calibrated [bool]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%d", _server->is_calibrated());
+        if (_server->is_calibrated()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
+        } else {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
+        }
+        
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Calibration State");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::TextUnformatted(calibration_state_names.at(_server->calstatus()).data());
+        switch (_server->calstatus()) {
+        case CalibrationState::standby:
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
+            break;
+        case CalibrationState::done:
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
+            break;
+        default:
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
+            break;
+        }
+
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);

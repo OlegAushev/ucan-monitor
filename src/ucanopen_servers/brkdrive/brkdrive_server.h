@@ -46,6 +46,7 @@ private:
     struct {
         std::atomic<float> angle{0};
         std::atomic<OperatingStatus> opstatus{OperatingStatus::inoperable};
+        std::atomic<bool> calibrated{false};
         std::atomic<DriveState> drive_state{DriveState::waiting};
 
         std::atomic<bool> pwm_on{false};
@@ -54,6 +55,8 @@ private:
         std::atomic<OperatingMode> opmode{OperatingMode::normal};
         std::atomic<ControlMode> ctlmode{ControlMode::torque};
         std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
+        
+        std::atomic<CalibrationState> calstatus{CalibrationState::standby};
     } _tpdo1;
 
     struct {
@@ -89,6 +92,8 @@ public:
     float angle() const { return _tpdo1.angle.load(); }
     OperatingStatus opstatus() const { return _tpdo1.opstatus.load(); }
     DriveState drive_state() const { return _tpdo1.drive_state.load(); }
+    bool is_calibrated() const { return _tpdo1.calibrated; }
+    CalibrationState calstatus() const { return _tpdo1.calstatus; }
     bool is_pwm_on() const { return _tpdo1.pwm_on.load(); }
     bool has_error() const { return _tpdo1.error.load(); }
     bool has_warning() const { return _tpdo1.warning.load(); }

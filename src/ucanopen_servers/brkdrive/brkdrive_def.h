@@ -19,7 +19,8 @@ struct CobTpdo1 {
     float angle;
 
     uint8_t opstatus : 2;
-    uint8_t drive_state : 6;
+    uint8_t calibrated : 1;
+    uint8_t drive_state : 5;
 
     uint8_t pwm_on : 1;
     uint8_t error : 1;
@@ -28,7 +29,8 @@ struct CobTpdo1 {
     uint8_t ctlmode : 1;
     uint8_t ctlloop : 2;
     
-    uint8_t _reserved1;
+    uint8_t calstatus : 3;
+    uint8_t _reserved1 : 5;
     
     uint8_t counter : 2;
     uint8_t _reserved2 : 6;
@@ -218,9 +220,7 @@ enum class DriveState {
     running,
     tracking,
     powerdown,
-    cal_stage_1,
-    cal_stage_2,
-    cal_stage_3,
+    calibrating,
     hwtest   
 };
 
@@ -234,9 +234,7 @@ inline const std::unordered_set<int> drive_state_values {
     std::to_underlying(DriveState::running),
     std::to_underlying(DriveState::tracking),
     std::to_underlying(DriveState::powerdown),
-    std::to_underlying(DriveState::cal_stage_1),
-    std::to_underlying(DriveState::cal_stage_2),
-    std::to_underlying(DriveState::cal_stage_3),
+    std::to_underlying(DriveState::calibrating),
     std::to_underlying(DriveState::hwtest) 
 };
 
@@ -250,9 +248,7 @@ inline const std::unordered_map<DriveState, std::string_view> drive_state_names 
     {DriveState::running, "running"},
     {DriveState::tracking, "tracking"},
     {DriveState::powerdown, "powerdown"},
-    {DriveState::cal_stage_1, "cal_stage_1"},
-    {DriveState::cal_stage_2, "cal_stage_2"},
-    {DriveState::cal_stage_3, "cal_stage_3"},
+    {DriveState::calibrating, "calibrating"},
     {DriveState::hwtest, "hwtest"},
 };
 
@@ -337,6 +333,39 @@ inline const std::unordered_map<ControlLoop, std::string_view> ctlloop_names = {
     {ControlLoop::closed, "closed"},
     {ControlLoop::open, "open"},
     {ControlLoop::semiclosed, "semiclosed"}
+};
+
+
+enum class CalibrationState {
+    standby,
+    stage1,
+    stage2,
+    stage3,
+    stage4,
+    stage5,
+    done
+};
+
+
+inline const std::unordered_set<int> calibration_state_values {
+    std::to_underlying(CalibrationState::standby),
+    std::to_underlying(CalibrationState::stage1),
+    std::to_underlying(CalibrationState::stage2),
+    std::to_underlying(CalibrationState::stage3),
+    std::to_underlying(CalibrationState::stage4),
+    std::to_underlying(CalibrationState::stage5),
+    std::to_underlying(CalibrationState::done),
+};
+
+
+inline const std::unordered_map<CalibrationState, std::string_view> calibration_state_names = {
+    {CalibrationState::standby, "standby"},
+    {CalibrationState::stage1, "stage1"},
+    {CalibrationState::stage2, "stage2"},
+    {CalibrationState::stage3, "stage3"},
+    {CalibrationState::stage4, "stage4"},
+    {CalibrationState::stage5, "stage5"},
+    {CalibrationState::done, "done"},
 };
 
 
