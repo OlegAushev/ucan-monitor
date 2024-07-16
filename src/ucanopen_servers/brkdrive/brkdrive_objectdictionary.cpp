@@ -151,6 +151,16 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3009, 0x03}, {"config", "angle_sensor", "spi_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3009, 0x04}, {"config", "angle_sensor", "adc_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
+{{0x300A, 0x01}, {"config", "calibration", "touch_current",     "A",        OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300A, 0x02}, {"config", "calibration", "clamp_current",     "A",        OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300A, 0x03}, {"config", "calibration", "current_reg_delay", "ms",       OD_ACCESS_RW, OD_UINT32}},
+{{0x300A, 0x04}, {"config", "calibration", "to_speed",          "rpm",      OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300A, 0x05}, {"config", "calibration", "from_speed",        "rpm",      OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300A, 0x06}, {"config", "calibration", "stage1_to_angle",   "rad",      OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300A, 0x07}, {"config", "calibration", "stage2_from_angle", "rad",      OD_ACCESS_RW, OD_FLOAT32}},
+
+
+
 // {{0x1A00, 0x00}, {}},
 // {{0x1A01, 0x00}, {}},
 // {{0x1A01, 0x01}, {"tpdo2", "converter", "vDC", "V", OD_ACCESS_RO, OD_UINT16}},
