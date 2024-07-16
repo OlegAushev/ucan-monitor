@@ -168,9 +168,28 @@ void ControlPanel::_draw_normal_mode_controls() {
     if (selected) {
         ToggleButton(ICON_MDI_MATH_COMPASS" Calibrate", _calibrate, ImVec2{200, 0});
 
+        static int angle_mode = 0;
+        float ref_angle;
+        if (angle_mode == 0) {
+            ref_angle = _ref_angle;
+        } else {
+            ref_angle = (_ref_angle / std::numbers::pi) * 180.f;
+        }
+
         ImGui::PushItemWidth(200);
-        ImGui::InputFloat("Angle [deg]", &_ref_angle, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue);
+        ImGui::InputFloat("Angle", &ref_angle, 1.0f, 100.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue);
         ImGui::PopItemWidth();
+
+        if (angle_mode == 0) {
+            _ref_angle = ref_angle;
+        } else {
+            _ref_angle = (ref_angle / 180.f) * std::numbers::pi;
+        }    
+        
+        ImGui::SameLine();
+        ImGui::RadioButton("[rad]", &angle_mode, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("[deg]", &angle_mode, 1);
 
         ImGui::PushItemWidth(200);
         if (ImGui::InputScalar("Track Speed [rpm]", ImGuiDataType_U16, &_track_speed, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -366,11 +385,6 @@ void ControlPanel::_draw_track_mode_controls() {
     });
 
     if (selected) {
-        // start/stop
-        ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run, ImVec2{200, 0});
-        ImGui::SameLine();
-        ImGui::TextDisabled("(F4)");
-
         int ref_control = std::to_underlying(_angle_ref_control);
         ImGui::PushItemWidth(200);
         if (ImGui::Combo("Ref Control##angle_ref_control", &ref_control, "manual\0program\0\0")) {
@@ -431,9 +445,28 @@ void ControlPanel::_draw_track_mode_controls() {
             }
         }
 
+        static int angle_mode = 0;
+        float ref_angle;
+        if (angle_mode == 0) {
+            ref_angle = _ref_angle;
+        } else {
+            ref_angle = (_ref_angle / std::numbers::pi) * 180.f;
+        }
+
         ImGui::PushItemWidth(200);
-        ImGui::InputFloat("Angle [deg]", &_ref_angle, 1.0f, 100.0f, "%.f", ImGuiInputTextFlags_EnterReturnsTrue);
+        ImGui::InputFloat("Angle", &ref_angle, 1.0f, 100.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue);
         ImGui::PopItemWidth();
+
+        if (angle_mode == 0) {
+            _ref_angle = ref_angle;
+        } else {
+            _ref_angle = (ref_angle / 180.f) * std::numbers::pi;
+        }    
+        
+        ImGui::SameLine();
+        ImGui::RadioButton("[rad]", &angle_mode, 0);
+        ImGui::SameLine();
+        ImGui::RadioButton("[deg]", &angle_mode, 1);
 
         ImGui::PushItemWidth(200);
         if (ImGui::InputScalar("Track Speed [rpm]", ImGuiDataType_U16, &_track_speed, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
