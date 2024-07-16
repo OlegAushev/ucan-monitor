@@ -30,7 +30,8 @@ struct CobTpdo1 {
     uint8_t ctlloop : 2;
     
     uint8_t calstatus : 3;
-    uint8_t _reserved1 : 5;
+    uint8_t trkcompleted : 1;
+    uint8_t _reserved1 : 4;
     
     uint8_t counter : 2;
     uint8_t _reserved2 : 6;
@@ -343,7 +344,7 @@ enum class CalibrationState {
     stage3,
     stage4,
     stage5,
-    done
+    completed
 };
 
 
@@ -354,7 +355,7 @@ inline const std::unordered_set<int> calibration_state_values {
     std::to_underlying(CalibrationState::stage3),
     std::to_underlying(CalibrationState::stage4),
     std::to_underlying(CalibrationState::stage5),
-    std::to_underlying(CalibrationState::done),
+    std::to_underlying(CalibrationState::completed),
 };
 
 
@@ -365,7 +366,7 @@ inline const std::unordered_map<CalibrationState, std::string_view> calibration_
     {CalibrationState::stage3, "stage3"},
     {CalibrationState::stage4, "stage4"},
     {CalibrationState::stage5, "stage5"},
-    {CalibrationState::done, "done"},
+    {CalibrationState::completed, "completed"},
 };
 
 

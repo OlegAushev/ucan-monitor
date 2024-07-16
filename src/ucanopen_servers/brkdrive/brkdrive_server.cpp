@@ -50,6 +50,8 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
         _tpdo1.opstatus.store(static_cast<OperatingStatus>(tpdo.opstatus));
     }
 
+    _tpdo1.calibrated.store(tpdo.calibrated);
+
     if (drive_state_values.contains(tpdo.drive_state)) {
         _tpdo1.drive_state.store(static_cast<DriveState>(tpdo.drive_state));
     }
@@ -69,6 +71,12 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
     if (ctlloop_values.contains(tpdo.ctlloop)) {
         _tpdo1.ctlloop.store(static_cast<ControlLoop>(tpdo.ctlloop));
     }
+
+    if (calibration_state_values.contains(tpdo.calstatus)) {
+        _tpdo1.calstatus.store(static_cast<CalibrationState>(tpdo.calstatus));
+    }
+
+    _tpdo1.trkcompleted.store(tpdo.trkcompleted);
 }
 
 

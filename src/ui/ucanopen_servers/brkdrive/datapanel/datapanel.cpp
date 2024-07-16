@@ -102,7 +102,7 @@ void DataPanel::_draw_tpdo1_table() {
         case CalibrationState::standby:
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
             break;
-        case CalibrationState::done:
+        case CalibrationState::completed:
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
             break;
         default:
@@ -161,6 +161,17 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TextUnformatted("Angle [rad]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.2f", _server->angle());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Trk Completed [bool]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%d", _server->is_trk_completed());
+        if (_server->is_trk_completed()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
+        } else {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
+        }
 
         ImGui::EndTable();
     }

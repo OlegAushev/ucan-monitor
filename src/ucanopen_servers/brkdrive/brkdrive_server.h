@@ -57,6 +57,7 @@ private:
         std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
         
         std::atomic<CalibrationState> calstatus{CalibrationState::standby};
+        std::atomic<bool> trkcompleted{false};
     } _tpdo1;
 
     struct {
@@ -100,6 +101,7 @@ public:
     OperatingMode opmode() const { return _tpdo1.opmode.load(); }
     ControlMode ctlmode() const { return _tpdo1.ctlmode.load(); }
     ControlLoop ctlloop() const { return _tpdo1.ctlloop.load(); }
+    bool is_trk_completed() const { return _tpdo1.trkcompleted; }
     
     float ref_angle() const { return _tpdo2.ref_angle.load(); }
     float ref_brake() const { return _tpdo2.ref_brake.load(); }
