@@ -58,6 +58,7 @@ private:
     void _draw_track_mode_controls();
     void _draw_hwtest_mode_controls();
     void _draw_actions();
+    void _draw_calibration_results();
 
     void _draw_popups();
     void _read_keyboard();

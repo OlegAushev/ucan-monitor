@@ -168,6 +168,8 @@ void ControlPanel::_draw_normal_mode_controls() {
     if (selected) {
         ToggleButton(ICON_MDI_MATH_COMPASS" Calibrate", _calibrate, ImVec2{200, 0});
 
+        _draw_calibration_results();
+
         static int angle_mode = 0;
         float ref_angle;
         if (angle_mode == 0) {
@@ -522,22 +524,6 @@ void ControlPanel::_draw_actions() {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void ControlPanel::_draw_popups() {
     // Always center this window when appearing
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
@@ -595,6 +581,58 @@ void ControlPanel::_draw_popups() {
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
+    }
+}
+
+
+void ControlPanel::_draw_calibration_results() {
+    static std::string phi_1;
+    static std::string phi_2;
+    static std::string phi_3;
+    
+    ImGui::TextUnformatted(ICON_MDI_MATH_COMPASS);
+    ImGui::SameLine();
+    if (ImGui::TreeNode("Calibration Results")) {
+        if (phi_1.empty()) {
+            phi_1 = _server->read_scalar("ctl", "drive", "phi_1", std::chrono::milliseconds(100)).value_or("n/a");
+        }
+        
+        if (phi_2.empty()) {
+            phi_2 = _server->read_scalar("ctl", "drive", "phi_2", std::chrono::milliseconds(100)).value_or("n/a");
+        }
+        
+        if (phi_3.empty()) {
+            phi_3 = _server->read_scalar("ctl", "drive", "phi_3", std::chrono::milliseconds(100)).value_or("n/a");
+        }
+
+        static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+        if (ImGui::BeginTable("phi_table", 3, flags)) {
+            ImGui::TableSetupColumn("Phi_1 [rad]");
+            ImGui::TableSetupColumn("Phi_2 [rad]");
+            ImGui::TableSetupColumn("Phi_3 [rad]");
+            ImGui::TableHeadersRow();
+
+            ImGui::TableNextRow();
+
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(phi_1.c_str());
+            
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted(phi_2.c_str());
+            
+            ImGui::TableSetColumnIndex(2);
+            ImGui::TextUnformatted(phi_3.c_str());
+
+            ImGui::EndTable();
+        }
+
+        if (ImGui::Button(ICON_MDI_REFRESH " Refresh##calibration")) {
+            phi_1.clear();
+            phi_2.clear();
+            phi_3.clear();
+        }
+
+        ImGui::TreePop();
     }
 }
 
