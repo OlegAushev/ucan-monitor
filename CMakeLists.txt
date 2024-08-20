@@ -101,6 +101,14 @@ target_link_libraries(${executable} PRIVATE
     ${OPENGL_LIBRARIES}
 )
 
+if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "13")
+    message(STATUS "Compiler version ${CMAKE_CXX_COMPILER_VERSION} doesn`t support std::format, fmtlib is required")
+    find_package(fmt REQUIRED)
+    target_link_libraries(${executable} PRIVATE
+        fmt::fmt
+    )
+endif()
+
 ################################################################################
 # Compiler Options and Features
 target_compile_options(${executable} PRIVATE

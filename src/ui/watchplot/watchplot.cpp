@@ -15,9 +15,9 @@ WatchPlot::WatchPlot(std::shared_ptr<::ucanopen::Server> server,
 {
     _plotid = ++_plotid_count;
     _init_charts();
-    _header_id = std::format("Watch Plot##{}", _plotid);
-    _dndleft_id = std::format("dndleft##{}", _plotid);
-    _dnd_id = std::format("dnd##{}", _plotid);
+    _header_id = bsclog_fmt::format("Watch Plot##{}", _plotid);
+    _dndleft_id = bsclog_fmt::format("dndleft##{}", _plotid);
+    _dnd_id = bsclog_fmt::format("dnd##{}", _plotid);
 }
 
 

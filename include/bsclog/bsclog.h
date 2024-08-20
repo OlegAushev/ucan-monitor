@@ -2,12 +2,30 @@
 
 
 #include <chrono>
+#ifdef __cpp_lib_format
 #include <format>
+namespace bsclog_fmt = std;
+#else
+#include <fmt/format.h>
+#include <fmt/chrono.h>
+namespace bsclog_fmt = fmt;
+#endif
 #include <set>
 #include <string>
 #include <string_view>
 #include <vector>
 #include <utility>
+
+
+#ifndef __cpp_lib_to_underlying
+namespace std {
+template<typename E>
+constexpr std::underlying_type_t<E> to_underlying(E e) noexcept {
+    static_assert(std::is_enum_v<E> == true);
+    return static_cast<std::underlying_type_t<E>>(e);
+}
+}
+#endif
 
 
 namespace bsclog {
@@ -54,55 +72,55 @@ public:
     }
 
     template <typename... Args>
-    void trace(std::format_string<Args...> fmt, Args&&... args) {
+    void trace(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
         _log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    void debug(std::format_string<Args...> fmt, Args&&... args) {
+    void debug(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
         _log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    void info(std::format_string<Args...> fmt, Args&&... args) {
+    void info(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
         _log(level::info, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    void success(std::format_string<Args...> fmt, Args&&... args) {
+    void success(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
         _log(level::success, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    void warning(std::format_string<Args...> fmt, Args&&... args) {
+    void warning(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
         _log(level::warning, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    void error(std::format_string<Args...> fmt, Args&&... args) {
+    void error(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
         _log(level::error, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    void critical(std::format_string<Args...> fmt, Args&&... args) {
+    void critical(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
         _log(level::critical, fmt, std::forward<Args>(args)...);
     }
 
     template <typename... Args>
-    void log(std::format_string<Args...> fmt, Args&&... args) {
+    void log(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
         _log(level::off, fmt, std::forward<Args>(args)...);
     }
 
 private:
     template <typename... Args>
-    void _log(level lvl, std::format_string<Args...> fmt, Args&&... args) {
+    void _log(level lvl, bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
         // auto now = std::chrono::system_clock::now();
         // auto now_time_t = std::chrono::system_clock::to_time_t(now);
         // std::stringstream timestamp;
         // timestamp << '[' << std::put_time(std::localtime(&now_time_t), "%F %T") << '] ';
 
-        std::string payload = std::format(fmt, std::forward<Args>(args)...);
-        std::string message = std::format("{} {}", level_prefix[std::to_underlying(lvl)], payload); 
+        std::string payload = bsclog_fmt::format(fmt, std::forward<Args>(args)...);
+        std::string message = bsclog_fmt::format("{} {}", level_prefix[std::to_underlying(lvl)], payload); 
 
         for (auto sink : _sinks) {
             *sink << message << '\n';
@@ -129,49 +147,49 @@ inline auto sink_count() {
 
 
 template <typename... Args>
-inline void trace(std::format_string<Args...> fmt, Args&&... args) {
+inline void trace(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
     logger::instance().trace(fmt, std::forward<Args>(args)...);
 }
 
 
 template <typename... Args>
-inline void debug(std::format_string<Args...> fmt, Args&&... args) {
+inline void debug(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
     logger::instance().debug(fmt, std::forward<Args>(args)...);
 }
 
 
 template <typename... Args>
-inline void info(std::format_string<Args...> fmt, Args&&... args) {
+inline void info(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
     logger::instance().info(fmt, std::forward<Args>(args)...);
 }
 
 
 template <typename... Args>
-inline void success(std::format_string<Args...> fmt, Args&&... args) {
+inline void success(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
     logger::instance().success(fmt, std::forward<Args>(args)...);
 }
 
 
 template <typename... Args>
-inline void warning(std::format_string<Args...> fmt, Args&&... args) {
+inline void warning(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
     logger::instance().warning(fmt, std::forward<Args>(args)...);
 }
 
 
 template <typename... Args>
-inline void error(std::format_string<Args...> fmt, Args&&... args) {
+inline void error(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
     logger::instance().error(fmt, std::forward<Args>(args)...);
 }
 
 
 template <typename... Args>
-inline void critical(std::format_string<Args...> fmt, Args&&... args) {
+inline void critical(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
     logger::instance().critical(fmt, std::forward<Args>(args)...);
 }
 
 
 template <typename... Args>
-inline void log(std::format_string<Args...> fmt, Args&&... args) {
+inline void log(bsclog_fmt::format_string<Args...> fmt, Args&&... args) {
     logger::instance().log(fmt, std::forward<Args>(args)...);
 }
 
