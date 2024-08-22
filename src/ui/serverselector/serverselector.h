@@ -21,7 +21,7 @@ public:
         return s;
     }
 
-    void show(const std::vector<std::string>& server_names);
+    void show(const std::vector<std::string>& server_names, ImVec2 size);
     bool server_is_selected() { return _server_is_selected; }
     std::string selected_server() const { return _selected_server; }
 };
