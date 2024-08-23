@@ -9,6 +9,8 @@ Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, co
         , ucanopen::SdoSubscriber(sdo_service) {
     tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo1, std::chrono::milliseconds(1000),
                                [this](ucanopen::can_payload payload) { this->_handle_tpdo1(payload); });
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1000),
+                               [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
     tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1000),
                                [this](ucanopen::can_payload payload) { this->_handle_tpdo4(payload); });
 }
@@ -26,7 +28,7 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
 
 
 //----------------------------------------------------------------------------------------------------------------------
-void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
+void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo1) == 8);
     CobTpdo1 tpdo = ucanopen::from_payload<CobTpdo1>(payload);
     
@@ -37,7 +39,15 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
 }
 
 
-void Server::_handle_tpdo4(const ucanopen::can_payload& payload){
+void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
+    static_assert(sizeof(CobTpdo2) == 8);
+    CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
+    
+    _tpdo2.throttle.store(tpdo.voltageOut / 255.f);
+}
+
+
+void Server::_handle_tpdo4(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo4) == 8);
     CobTpdo4 tpdo = ucanopen::from_payload<CobTpdo4>(payload);
 

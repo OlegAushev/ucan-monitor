@@ -19,7 +19,7 @@
 #include <ui/watchpanel/watchpanel.h>
 #include <ui/watchplot/watchplot.h>
 
-#include <ucanopen_servers/moyka/moyka_server.h>
+#include <ui/ucanopen_servers/moyka/panel/panel.h>
 
 #include <ui/ucanopen_servers/srmdrive/controlpanel/controlpanel.h>
 #include <ui/ucanopen_servers/srmdrive/datapanel/datapanel.h>
@@ -164,9 +164,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto moyka_server = std::make_shared<moyka::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
         ucanopen_client->register_server(moyka_server);
         
-        watchpanel = std::make_shared<ui::WatchPanel>(moyka_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
+        auto panel = std::make_shared<ui::moyka::Panel>(moyka_server, ICON_MDI_GAUGE" Panel", ICON_MDI_GAUGE, "true");
+        watchpanel = std::make_shared<ui::WatchPanel>(moyka_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", false);
         serversetuppanel = std::make_shared<ui::ServerSetupPanel>(moyka_server, ICON_MDI_TOOLS" Setup", "Setup", false);
+        gui_log->toggle(false);
         
+        views.push_back(panel);
         views.push_back(watchpanel);
         views.push_back(serversetuppanel);
     } if (server_name == "srmdrive") {

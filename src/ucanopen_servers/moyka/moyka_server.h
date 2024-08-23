@@ -28,6 +28,10 @@ private:
         std::atomic<int16_t> speed{0};
         std::atomic<uint16_t> dc_voltage{0};
     } _tpdo1;
+    
+    struct {
+        std::atomic<float> throttle{0.5f};
+    } _tpdo2;
 
     struct {
         std::atomic<uint32_t> errors{0};
@@ -36,6 +40,8 @@ private:
 
     std::atomic<DriveState> _drive_state{DriveState::STANDBY};
 public:
+    DriveState drive_state() const { return _drive_state.load(); }
+    float throttle() const { return _tpdo2.throttle.load(); }
  /*    void set_ref_angle(float value) { _rpdo1.ref_angle.store(value); }
     void set_track_speed(uint16_t value) { _rpdo1.track_speed.store(value); }
     void toggle_master_bad(bool value) { _rpdo1.master_bad = value; }
@@ -53,7 +59,6 @@ public:
 
     float angle() const { return _tpdo1.angle.load(); }
     OperatingStatus opstatus() const { return _tpdo1.opstatus.load(); }
-    DriveState drive_state() const { return _tpdo1.drive_state.load(); }
     bool is_calibrated() const { return _tpdo1.calibrated; }
     CalibrationState calstatus() const { return _tpdo1.calstatus; }
     bool is_pwm_on() const { return _tpdo1.pwm_on.load(); }
@@ -77,6 +82,7 @@ public:
 
 private:
     void _handle_tpdo1(const ucanopen::can_payload& payload);
+    void _handle_tpdo2(const ucanopen::can_payload& payload);
     void _handle_tpdo4(const ucanopen::can_payload& payload);
 };
 

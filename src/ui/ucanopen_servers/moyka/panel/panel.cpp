@@ -1,0 +1,76 @@
+#include "panel.h"
+#include <ui/util/util.h>
+#include <ui/util/style.h>
+
+
+using namespace moyka;
+
+
+namespace ui {
+namespace moyka {
+
+
+Panel::Panel(std::shared_ptr<::moyka::Server> server,
+             const std::string& menu_title,
+             const std::string& window_title,
+             bool open)
+        : View(menu_title, window_title, open)
+        , _server(server) {}
+
+
+void Panel::draw() {
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    float menubar_height = window->MenuBarHeight;
+    ImGui::SetNextWindowPos(ImVec2(0.0f, menubar_height));
+    ImGui::SetNextWindowSize(ImGui::GetWindowSize());// GetIO().DisplaySize);
+    
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration;
+    ImGui::Begin(_window_title.c_str(), &_opened, flags);
+    
+    if (_server->tpdo_service.good(ucanopen::CobTpdo::tpdo1)) {
+        ui::util::BlinkingText(ICON_MDI_NETWORK, std::chrono::milliseconds{750},
+                               ui::colors::icon_green, ui::colors::icon_inactive);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+    
+    // Drive state indicator
+    ImGui::SameLine();
+    std::string state(drive_state_names.at(_server->drive_state()));
+    ImGui::PushItemWidth(140);
+    ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
+    ImGui::PopItemWidth();
+
+    ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE" Uptime[s]:");
+    ImGui::SameLine();
+    ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "UPTIME").c_str());
+    
+    ImGui::TextUnformatted(ICON_MDI_CAR_BATTERY" Voltage[V]:");
+    ImGui::SameLine();
+    ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "DC_VOLTAGE").c_str());
+    
+    ImGui::TextUnformatted(ICON_MDI_GAUGE" Speed[rpm]:");
+    ImGui::SameLine();
+    ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "SPEED_RPM").c_str());
+    
+    ImGui::TextUnformatted(ICON_MDI_THERMOMETER" Motor Temp[oC]:");
+    ImGui::SameLine();
+    ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "MOTOR_S_TEMP").c_str());
+    
+    ImGui::TextUnformatted(ICON_MDI_THERMOMETER" Motor Temp[oC]:");
+    ImGui::SameLine();
+    ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "MOTOR_FW_TEMP").c_str());
+    
+    float throttle_pct = _server->throttle() * 200.f - 100.f;
+    ImGui::PushItemWidth(200);
+    ImGui::SliderFloat(ICON_MDI_SPEEDOMETER"##accl_slider", &throttle_pct, -100.f, 100.0f, "%.0f", ImGuiSliderFlags_NoInput);
+    ImGui::PopItemWidth();
+
+    ImGui::End();
+}
+
+
+} // namespace moyka
+} // namespace ui
