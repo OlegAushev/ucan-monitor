@@ -92,9 +92,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     style.FrameBorderSize = 1.0f;
 
     // Fonts
-    float base_fontsize = 20.0f;
+    float base_fontsize = 35.0f;
     float icon_fontsize = base_fontsize;
-    io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf", base_fontsize, NULL, io.Fonts->GetGlyphRangesDefault());
+    io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf", base_fontsize, NULL, io.Fonts->GetGlyphRangesCyrillic());
 
         // merge in icons from Font Awesome
     static const ImWchar icons_ranges[] = {ICON_MIN_MDI, ICON_MAX_MDI, 0};

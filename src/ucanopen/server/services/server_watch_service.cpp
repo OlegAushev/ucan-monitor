@@ -15,7 +15,7 @@ ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher&
         if (object.category == _server.dictionary().config.watch_category) {
             _objects.push_back(&object);
             _object_daq_enabled.push_back(true);
-            _data.insert({WatchKey{object.subcategory, object.name}, {ExpeditedSdoData{}, "n/a"}});
+            _data.insert({WatchKey{object.subcategory, object.name}, {ExpeditedSdoData{}, "н/д"}});
         }
     }
 }

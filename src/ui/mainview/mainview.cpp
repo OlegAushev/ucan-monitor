@@ -18,8 +18,7 @@ MainView::MainView(std::shared_ptr<ui::Options> options,
 
 
 void MainView::draw() {
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar
-                                  | ImGuiWindowFlags_NoDocking
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking
                                   | ImGuiWindowFlags_NoResize
                                   | ImGuiWindowFlags_NoMove
                                   | ImGuiWindowFlags_NoTitleBar
@@ -40,7 +39,7 @@ void MainView::draw() {
     ImGuiID dockspace_id = ImGui::GetID("DockSpace");
     ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
-    _draw_menubar();
+    // _draw_menubar();
 
     for (auto& view : _views) {
         if (view->opened()) {
