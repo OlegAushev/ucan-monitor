@@ -43,23 +43,23 @@ void Panel::draw() {
     ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
 
-    ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE" Uptime[s]:");
+    ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE" Время[сек]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "UPTIME").c_str());
     
-    ImGui::TextUnformatted(ICON_MDI_CAR_BATTERY" Voltage[V]:");
+    ImGui::TextUnformatted(ICON_MDI_CAR_BATTERY" Напряжение[В]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "DC_VOLTAGE").c_str());
     
-    ImGui::TextUnformatted(ICON_MDI_THERMOMETER" Motor Temp[oC]:");
+    ImGui::TextUnformatted(ICON_MDI_THERMOMETER" Темп. мотора 1[oC]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "MOTOR_S_TEMP").c_str());
     
-    ImGui::TextUnformatted(ICON_MDI_THERMOMETER" Motor Temp[oC]:");
+    ImGui::TextUnformatted(ICON_MDI_THERMOMETER" Темп. мотора 2[oC]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "MOTOR_FW_TEMP").c_str());
     
-    ImGui::TextUnformatted(ICON_MDI_GAUGE" Speed[rpm]:");
+    ImGui::TextUnformatted(ICON_MDI_GAUGE" Скорость[об/мин]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "SPEED_RPM").c_str());
     

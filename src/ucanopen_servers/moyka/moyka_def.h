@@ -93,18 +93,18 @@ inline const std::unordered_set<int> drive_state_values {
 
 
 inline const std::unordered_map<DriveState, std::string_view> drive_state_names = {
-    {DriveState::STANDBY, "STANDBY"},
-    {DriveState::IDLE, "IDLE"},
-    {DriveState::POWERUP, "POWERUP"},
-    {DriveState::READY, "READY"},
-    {DriveState::PREPARING, "PREPARING"},
-    {DriveState::STARTING, "STARTING"},
-    {DriveState::IN_OPERATION, "IN_OPERATION"},
-    {DriveState::STOPPING, "STOPPING"},
-    {DriveState::POWERDOWN, "POWERDOWN"},
-    {DriveState::CALIBRATING_POS_SENSOR_POWERUP, "CALIBRATING_POS_SENSOR_POWERUP"},
-    {DriveState::CALIBRATING_POS_SENSOR, "CALIBRATING_POS_SENSOR"},
-    {DriveState::EVALUATING_MOTOR, "EVALUATING_MOTOR"},
+    {DriveState::STANDBY, "ОЖИДАНИЕ"},
+    {DriveState::IDLE, "ОЖИДАНИЕ"},
+    {DriveState::POWERUP, "ВКЛЮЧЕНИЕ"},
+    {DriveState::READY, "ГОТОВ"},
+    {DriveState::PREPARING, "ЗАПУСК"},
+    {DriveState::STARTING, "ЗАПУСК"},
+    {DriveState::IN_OPERATION, "РАБОТА"},
+    {DriveState::STOPPING, "ОСТАНОВ"},
+    {DriveState::POWERDOWN, "ВЫКЛЮЧЕНИЕ"},
+    {DriveState::CALIBRATING_POS_SENSOR_POWERUP, "КАЛИБРОВКА"},
+    {DriveState::CALIBRATING_POS_SENSOR, "КАЛИБРОВКА"},
+    {DriveState::EVALUATING_MOTOR, "КАЛИБРОВКА"},
 };
 
 
