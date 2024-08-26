@@ -39,7 +39,7 @@ void Panel::draw() {
     // Drive state indicator
     ImGui::SameLine();
     std::string state(drive_state_names.at(_server->drive_state()));
-    ImGui::PushItemWidth(140);
+    ImGui::PushItemWidth(200);
     ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
 
