@@ -42,6 +42,9 @@ private:
 public:
     DriveState drive_state() const { return _drive_state.load(); }
     float throttle() const { return _tpdo2.throttle.load(); }
+    uint32_t errors() const { return _tpdo4.errors.load(); }
+    uint16_t warnings() const { return _tpdo4.warnings.load(); }
+
  /*    void set_ref_angle(float value) { _rpdo1.ref_angle.store(value); }
     void set_track_speed(uint16_t value) { _rpdo1.track_speed.store(value); }
     void toggle_master_bad(bool value) { _rpdo1.master_bad = value; }
@@ -73,9 +76,6 @@ public:
     float ref_brake() const { return _tpdo2.ref_brake.load(); }
     
     int16_t speed() const { return _tpdo3.speed.load(); }
-
-    uint32_t errors() const { return _tpdo4.errors.load(); }
-    uint16_t warnings() const { return _tpdo4.warnings.load(); }
 
     const auto& error_list() const { return ::brkdrive::error_list; }
     const auto& warning_list() const { return ::brkdrive::warning_list; } */

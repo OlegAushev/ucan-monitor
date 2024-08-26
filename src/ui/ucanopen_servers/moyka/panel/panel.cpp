@@ -24,7 +24,7 @@ void Panel::draw() {
     ImGui::SetNextWindowPos(ImVec2(0.0f, menubar_height));
     ImGui::SetNextWindowSize(ImGui::GetWindowSize());// GetIO().DisplaySize);
     
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration;
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration; 
     ImGui::Begin(_window_title.c_str(), &_opened, flags);
     
     if (_server->tpdo_service.good(ucanopen::CobTpdo::tpdo1)) {
@@ -39,9 +39,17 @@ void Panel::draw() {
     // Drive state indicator
     ImGui::SameLine();
     std::string state(drive_state_names.at(_server->drive_state()));
+    if (_server->errors() != 0) {
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_red);
+    } else {
+        auto color = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, color);
+    }
+
     ImGui::PushItemWidth(200);
     ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
+    ImGui::PopStyleColor();
 
     ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE" Время[сек]:");
     ImGui::SameLine();
