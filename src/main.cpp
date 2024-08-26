@@ -160,7 +160,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     if (server_name == "project-moyka") {
         glfwMaximizeWindow(window);
         glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
-
+        io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+        io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        
         auto moyka_server = std::make_shared<moyka::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
         ucanopen_client->register_server(moyka_server);
         
