@@ -51,10 +51,6 @@ void Panel::draw() {
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "DC_VOLTAGE").c_str());
     
-    ImGui::TextUnformatted(ICON_MDI_GAUGE" Speed[rpm]:");
-    ImGui::SameLine();
-    ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "SPEED_RPM").c_str());
-    
     ImGui::TextUnformatted(ICON_MDI_THERMOMETER" Motor Temp[oC]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "MOTOR_S_TEMP").c_str());
@@ -63,10 +59,43 @@ void Panel::draw() {
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "MOTOR_FW_TEMP").c_str());
     
+    ImGui::TextUnformatted(ICON_MDI_GAUGE" Speed[rpm]:");
+    ImGui::SameLine();
+    ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "SPEED_RPM").c_str());
+    
     float throttle_pct = _server->throttle() * 200.f - 100.f;
-    ImGui::PushItemWidth(200);
+    ImGui::PushItemWidth(100);
     ImGui::SliderFloat(ICON_MDI_SPEEDOMETER"##accl_slider", &throttle_pct, -100.f, 100.0f, "%.0f", ImGuiSliderFlags_NoInput);
     ImGui::PopItemWidth();
+
+    float speed = _server->watch_service.value("WATCH", "SPEED_RPM").f32();
+
+    ImGui::SameLine();
+    if (speed < 0) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED" R"); 
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    if (speed == 0) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED" N"); 
+    ImGui::PopStyleColor();
+    
+    ImGui::SameLine();
+    if (speed > 0) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED" D"); 
+    ImGui::PopStyleColor();
 
     ImGui::End();
 }
