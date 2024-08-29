@@ -259,6 +259,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        static size_t i = 0;
+        const std::array<double, 2> pos = {100, 200};
+        glfwSetCursorPos(window, pos[i], pos[i]);
+        i = (i + 1) % pos.size();
         mainview->draw();
 
         // Rendering
