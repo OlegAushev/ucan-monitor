@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=start-ucan-monitor
+Exec=/home/alexey/start-ucan-monitor.sh
+Type=Application
