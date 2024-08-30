@@ -42,7 +42,7 @@
 #include <reference_manager/reference_manager.h>
 
 
-const std::vector<std::string> server_names = {"project-moyka", "srmdrive", "atv-vcu", "brake-drive"};
+const std::vector<std::string> server_names = {"project-moyka", "srmdrive", "atv-vcu", "brake-drive", "loco-drive"};
 
 
 static void glfw_error_callback(int error, const char* description) {
@@ -238,6 +238,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 2", "Watch Plot 2", false));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 3", "Watch Plot 3", false));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 4", "Watch Plot 4", false));
+    } else if (server_name == "loco-drive") {
+        
     } else {
         // TODO Error
     }
