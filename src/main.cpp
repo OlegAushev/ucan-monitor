@@ -245,8 +245,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         ucanopen_client->register_server(loco_server);
 
         auto controlpanel = std::make_shared<ui::loco::ControlPanel>(loco_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
+        watchpanel = std::make_shared<ui::WatchPanel>(loco_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
 
         views.push_back(controlpanel);
+        views.push_back(watchpanel);
 
         watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 1", "Watch Plot 1", true));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 2", "Watch Plot 2", false));

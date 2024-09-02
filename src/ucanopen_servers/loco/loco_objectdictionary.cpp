@@ -33,6 +33,27 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslog_message", "", OD_ACCESS_RO, OD_UINT32}},
+{{0x5000, 0x03}, {"watch", "converter", "vDC",          "V",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x04}, {"watch", "converter", "iA1",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x05}, {"watch", "converter", "iB1",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x06}, {"watch", "converter", "iC1",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x07}, {"watch", "converter", "iA2",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x08}, {"watch", "converter", "iB2",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x09}, {"watch", "converter", "iC2",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x0A}, {"watch", "converter", "iA3",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x0B}, {"watch", "converter", "iB3",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x0C}, {"watch", "converter", "iC3",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x0D}, {"watch", "converter", "iF",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x0E}, {"watch", "model",     "iS",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x0F}, {"watch", "model",     "iD",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x10}, {"watch", "model",     "iDRef",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x11}, {"watch", "model",     "iQ",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x12}, {"watch", "model",     "iQRef",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x13}, {"watch", "possens",   "speed",        "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x14}, {"watch", "possens",   "angle",        "rad",  OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5000, 0xF1}, {"watch",  "ref",      "torque",       "",     OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0xF2}, {"watch",  "ref",      "speed",        "",     OD_ACCESS_RO, OD_FLOAT32}},
 
 
 //############################################################################################
