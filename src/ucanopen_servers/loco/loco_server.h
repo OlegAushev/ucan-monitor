@@ -43,7 +43,7 @@ private:
     struct {
         std::atomic<OperatingMode> opmode{OperatingMode::normal};
         std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
-        std::atomic<float> ref_d_angle{0};
+        std::atomic<int16_t> ref_d_angle{0};
         std::atomic<float> ref_d_current{0};
     } _rpdo2;
 
@@ -70,6 +70,20 @@ private:
       std::atomic<uint16_t> warnings{0};
     } _tpdo4;
 
+public:
+    void toggle_power(bool v) { _rpdo1.power.store(v); }
+    void toggle_start(bool v) { _rpdo1.start.store(v); }
+    void set_ctlmode(ControlMode v) { _rpdo1.ctlmode.store(v); }
+    void set_torque(float v_pu) { _rpdo1.ref_torque.store(std::clamp(v_pu, 0.f, 1.f)); }
+    void set_speed(int16_t v) { _rpdo1.ref_speed.store(v); }
+    
+    void set_opmode(OperatingMode v) { _rpdo2.opmode.store(v); }
+    void set_ctlloop(ControlLoop v) { _rpdo2.ctlloop.store(v); }
+    void set_d_angle(int16_t v_deg) { _rpdo2.ref_d_angle.store(v_deg); }
+    void set_d_current(float v_pu) { _rpdo2.ref_d_current.store(std::clamp(v_pu, 0.f, 1.f)); }
+    
+    void toggle_manual_field(bool v) { _rpdo3.manual_field.store(v); }
+    void set_f_current(float v_pu) { _rpdo3.ref_f_current.store(std::clamp(v_pu, 0.f, 1.f)); }
 public:
     DriveState drive_state() const { return _tpdo1.drive_state.load(); }
     bool pwm_on() const { return _tpdo1.pwm_on.load(); }

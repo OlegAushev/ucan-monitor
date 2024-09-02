@@ -19,10 +19,19 @@ ControlPanel::ControlPanel(std::shared_ptr<::loco::Server> server,
 {}
 
 
+void ControlPanel::_reset_refs() {
+    _start = false;
+    _ref_torque_pct = 0;
+    _ref_speed = 0;
+    _ref_d_angle_deg = 0;
+    _ref_d_current_pct = 0;
+    _ref_f_current_pct = 0;
+}
 
 
+void ControlPanel::_update_refs() {
 
-
+}
 
 
 

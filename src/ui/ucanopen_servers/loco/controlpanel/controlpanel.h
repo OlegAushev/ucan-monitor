@@ -14,13 +14,16 @@ private:
     std::shared_ptr<::loco::Server> _server;
 
     bool _power{false};
-    bool _run{false};
+    bool _start{false};
 
     float _ref_torque_pct{0.f};
     int16_t _ref_speed{0};
 
     float _ref_d_angle_deg{0.f};
-    float _ref_d_current_pu{0.f};
+    float _ref_d_current_pct{0.f};
+    
+    bool _manual_field{false};
+    float _ref_f_current_pct{false};
 
     ::loco::OperatingMode _opmode{::loco::OperatingMode::normal};
 
