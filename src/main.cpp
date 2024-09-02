@@ -35,6 +35,8 @@
 #include <ui/ucanopen_servers/brkdrive/datapanel/datapanel.h>
 #include <ui/ucanopen_servers/brkdrive/statuspanel/statuspanel.h>
 
+#include <ui/ucanopen_servers/loco/controlpanel/controlpanel.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -239,7 +241,17 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 3", "Watch Plot 3", false));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 4", "Watch Plot 4", false));
     } else if (server_name == "loco-drive") {
-        
+        auto loco_server = std::make_shared<loco::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
+        ucanopen_client->register_server(loco_server);
+
+        auto controlpanel = std::make_shared<ui::loco::ControlPanel>(loco_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
+
+        views.push_back(controlpanel);
+
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 1", "Watch Plot 1", true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 2", "Watch Plot 2", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 3", "Watch Plot 3", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 4", "Watch Plot 4", false));
     } else {
         // TODO Error
     }

@@ -34,53 +34,6 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslog_message", "", OD_ACCESS_RO, OD_UINT32}},
 
-{{0x5000, 0x11}, {"watch", "converter", "vDC", "V", OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x12}, {"watch", "converter", "iA", "A", OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x13}, {"watch", "converter", "iB", "A", OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x14}, {"watch", "converter", "iC", "A", OD_ACCESS_RO, OD_FLOAT32}},
-
-{{0x5000, 0x21}, {"watch", "model", "iS",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x22}, {"watch", "model", "iD",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x23}, {"watch", "model", "iDref",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x24}, {"watch", "model", "iQ",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x25}, {"watch", "model", "iQref",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x26}, {"watch", "model", "speedcont_ll", "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x27}, {"watch", "model", "speedcont_ul", "A",    OD_ACCESS_RO, OD_FLOAT32}},
-
-// {{0x5000, 0x31}, {"watch", "angsens",  "mech_angel_d",      "rad",    OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0x32}, {"watch", "angsens",  "mech_absangle_d",   "rad",    OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0x33}, {"watch", "angsens",  "elec_angle_d",      "rad",    OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0x34}, {"watch", "angsens",  "elec_absangle_d",   "rad",    OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0x35}, {"watch", "angsens",  "speed_d",           "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
-// {{0x5000, 0x36}, {"watch", "angsens",  "turns_d",           "",     OD_ACCESS_RO, OD_INT32}},
-{{0x5000, 0x37}, {"watch", "angsens",  "mech_angle_a",      "rad",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x38}, {"watch", "angsens",  "mech_absangle_a",   "rad",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x39}, {"watch", "angsens",  "elec_angle_a",      "rad",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x3A}, {"watch", "angsens",  "elec_absangle_a",   "rad",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x3B}, {"watch", "angsens",  "speed_a",           "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x3C}, {"watch", "angsens",  "turns_a",           "",     OD_ACCESS_RO, OD_INT32}},
-
-{{0x5000, 0x41}, {"watch", "temp",  "pcb_a",    "oC",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x42}, {"watch", "temp",  "pcb_b",    "oC",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x43}, {"watch", "temp",  "pcb_c",    "oC",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x44}, {"watch", "temp",  "motor_a",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x45}, {"watch", "temp",  "motor_b",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x46}, {"watch", "temp",  "motor_c",  "oC",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x47}, {"watch", "temp",  "mcu",      "oC",    OD_ACCESS_RO, OD_FLOAT32}},
-
-{{0x5000, 0x51}, {"watch", "drive", "speed",    "rpm",   OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x52}, {"watch", "drive", "angle",    "rad",   OD_ACCESS_RO, OD_FLOAT32}},
-
-{{0x5000, 0x61}, {"watch", "mras",  "mech_angle",      "rad",   OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x62}, {"watch", "mras",  "mech_absangle",   "rad",   OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x63}, {"watch", "mras",  "elec_angle",      "rad",   OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x64}, {"watch", "mras",  "elec_absangle",   "rad",   OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x65}, {"watch", "mras",  "speed",           "rpm",   OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x66}, {"watch", "mras",  "turns",           "",      OD_ACCESS_RO, OD_INT32}},
-
-{{0x5000, 0xF1}, {"watch", "ref",   "torque", "pu",     OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0xF2}, {"watch", "ref",   "speed",  "rpm",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0xF3}, {"watch", "ref",   "angle",  "rad",      OD_ACCESS_RO, OD_FLOAT32}},
 
 //############################################################################################
 {{0x3000, 0x01}, {"config", "ucanopen", "node_id",          "",     OD_ACCESS_RW, OD_UINT32}},
