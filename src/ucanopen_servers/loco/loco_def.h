@@ -96,8 +96,9 @@ struct CobRpdo1 {
 
 
 struct CobRpdo2 {
+    uint16_t opmode : 2;
     uint16_t ctlloop : 2;
-    uint16_t _reserved1 : 6;
+    uint16_t _reserved1 : 4;
 
     uint16_t _reserved2 : 8;
 

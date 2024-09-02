@@ -122,7 +122,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ui::ServerSelector::instance().show(server_names, ImVec2{400, 240});
+        ui::ServerSelector::instance().show(server_names, ImVec2{400, 260});
 
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)

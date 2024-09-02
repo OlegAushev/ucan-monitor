@@ -34,23 +34,53 @@ private:
 private:
     struct {
         std::atomic<bool> power{false};
-        std::atomic<bool> start{false}; 
-        std::atomic<OperatingMode> opmode{OperatingMode::normal};
+        std::atomic<bool> start{false};
         std::atomic<ControlMode> ctlmode{ControlMode::torque};
-        std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
         std::atomic<float> ref_torque{0};
         std::atomic<int16_t> ref_speed{0};
     } _rpdo1;
 
     struct {
-
+        std::atomic<OperatingMode> opmode{OperatingMode::normal};
+        std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
+        std::atomic<float> ref_d_angle{0};
+        std::atomic<float> ref_d_current{0};
     } _rpdo2;
 
     struct {
-
+        std::atomic<bool> manual_field{false};
+        std::atomic<float> ref_f_current{0};
     } _rpdo3;
 
+    struct {
+        std::atomic<DriveState> drive_state{DriveState::init};
+        std::atomic<bool> pwm_on{false};
+        std::atomic<bool> error{false};
+        std::atomic<bool> warning{false};
+        std::atomic<OperatingMode> opmode{OperatingMode::normal};
+        std::atomic<ControlMode> ctlmode{ControlMode::torque};
+        std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
+        std::atomic<float> torque{0};
+        std::atomic<int16_t> speed{0};
+        std::atomic<bool> manual_field{false};
+    } _tpdo1;
 
+    struct {
+      std::atomic<uint32_t> errors{0};
+      std::atomic<uint16_t> warnings{0};
+    } _tpdo4;
+
+public:
+    DriveState drive_state() const { return _tpdo1.drive_state.load(); }
+    bool pwm_on() const { return _tpdo1.pwm_on.load(); }
+    bool error() const { return _tpdo1.error.load(); }
+    bool warning() const { return _tpdo1.warning.load(); }
+    OperatingMode opmode() const { return _tpdo1.opmode.load(); }
+    ControlMode ctlmode() const { return _tpdo1.ctlmode.load(); }
+    ControlLoop ctlloop() const { return _tpdo1.ctlloop.load(); }
+    float torque() const { return _tpdo1.torque.load(); }
+    int16_t speed() const { return _tpdo1.speed.load(); }
+    bool manual_field() const { return _tpdo1.manual_field.load(); }
 };
 
 
