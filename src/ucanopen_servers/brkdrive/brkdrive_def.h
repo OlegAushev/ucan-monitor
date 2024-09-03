@@ -222,7 +222,8 @@ enum class DriveState {
     tracking,
     powerdown,
     calibrating,
-    hwtest   
+    hwtest,
+    stop
 };
 
 
@@ -236,7 +237,8 @@ inline const std::unordered_set<int> drive_state_values {
     std::to_underlying(DriveState::tracking),
     std::to_underlying(DriveState::powerdown),
     std::to_underlying(DriveState::calibrating),
-    std::to_underlying(DriveState::hwtest) 
+    std::to_underlying(DriveState::hwtest),
+    std::to_underlying(DriveState::stop)
 };
 
 
@@ -251,6 +253,7 @@ inline const std::unordered_map<DriveState, std::string_view> drive_state_names 
     {DriveState::powerdown, "powerdown"},
     {DriveState::calibrating, "calibrating"},
     {DriveState::hwtest, "hwtest"},
+    {DriveState::stop, "stop"}
 };
 
 

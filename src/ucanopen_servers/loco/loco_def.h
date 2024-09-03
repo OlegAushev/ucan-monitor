@@ -2,10 +2,12 @@
 
 
 #include <cstdint>
+#include <string>
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 
 namespace loco {
@@ -125,6 +127,102 @@ struct CobRpdo3 {
 
     uint16_t counter : 2;
     uint16_t _reserved4 : 6;
+};
+
+
+//------------------------------------------------------------------------------
+inline const std::vector<std::string> syslog_messages = {
+    "",
+    "@syslog: [ info ] Boot CPU1...",
+    "@syslog: [  ok  ] CPU1 is ready.",
+    "@syslog: [ info ] Boot CPU2...",
+    "@syslog: [  ok  ] CPU2 is ready.",
+    "@syslog: [  ok  ] CPU1 periphery is configured.",
+    "@syslog: [  ok  ] CPU2 periphery is configured.",
+    "@syslog: [  ok  ] Device is ready.",
+    "@syslog: [ fail ] Device is busy.",
+    "@syslog: [ fail ] Error occurred.",
+    "@syslog: [ info ] Device is resetting...",
+    "@syslog: [ warn ] SDO request is lost.",
+
+    "@syslog: [ warn ] Cannot communicate with external memory: disabled.",
+    "@syslog: [  ok  ] Load settings - ok.",
+    "@syslog: [ fail ] Load settings - fail.",
+    "@syslog: [  ok  ] Apply settings - ok.",
+    "@syslog: [ fail ] Apply settings - fail.",
+    "@syslog: [  ok  ] Restore settings - ok.",
+    "@syslog: [ fail ] Restore settings - fail.",
+    "@syslog: [  ok  ] Load default settings - ok.",
+
+    "@syslog: [  ok  ] Load ucanopen server config - ok.",
+    "@syslog: [ fail ] Load ucanopen server config - fail.",
+    "@syslog: [  ok  ] Load syslog config - ok.",
+    "@syslog: [ fail ] Load syslog config - fail.",
+    "@syslog: [  ok  ] Load drive config - ok.",
+    "@syslog: [ fail ] Load drive config - fail.",
+    "@syslog: [  ok  ] Load motor config - ok.",
+    "@syslog: [ fail ] Load motor config - fail.",
+    "@syslog: [  ok  ] Load converter config - ok.",
+    "@syslog: [ fail ] Load converter config - fail.",
+    "@syslog: [  ok  ] Load model basic config - ok.",
+    "@syslog: [ fail ] Load model basic config - fail.",
+    "@syslog: [  ok  ] Load model controllers config - ok.",
+    "@syslog: [ fail ] Load model controllers config - fail.",
+    "@syslog: [  ok  ] Load mras config - ok.",
+    "@syslog: [ fail ] Load mras config - fail.",
+    "@syslog: [  ok  ] Load precharge config - ok.",
+    "@syslog: [ fail ] Load precharge config - fail.",
+    
+    "@syslog: [  ok  ] Calibration completed successfully."	
+};
+
+
+
+
+
+
+
+inline const std::vector<std::string> error_list = {
+    "none",
+    "emergency_stop",
+    "watchdog_timeout",
+    "ext_memory_error",
+    "invalid_config",
+    "can_bus_connection_lost",
+    "dclink_charge_failure",
+    "dclink_discharge_failure",
+    "dc_undervoltage",
+    "dc_overvoltage",
+    "phase_module_fault",
+    "field_module_fault",
+    "phase_overcurrent",
+    "field_overcurrent",
+    "phase_overtemp",
+    "field_overtemp",
+    "pcb_overtemp",
+    "aw_overtemp",
+    "fw_overtemp",
+    "vdc_sensor_failure",
+    "iph_sensor_failure",
+    "if_sensor_failure",
+    "ang_sensor_failure",
+};
+
+
+inline const std::vector<std::string> warning_list = {
+    "none",
+    "can_bus_error",
+    "can_bus_overrun",
+    "can_bus_connection_lost",
+    "can_bus_checksum_mismatch",
+    "can_bus_counter_freeze",
+    "dclink_disconnected",
+    "dclink_charging",
+    "converter_overheat",
+    "motor_overheat",
+    "flux_weakening",
+    "isolation_low",
+    "isolation_na",
 };
 
 
