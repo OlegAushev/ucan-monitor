@@ -177,11 +177,6 @@ inline const std::vector<std::string> syslog_messages = {
 };
 
 
-
-
-
-
-
 inline const std::vector<std::string> error_list = {
     "none",
     "emergency_stop",

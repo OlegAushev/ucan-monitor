@@ -38,13 +38,13 @@ Server::Server(std::shared_ptr<can::Socket> socket,
 ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
                                                  [[maybe_unused]] ucanopen::SdoType sdo_type,
                                                  ucanopen::ExpeditedSdoData data) {
-    // if (entry->second.name == "syslog_message") {
-    //     auto message_id = data.u32();
-    //     if ((message_id != 0) && (message_id < syslog_messages.size())) {
-    //         bsclog::info("{}", syslog_messages[message_id]);
-    //     }
-    // }
-    // TODO
+    if (entry->second.name == "syslog_message") {
+        auto message_id = data.u32();
+        if ((message_id != 0) && (message_id < syslog_messages.size())) {
+            bsclog::info("{}", syslog_messages[message_id]);
+        }
+    }
+
     return ucanopen::FrameHandlingStatus::success;
 }
 
@@ -88,8 +88,11 @@ void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
 }
 
 void Server::_handle_tpdo4(const ucanopen::can_payload &payload) {
-  static_assert(sizeof(CobTpdo4) == 8);
-  CobTpdo4 tpdo = ucanopen::from_payload<CobTpdo4>(payload);
+    static_assert(sizeof(CobTpdo4) == 8);
+    CobTpdo4 tpdo = ucanopen::from_payload<CobTpdo4>(payload);
+
+    _tpdo4.errors.store(tpdo.errors);
+    _tpdo4.warnings.store(tpdo.warnings);
 }
 
 

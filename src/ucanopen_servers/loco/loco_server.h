@@ -95,6 +95,12 @@ public:
     float torque() const { return _tpdo1.torque.load(); }
     int16_t speed() const { return _tpdo1.speed.load(); }
     bool manual_field() const { return _tpdo1.manual_field.load(); }
+
+    uint32_t errors() const { return _tpdo4.errors.load(); }
+    uint16_t warnings() const { return _tpdo4.warnings.load(); }
+    const auto& error_list() const { return ::loco::error_list; }
+    const auto& warning_list() const { return ::loco::warning_list; }
+
 };
 
 
