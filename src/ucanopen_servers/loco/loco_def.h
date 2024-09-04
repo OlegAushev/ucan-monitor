@@ -178,7 +178,6 @@ inline const std::vector<std::string> syslog_messages = {
 
 
 inline const std::vector<std::string> error_list = {
-    "none",
     "emergency_stop",
     "watchdog_timeout",
     "ext_memory_error",
@@ -205,7 +204,6 @@ inline const std::vector<std::string> error_list = {
 
 
 inline const std::vector<std::string> warning_list = {
-    "none",
     "can_bus_error",
     "can_bus_overrun",
     "can_bus_connection_lost",
