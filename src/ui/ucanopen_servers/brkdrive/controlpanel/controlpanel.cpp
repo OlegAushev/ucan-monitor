@@ -37,6 +37,11 @@ void ControlPanel::_reset_refs() {
 
 
 void ControlPanel::_update_refs() {
+    if (!_server->heartbeat_service.good()
+            || _server->errors() != 0) {
+        _run = false;
+    }
+
     _server->set_opmode(_opmode);
     
     _server->toggle_wakeup(_wakeup);
