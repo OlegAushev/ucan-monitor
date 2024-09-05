@@ -47,7 +47,7 @@ private:
         std::atomic<float> angle{0};
         std::atomic<OperatingStatus> opstatus{OperatingStatus::inoperable};
         std::atomic<bool> calibrated{false};
-        std::atomic<DriveState> drive_state{DriveState::waiting};
+        std::atomic<DriveState> drive_state{DriveState::init};
 
         std::atomic<bool> pwm_on{false};
         std::atomic<bool> error{false};

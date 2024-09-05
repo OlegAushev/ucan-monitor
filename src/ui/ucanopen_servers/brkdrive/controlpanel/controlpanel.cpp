@@ -500,13 +500,6 @@ void ControlPanel::_draw_hwtest_mode_controls() {
         ImGui::SameLine();
         ImGui::SeparatorText("Hardware Test Mode");
     });
-
-    if (selected) {
-        // start/stop
-        ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE" Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE, _run);
-        ImGui::SameLine();
-        ImGui::TextDisabled("(F4)");
-    }
 }
 
 

@@ -213,7 +213,7 @@ inline const std::vector<std::string> warning_list = {
 
 
 enum class DriveState {
-    waiting,
+    init,
     standby,
     powerup,
     ready,
@@ -228,7 +228,7 @@ enum class DriveState {
 
 
 inline const std::unordered_set<int> drive_state_values {
-    std::to_underlying(DriveState::waiting),
+    std::to_underlying(DriveState::init),
     std::to_underlying(DriveState::standby),
     std::to_underlying(DriveState::powerup),
     std::to_underlying(DriveState::ready),
@@ -243,7 +243,7 @@ inline const std::unordered_set<int> drive_state_values {
 
 
 inline const std::unordered_map<DriveState, std::string_view> drive_state_names = {
-    {DriveState::waiting, "waiting"},
+    {DriveState::init, "init"},
     {DriveState::standby, "standby"},
     {DriveState::powerup, "powerup"},
     {DriveState::ready, "ready"},
