@@ -173,7 +173,12 @@ inline const std::vector<std::string> syslog_messages = {
     "@syslog: [ fail ] Load ac current sensors config - fail.",
     "@syslog: [  ok  ] Load angle sensor config - ok.",
     "@syslog: [ fail ] Load angle sensor config - fail.",
+    "@syslog: [  ok  ] Load angle sensor calibration data - ok.",
+    "@syslog: [ fail ] Load angle sensor calibration data - fail.",
 
+    "@syslog: [  ok  ] Save angle sensor calibration data - ok.",
+    "@syslog: [ fail ] Save angle sensor calibration data - fail.",
+    
     "@syslog: [  ok  ] Calibration completed successfully."	
 };
 
@@ -223,7 +228,8 @@ enum class DriveState {
     powerdown,
     calibrating,
     hwtest,
-    stop
+    stop,
+    angsens_cal
 };
 
 
@@ -238,7 +244,8 @@ inline const std::unordered_set<int> drive_state_values {
     std::to_underlying(DriveState::powerdown),
     std::to_underlying(DriveState::calibrating),
     std::to_underlying(DriveState::hwtest),
-    std::to_underlying(DriveState::stop)
+    std::to_underlying(DriveState::stop),
+    std::to_underlying(DriveState::angsens_cal)
 };
 
 
@@ -253,7 +260,8 @@ inline const std::unordered_map<DriveState, std::string_view> drive_state_names 
     {DriveState::powerdown, "powerdown"},
     {DriveState::calibrating, "calibrating"},
     {DriveState::hwtest, "hwtest"},
-    {DriveState::stop, "stop"}
+    {DriveState::stop, "stop"},
+    {DriveState::angsens_cal, "angsens_cal"}
 };
 
 

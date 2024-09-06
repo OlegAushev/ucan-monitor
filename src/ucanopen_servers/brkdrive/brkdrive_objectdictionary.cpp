@@ -31,6 +31,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x2001, 0x03}, {"ctl", "drive", "phi_3", "rad", OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x2002, 0x01}, {"ctl", "angsens", "calibrate", "", OD_ACCESS_WO, OD_EXEC}},
+{{0x2002, 0x02}, {"ctl", "angsens", "save_calibration", "", OD_ACCESS_WO, OD_EXEC}},
 
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslog_message", "", OD_ACCESS_RO, OD_UINT32}},

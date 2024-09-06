@@ -509,18 +509,22 @@ void ControlPanel::_draw_actions() {
     ImGui::TextUnformatted(ICON_MDI_CAR_WRENCH);
     ImGui::SameLine();
     if (ImGui::TreeNode("Service Actions")) {
-        if (ImGui::Button(ICON_MDI_SHIELD_REFRESH" Clear Errors          ")) {
+        if (ImGui::Button(ICON_MDI_SHIELD_REFRESH" Clear Errors             ")) {
             _server->exec("ctl", "sys", "clear_errors");
         }
 
-        if (ImGui::Button(ICON_MDI_RESTART" Reset MCU             ")) {
+        if (ImGui::Button(ICON_MDI_RESTART" Reset MCU                ")) {
             _server->exec("ctl", "sys", "reset_device");
         }
 
-        if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE" Calibrate Angle Sensor")) {
+        if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE" Calibrate Angle Sensor   ")) {
             _server->exec("ctl", "angsens", "calibrate");
         }
 
+        if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE" Save Calibration Results ")) {
+            _server->exec("ctl", "angsens", "save_calibration");
+        }
+        
         ImGui::TreePop();
     }
 }
