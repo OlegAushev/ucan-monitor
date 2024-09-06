@@ -30,6 +30,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x2001, 0x02}, {"ctl", "drive", "phi_2", "rad", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x2001, 0x03}, {"ctl", "drive", "phi_3", "rad", OD_ACCESS_RO, OD_FLOAT32}},
 
+{{0x2002, 0x01}, {"ctl", "angsens", "calibrate", "", OD_ACCESS_WO, OD_EXEC}},
 
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslog_message", "", OD_ACCESS_RO, OD_UINT32}},
@@ -59,6 +60,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x3A}, {"watch", "angsens",  "elec_absangle_a",   "rad",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x3B}, {"watch", "angsens",  "speed_a",           "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x3C}, {"watch", "angsens",  "turns_a",           "",     OD_ACCESS_RO, OD_INT32}},
+{{0x5000, 0x3D}, {"watch", "angsens",  "cal_ref",           "rad",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x3E}, {"watch", "angsens",  "cal_val",           "rad",  OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5000, 0x41}, {"watch", "temp",  "pcb_a",    "oC",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x42}, {"watch", "temp",  "pcb_b",    "oC",    OD_ACCESS_RO, OD_FLOAT32}},
