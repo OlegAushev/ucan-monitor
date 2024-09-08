@@ -2,6 +2,7 @@
 
 
 #include "../impl/impl_server.h"
+#include "../services/server_sdo_service.h"
 #include <future>
 #include <optional>
 #include <vector>
@@ -13,14 +14,14 @@ namespace utils {
 
 class StringReader : public SdoSubscriber {
 private:
-    impl::Server& _server;
+    ServerSdoService& _sdo_service;
     ODEntryIter _entry;
 
     std::vector<char> _charbuf;
     std::optional<std::string> _result;
     bool _ready = false;
 public:
-    StringReader(impl::Server& server, impl::SdoPublisher& publisher,
+    StringReader(ServerSdoService& sdo_service,
                  std::string_view category, std::string_view subcategory, std::string_view name);
     std::optional<std::string> get(std::future<void> signal_terminate) const;
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
@@ -29,13 +30,13 @@ public:
 
 class ScalarReader : public SdoSubscriber {
 private:
-    impl::Server& _server;
+    ServerSdoService& _sdo_service;
     ODEntryIter _entry;
 
     std::optional<std::string> _result;
     bool _ready = false;
 public:
-    ScalarReader(impl::Server& server, impl::SdoPublisher& publisher,
+    ScalarReader(ServerSdoService& sdo_service,
                  std::string_view category, std::string_view subcategory, std::string_view name);
     std::optional<std::string> get(std::future<void> signal_terminate) const;
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
@@ -44,13 +45,13 @@ public:
 
 class ExpeditedSdoDataReader : public SdoSubscriber {
 private:
-    impl::Server& _server;
+    ServerSdoService& _sdo_service;
     ODEntryIter _entry;
 
     std::optional<ExpeditedSdoData> _result;
     bool _ready = false;
 public:
-    ExpeditedSdoDataReader(impl::Server& server, impl::SdoPublisher& publisher,
+    ExpeditedSdoDataReader(ServerSdoService& sdo_service,
                            std::string_view category, std::string_view subcategory, std::string_view name);
     std::optional<ExpeditedSdoData> get(std::future<void> signal_terminate) const;
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
@@ -59,13 +60,13 @@ public:
 
 class Executor : public SdoSubscriber {
 private:
-    impl::Server& _server;
+    ServerSdoService& _sdo_service;
     ODEntryIter _entry;
 
     std::optional<ExpeditedSdoData> _result;
     bool _ready = false;
 public:
-    Executor(impl::Server& server, impl::SdoPublisher& publisher,
+    Executor(ServerSdoService& sdo_service,
              std::string_view category, std::string_view subcategory, std::string_view name);
     std::optional<ExpeditedSdoData> get(std::future<void> signal_terminate) const;
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
@@ -74,13 +75,13 @@ public:
 
 class ExpeditedSdoDataWriter : public SdoSubscriber {
 private:
-    impl::Server& _server;
+    ServerSdoService& _sdo_service;
     ODEntryIter _entry;
 
     std::optional<ExpeditedSdoData> _result;
     bool _ready = false;
 public:
-    ExpeditedSdoDataWriter(impl::Server& server, impl::SdoPublisher& publisher,
+    ExpeditedSdoDataWriter(ServerSdoService& sdo_service,
                            std::string_view category, std::string_view subcategory, std::string_view name,
                            ExpeditedSdoData sdo_data);
     std::optional<ExpeditedSdoData> get(std::future<void> signal_terminate) const;

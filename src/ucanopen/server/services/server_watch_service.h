@@ -2,6 +2,7 @@
 
 
 #include "../impl/impl_server.h"
+#include "server_sdo_service.h"
 #include <map>
 #include <mutex>
 #include <shared_mutex>
@@ -17,6 +18,7 @@ namespace ucanopen {
 class ServerWatchService : public SdoSubscriber {
 private:
     impl::Server& _server;
+    ServerSdoService& _sdo_service;
     bool _enabled{false};
     std::chrono::milliseconds _period{1000};
     std::chrono::time_point<std::chrono::steady_clock> _daq_timepoint;
@@ -39,7 +41,7 @@ private:
     mutable std::mutex _data_mtx;
 
 public:
-    ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher);
+    ServerWatchService(impl::Server& server, ServerSdoService& sdo_service);
     void send();
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
 

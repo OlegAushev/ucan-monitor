@@ -64,6 +64,22 @@ public:
                                                   std::string_view name,
                                                   ExpeditedSdoData sdo_data,
                                                   std::chrono::milliseconds timeout = std::chrono::milliseconds(1000));
+
+    ODAccessStatus read(std::string_view category, std::string_view subcategory, std::string_view name) {
+        return sdo_service.read(category, subcategory, name);
+    }
+
+    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, ExpeditedSdoData sdo_data) {
+        return sdo_service.write(category, subcategory, name, sdo_data);
+    }
+
+    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, const std::string& value) {
+        return sdo_service.write(category, subcategory, name, value);
+    }
+    
+    ODAccessStatus exec(std::string_view category, std::string_view subcategory, std::string_view name) {
+        return sdo_service.exec(category, subcategory, name);
+    }
 };
 
 } // namespace ucanopen

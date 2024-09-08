@@ -2,6 +2,7 @@
 
 
 #include "../impl/impl_server.h"
+#include "server_sdo_service.h"
 #include <map>
 #include <mutex>
 #include <shared_mutex>
@@ -14,7 +15,8 @@
 namespace ucanopen {
 
 
-class ServerLogService : public SdoSubscriber, public TpdoSubscriber {
+class ServerLogService : public SdoSubscriber,
+                         public TpdoSubscriber {
 public:
     using LogKey = std::pair<std::string_view, std::string_view>;
     using LogBuf = boost::circular_buffer<boost::geometry::model::d2::point_xy<float>>;
@@ -28,7 +30,7 @@ private:
     mutable std::mutex _log_mtx;
     static inline size_t _log_capacity = 1000;
 public:
-    ServerLogService(impl::Server& server, impl::SdoPublisher& sdo_publisher, impl::TpdoPublisher& tpdo_publisher);
+    ServerLogService(impl::Server& server, SdoPublisher& sdo_publisher, impl::TpdoPublisher& tpdo_publisher);
     std::vector<const ODObject*> objects() const { return _objects; }
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) override;
     virtual FrameHandlingStatus handle_tpdo(CobTpdo tpdo, const can_payload& payload) override;

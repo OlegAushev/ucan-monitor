@@ -5,9 +5,10 @@
 namespace ucanopen {
 
 
-ServerWatchService::ServerWatchService(impl::Server& server, impl::SdoPublisher& sdo_publisher)
-        : SdoSubscriber(sdo_publisher)
-        , _server(server) {
+ServerWatchService::ServerWatchService(impl::Server& server, ServerSdoService& sdo_service)
+        : SdoSubscriber(sdo_service)
+        , _server(server)
+        , _sdo_service(sdo_service) {
     _daq_timepoint = std::chrono::steady_clock::now();
 
     for (const auto& [key, object] : _server.dictionary().entries) {
@@ -28,7 +29,7 @@ void ServerWatchService::send() {
         if (now - _daq_timepoint >= _period) {
             static size_t i = 0;
             if (_object_daq_enabled[i]) {
-                _server.read(_server.dictionary().config.watch_category,
+                _sdo_service.read(_server.dictionary().config.watch_category,
                             _objects[i]->subcategory,
                             _objects[i]->name);
                 _daq_timepoint = now;

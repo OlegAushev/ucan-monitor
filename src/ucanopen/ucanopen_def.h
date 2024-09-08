@@ -412,7 +412,7 @@ enum ODObjectAccessPermission {
 
 struct ODObjectKey {
     uint16_t index;
-    uint16_t subindex;
+    uint8_t subindex;
 };
 
 

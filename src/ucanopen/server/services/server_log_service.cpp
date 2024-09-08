@@ -4,7 +4,7 @@
 namespace ucanopen {
 
 
-ServerLogService::ServerLogService(impl::Server& server, impl::SdoPublisher& sdo_publisher, impl::TpdoPublisher& tpdo_publisher)
+ServerLogService::ServerLogService(impl::Server& server, SdoPublisher& sdo_publisher, impl::TpdoPublisher& tpdo_publisher)
         : SdoSubscriber(sdo_publisher)
         , TpdoSubscriber(tpdo_publisher)
         , _server(server) {
@@ -25,7 +25,7 @@ ServerLogService::ServerLogService(impl::Server& server, impl::SdoPublisher& sdo
             continue;
         }
 
-        uint16_t subindex = 0x01;
+        uint8_t subindex = 0x01;
         uint64_t offset = 0;
         while (_server.dictionary().entries.contains({index, subindex})) {
             const auto& object = _server.dictionary().entries.at({index, subindex});

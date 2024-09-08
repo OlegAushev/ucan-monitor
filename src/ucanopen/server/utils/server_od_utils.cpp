@@ -6,12 +6,12 @@ namespace utils {
 
 
 //----------------------------------------------------------------------------------------------------------------------
-StringReader::StringReader(impl::Server& server, impl::SdoPublisher& publisher,
+StringReader::StringReader(ServerSdoService& sdo_service,
                            std::string_view category, std::string_view subcategory, std::string_view name)
-        : SdoSubscriber(publisher)
-        , _server(server)
+        : SdoSubscriber(sdo_service)
+        , _sdo_service(sdo_service)
 {
-    if (_server.find_od_entry_to_read(category, subcategory, name, _entry) != ODAccessStatus::success) {
+    if (_sdo_service.server().find_od_entry_to_read(category, subcategory, name, _entry) != ODAccessStatus::success) {
         _ready = true;
         return;
     }
@@ -23,7 +23,7 @@ StringReader::StringReader(impl::Server& server, impl::SdoPublisher& publisher,
         return;
     }
 
-    if (_server.read(object.category, object.subcategory, object.name) != ODAccessStatus::success) {
+    if (_sdo_service.read(object.category, object.subcategory, object.name) != ODAccessStatus::success) {
         _ready = true;
         return;
     }
@@ -53,7 +53,7 @@ FrameHandlingStatus StringReader::handle_sdo(ODEntryIter entry, SdoType sdo_type
 
         if (!_ready) {
             const auto& [key, object] = *_entry;
-            _server.read(object.category, object.subcategory, object.name);
+            _sdo_service.read(object.category, object.subcategory, object.name);
         }
 
         return FrameHandlingStatus::success;
@@ -63,12 +63,12 @@ FrameHandlingStatus StringReader::handle_sdo(ODEntryIter entry, SdoType sdo_type
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ScalarReader::ScalarReader(impl::Server& server, impl::SdoPublisher& publisher,
+ScalarReader::ScalarReader(ServerSdoService& sdo_service,
                            std::string_view category, std::string_view subcategory, std::string_view name)
-        : SdoSubscriber(publisher)
-        , _server(server)
+        : SdoSubscriber(sdo_service)
+        , _sdo_service(sdo_service)
 {
-    if (_server.find_od_entry_to_read(category, subcategory, name, _entry) != ODAccessStatus::success) {
+    if (_sdo_service.server().find_od_entry_to_read(category, subcategory, name, _entry) != ODAccessStatus::success) {
         _ready = true;
         return;
     }
@@ -80,7 +80,7 @@ ScalarReader::ScalarReader(impl::Server& server, impl::SdoPublisher& publisher,
         return;
     }
 
-    if (_server.read(category, subcategory, name) != ODAccessStatus::success) {
+    if (_sdo_service.read(category, subcategory, name) != ODAccessStatus::success) {
         _ready = true;
         return;
     }	
@@ -109,12 +109,12 @@ FrameHandlingStatus ScalarReader::handle_sdo(ODEntryIter entry, SdoType sdo_type
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ExpeditedSdoDataReader::ExpeditedSdoDataReader(impl::Server& server, impl::SdoPublisher& publisher,
+ExpeditedSdoDataReader::ExpeditedSdoDataReader(ServerSdoService& sdo_service,
                                                std::string_view category, std::string_view subcategory, std::string_view name)
-        : SdoSubscriber(publisher)
-        , _server(server)
+        : SdoSubscriber(sdo_service)
+        , _sdo_service(sdo_service)
 {
-    if (_server.find_od_entry_to_read(category, subcategory, name, _entry) != ODAccessStatus::success) {
+    if (_sdo_service.server().find_od_entry_to_read(category, subcategory, name, _entry) != ODAccessStatus::success) {
         _ready = true;
         return;
     }
@@ -126,7 +126,7 @@ ExpeditedSdoDataReader::ExpeditedSdoDataReader(impl::Server& server, impl::SdoPu
         return;
     }
 
-    if (_server.read(category, subcategory, name) != ODAccessStatus::success) {
+    if (_sdo_service.read(category, subcategory, name) != ODAccessStatus::success) {
         _ready = true;
         return;
     }	
@@ -155,12 +155,12 @@ FrameHandlingStatus ExpeditedSdoDataReader::handle_sdo(ODEntryIter entry, SdoTyp
 
 
 //----------------------------------------------------------------------------------------------------------------------
-Executor::Executor(impl::Server& server, impl::SdoPublisher& publisher,
+Executor::Executor(ServerSdoService& sdo_service,
                    std::string_view category, std::string_view subcategory, std::string_view name)
-        : SdoSubscriber(publisher)
-        , _server(server)\
+        : SdoSubscriber(sdo_service)
+        , _sdo_service(sdo_service)\
 {
-    if (_server.exec(category, subcategory, name) != ODAccessStatus::success) {
+    if (_sdo_service.exec(category, subcategory, name) != ODAccessStatus::success) {
         _ready = true;
         return;
     }	
@@ -189,13 +189,13 @@ FrameHandlingStatus Executor::handle_sdo(ODEntryIter entry, SdoType sdo_type, Ex
 
 
 //----------------------------------------------------------------------------------------------------------------------
-ExpeditedSdoDataWriter::ExpeditedSdoDataWriter(impl::Server& server, impl::SdoPublisher& publisher,
+ExpeditedSdoDataWriter::ExpeditedSdoDataWriter(ServerSdoService& sdo_service,
                                                std::string_view category, std::string_view subcategory, std::string_view name,
                                                ExpeditedSdoData sdo_data)
-        : SdoSubscriber(publisher)
-        , _server(server)
+        : SdoSubscriber(sdo_service)
+        , _sdo_service(sdo_service)
 {
-    if (_server.find_od_entry_to_write(category, subcategory, name, _entry) != ODAccessStatus::success) {
+    if (_sdo_service.server().find_od_entry_to_write(category, subcategory, name, _entry) != ODAccessStatus::success) {
         _ready = true;
         return;
     }
@@ -207,7 +207,7 @@ ExpeditedSdoDataWriter::ExpeditedSdoDataWriter(impl::Server& server, impl::SdoPu
         return;
     }
 
-    if (_server.write(category, subcategory, name, sdo_data) != ODAccessStatus::success) {
+    if (_sdo_service.write(category, subcategory, name, sdo_data) != ODAccessStatus::success) {
         _ready = true;
         return;
     }	

@@ -37,7 +37,6 @@ class ServerHeartbeatService;
 class ServerTpdoService;
 class ServerRpdoService;
 class ServerSdoService;
-class SdoSubscriber;
 class TpdoSubscriber;
 
 
@@ -88,27 +87,12 @@ public:
                                          std::string_view subcategory,
                                          std::string_view name,
                                          ODEntryIter& ret_entry) const;
-public:
-    ODAccessStatus read(std::string_view category, std::string_view subcategory, std::string_view name);
-    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, ExpeditedSdoData sdo_data);
-    ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, const std::string& value);
-    ODAccessStatus exec(std::string_view category, std::string_view subcategory, std::string_view name);
 };
 
 
 class FrameReceiverInterface {
 public:
     virtual FrameHandlingStatus handle_frame(const can_frame& frame) = 0;
-};
-
-
-class SdoPublisher {
-public:
-    virtual ~SdoPublisher() = default;
-    void register_subscriber(SdoSubscriber& subscriber) { _subscriber_list.push_back(&subscriber); }
-    void unregister_subscriber(SdoSubscriber& subscriber) { _subscriber_list.remove(&subscriber); }
-protected:
-    std::list<SdoSubscriber*> _subscriber_list;
 };
 
 
@@ -123,22 +107,6 @@ protected:
 
 
 } // namespace impl
-
-
-class SdoSubscriber {
-private:
-    impl::SdoPublisher& _publisher;
-public:
-    SdoSubscriber(impl::SdoPublisher& publisher)
-            : _publisher(publisher) {
-        _publisher.register_subscriber(*this);
-    }
-    virtual ~SdoSubscriber() {
-        _publisher.unregister_subscriber(*this);
-    }
-    virtual FrameHandlingStatus handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) = 0;
-    void unsubscribe() { _publisher.unregister_subscriber(*this); }
-};
 
 
 class TpdoSubscriber {
