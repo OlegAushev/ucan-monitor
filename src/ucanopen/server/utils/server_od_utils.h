@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "../impl/impl_server.h"
-#include "../services/server_sdo_service.h"
+#include <ucanopen/server/impl/impl_server.h>
+#include <ucanopen/server/services/sdo/server_sdo_service.h>
 #include <future>
 #include <optional>
 #include <vector>

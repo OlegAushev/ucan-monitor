@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "../impl/impl_server.h"
+#include <ucanopen/server/impl/impl_server.h>
 
 
 namespace ucanopen {
