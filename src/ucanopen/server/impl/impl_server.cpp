@@ -20,7 +20,7 @@ impl::Server::Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const 
 
 ODAccessStatus impl::Server::read(std::string_view category, std::string_view subcategory, std::string_view name) {
     ODEntryIter entry;
-    auto status = find_od_entry(category, subcategory, name, entry, traits::check_read_perm{});
+    auto status = find_od_entry_to_read(category, subcategory, name, entry);
     if (status != ODAccessStatus::success) {
         return status;
     }
@@ -43,7 +43,7 @@ ODAccessStatus impl::Server::read(std::string_view category, std::string_view su
 ODAccessStatus impl::Server::write(std::string_view category, std::string_view subcategory, std::string_view name,
                                    ExpeditedSdoData sdo_data) {
     ODEntryIter entry;
-    auto status = find_od_entry(category, subcategory, name, entry, traits::check_write_perm{});
+    auto status = find_od_entry_to_write(category, subcategory, name, entry);
     if (status != ODAccessStatus::success) {
         return status;
     }
@@ -69,7 +69,7 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
 ODAccessStatus impl::Server::write(std::string_view category, std::string_view subcategory, std::string_view name,
                                    const std::string& value) {
     ODEntryIter entry;
-    auto status = find_od_entry(category, subcategory, name, entry, traits::check_write_perm{});
+    auto status = find_od_entry_to_write(category, subcategory, name, entry);
     if (status != ODAccessStatus::success) {
         return status;
     }
@@ -129,7 +129,7 @@ ODAccessStatus impl::Server::write(std::string_view category, std::string_view s
 
 ODAccessStatus impl::Server::exec(std::string_view category, std::string_view subcategory, std::string_view name) {
     ODEntryIter entry;
-    auto status = find_od_entry(category, subcategory, name, entry, traits::check_exec_perm{});
+    auto status = find_od_entry_to_exec(category, subcategory, name, entry);
     if (status != ODAccessStatus::success) {
         return status;
     }
@@ -151,9 +151,10 @@ ODAccessStatus impl::Server::exec(std::string_view category, std::string_view su
 }
 
 
-ODAccessStatus impl::Server::find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name,
-                                           ODEntryIter& ret_entry,
-                                           traits::check_read_perm) const {
+ODAccessStatus impl::Server::find_od_entry_to_read(std::string_view category,
+                                                   std::string_view subcategory,
+                                                   std::string_view name,
+                                                   ODEntryIter& ret_entry) const {
     ret_entry = find_od_entry(category, subcategory, name);
     if (ret_entry == _dictionary.entries.end()) {
         bsclog::error("Cannot read {}::{}::{}::{}: no such OD entry.", _name, category, subcategory, name);
@@ -166,9 +167,10 @@ ODAccessStatus impl::Server::find_od_entry(std::string_view category, std::strin
 }
 
 
-ODAccessStatus impl::Server::find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name,
-                                           ODEntryIter& ret_entry,
-                                           traits::check_write_perm) const {
+ODAccessStatus impl::Server::find_od_entry_to_write(std::string_view category,
+                                                    std::string_view subcategory,
+                                                    std::string_view name,
+                                                    ODEntryIter& ret_entry) const {
     ret_entry = find_od_entry(category, subcategory, name);
     if (ret_entry == _dictionary.entries.end()) {
         bsclog::error("Cannot write {}::{}::{}::{}: no such OD entry.", _name, category, subcategory, name);
@@ -181,9 +183,10 @@ ODAccessStatus impl::Server::find_od_entry(std::string_view category, std::strin
 }
 
 
-ODAccessStatus impl::Server::find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name,
-                                           ODEntryIter& ret_entry,
-                                           traits::check_exec_perm) const {
+ODAccessStatus impl::Server::find_od_entry_to_exec(std::string_view category,
+                                                   std::string_view subcategory,
+                                                   std::string_view name,
+                                                   ODEntryIter& ret_entry) const {
     ret_entry = find_od_entry(category, subcategory, name);
     if (ret_entry == _dictionary.entries.end()) {
         bsclog::error("Cannot execute {}::{}::{}::{}: no such OD entry.", _name, category, subcategory, name);

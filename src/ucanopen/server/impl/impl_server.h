@@ -33,13 +33,6 @@ enum class SetupStatus {
 };
 
 
-namespace traits {
-struct check_read_perm{};
-struct check_write_perm{};
-struct check_exec_perm{};
-}
-
-
 class ServerHeartbeatService;
 class ServerTpdoService;
 class ServerRpdoService;
@@ -73,7 +66,9 @@ public:
     NmtState nmt_state() const { return _nmt_state; }
     const ObjectDictionary& dictionary() const { return _dictionary; }
 public:
-    ODEntryIter find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name) const {
+    ODEntryIter find_od_entry(std::string_view category,
+                              std::string_view subcategory,
+                              std::string_view name) const {
         auto iter = _dictionary_aux.find({category, subcategory, name});
         if (iter == _dictionary_aux.end()) {
             return _dictionary.entries.end();
@@ -81,15 +76,18 @@ public:
         return iter->second;
     }
 
-    ODAccessStatus find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name,
-                    ODEntryIter& ret_entry,
-                    traits::check_read_perm) const;
-    ODAccessStatus find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name,
-                    ODEntryIter& ret_entry,
-                    traits::check_write_perm) const;
-    ODAccessStatus find_od_entry(std::string_view category, std::string_view subcategory, std::string_view name,
-                    ODEntryIter& ret_entry,
-                    traits::check_exec_perm) const;
+    ODAccessStatus find_od_entry_to_read(std::string_view category,
+                                         std::string_view subcategory,
+                                         std::string_view name,
+                                         ODEntryIter& ret_entry) const;
+    ODAccessStatus find_od_entry_to_write(std::string_view category,
+                                          std::string_view subcategory,
+                                          std::string_view name,
+                                          ODEntryIter& ret_entry) const;
+    ODAccessStatus find_od_entry_to_exec(std::string_view category,
+                                         std::string_view subcategory,
+                                         std::string_view name,
+                                         ODEntryIter& ret_entry) const;
 public:
     ODAccessStatus read(std::string_view category, std::string_view subcategory, std::string_view name);
     ODAccessStatus write(std::string_view category, std::string_view subcategory, std::string_view name, ExpeditedSdoData sdo_data);

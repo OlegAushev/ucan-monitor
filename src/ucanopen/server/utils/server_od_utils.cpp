@@ -11,7 +11,7 @@ StringReader::StringReader(impl::Server& server, impl::SdoPublisher& publisher,
         : SdoSubscriber(publisher)
         , _server(server)
 {
-    if (_server.find_od_entry(category, subcategory, name, _entry, traits::check_read_perm{}) != ODAccessStatus::success) {
+    if (_server.find_od_entry_to_read(category, subcategory, name, _entry) != ODAccessStatus::success) {
         _ready = true;
         return;
     }
@@ -68,7 +68,7 @@ ScalarReader::ScalarReader(impl::Server& server, impl::SdoPublisher& publisher,
         : SdoSubscriber(publisher)
         , _server(server)
 {
-    if (_server.find_od_entry(category, subcategory, name, _entry, traits::check_read_perm{}) != ODAccessStatus::success) {
+    if (_server.find_od_entry_to_read(category, subcategory, name, _entry) != ODAccessStatus::success) {
         _ready = true;
         return;
     }
@@ -114,7 +114,7 @@ ExpeditedSdoDataReader::ExpeditedSdoDataReader(impl::Server& server, impl::SdoPu
         : SdoSubscriber(publisher)
         , _server(server)
 {
-    if (_server.find_od_entry(category, subcategory, name, _entry, traits::check_read_perm{}) != ODAccessStatus::success) {
+    if (_server.find_od_entry_to_read(category, subcategory, name, _entry) != ODAccessStatus::success) {
         _ready = true;
         return;
     }
@@ -195,7 +195,7 @@ ExpeditedSdoDataWriter::ExpeditedSdoDataWriter(impl::Server& server, impl::SdoPu
         : SdoSubscriber(publisher)
         , _server(server)
 {
-    if (_server.find_od_entry(category, subcategory, name, _entry, traits::check_write_perm{}) != ODAccessStatus::success) {
+    if (_server.find_od_entry_to_write(category, subcategory, name, _entry) != ODAccessStatus::success) {
         _ready = true;
         return;
     }
