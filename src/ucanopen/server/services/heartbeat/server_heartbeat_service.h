@@ -7,7 +7,7 @@
 namespace ucanopen {
 
 
-class ServerHeartbeatService : public impl::FrameReceiverInterface {
+class ServerHeartbeatService : public impl::FrameReceiver {
 private:
     impl::Server& _server;
     canid_t _id;

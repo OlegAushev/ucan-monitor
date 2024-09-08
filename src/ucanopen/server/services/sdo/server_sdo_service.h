@@ -36,7 +36,7 @@ public:
 };
 
 
-class ServerSdoService : public impl::FrameReceiverInterface, public SdoPublisher {
+class ServerSdoService : public impl::FrameReceiver, public SdoPublisher {
 private:
     impl::Server& _server;
     canid_t _id;

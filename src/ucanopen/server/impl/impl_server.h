@@ -90,7 +90,7 @@ public:
 };
 
 
-class FrameReceiverInterface {
+class FrameReceiver {
 public:
     virtual FrameHandlingStatus handle_frame(const can_frame& frame) = 0;
 };

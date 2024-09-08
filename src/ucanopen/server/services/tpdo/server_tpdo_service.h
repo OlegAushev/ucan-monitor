@@ -8,7 +8,7 @@
 namespace ucanopen {
 
 
-class ServerTpdoService : public impl::FrameReceiverInterface, public impl::TpdoPublisher {
+class ServerTpdoService : public impl::FrameReceiver, public impl::TpdoPublisher {
 private:
     impl::Server& _server;
 

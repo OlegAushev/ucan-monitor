@@ -36,7 +36,7 @@ private:
     void _handle_frame(const can_frame& frame);
     void _set_node_id(NodeId nodeId);
 
-    std::vector<impl::FrameReceiverInterface*> _rx_services;
+    std::vector<impl::FrameReceiver*> _rx_services;
 
 public:
     std::optional<std::string> read_string(std::string_view category,
