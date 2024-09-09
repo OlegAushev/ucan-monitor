@@ -19,7 +19,7 @@ private:
     float _ref_torque_pct{0.f};
     int16_t _ref_speed{0};
 
-    float _ref_d_angle_deg{0.f};
+    int16_t _ref_d_angle_deg{0};
     float _ref_d_current_pct{0.f};
     
     bool _manual_field{false};

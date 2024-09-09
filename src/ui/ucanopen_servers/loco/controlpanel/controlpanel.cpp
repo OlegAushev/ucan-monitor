@@ -93,8 +93,23 @@ void ControlPanel::_draw_dash() {
     ImGui::InputText("##state", state.data(), state.size(), ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
 
+    // Operation mode selection
+    ImGui::PushItemWidth(200);
+    auto opmode_preview = opmode_names.at(_opmode).data();
+    if (ImGui::BeginCombo("Operating Mode", opmode_preview)) {
+        for (const auto& mode : opmode_names) {
+            bool is_selected = (mode.first == _opmode);
+            if (ImGui::Selectable(mode.second.data(), is_selected)) {
+                _opmode = mode.first;
+                _reset_refs();
+            }
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::PopItemWidth();
+
     // Power On/Off
-    ToggleButton(ICON_MDI_POWER_ON" On/Off " ICON_MDI_POWER_OFF, _power, ImVec2{200, 0});
+    ToggleButton(ICON_MDI_POWER_ON"   On/Off   " ICON_MDI_POWER_OFF, _power, ImVec2{200, 0});
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
 
@@ -106,7 +121,92 @@ void ControlPanel::_draw_dash() {
 
 
 void ControlPanel::_draw_normal_mode_controls() {
+    bool enabled = _server->opmode() == OperatingMode::normal;
+    if (enabled) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
 
+    bool selected = _opmode == OperatingMode::normal;
+    ui::util::Switchable run_mode_header(selected, []() {
+        ImGui::SameLine();
+        ImGui::SeparatorText("Run Mode");
+    });
+
+    if (!selected) {
+        return;
+    }
+
+    // torque input
+    ImGui::RadioButton("##torque_ctlmode", &_ctlmode_v, std::to_underlying(ControlMode::torque));
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+        ImGui::SetTooltip("Torque mode");
+    }
+    ImGui::SameLine();
+
+    ImGui::PushItemWidth(200);
+    if (ImGui::InputFloat("Torque [%]", &_ref_torque_pct, 1.0f, 100.0f, "%.2f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _ref_torque_pct = std::clamp(_ref_torque_pct, -100.0f, 100.0f);
+    }
+    if (_ctlmode != ControlMode::torque) {
+        _ref_torque_pct = 0;
+    }
+    ImGui::PopItemWidth();
+
+    // speed input
+    ImGui::RadioButton("##speed_ctlmode", &_ctlmode_v, std::to_underlying(ControlMode::speed));
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+        ImGui::SetTooltip("Speed mode");
+    }
+    ImGui::SameLine();
+
+    ImGui::PushItemWidth(200);
+    if (ImGui::InputScalar("Speed [rpm]", ImGuiDataType_S16,  &_ref_speed, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _ref_speed = std::clamp(_ref_speed, int16_t(-5000), int16_t(5000));
+    }
+    if (_ctlmode != ControlMode::speed) {
+        _ref_speed = 0;
+    }
+    ImGui::PopItemWidth();
+
+    // control loop
+    if (ImGui::TreeNode("Control Loop")) {
+        ImGui::RadioButton("Closed Loop", &_ctlloop_v, std::to_underlying(ControlLoop::closed));
+        if (ImGui::RadioButton("Open Loop", &_ctlloop_v, std::to_underlying(ControlLoop::open))) {
+            _ref_d_current_pct = std::clamp(_ref_d_current_pct, 0.0f, 100.0f);
+        }
+        ImGui::RadioButton("Semi-Closed Loop", &_ctlloop_v, std::to_underlying(ControlLoop::semiclosed));
+        ImGui::PushItemWidth(200);
+
+        switch (_ctlloop) {
+        case ControlLoop::closed:
+            // DO NOTHING
+            break;
+        case ControlLoop::open:
+            if (ImGui::InputFloat("D-Current [%]", &_ref_d_current_pct, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_d_current_pct = std::clamp(_ref_d_current_pct, 0.0f, 100.0f);
+            }
+
+            if (_ref_speed == 0) {
+                if (ImGui::InputScalar("Angle [deg]", ImGuiDataType_S16, &_ref_d_angle_deg, NULL, NULL, NULL, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    // _openloop_ref_angle = std::clamp(_openloop_ref_angle, 0, 360);
+                }
+            }
+
+            break;
+        case ControlLoop::semiclosed:
+            if (ImGui::InputFloat("D-Current [%]", &_ref_d_current_pct, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_d_current_pct = std::clamp(_ref_d_current_pct, -100.0f, 100.0f);
+            }           
+            break;
+        }
+
+        ImGui::PopItemWidth();
+        ImGui::TreePop();
+    }
 }
 
 

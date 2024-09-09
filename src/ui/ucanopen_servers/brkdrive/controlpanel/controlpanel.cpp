@@ -132,7 +132,7 @@ void ControlPanel::_draw_dash() {
     ImGui::PopItemWidth();
 
     // wakeup
-    ToggleButton(ICON_MDI_POWER" On/Off", _wakeup, ImVec2{200, 0});
+    ToggleButton(ICON_MDI_POWER_ON"   On/Off   " ICON_MDI_POWER_OFF, _wakeup, ImVec2{200, 0});
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
 

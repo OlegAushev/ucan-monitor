@@ -2,6 +2,7 @@
 
 
 #include <cstdint>
+#include <map>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -269,7 +270,7 @@ inline const std::unordered_set<uint8_t> opmode_values = {
     std::to_underlying(OperatingMode::testing)
 };
 
-inline const std::unordered_map<OperatingMode, std::string_view> opmode_names = {
+inline const std::map<OperatingMode, std::string_view> opmode_names = {
     {OperatingMode::normal, "normal"},
     {OperatingMode::testing, "testing"},
 };
