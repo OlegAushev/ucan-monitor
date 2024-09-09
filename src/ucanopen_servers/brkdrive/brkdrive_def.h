@@ -191,7 +191,7 @@ inline const std::vector<std::string> error_list = {
     "dc_overcurrent",
     "module_fault",
     "ac_overcurrent",
-    "module_overtemp",
+    "converter_overtemp",
     "motor_overtemp",
     "vdc_sensor_fault",
     "iac_sensor_fault",
