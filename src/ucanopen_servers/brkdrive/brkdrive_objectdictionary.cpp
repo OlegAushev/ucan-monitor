@@ -142,7 +142,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3005, 0x02}, {"config", "model_basic", "gener_current_limit",   "A",    OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x03}, {"config", "model_basic", "speed_limit",           "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x04}, {"config", "model_basic", "flux_weakening_limit",  "A",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3005, 0x05}, {"config", "model_basic", "mras_enable_speed",     "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x05}, {"config", "model_basic", "dq_advance_angle",     "o",    OD_ACCESS_RW, OD_FLOAT32}},
 //#############################################################################################
 {{0x3006, 0x01}, {"config", "model_controllers", "speed_kP",        "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3006, 0x02}, {"config", "model_controllers", "speed_kI",        "", OD_ACCESS_RW, OD_FLOAT32}},
