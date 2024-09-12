@@ -179,7 +179,8 @@ inline const std::vector<std::string> syslog_messages = {
     "@syslog: [  ok  ] Save angle sensor calibration data - ok.",
     "@syslog: [ fail ] Save angle sensor calibration data - fail.",
     
-    "@syslog: [  ok  ] Calibration completed successfully."	
+    "@syslog: [  ok  ] Abgle sensor calibration completed successfully.",
+    "@syslog: [  ok  ] Abgle sensor calibration terminated."	
 };
 
 
