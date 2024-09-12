@@ -33,8 +33,13 @@ void ControlPanel::_update_refs() {
     _server->set_opmode(_opmode);
     _server->toggle_power(_power);
     _server->toggle_start(_start);
+
+    _ctlmode = static_cast<ControlMode>(_ctlmode_v);
     _server->set_ctlmode(_ctlmode);
+
+    _ctlloop = static_cast<ControlLoop>(_ctlloop_v);
     _server->set_ctlloop(_ctlloop);
+
     _server->set_torque(_ref_torque_pct/100.f);
     _server->set_speed(_ref_speed);
     _server->set_d_angle(_ref_d_angle_deg);
@@ -133,7 +138,7 @@ void ControlPanel::_draw_normal_mode_controls() {
     bool selected = _opmode == OperatingMode::normal;
     ui::util::Switchable run_mode_header(selected, []() {
         ImGui::SameLine();
-        ImGui::SeparatorText("Run Mode");
+        ImGui::SeparatorText("Normal Mode");
     });
 
     if (!selected) {
@@ -171,6 +176,23 @@ void ControlPanel::_draw_normal_mode_controls() {
         _ref_speed = 0;
     }
     ImGui::PopItemWidth();
+
+    // field current
+    ImGui::Checkbox("##manual_field", &_manual_field);
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+        ImGui::SetTooltip("Manual field current control");
+    }
+    ImGui::SameLine();
+    ui::util::Switchable manual_field_controller(_manual_field, [&](){
+        ImGui::PushItemWidth(200);
+        if (ImGui::InputFloat("Field Current [%]", &_ref_f_current_pct, 1.0f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _ref_f_current_pct = std::clamp(_ref_f_current_pct, 0.f, 100.f);
+        }
+        if (!_manual_field) {
+            _ref_f_current_pct = 0;
+        }
+        ImGui::PopItemWidth();
+    });
 
     // control loop
     if (ImGui::TreeNode("Control Loop")) {
@@ -216,7 +238,29 @@ void ControlPanel::_draw_testing_mode_controls() {
 
 
 void ControlPanel::_draw_actions() {
+    ImGui::SeparatorText("");
 
+    ImGui::TextUnformatted(ICON_MDI_CAR_WRENCH);
+    ImGui::SameLine();
+    if (ImGui::TreeNode("Service Actions")) {
+        if (ImGui::Button(ICON_MDI_SHIELD_REFRESH" Clear Errors             ")) {
+            _server->exec("ctl", "sys", "clear_errors");
+        }
+
+        if (ImGui::Button(ICON_MDI_RESTART" Reset MCU                ")) {
+            _server->exec("ctl", "sys", "reset_device");
+        }
+
+        // if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE" Calibrate Angle Sensor   ")) {
+        //     _server->exec("ctl", "angsens", "calibrate");
+        // }
+
+        // if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE" Save Calibration Results ")) {
+        //     _server->exec("ctl", "angsens", "save_calibration");
+        // }
+        
+        ImGui::TreePop();
+    }
 }
 
 
