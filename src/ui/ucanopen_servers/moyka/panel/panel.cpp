@@ -55,6 +55,11 @@ void Panel::draw() {
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "UPTIME").c_str());
     
+    ImGui::TextUnformatted(ICON_MDI_ALERT_OUTLINE" Ошибки:");
+    ImGui::SameLine();
+    uint32_t errors = _server->watch_service.value("WATCH", "FAULTS").u32();
+    ImGui::Text("0x%08X", errors);
+    
     ImGui::TextUnformatted(ICON_MDI_CAR_BATTERY" Напряжение[В]:");
     ImGui::SameLine();
     ImGui::TextUnformatted(_server->watch_service.string_value("WATCH", "DC_VOLTAGE").c_str());
