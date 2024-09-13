@@ -74,7 +74,7 @@ public:
     void toggle_power(bool v) { _rpdo1.power.store(v); }
     void toggle_start(bool v) { _rpdo1.start.store(v); }
     void set_ctlmode(ControlMode v) { _rpdo1.ctlmode.store(v); }
-    void set_torque(float v_pu) { _rpdo1.ref_torque.store(std::clamp(v_pu, 0.f, 1.f)); }
+    void set_torque(float v_pu) { _rpdo1.ref_torque.store(std::clamp(v_pu, -1.f, 1.f)); }
     void set_speed(int16_t v) { _rpdo1.ref_speed.store(v); }
     
     void set_opmode(OperatingMode v) { _rpdo2.opmode.store(v); }
@@ -87,8 +87,8 @@ public:
 public:
     DriveState drive_state() const { return _tpdo1.drive_state.load(); }
     bool pwm_on() const { return _tpdo1.pwm_on.load(); }
-    bool error() const { return _tpdo1.error.load(); }
-    bool warning() const { return _tpdo1.warning.load(); }
+    bool has_error() const { return _tpdo1.error.load(); }
+    bool has_warning() const { return _tpdo1.warning.load(); }
     OperatingMode opmode() const { return _tpdo1.opmode.load(); }
     ControlMode ctlmode() const { return _tpdo1.ctlmode.load(); }
     ControlLoop ctlloop() const { return _tpdo1.ctlloop.load(); }

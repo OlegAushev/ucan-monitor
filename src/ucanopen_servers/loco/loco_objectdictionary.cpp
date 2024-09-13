@@ -49,8 +49,10 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x10}, {"watch", "model",     "iDRef",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x11}, {"watch", "model",     "iQ",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x12}, {"watch", "model",     "iQRef",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x13}, {"watch", "possens",   "speed",        "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x14}, {"watch", "possens",   "angle",        "rad",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x13}, {"watch", "model",     "iFRef",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5000, 0x20}, {"watch", "possens",   "speed",        "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x21}, {"watch", "possens",   "angle",        "rad",  OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5000, 0xF1}, {"watch",  "ref",      "torque",       "",     OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0xF2}, {"watch",  "ref",      "speed",        "",     OD_ACCESS_RO, OD_FLOAT32}},

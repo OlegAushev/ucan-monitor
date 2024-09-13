@@ -1,17 +1,16 @@
 #include "datapanel.h"
-#include <ui/util/checkbox_tristate.h>
 #include <ui/util/style.h>
 #include <ui/util/util.h>
 
 
-using namespace brkdrive;
+using namespace loco;
 
 
 namespace ui {
-namespace brkdrive {
+namespace loco {
 
 
-DataPanel::DataPanel(std::shared_ptr<::brkdrive::Server> server,
+DataPanel::DataPanel(std::shared_ptr<::loco::Server> server,
                      const std::string& menu_title,
                      const std::string& window_title,
                      bool open)
@@ -61,62 +60,16 @@ void DataPanel::_draw_tpdo1_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Operating Status");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(::brkdrive::opstatus_names.at(_server->opstatus()).data());
-        switch (_server->opstatus()) {
-        case ::brkdrive::OperatingStatus::inoperable:
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
-            break;
-        case ::brkdrive::OperatingStatus::calibrating:
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
-            break;
-        case ::brkdrive::OperatingStatus::working:
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
-            break;
-        }
-        
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Drive State");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(::brkdrive::drive_state_names.at(_server->drive_state()).data());
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Calibrated [bool]");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::Text("%d", _server->is_calibrated());
-        if (_server->is_calibrated()) {
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
-        } else {
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
-        }
-        
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Calibration State");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(calibration_state_names.at(_server->calstatus()).data());
-        switch (_server->calstatus()) {
-        case CalibrationState::standby:
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
-            break;
-        case CalibrationState::completed:
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
-            break;
-        default:
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
-            break;
-        }
-
+        ImGui::TextUnformatted(drive_state_names.at(_server->drive_state()).data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("PWM [bool]");
         ImGui::TableSetColumnIndex(1);
-        ImGui::Text("%d", _server->is_pwm_on());
-        if (_server->is_pwm_on()) {
+        ImGui::Text("%d", _server->pwm_on());
+        if (_server->pwm_on()) {
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
         }
 
@@ -142,35 +95,39 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Operating Mode");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(::brkdrive::opmode_names.at(_server->opmode()).data());
+        ImGui::TextUnformatted(opmode_names.at(_server->opmode()).data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Control Mode");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(::brkdrive::ctlmode_names.at(_server->ctlmode()).data());
+        ImGui::TextUnformatted(ctlmode_names.at(_server->ctlmode()).data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Control Loop");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(::brkdrive::ctlloop_names.at(_server->ctlloop()).data());
-        
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Angle [rad]");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::Text("%.2f", _server->angle());
+        ImGui::TextUnformatted(ctlloop_names.at(_server->ctlloop()).data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Trk Completed [bool]");
+        ImGui::TextUnformatted("Torque [%]");
         ImGui::TableSetColumnIndex(1);
-        ImGui::Text("%d", _server->is_trk_completed());
-        if (_server->is_trk_completed()) {
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
-        } else {
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
+        ImGui::Text("%.2f", _server->torque());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Speed [rpm]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%d", _server->speed());
+        
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Manual Field [bool]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%d", _server->manual_field());
+        if (_server->manual_field()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
         }
 
         ImGui::EndTable();
@@ -203,19 +160,6 @@ void DataPanel::_draw_tpdo2_table() {
         ImGui::TableSetColumnIndex(1);
         auto payload = _server->tpdo_service.data(ucanopen::CobTpdo::tpdo2);
         ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X", payload[0], payload[1], payload[2], payload[3], payload[4], payload[5], payload[6], payload[7]);
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Ref Angle [rad]");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::Text("%.2f", _server->ref_angle());
-        
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Braking Force [%]");
-        ImGui::TableSetColumnIndex(1);
-        int braking_pct = _server->ref_brake() * 100.0f;
-        ImGui::Text("%d", braking_pct);
 
         ImGui::EndTable();
     }
@@ -253,12 +197,6 @@ void DataPanel::_draw_tpdo3_table() {
         ImGui::TableSetColumnIndex(1);
         auto payload = _server->tpdo_service.data(ucanopen::CobTpdo::tpdo3);
         ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X", payload[0], payload[1], payload[2], payload[3], payload[4], payload[5], payload[6], payload[7]);
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Speed [rpm]");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::Text("%d", _server->speed());
 
         ImGui::EndTable();
     }    
@@ -308,5 +246,5 @@ void DataPanel::_draw_tpdo4_table() {
 }
 
 
-} // namespace brkdrive
+} // namespace loco
 } // namespace ui

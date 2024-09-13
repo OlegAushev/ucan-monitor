@@ -233,7 +233,34 @@ void ControlPanel::_draw_normal_mode_controls() {
 
 
 void ControlPanel::_draw_testing_mode_controls() {
+    bool enabled = _server->opmode() == OperatingMode::testing;
+    if (enabled) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::PopStyleColor();
 
+    bool selected = _opmode == OperatingMode::testing;
+    ui::util::Switchable run_mode_header(selected, []() {
+        ImGui::SameLine();
+        ImGui::SeparatorText("Testing Mode");
+    });
+
+    if (!selected) {
+        return;
+    }
+
+    ImGui::PushItemWidth(200);
+    if (ImGui::InputFloat("Phase Duty Cycle [%]", &_ref_torque_pct, 1.0f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _ref_torque_pct = std::clamp(_ref_torque_pct, -100.0f, 100.0f);
+    }
+        
+    if (ImGui::InputFloat("Field Duty Cycle [%]", &_ref_f_current_pct, 1.0f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _ref_f_current_pct = std::clamp(_ref_f_current_pct, 0.f, 100.f);
+    }
+    ImGui::PopItemWidth();
 }
 
 
