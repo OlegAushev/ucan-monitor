@@ -37,7 +37,7 @@ void ControlPanel::_reset_refs() {
 
 
 void ControlPanel::_update_refs() {
-    if (!_server->heartbeat_service.good()
+    if (!_server->tpdo_service.good(ucanopen::CobTpdo::tpdo1)
             || _server->errors() != 0) {
         _run = false;
     }
