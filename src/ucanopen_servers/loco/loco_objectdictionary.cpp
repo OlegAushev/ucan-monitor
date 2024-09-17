@@ -34,6 +34,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslog_message", "", OD_ACCESS_RO, OD_UINT32}},
 {{0x5000, 0x03}, {"watch", "converter", "vDC",          "V",    OD_ACCESS_RO, OD_FLOAT32}},
+
 {{0x5000, 0x04}, {"watch", "converter", "iA1",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x05}, {"watch", "converter", "iB1",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x06}, {"watch", "converter", "iC1",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
@@ -44,12 +45,26 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x0B}, {"watch", "converter", "iB3",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x0C}, {"watch", "converter", "iC3",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x0D}, {"watch", "converter", "iF",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x0E}, {"watch", "model",     "iS",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x0F}, {"watch", "model",     "iD",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x10}, {"watch", "model",     "iDRef",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x11}, {"watch", "model",     "iQ",           "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x12}, {"watch", "model",     "iQRef",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x13}, {"watch", "model",     "iFRef",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5000, 0x0E}, {"watch", "model",     "iS1",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x0F}, {"watch", "model",     "iD1",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x10}, {"watch", "model",     "iDRef1",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x11}, {"watch", "model",     "iQ1",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x12}, {"watch", "model",     "iQRef1",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5000, 0x13}, {"watch", "model",     "iS2",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x14}, {"watch", "model",     "iD2",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x15}, {"watch", "model",     "iDRef2",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x16}, {"watch", "model",     "iQ2",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x17}, {"watch", "model",     "iQRef2",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5000, 0x18}, {"watch", "model",     "iS3",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x19}, {"watch", "model",     "iD3",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x1A}, {"watch", "model",     "iDRef3",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x1B}, {"watch", "model",     "iQ3",          "A",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x1C}, {"watch", "model",     "iQRef3",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5000, 0x1D}, {"watch", "model",     "iFRef",        "A",    OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5000, 0x20}, {"watch", "possens",   "speed",        "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x21}, {"watch", "possens",   "angle",        "rad",  OD_ACCESS_RO, OD_FLOAT32}},
