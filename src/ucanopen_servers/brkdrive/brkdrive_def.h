@@ -200,6 +200,7 @@ inline const std::vector<std::string> error_list = {
     "invalid_config",
     "watchdog_timeout",
     "iac_sensor_overcurrent",
+    "mcu_overtemp"
 };
 
 
