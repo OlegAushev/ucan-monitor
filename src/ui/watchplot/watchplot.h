@@ -18,6 +18,7 @@ private:
     std::shared_ptr<::ucanopen::Server> _server;
     float _now{0.0f};
     float _time_depth{60.0f};
+    static constexpr float _max_time_depth{10000.0f};
 
     bool _running{true};
     std::map<ucanopen::ServerLogService::LogKey, ucanopen::ServerLogService::LogBuf> _log_snapshot;

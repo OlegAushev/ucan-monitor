@@ -63,9 +63,9 @@ void WatchPlot::_draw_menubar() {
             }
             if (ImGui::BeginMenu("Depth [s]")) {
                 //ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0.6f, 0.6f));
-                ImGui::PushItemWidth(120);
+                ImGui::PushItemWidth(160);
                 if (ImGui::InputFloat("##depth", &_time_depth, 1, 100, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                    _time_depth = std::clamp(_time_depth, 0.1f, 600.0f);
+                    _time_depth = std::clamp(_time_depth, 0.1f, _max_time_depth);
                 }
                 ImGui::PopItemWidth();
                 //ImGui::PopStyleVar();
