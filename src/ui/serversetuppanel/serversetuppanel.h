@@ -16,6 +16,7 @@ private:
     std::string _device_name;
     std::string _hardware_version;
     std::string _software_version;
+    std::string _software_commitdate;
     std::string _device_sn;
 public:
     ServerSetupPanel(std::shared_ptr<ucanopen::Server> server,
