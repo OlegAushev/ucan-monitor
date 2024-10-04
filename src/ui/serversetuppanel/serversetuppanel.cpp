@@ -31,6 +31,7 @@ void ServerSetupPanel::_draw_about() {
         _hardware_version.clear();
         _software_version.clear();
         _software_commitdate.clear();
+        _software_branch.clear();
         _device_sn.clear();
     }
 
@@ -61,6 +62,13 @@ void ServerSetupPanel::_draw_about() {
         _software_commitdate = _server->read_string("info", "sys", "firmware_commitdate", std::chrono::milliseconds(500)).value_or("n/a");
     }
     ImGui::TextUnformatted(_software_commitdate.c_str());
+
+    ImGui::TextDisabled("Software Branch: ");
+    ImGui::SameLine();
+    if (_software_branch.empty()) {
+        _software_branch = _server->read_string("info", "sys", "firmware_branch", std::chrono::milliseconds(500)).value_or("n/a");
+    }
+    ImGui::TextUnformatted(_software_branch.c_str());
 
     ImGui::TextDisabled("Device S/N: ");
     ImGui::SameLine();
