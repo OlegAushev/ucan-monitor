@@ -21,7 +21,7 @@ private:
 
     int _client_sync_period{200};
     int _server_watch_period{10};
-    int _server_log_capacity{1000};
+    int _server_log_capacity{1000000};
 public:
     Options(std::shared_ptr<can::Socket> socket, std::shared_ptr<ucanopen::Client> ucanopen_client);
     void draw(bool& open);

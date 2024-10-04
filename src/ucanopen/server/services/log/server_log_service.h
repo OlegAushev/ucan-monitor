@@ -28,7 +28,7 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> _start;
     std::map<LogKey, LogBuf> _log;
     mutable std::mutex _log_mtx;
-    static inline size_t _log_capacity = 1000;
+    static inline size_t _log_capacity = 1000000;
 public:
     ServerLogService(impl::Server& server, SdoPublisher& sdo_publisher, impl::TpdoPublisher& tpdo_publisher);
     std::vector<const ODObject*> objects() const { return _objects; }
