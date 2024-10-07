@@ -151,6 +151,7 @@ ucanopen::can_payload Server::_create_rpdo3() {
 
     rpdo.ref_dcurr = 10000.0f * _rpdo3.ref_dcurr.load();
     rpdo.openloop_ref_angle = _rpdo3.openloop_ref_angle.load();
+    rpdo.ref_dvolt = 10000.0f * _rpdo3.ref_dvolt.load();
 
     rpdo.counter = counter++;
 

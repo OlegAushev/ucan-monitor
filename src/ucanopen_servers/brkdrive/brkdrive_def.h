@@ -119,14 +119,12 @@ struct CobRpdo3 {
 
     int16_t openloop_ref_angle;
     
+    uint16_t ref_dvolt;
+    
     uint8_t _reserved1;
     
-    uint8_t _reserved2;
-    
-    uint8_t _reserved3;
-    
     uint8_t counter : 2;
-    uint8_t _reserved4 : 6;
+    uint8_t _reserved2 : 6;
 };
 
 
@@ -333,21 +331,24 @@ inline const std::unordered_map<ControlMode, std::string_view> ctlmode_names = {
 enum class ControlLoop {
     closed,
     open,
-    semiclosed
+    semiclosed,
+    openvolt
 };
 
 
 inline const std::unordered_set<int> ctlloop_values = {
     std::to_underlying(ControlLoop::closed),
     std::to_underlying(ControlLoop::open),
-    std::to_underlying(ControlLoop::semiclosed)
+    std::to_underlying(ControlLoop::semiclosed),
+    std::to_underlying(ControlLoop::openvolt)
 };
 
 
 inline const std::unordered_map<ControlLoop, std::string_view> ctlloop_names = {
     {ControlLoop::closed, "closed"},
     {ControlLoop::open, "open"},
-    {ControlLoop::semiclosed, "semiclosed"}
+    {ControlLoop::semiclosed, "semiclosed"},
+    {ControlLoop::openvolt, "openvolt"}
 };
 
 

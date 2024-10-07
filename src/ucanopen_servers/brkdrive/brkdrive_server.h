@@ -41,6 +41,7 @@ private:
     struct {
         std::atomic<float> ref_dcurr{0};
         std::atomic<int16_t> openloop_ref_angle{0};
+        std::atomic<float> ref_dvolt{0};
     } _rpdo3;
 
     struct {
@@ -89,6 +90,7 @@ public:
 
     void set_ref_dcurr(float value) { _rpdo3.ref_dcurr.store(std::clamp(value, -1.0f, 1.0f)); }
     void set_openloop_ref_angle(int16_t value) { _rpdo3.openloop_ref_angle.store(value); }
+    void set_ref_dvolt(float value) { _rpdo3.ref_dvolt.store(std::clamp(value, 0.0f, 1.0f)); }
 
     float angle() const { return _tpdo1.angle.load(); }
     OperatingStatus opstatus() const { return _tpdo1.opstatus.load(); }

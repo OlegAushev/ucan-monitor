@@ -27,7 +27,8 @@ void ControlPanel::_reset_refs() {
     _ref_angle = 0;
     _ref_torque_pct = 0;
     _ref_speed = 0;
-    _ref_dcurr_pu = 0;
+    _ref_dcurr_pct = 0;
+    _ref_dvolt_pct = 0;
     _openloop_ref_angle = 0;
     _track_speed = 0;
 
@@ -66,8 +67,9 @@ void ControlPanel::_update_refs() {
 
     _server->set_ref_torque(_ref_torque_pct / 100.0f);
     _server->set_ref_speed(_ref_speed);
-    _server->set_ref_dcurr(_ref_dcurr_pu / 100.0f);
+    _server->set_ref_dcurr(_ref_dcurr_pct / 100.0f);
     _server->set_openloop_ref_angle(_openloop_ref_angle);
+    _server->set_ref_dvolt(_ref_dvolt_pct / 100.0f);
 }
 
 
@@ -340,9 +342,10 @@ void ControlPanel::_draw_run_mode_controls() {
         if (ImGui::TreeNode("Control Loop")) {
             ImGui::RadioButton("Closed Loop", &_ctlloop_v, std::to_underlying(::brkdrive::ControlLoop::closed));
             if (ImGui::RadioButton("Open Loop", &_ctlloop_v, std::to_underlying(::brkdrive::ControlLoop::open))) {
-                _ref_dcurr_pu = std::clamp(_ref_dcurr_pu, 0.0f, 100.0f);
+                _ref_dcurr_pct = std::clamp(_ref_dcurr_pct, 0.0f, 100.0f);
             }
             ImGui::RadioButton("Semi-Closed Loop", &_ctlloop_v, std::to_underlying(::brkdrive::ControlLoop::semiclosed));
+            ImGui::RadioButton("Voltage Loop", &_ctlloop_v, std::to_underlying(::brkdrive::ControlLoop::openvolt));
             ImGui::PushItemWidth(200);
 
             switch (_ctlloop) {
@@ -350,8 +353,8 @@ void ControlPanel::_draw_run_mode_controls() {
                 // DO NOTHING
                 break;
             case ControlLoop::open:
-                if (ImGui::InputFloat("D-Current [%]", &_ref_dcurr_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                    _ref_dcurr_pu = std::clamp(_ref_dcurr_pu, 0.0f, 100.0f);
+                if (ImGui::InputFloat("D-Current [%]", &_ref_dcurr_pct, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _ref_dcurr_pct = std::clamp(_ref_dcurr_pct, 0.0f, 100.0f);
                 }
 
                 if (_ref_speed == 0) {
@@ -362,9 +365,21 @@ void ControlPanel::_draw_run_mode_controls() {
 
                 break;
             case ControlLoop::semiclosed:
-                if (ImGui::InputFloat("D-Current [%]", &_ref_dcurr_pu, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
-                    _ref_dcurr_pu = std::clamp(_ref_dcurr_pu, -100.0f, 100.0f);
+                if (ImGui::InputFloat("D-Current [%]", &_ref_dcurr_pct, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _ref_dcurr_pct = std::clamp(_ref_dcurr_pct, -100.0f, 100.0f);
                 }           
+                break;
+            case ControlLoop::openvolt:
+                if (ImGui::InputFloat("Voltage [%]", &_ref_dvolt_pct, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _ref_dvolt_pct = std::clamp(_ref_dvolt_pct, 0.0f, 100.0f);
+                }
+
+                if (_ref_speed == 0) {
+                    if (ImGui::InputInt("Angle [deg]", &_openloop_ref_angle, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                        // _openloop_ref_angle = std::clamp(_openloop_ref_angle, 0, 360);
+                    }
+                }
+
                 break;
             }
 

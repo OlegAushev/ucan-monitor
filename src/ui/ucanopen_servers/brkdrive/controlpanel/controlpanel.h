@@ -24,7 +24,8 @@ private:
 
     float _ref_torque_pct{0.0f};
     int16_t _ref_speed{0};
-    float _ref_dcurr_pu{0.0f};
+    float _ref_dcurr_pct{0.0f};
+    float _ref_dvolt_pct{0.0f};
 
     ::brkdrive::OperatingMode _opmode{::brkdrive::OperatingMode::normal};
 
