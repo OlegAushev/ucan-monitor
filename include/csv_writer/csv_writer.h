@@ -2,6 +2,7 @@
 
 
 #include <fstream>
+#include <iomanip>
 
 
 class CsvWriter {
@@ -13,6 +14,11 @@ public:
             : _file(filename)
             , _separator(separator)
     {}
+
+    CsvWriter& operator<<(float t) {
+        _file << std::setprecision(6) << t << _separator;
+        return *this;
+    }
 
     template <typename T>
     CsvWriter& operator<<(const T& t) {
