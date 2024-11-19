@@ -123,6 +123,6 @@ SpacesBeforeTrailingComments: 1
 SpacesInAngles: Never
 SpacesInParens: Never
 SpacesInSquareBrackets: false
-Standard: c++03 # Latest or c++03 for TI-projects
+Standard: Latest # Latest or c++03 for TI-projects
 TabWidth: 4
 UseTab: Never
