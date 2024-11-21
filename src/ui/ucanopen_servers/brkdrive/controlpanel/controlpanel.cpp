@@ -44,19 +44,19 @@ void ControlPanel::_update_refs() {
     }
 
     _server->set_opmode(_opmode);
-    
+
     _server->toggle_wakeup(_wakeup);
 
     if (!(_run && _calibrate)) {
         if (_run) {
-            _server->set_cmd_status(OperatingStatus::working);
+            _server->set_cmd_status(OperatingStatus::operable);
         } else if (_calibrate) {
             _server->set_cmd_status(OperatingStatus::calibrating);
         } else {
             _server->set_cmd_status(OperatingStatus::inoperable);
         }
     }
-    
+
     _server->set_ref_angle(_ref_angle);
     _server->set_track_speed(_track_speed);
 
@@ -85,7 +85,7 @@ void ControlPanel::draw() {
     _draw_hwtest_mode_controls();
 
     _draw_actions();
-    
+
     _update_refs();
 
     ImGui::End();
@@ -163,7 +163,7 @@ void ControlPanel::_draw_normal_mode_controls() {
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
     }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
     ImGui::PopStyleColor();
 
     bool selected = _opmode == OperatingMode::normal;
@@ -193,8 +193,8 @@ void ControlPanel::_draw_normal_mode_controls() {
             _ref_angle = ref_angle;
         } else {
             _ref_angle = (ref_angle / 180.f) * std::numbers::pi;
-        }    
-        
+        }
+
         ImGui::SameLine();
         ImGui::RadioButton("[rad]", &angle_mode, 0);
         ImGui::SameLine();
@@ -216,7 +216,7 @@ void ControlPanel::_draw_run_mode_controls() {
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
     }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
     ImGui::PopStyleColor();
 
     bool selected = _opmode == OperatingMode::run;
@@ -238,9 +238,9 @@ void ControlPanel::_draw_run_mode_controls() {
         }
         ImGui::PopItemWidth();
         _run_ref_control = static_cast<ReferenceControl>(ref_control);
-        
+
         if (_run_ref_control == ReferenceControl::program) {
-            ReferenceManager* ref_manager = (_ctlmode == ControlMode::torque) ?    
+            ReferenceManager* ref_manager = (_ctlmode == ControlMode::torque) ?
                                             &_ref_torque_manager : &_ref_speed_manager;
 
             ImGui::PushItemWidth(200);
@@ -269,11 +269,11 @@ void ControlPanel::_draw_run_mode_controls() {
                 std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
                     ref_manager->read_file(file_path);
                 }
-                
+
                 // close
                 ImGuiFileDialog::Instance()->Close();
             }
-            
+
             if (ref_manager->empty()) {
                 _run = false;
             }
@@ -367,7 +367,7 @@ void ControlPanel::_draw_run_mode_controls() {
             case ControlLoop::semiclosed:
                 if (ImGui::InputFloat("D-Current [%]", &_ref_dcurr_pct, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
                     _ref_dcurr_pct = std::clamp(_ref_dcurr_pct, -100.0f, 100.0f);
-                }           
+                }
                 break;
             case ControlLoop::openvolt:
                 if (ImGui::InputFloat("Voltage [%]", &_ref_dvolt_pct, 0.1f, 100.0f, "%.1f", ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -397,12 +397,12 @@ void ControlPanel::_draw_track_mode_controls() {
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
     }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
     ImGui::PopStyleColor();
 
     bool selected = _opmode == ::brkdrive::OperatingMode::track;
     ui::util::Switchable track_mode_header(selected, [](){
-        ImGui::SameLine();  
+        ImGui::SameLine();
         ImGui::SeparatorText("Track Mode");
     });
 
@@ -447,11 +447,11 @@ void ControlPanel::_draw_track_mode_controls() {
                 std::string file_path = ImGuiFileDialog::Instance()->GetFilePathName();
                     _ref_angle_manager.read_file(file_path);
                 }
-                
+
                 // close
                 ImGuiFileDialog::Instance()->Close();
             }
-            
+
             if (_ref_angle_manager.empty()) {
                 _run = false;
             }
@@ -484,8 +484,8 @@ void ControlPanel::_draw_track_mode_controls() {
             _ref_angle = ref_angle;
         } else {
             _ref_angle = (ref_angle / 180.f) * std::numbers::pi;
-        }    
-        
+        }
+
         ImGui::SameLine();
         ImGui::RadioButton("[rad]", &angle_mode, 0);
         ImGui::SameLine();
@@ -507,7 +507,7 @@ void ControlPanel::_draw_hwtest_mode_controls() {
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
     }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED); 
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
     ImGui::PopStyleColor();
 
     bool selected = _opmode == ::brkdrive::OperatingMode::hwtest;
@@ -539,7 +539,7 @@ void ControlPanel::_draw_actions() {
         if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE" Save Calibration Results ")) {
             _server->exec("ctl", "angsens", "save_calibration");
         }
-        
+
         ImGui::TreePop();
     }
 }
@@ -610,18 +610,18 @@ void ControlPanel::_draw_calibration_results() {
     static std::string phi_1;
     static std::string phi_2;
     static std::string phi_3;
-    
+
     ImGui::TextUnformatted(ICON_MDI_MATH_COMPASS);
     ImGui::SameLine();
     if (ImGui::TreeNode("Calibration Results")) {
         if (phi_1.empty()) {
             phi_1 = _server->read_scalar("ctl", "drive", "phi_1", std::chrono::milliseconds(100)).value_or("n/a");
         }
-        
+
         if (phi_2.empty()) {
             phi_2 = _server->read_scalar("ctl", "drive", "phi_2", std::chrono::milliseconds(100)).value_or("n/a");
         }
-        
+
         if (phi_3.empty()) {
             phi_3 = _server->read_scalar("ctl", "drive", "phi_3", std::chrono::milliseconds(100)).value_or("n/a");
         }
@@ -637,10 +637,10 @@ void ControlPanel::_draw_calibration_results() {
 
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted(phi_1.c_str());
-            
+
             ImGui::TableSetColumnIndex(1);
             ImGui::TextUnformatted(phi_2.c_str());
-            
+
             ImGui::TableSetColumnIndex(2);
             ImGui::TextUnformatted(phi_3.c_str());
 

@@ -28,11 +28,11 @@ struct CobTpdo1 {
     uint8_t opmode : 2;
     uint8_t ctlmode : 1;
     uint8_t ctlloop : 2;
-    
+
     uint8_t calstatus : 3;
     uint8_t trkcompleted : 1;
     uint8_t _reserved1 : 4;
-    
+
     uint8_t counter : 2;
     uint8_t _reserved2 : 6;
 };
@@ -40,7 +40,7 @@ struct CobTpdo1 {
 
 struct CobTpdo2 {
     float ref_angle;
-    
+
     uint8_t ref_brake;
 
     uint8_t _reserved1;
@@ -89,7 +89,7 @@ struct CobRpdo1 {
     uint8_t wakeup : 1;
     uint8_t cmd_opstatus : 2;
     uint8_t _reserved1 : 4;
-    
+
     uint8_t counter : 2;
     uint8_t _reserved2 : 6;
 };
@@ -100,15 +100,15 @@ struct CobRpdo2 {
     uint8_t ctlmode : 1;
     uint8_t ctlloop : 2;
     uint8_t _reserved1 : 3;
-    
+
     uint8_t _reserved2;
 
     int16_t ref_torque;
-    
+
     int16_t ref_speed;
-    
+
     uint8_t _reserved3;
-    
+
     uint8_t counter : 2;
     uint8_t _reserved4 : 6;
 };
@@ -118,11 +118,11 @@ struct CobRpdo3 {
     int16_t ref_dcurr;
 
     int16_t openloop_ref_angle;
-    
+
     uint16_t ref_dvolt;
-    
+
     uint8_t _reserved1;
-    
+
     uint8_t counter : 2;
     uint8_t _reserved2 : 6;
 };
@@ -176,9 +176,9 @@ inline const std::vector<std::string> syslog_messages = {
 
     "@syslog: [  ok  ] Save angle sensor calibration data - ok.",
     "@syslog: [ fail ] Save angle sensor calibration data - fail.",
-    
+
     "@syslog: [  ok  ] Abgle sensor calibration completed successfully.",
-    "@syslog: [  ok  ] Abgle sensor calibration terminated."	
+    "@syslog: [  ok  ] Abgle sensor calibration terminated."
 };
 
 
@@ -268,21 +268,21 @@ inline const std::unordered_map<DriveState, std::string_view> drive_state_names 
 
 enum class OperatingStatus {
     inoperable,
-    working,
+    operable,
     calibrating
 };
 
 
 inline const std::unordered_set<int> opstatus_values = {
     std::to_underlying(OperatingStatus::inoperable),
-    std::to_underlying(OperatingStatus::working),
+    std::to_underlying(OperatingStatus::operable),
     std::to_underlying(OperatingStatus::calibrating)
 };
 
 
 inline const std::unordered_map<OperatingStatus, std::string_view> opstatus_names = {
     {OperatingStatus::inoperable, "inoperable"},
-    {OperatingStatus::working, "working"},
+    {OperatingStatus::operable, "operable"},
     {OperatingStatus::calibrating, "calibrating"}
 };
 

@@ -42,7 +42,7 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
         ImGui::PopStyleColor();
     }
-    
+
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO1");
 
@@ -71,11 +71,11 @@ void DataPanel::_draw_tpdo1_table() {
         case ::brkdrive::OperatingStatus::calibrating:
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_yellow);
             break;
-        case ::brkdrive::OperatingStatus::working:
+        case ::brkdrive::OperatingStatus::operable:
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_green);
             break;
         }
-        
+
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Drive State");
@@ -92,7 +92,7 @@ void DataPanel::_draw_tpdo1_table() {
         } else {
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ui::colors::table_bg_red);
         }
-        
+
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Calibration State");
@@ -155,7 +155,7 @@ void DataPanel::_draw_tpdo1_table() {
         ImGui::TextUnformatted("Control Loop");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(::brkdrive::ctlloop_names.at(_server->ctlloop()).data());
-        
+
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Angle [rad]");
@@ -187,7 +187,7 @@ void DataPanel::_draw_tpdo2_table() {
         ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
         ImGui::PopStyleColor();
     }
-    
+
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO2");
 
@@ -209,7 +209,7 @@ void DataPanel::_draw_tpdo2_table() {
         ImGui::TextUnformatted("Ref Angle [rad]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.2f", _server->ref_angle());
-        
+
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Braking Force [%]");
@@ -231,7 +231,7 @@ void DataPanel::_draw_tpdo3_table() {
         ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
         ImGui::PopStyleColor();
     }
-    
+
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO3");
 
@@ -261,7 +261,7 @@ void DataPanel::_draw_tpdo3_table() {
         ImGui::Text("%d", _server->speed());
 
         ImGui::EndTable();
-    }    
+    }
 }
 
 
@@ -274,7 +274,7 @@ void DataPanel::_draw_tpdo4_table() {
         ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
         ImGui::PopStyleColor();
     }
-    
+
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO4");
 
@@ -304,7 +304,7 @@ void DataPanel::_draw_tpdo4_table() {
         ImGui::Text("%d",_server->warnings());
 
         ImGui::EndTable();
-    }  
+    }
 }
 
 
