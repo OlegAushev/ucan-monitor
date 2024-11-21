@@ -37,7 +37,7 @@ private:
         std::atomic<float> ref_current{0};
         std::atomic<float> ref_voltage{0};
         std::atomic<float> ref_field{0};
-        std::atomic<OperatingMode> opmode{OperatingMode::running};
+        std::atomic<OperatingMode> opmode{OperatingMode::normal};
         std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
         std::atomic<bool> manual_field{false};
     } _rpdo2;
@@ -47,7 +47,7 @@ private:
         std::atomic<bool> pwm_on{false};
         std::atomic<bool> error{false};
         std::atomic<bool> warning{false};
-        std::atomic<OperatingMode> opmode{OperatingMode::running};
+        std::atomic<OperatingMode> opmode{OperatingMode::normal};
         std::atomic<ControlMode> ctlmode{ControlMode::torque};
         std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
         // TODO precharge state
@@ -108,6 +108,15 @@ public:
 
     int16_t speed() const { return _tpdo3.speed.load(); }
     int16_t angle() const { return _tpdo3.angle.load(); }
+
+    bool has_errors() const {
+        for (auto& entry : _errors) {
+            if (entry.load() != 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 private:
     void _handle_tpdo1(const ucanopen::can_payload& payload);
     void _handle_tpdo2(const ucanopen::can_payload& payload);

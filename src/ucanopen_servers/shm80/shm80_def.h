@@ -146,18 +146,18 @@ drive_state_names = {
 };
 
 enum class OperatingMode {
-    running,
+    normal,
     testing
 };
 
 
 inline const std::unordered_set<int> opmode_values = {
-    std::to_underlying(OperatingMode::running),
+    std::to_underlying(OperatingMode::normal),
     std::to_underlying(OperatingMode::testing),
 };
 
 inline const std::map<OperatingMode, std::string_view> opmode_names = {
-    {OperatingMode::running, "running"},
+    {OperatingMode::normal, "normal"},
     {OperatingMode::testing, "testing"},
 };
 

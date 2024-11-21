@@ -1,7 +1,7 @@
-#include <imgui.h>
+#include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
-#include <GLFW/glfw3.h>
+#include <imgui.h>
 #include <implot.h>
 
 //#include <icons_font_awesome/IconsFontAwesome6.h>
@@ -12,12 +12,14 @@
 #include <memory>
 #include <ucanopen/client/client.h>
 
-#include <ui/mainview/mainview.h>
 #include <ui/log/log.h>
+#include <ui/mainview/mainview.h>
 #include <ui/serverselector/serverselector.h>
 #include <ui/serversetuppanel/serversetuppanel.h>
 #include <ui/watchpanel/watchpanel.h>
 #include <ui/watchplot/watchplot.h>
+
+#include <ui/ucanopen_servers/shm80/controlpanel/controlpanel.h>
 
 #include <ui/ucanopen_servers/moyka/panel/panel.h>
 
@@ -25,11 +27,11 @@
 #include <ui/ucanopen_servers/srmdrive/datapanel/datapanel.h>
 #include <ui/ucanopen_servers/srmdrive/statuspanel/statuspanel.h>
 
-#include <ui/ucanopen_servers/atvvcu/dashboard/dashboard.h>
 #include <ui/ucanopen_servers/atvvcu/bmspanel/bmspanel.h>
-#include <ui/ucanopen_servers/atvvcu/pdmpanel/pdmpanel.h>
+#include <ui/ucanopen_servers/atvvcu/dashboard/dashboard.h>
 #include <ui/ucanopen_servers/atvvcu/motorcontrolpanel/motorcontrolpanel.h>
 #include <ui/ucanopen_servers/atvvcu/motordatapanel/motordatapanel.h>
+#include <ui/ucanopen_servers/atvvcu/pdmpanel/pdmpanel.h>
 
 #include <ui/ucanopen_servers/brkdrive/controlpanel/controlpanel.h>
 #include <ui/ucanopen_servers/brkdrive/datapanel/datapanel.h>
@@ -39,31 +41,33 @@
 #include <ui/ucanopen_servers/loco/datapanel/datapanel.h>
 #include <ui/ucanopen_servers/loco/statuspanel/statuspanel.h>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 #include <csv_writer/csv_writer.h>
 #include <reference_manager/reference_manager.h>
 
-
-const std::vector<std::string> server_names = {"project-moyka", "srmdrive", "atv-vcu", "brake-drive", "loco-drive"};
-
+const std::vector<std::string> server_names = {"SHM-Drive-80",
+                                               "project-moyka",
+                                               "srmdrive",
+                                               "atv-vcu",
+                                               "brake-drive",
+                                               "loco-drive"};
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
-    bsclog::add_sink(std::shared_ptr<std::ostream>(&std::cout, [](void*){}));
+    bsclog::add_sink(std::shared_ptr<std::ostream>(&std::cout, [](void*) {}));
     auto logfile = std::make_shared<std::ofstream>("log.txt");
     bsclog::add_sink(logfile);
-    auto gui_log = std::make_shared<ui::Log>(); 
+    auto gui_log = std::make_shared<ui::Log>();
     bsclog::add_sink(gui_log->stream());
-    bsclog::success("Initialized bsclog. Sink count: {}", bsclog::sink_count());  
-    
+    bsclog::success("Initialized bsclog. Sink count: {}", bsclog::sink_count());
+
     glfwSetErrorCallback(glfw_error_callback);
-    if(!glfwInit()){
+    if (!glfwInit()) {
         return 1;
     }
 
@@ -72,7 +76,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
     // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "uCAN Monitor", nullptr, nullptr);
+    GLFWwindow* window =
+            glfwCreateWindow(1280, 720, "uCAN Monitor", nullptr, nullptr);
     if (window == nullptr) {
         return 1;
     }
@@ -83,10 +88,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImPlot::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;   // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;    // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;       // Enable Docking
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |=
+            ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |=
+            ImGuiConfigFlags_NavEnableGamepad;        // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
 
     // Style
     ImGuiStyle& style = ImGui::GetStyle();
@@ -98,16 +106,22 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     // Fonts
     float base_fontsize = 20.0f;
     float icon_fontsize = base_fontsize;
-    io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf", base_fontsize, NULL, io.Fonts->GetGlyphRangesDefault());
+    io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf",
+                                 base_fontsize,
+                                 NULL,
+                                 io.Fonts->GetGlyphRangesDefault());
 
-        // merge in icons from Font Awesome
+    // merge in icons from Font Awesome
     static const ImWchar icons_ranges[] = {ICON_MIN_MDI, ICON_MAX_MDI, 0};
-    ImFontConfig icons_config; 
-    icons_config.MergeMode = true; 
-    icons_config.PixelSnapH = true; 
+    ImFontConfig icons_config;
+    icons_config.MergeMode = true;
+    icons_config.PixelSnapH = true;
     icons_config.GlyphMinAdvanceX = icon_fontsize;
     icons_config.GlyphOffset = {0, 2};
-    io.Fonts->AddFontFromFileTTF("../assets/fonts/" FONT_ICON_FILE_NAME_MDI, icon_fontsize, &icons_config, icons_ranges);
+    io.Fonts->AddFontFromFileTTF("../assets/fonts/" FONT_ICON_FILE_NAME_MDI,
+                                 icon_fontsize,
+                                 &icons_config,
+                                 icons_ranges);
 
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -117,7 +131,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
 #ifndef SINGLE_SERVER
     // Server Selection Loop
-    while (!glfwWindowShouldClose(window) && !ui::ServerSelector::instance().server_is_selected()) {
+    while (!glfwWindowShouldClose(window) &&
+           !ui::ServerSelector::instance().server_is_selected()) {
         // Poll and handle events (inputs, window resize, etc.)
         glfwPollEvents();
 
@@ -126,17 +141,19 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ui::ServerSelector::instance().show(server_names, ImVec2{400, 260});
+        ui::ServerSelector::instance().show(server_names, ImVec2{400, 300});
 
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)
         ImGui::Render();
 
-
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClearColor(clear_color.x * clear_color.w,
+                     clear_color.y * clear_color.w,
+                     clear_color.z * clear_color.w,
+                     clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -146,7 +163,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
     // Server Creation
     auto can_socket = std::make_shared<can::Socket>();
-    auto ucanopen_client = std::make_shared<ucanopen::Client>(ucanopen::NodeId(127), can_socket);
+    auto ucanopen_client =
+            std::make_shared<ucanopen::Client>(ucanopen::NodeId(127),
+                                               can_socket);
 
     std::vector<std::shared_ptr<ui::View>> views;
     std::vector<std::shared_ptr<ui::View>> tools;
@@ -159,55 +178,157 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 #ifndef SINGLE_SERVER
     std::string server_name = ui::ServerSelector::instance().selected_server();
 #else
-    std::string  server_name = SINGLE_SERVER;
+    std::string server_name = SINGLE_SERVER;
 #endif
-    if (server_name == "project-moyka") {
+    if (server_name == "SHM-Drive-80") {
+        auto shm_drive_80_server =
+                std::make_shared<shm80::Server>(can_socket,
+                                                ucanopen::NodeId(0x01),
+                                                server_name);
+        ucanopen_client->register_server(shm_drive_80_server);
+
+        auto controlpanel = std::make_shared<ui::shm80::ControlPanel>(
+                shm_drive_80_server,
+                ICON_MDI_GAMEPAD_OUTLINE " Control",
+                "Control",
+                true);
+
+        watchpanel = std::make_shared<ui::WatchPanel>(shm_drive_80_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Watch SDO",
+                                                      "Watch SDO",
+                                                      true);
+
+        views.push_back(controlpanel);
+        views.push_back(watchpanel);
+    } else if (server_name == "project-moyka") {
         glfwMaximizeWindow(window);
         glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
 
-        auto moyka_server = std::make_shared<moyka::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
+        auto moyka_server =
+                std::make_shared<moyka::Server>(can_socket,
+                                                ucanopen::NodeId(0x01),
+                                                server_name);
         ucanopen_client->register_server(moyka_server);
-        
-        auto panel = std::make_shared<ui::moyka::Panel>(moyka_server, ICON_MDI_GAUGE" Panel", ICON_MDI_GAUGE, "true");
-        watchpanel = std::make_shared<ui::WatchPanel>(moyka_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", false);
-        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(moyka_server, ICON_MDI_TOOLS" Setup", "Setup", false);
+
+        auto panel = std::make_shared<ui::moyka::Panel>(moyka_server,
+                                                        ICON_MDI_GAUGE " Panel",
+                                                        ICON_MDI_GAUGE,
+                                                        "true");
+        watchpanel = std::make_shared<ui::WatchPanel>(moyka_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Watch SDO",
+                                                      "Watch SDO",
+                                                      false);
+        serversetuppanel =
+                std::make_shared<ui::ServerSetupPanel>(moyka_server,
+                                                       ICON_MDI_TOOLS " Setup",
+                                                       "Setup",
+                                                       false);
         gui_log->toggle(false);
-        
+
         views.push_back(panel);
         views.push_back(watchpanel);
         views.push_back(serversetuppanel);
-    } if (server_name == "srmdrive") {
-        auto srmdrive_server = std::make_shared<srmdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
+    } else if (server_name == "srmdrive") {
+        auto srmdrive_server =
+                std::make_shared<srmdrive::Server>(can_socket,
+                                                   ucanopen::NodeId(0x01),
+                                                   server_name);
         ucanopen_client->register_server(srmdrive_server);
-        
-        auto controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(srmdrive_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
-        watchpanel = std::make_shared<ui::WatchPanel>(srmdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
-        auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(srmdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
-        auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(srmdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", true);
-        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(srmdrive_server, ICON_MDI_TOOLS" Setup", "Setup", false);
-        
+
+        auto controlpanel = std::make_shared<ui::srmdrive::ControlPanel>(
+                srmdrive_server,
+                ICON_MDI_GAMEPAD_OUTLINE " Control",
+                "Control",
+                true);
+        watchpanel = std::make_shared<ui::WatchPanel>(srmdrive_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Watch SDO",
+                                                      "Watch SDO",
+                                                      true);
+        auto datapanel = std::make_shared<ui::srmdrive::DataPanel>(
+                srmdrive_server,
+                ICON_MDI_TABLE " TPDO Data",
+                "TPDO Data",
+                true);
+        auto statuspanel = std::make_shared<ui::srmdrive::StatusPanel>(
+                srmdrive_server,
+                ICON_MDI_INFORMATION_OUTLINE " Status",
+                "Status",
+                true);
+        serversetuppanel =
+                std::make_shared<ui::ServerSetupPanel>(srmdrive_server,
+                                                       ICON_MDI_TOOLS " Setup",
+                                                       "Setup",
+                                                       false);
+
         views.push_back(controlpanel);
         views.push_back(watchpanel);
         views.push_back(datapanel);
         views.push_back(statuspanel);
         views.push_back(serversetuppanel);
 
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 1", "Watch Plot 1", true));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 2", "Watch Plot 2", false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 3", "Watch Plot 3", false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server, "Plot 4", "Watch Plot 4", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server,
+                                                             "Plot 1",
+                                                             "Watch Plot 1",
+                                                             true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server,
+                                                             "Plot 2",
+                                                             "Watch Plot 2",
+                                                             false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server,
+                                                             "Plot 3",
+                                                             "Watch Plot 3",
+                                                             false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(srmdrive_server,
+                                                             "Plot 4",
+                                                             "Watch Plot 4",
+                                                             false));
 
     } else if (server_name == "atv-vcu") {
-        auto atvvcu_server = std::make_shared<atvvcu::Server>(can_socket, ucanopen::NodeId(0x0A), server_name);
+        auto atvvcu_server =
+                std::make_shared<atvvcu::Server>(can_socket,
+                                                 ucanopen::NodeId(0x0A),
+                                                 server_name);
         ucanopen_client->register_server(atvvcu_server);
 
-        watchpanel = std::make_shared<ui::WatchPanel>(atvvcu_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
-        auto systempanel = std::make_shared<ui::atvvcu::Dashboard>(atvvcu_server, ICON_MDI_GAUGE" Dashboard", "Dashboard", true);
-        auto bmspanel = std::make_shared<ui::atvvcu::BmsPanel>(atvvcu_server, ICON_MDI_CAR_BATTERY" BMS", "BMS", true);
-        auto pdmpanel = std::make_shared<ui::atvvcu::PdmPanel>(atvvcu_server, ICON_MDI_CAR_ELECTRIC_OUTLINE" PDM", "PDM", true);
-        auto motordatapanel = std::make_shared<ui::atvvcu::MotorDataPanel>(atvvcu_server, ICON_MDI_TABLE" Motor Data", "Motor Data", true);
-        auto motorcontrolpanel = std::make_shared<ui::atvvcu::MotorControlPanel>(atvvcu_server, ICON_MDI_GAMEPAD_OUTLINE" Motor Control", "Motor Control", false);
-        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(atvvcu_server, ICON_MDI_TOOLS" Setup", "Setup", false);
+        watchpanel = std::make_shared<ui::WatchPanel>(atvvcu_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Watch SDO",
+                                                      "Watch SDO",
+                                                      true);
+        auto systempanel = std::make_shared<ui::atvvcu::Dashboard>(
+                atvvcu_server,
+                ICON_MDI_GAUGE " Dashboard",
+                "Dashboard",
+                true);
+        auto bmspanel = std::make_shared<ui::atvvcu::BmsPanel>(
+                atvvcu_server,
+                ICON_MDI_CAR_BATTERY " BMS",
+                "BMS",
+                true);
+        auto pdmpanel = std::make_shared<ui::atvvcu::PdmPanel>(
+                atvvcu_server,
+                ICON_MDI_CAR_ELECTRIC_OUTLINE " PDM",
+                "PDM",
+                true);
+        auto motordatapanel = std::make_shared<ui::atvvcu::MotorDataPanel>(
+                atvvcu_server,
+                ICON_MDI_TABLE " Motor Data",
+                "Motor Data",
+                true);
+        auto motorcontrolpanel =
+                std::make_shared<ui::atvvcu::MotorControlPanel>(
+                        atvvcu_server,
+                        ICON_MDI_GAMEPAD_OUTLINE " Motor Control",
+                        "Motor Control",
+                        false);
+        serversetuppanel =
+                std::make_shared<ui::ServerSetupPanel>(atvvcu_server,
+                                                       ICON_MDI_TOOLS " Setup",
+                                                       "Setup",
+                                                       false);
 
         views.push_back(watchpanel);
         views.push_back(systempanel);
@@ -217,56 +338,135 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         views.push_back(motorcontrolpanel);
         views.push_back(serversetuppanel);
 
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 1", "Watch Plot 1", true));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 2", "Watch Plot 2", false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 3", "Watch Plot 3", false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server, "Plot 4", "Watch Plot 4", false));
-    
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server,
+                                                             "Plot 1",
+                                                             "Watch Plot 1",
+                                                             true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server,
+                                                             "Plot 2",
+                                                             "Watch Plot 2",
+                                                             false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server,
+                                                             "Plot 3",
+                                                             "Watch Plot 3",
+                                                             false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(atvvcu_server,
+                                                             "Plot 4",
+                                                             "Watch Plot 4",
+                                                             false));
+
     } else if (server_name == "brake-drive") {
-        auto brkdrive_server = std::make_shared<brkdrive::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
+        auto brkdrive_server =
+                std::make_shared<brkdrive::Server>(can_socket,
+                                                   ucanopen::NodeId(0x01),
+                                                   server_name);
         ucanopen_client->register_server(brkdrive_server);
 
-        auto controlpanel = std::make_shared<ui::brkdrive::ControlPanel>(brkdrive_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
-        watchpanel = std::make_shared<ui::WatchPanel>(brkdrive_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
-        auto datapanel = std::make_shared<ui::brkdrive::DataPanel>(brkdrive_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
-        auto statuspanel = std::make_shared<ui::brkdrive::StatusPanel>(brkdrive_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", true);
-        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(brkdrive_server, ICON_MDI_TOOLS" Setup", "Setup", false);
-        
+        auto controlpanel = std::make_shared<ui::brkdrive::ControlPanel>(
+                brkdrive_server,
+                ICON_MDI_GAMEPAD_OUTLINE " Control",
+                "Control",
+                true);
+        watchpanel = std::make_shared<ui::WatchPanel>(brkdrive_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Watch SDO",
+                                                      "Watch SDO",
+                                                      true);
+        auto datapanel = std::make_shared<ui::brkdrive::DataPanel>(
+                brkdrive_server,
+                ICON_MDI_TABLE " TPDO Data",
+                "TPDO Data",
+                true);
+        auto statuspanel = std::make_shared<ui::brkdrive::StatusPanel>(
+                brkdrive_server,
+                ICON_MDI_INFORMATION_OUTLINE " Status",
+                "Status",
+                true);
+        serversetuppanel =
+                std::make_shared<ui::ServerSetupPanel>(brkdrive_server,
+                                                       ICON_MDI_TOOLS " Setup",
+                                                       "Setup",
+                                                       false);
+
         views.push_back(controlpanel);
         views.push_back(watchpanel);
         views.push_back(datapanel);
         views.push_back(statuspanel);
         views.push_back(serversetuppanel);
-        
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 1", "Watch Plot 1", true));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 2", "Watch Plot 2", false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 3", "Watch Plot 3", false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server, "Plot 4", "Watch Plot 4", false));
+
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server,
+                                                             "Plot 1",
+                                                             "Watch Plot 1",
+                                                             true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server,
+                                                             "Plot 2",
+                                                             "Watch Plot 2",
+                                                             false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server,
+                                                             "Plot 3",
+                                                             "Watch Plot 3",
+                                                             false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(brkdrive_server,
+                                                             "Plot 4",
+                                                             "Watch Plot 4",
+                                                             false));
     } else if (server_name == "loco-drive") {
-        auto loco_server = std::make_shared<loco::Server>(can_socket, ucanopen::NodeId(0x01), server_name);
+        auto loco_server =
+                std::make_shared<loco::Server>(can_socket,
+                                               ucanopen::NodeId(0x01),
+                                               server_name);
         ucanopen_client->register_server(loco_server);
 
-        auto controlpanel = std::make_shared<ui::loco::ControlPanel>(loco_server, ICON_MDI_GAMEPAD_OUTLINE" Control", "Control", true);
-        auto datapanel = std::make_shared<ui::loco::DataPanel>(loco_server, ICON_MDI_TABLE" TPDO Data", "TPDO Data", true);
-        watchpanel = std::make_shared<ui::WatchPanel>(loco_server, ICON_MDI_TABLE_EYE" Watch SDO", "Watch SDO", true);
-        auto statuspanel = std::make_shared<ui::loco::StatusPanel>(loco_server, ICON_MDI_INFORMATION_OUTLINE" Status", "Status", true);
+        auto controlpanel = std::make_shared<ui::loco::ControlPanel>(
+                loco_server,
+                ICON_MDI_GAMEPAD_OUTLINE " Control",
+                "Control",
+                true);
+        auto datapanel = std::make_shared<ui::loco::DataPanel>(loco_server,
+                                                               ICON_MDI_TABLE
+                                                               " TPDO Data",
+                                                               "TPDO Data",
+                                                               true);
+        watchpanel = std::make_shared<ui::WatchPanel>(loco_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Watch SDO",
+                                                      "Watch SDO",
+                                                      true);
+        auto statuspanel = std::make_shared<ui::loco::StatusPanel>(
+                loco_server,
+                ICON_MDI_INFORMATION_OUTLINE " Status",
+                "Status",
+                true);
 
         views.push_back(controlpanel);
         views.push_back(watchpanel);
         views.push_back(datapanel);
         views.push_back(statuspanel);
 
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 1", "Watch Plot 1", true));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 2", "Watch Plot 2", false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 3", "Watch Plot 3", false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server, "Plot 4", "Watch Plot 4", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server,
+                                                             "Plot 1",
+                                                             "Watch Plot 1",
+                                                             true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server,
+                                                             "Plot 2",
+                                                             "Watch Plot 2",
+                                                             false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server,
+                                                             "Plot 3",
+                                                             "Watch Plot 3",
+                                                             false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(loco_server,
+                                                             "Plot 4",
+                                                             "Watch Plot 4",
+                                                             false));
     } else {
         // TODO Error
     }
 
     // GUI Creation
     auto options = std::make_shared<ui::Options>(can_socket, ucanopen_client);
-    auto mainview = std::make_shared<ui::MainView>(options, views, tools, watchplots);
+    auto mainview =
+            std::make_shared<ui::MainView>(options, views, tools, watchplots);
 
     // Main View Loop
     while (!glfwWindowShouldClose(window) && !mainview->should_close()) {
@@ -284,11 +484,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         // (Your code clears your framebuffer, renders your other stuff etc.)
         ImGui::Render();
 
-
         int display_w, display_h;
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClearColor(clear_color.x * clear_color.w,
+                     clear_color.y * clear_color.w,
+                     clear_color.z * clear_color.w,
+                     clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -306,4 +508,3 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
     return 0;
 }
-
