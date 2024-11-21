@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <cstring>
 #include <map>
@@ -9,6 +10,8 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
+
+#include "shm80_def_syslog.h"
 
 namespace shm80 {
 
@@ -32,7 +35,6 @@ struct CobTpdo1 {
     uint16_t _reserved3;
 
     uint16_t _reserved4 : 8;
-
 
     uint16_t counter : 2;
     uint16_t _reserved5 : 6;
@@ -133,23 +135,19 @@ inline const std::unordered_set<int> drive_state_values = {
 };
 
 inline const std::unordered_map<DriveState, std::string_view>
-drive_state_names = {
-    {DriveState::init, "init"},
-    {DriveState::standby, "standby"},
-    {DriveState::powering_up, "powering_up"},
-    {DriveState::powering_down, "powering_down"},
-    {DriveState::ready, "ready"},
-    {DriveState::running, "running"},
-    {DriveState::stopping, "stopping"},
-    {DriveState::calibrating, "calibrating"},
-    {DriveState::testing, "testing"},
+        drive_state_names = {
+            {DriveState::init, "init"},
+            {DriveState::standby, "standby"},
+            {DriveState::powering_up, "powering_up"},
+            {DriveState::powering_down, "powering_down"},
+            {DriveState::ready, "ready"},
+            {DriveState::running, "running"},
+            {DriveState::stopping, "stopping"},
+            {DriveState::calibrating, "calibrating"},
+            {DriveState::testing, "testing"},
 };
 
-enum class OperatingMode {
-    normal,
-    testing
-};
-
+enum class OperatingMode { normal, testing };
 
 inline const std::unordered_set<int> opmode_values = {
     std::to_underlying(OperatingMode::normal),
@@ -161,48 +159,28 @@ inline const std::map<OperatingMode, std::string_view> opmode_names = {
     {OperatingMode::testing, "testing"},
 };
 
-
-enum class ControlMode {
-    torque,
-    speed
-};
-
+enum class ControlMode { torque, speed };
 
 inline const std::unordered_set<int> ctlmode_values = {
     std::to_underlying(ControlMode::torque),
-    std::to_underlying(ControlMode::speed)
-};
-
+    std::to_underlying(ControlMode::speed)};
 
 inline const std::unordered_map<ControlMode, std::string_view> ctlmode_names = {
     {ControlMode::torque, "torque"},
-    {ControlMode::speed, "speed"}
-};
+    {ControlMode::speed, "speed"}};
 
-
-enum class ControlLoop {
-    closed,
-    open,
-    semiclosed,
-    openvolt
-};
-
+enum class ControlLoop { closed, open, semiclosed, openvolt };
 
 inline const std::unordered_set<int> ctlloop_values = {
     std::to_underlying(ControlLoop::closed),
     std::to_underlying(ControlLoop::open),
     std::to_underlying(ControlLoop::semiclosed),
-    std::to_underlying(ControlLoop::openvolt)
-};
-
+    std::to_underlying(ControlLoop::openvolt)};
 
 inline const std::unordered_map<ControlLoop, std::string_view> ctlloop_names = {
     {ControlLoop::closed, "closed"},
     {ControlLoop::open, "open"},
     {ControlLoop::semiclosed, "semiclosed"},
-    {ControlLoop::openvolt, "openvolt"}
-};
-
-inline constexpr size_t syslog_domain_count = 9;
+    {ControlLoop::openvolt, "openvolt"}};
 
 } // namespace shm80

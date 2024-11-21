@@ -20,6 +20,7 @@
 #include <ui/watchplot/watchplot.h>
 
 #include <ui/ucanopen_servers/shm80/controlpanel/controlpanel.h>
+#include <ui/ucanopen_servers/shm80/statuspanel/statuspanel.h>
 
 #include <ui/ucanopen_servers/moyka/panel/panel.h>
 
@@ -193,6 +194,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                 "Control",
                 true);
 
+        auto statuspanel = std::make_shared<ui::shm80::StatusPanel>(
+                shm_drive_80_server,
+                ICON_MDI_INFORMATION_OUTLINE " Status",
+                "Status",
+                true);
+
         watchpanel = std::make_shared<ui::WatchPanel>(shm_drive_80_server,
                                                       ICON_MDI_TABLE_EYE
                                                       " Watch SDO",
@@ -200,7 +207,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                       true);
 
         views.push_back(controlpanel);
+        views.push_back(statuspanel);
         views.push_back(watchpanel);
+
     } else if (server_name == "project-moyka") {
         glfwMaximizeWindow(window);
         glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
@@ -230,6 +239,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         views.push_back(panel);
         views.push_back(watchpanel);
         views.push_back(serversetuppanel);
+
     } else if (server_name == "srmdrive") {
         auto srmdrive_server =
                 std::make_shared<srmdrive::Server>(can_socket,
@@ -410,6 +420,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                              "Plot 4",
                                                              "Watch Plot 4",
                                                              false));
+
     } else if (server_name == "loco-drive") {
         auto loco_server =
                 std::make_shared<loco::Server>(can_socket,

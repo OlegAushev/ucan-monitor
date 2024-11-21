@@ -117,6 +117,8 @@ public:
         }
         return false;
     }
+    const auto& errors() const { return _errors; }
+    const auto& warnings() const { return _warnings; }
 private:
     void _handle_tpdo1(const ucanopen::can_payload& payload);
     void _handle_tpdo2(const ucanopen::can_payload& payload);
