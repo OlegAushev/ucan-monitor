@@ -25,7 +25,7 @@ struct CobTpdo1 {
     uint16_t ctlmode : 1;
     uint16_t ctlloop : 2;
 
-    uint16_t precharge_state : 3;
+    uint16_t pdm_state : 3;
     uint16_t calibration_state : 3;
     uint16_t manual_field : 1;
     uint16_t _reserved1 : 1;
