@@ -338,7 +338,7 @@ void ControlPanel::_draw_actions() {
 
         if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE " Calibrate Angle Sensor",
                           ImVec2{-1.f, 0.f})) {
-            _server->exec("ctl", "angsens", "calibrate");
+            _server->exec("ctl", "drive", "calibrate");
         }
 
         if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE
