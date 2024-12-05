@@ -225,10 +225,7 @@ void ControlPanel::_draw_normal_mode_controls() {
         ImGui::PopItemWidth();
     });
 
-    std::string ctlloop = "Control Loop: ";
-    ctlloop.append(ctlloop_names.at(_server->ctlloop()));
-
-    if (ImGui::CollapsingHeader(ctlloop.c_str(), ImGuiTreeNodeFlags_Framed)) {
+    if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Control Loop", ImGuiTreeNodeFlags_Framed)) {
         // control loop
         ImGui::RadioButton("Closed Loop",
                            &_ctlloop_v,
