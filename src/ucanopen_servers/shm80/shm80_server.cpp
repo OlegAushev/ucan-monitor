@@ -40,11 +40,11 @@ ucanopen::FrameHandlingStatus
 Server::handle_sdo(ucanopen::ODEntryIter entry,
                    [[maybe_unused]] ucanopen::SdoType sdo_type,
                    ucanopen::ExpeditedSdoData data) {
-    if (entry->second.name == "syslog_message") {
-        auto message_id = data.u32();
-        // if ((message_id != 0) && (message_id < syslog_messages.size())) {
-            // bsclog::info("{}", syslog_messages[message_id]);
-        // } TODO
+    if (entry->second.name == "syslogmsg") {
+        SyslogMessage message(data.u32());
+        if (message.valid()) {
+            bsclog::info("{}::{}", syslog_domains[message.domain], syslog_messages[message.domain][message.id]);
+        }
     }
 
     return ucanopen::FrameHandlingStatus::success;
