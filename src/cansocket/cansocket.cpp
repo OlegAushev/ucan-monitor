@@ -24,12 +24,12 @@ Socket::Socket() {
     std::string cmd = "sh " + script_path.string() + " " + "can0" + " 2>&1";
 #endif
     bsclog::info("Checking SocketCAN interface can0, executing system command: {}", cmd);
-    
+
     auto script_result = cmdexec::run(cmd);
     std::stringstream log_sstr(script_result.output);
     std::string log_str;
     while (std::getline(log_sstr, log_str, '\n')) {
-        bsclog::log("{}", log_str);
+        bsclog::info("{}", log_str);
     }
 
     if (script_result.exitcode == 0) {
@@ -97,7 +97,7 @@ Status Socket::connect(const std::string& interface, const std::string& bitrate)
 
     /* FIND SCRIPT */
     bsclog::info("Searching for SocketCAN enabling script...");
-    
+
     std::filesystem::path script_path = _find_script("socketcan_enable.sh");
     if (script_path.empty()) {
         bsclog::error("Failed to find SocketCAN enabling script.");
@@ -118,7 +118,7 @@ Status Socket::connect(const std::string& interface, const std::string& bitrate)
     std::stringstream log_sstr(pkexec_result.output);
     std::string log_str;
     while (std::getline(log_sstr, log_str, '\n')) {
-        bsclog::log("{}", log_str);
+        bsclog::info("{}", log_str);
     }
 
     Status error;

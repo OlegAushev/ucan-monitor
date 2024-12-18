@@ -16,10 +16,10 @@ StatusPanel::StatusPanel(std::shared_ptr<::shm80::Server> server,
 void StatusPanel::draw() {
     ImGui::Begin(_window_title.c_str(), &_opened);
 
-    for (auto domain_idx = 0uz; domain_idx < ::shm80::syslog_domain_count;
+    for (auto domain_idx = 0uz; domain_idx < syslog::domains.size();
          ++domain_idx) {
-        if (error_list[domain_idx].empty() &&
-            warning_list[domain_idx].empty()) {
+        if (syslog::errors[domain_idx].empty() &&
+            syslog::warnings[domain_idx].empty()) {
             continue;
         }
 
@@ -39,19 +39,21 @@ void StatusPanel::draw() {
 
         ImGui::SameLine();
 
-        if (ImGui::TreeNode(syslog_domains[domain_idx].data())) {
+        if (ImGui::TreeNode(syslog::domains[domain_idx].data())) {
             // draw error table
-            if (error_list[domain_idx].size() != 0) {
+            if (syslog::errors[domain_idx].size() != 0) {
                 ImGui::SeparatorText("Errors");
                 static ImGuiTableFlags flags =
                         ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
                 if (ImGui::BeginTable("error_table", 1, flags)) {
                     uint32_t errors = _server->errors()[domain_idx];
-                    for (auto row = 0uz; row < error_list[domain_idx].size();
+                    for (auto row = 0uz;
+                         row < syslog::errors[domain_idx].size();
                          ++row) {
                         ImGui::TableNextRow();
                         ImGui::TableSetColumnIndex(0);
-                        ImGui::Text("%s", error_list[domain_idx][row].data());
+                        ImGui::Text("%s",
+                                    syslog::errors[domain_idx][row].data());
                         if ((errors & (1 << row)) != 0) {
                             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                                    ui::colors::table_bg_red);
@@ -62,17 +64,19 @@ void StatusPanel::draw() {
             }
 
             // draw warning table
-            if (warning_list[domain_idx].size() != 0) {
+            if (syslog::warnings[domain_idx].size() != 0) {
                 ImGui::SeparatorText("Warnings");
                 static ImGuiTableFlags flags =
                         ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
                 if (ImGui::BeginTable("warning_table", 1, flags)) {
                     uint32_t warnings = _server->warnings()[domain_idx];
-                    for (auto row = 0uz; row < warning_list[domain_idx].size();
+                    for (auto row = 0uz;
+                         row < syslog::warnings[domain_idx].size();
                          ++row) {
                         ImGui::TableNextRow();
                         ImGui::TableSetColumnIndex(0);
-                        ImGui::Text("%s", warning_list[domain_idx][row].data());
+                        ImGui::Text("%s",
+                                    syslog::warnings[domain_idx][row].data());
                         if ((warnings & (1 << row)) != 0) {
                             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                                    ui::colors::table_bg_yellow);

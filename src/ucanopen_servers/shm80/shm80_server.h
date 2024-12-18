@@ -66,8 +66,8 @@ private:
         std::atomic<int16_t> angle{0};
     } _tpdo3;
 
-    std::array<std::atomic_uint32_t, syslog_domain_count> _errors{};
-    std::array<std::atomic_uint16_t, syslog_domain_count> _warnings{};
+    std::array<std::atomic_uint32_t, syslog::domains.size()> _errors{};
+    std::array<std::atomic_uint16_t, syslog::domains.size()> _warnings{};
 public:
     // RPDO
     void toggle_emergency(bool v) { _rpdo1.emergency_stop.store(v); }

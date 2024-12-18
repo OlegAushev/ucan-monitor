@@ -43,7 +43,7 @@ Server::handle_sdo(ucanopen::ODEntryIter entry,
     if (entry->second.name == "syslogmsg") {
         SyslogMessage message(data.u32());
         if (message.valid()) {
-            bsclog::info("{}::{}", syslog_domains[message.domain], syslog_messages[message.domain][message.id]);
+            bsclog::log("{} @syslog: {}", message.level(), message.message());
         }
     }
 
@@ -100,7 +100,7 @@ void Server::_handle_tpdo4(const ucanopen::can_payload& payload) {
     CobTpdo4 tpdo = ucanopen::from_payload<CobTpdo4>(payload);
 
     size_t domain = tpdo.domain;
-    if (domain >= syslog_domain_count) {
+    if (domain >= syslog::domains.size()) {
         return;
     }
 
