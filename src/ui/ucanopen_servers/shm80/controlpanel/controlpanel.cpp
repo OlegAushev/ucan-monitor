@@ -28,7 +28,7 @@ void ControlPanel::_reset_refs() {
 
 void ControlPanel::_update_refs() {
     if (!_server->tpdo_service.good(ucanopen::CobTpdo::tpdo1) ||
-        _server->has_errors() != 0) {
+        _server->has_any_error() != 0) {
         _start = false;
     }
 
@@ -94,7 +94,7 @@ void ControlPanel::_draw_dash() {
 
     // Drive state indicator
     ImGui::SameLine();
-    std::string state(drive_state_names.at(_server->drive_state()));
+    std::string state(_server->drive_state_str());
     ImGui::PushItemWidth(120);
     ImGui::InputText("##state",
                      state.data(),
@@ -299,6 +299,28 @@ void ControlPanel::_draw_normal_mode_controls() {
         }
 
         ImGui::PopItemWidth();
+    }
+
+    if (ImGui::CollapsingHeader(ICON_MDI_INDUCTION " Field Control",
+                                ImGuiTreeNodeFlags_Framed)) {
+        ImGui::Checkbox("Manual", &_manual_field);
+
+        util::Switchable field_control(_manual_field, [this]() {
+            ImGui::PushItemWidth(200);
+            if (ImGui::InputFloat("Field Current [%]",
+                                  &_ref_field_pct,
+                                  1.0f,
+                                  100.0f,
+                                  "%.1f",
+                                  ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_field_pct = std::clamp(_ref_field_pct, -100.f, 100.f);
+            }
+            if (!_manual_field) {
+                _ref_field_pct = 0;
+            }
+
+            ImGui::PopItemWidth();
+        });
     }
 }
 

@@ -92,12 +92,48 @@ public:
 
     // TPDO
     DriveState drive_state() const { return _tpdo1.drive_state.load(); }
+    std::string_view drive_state_str() const {
+        auto it = drive_state_names.find(drive_state());
+        if (it == drive_state_names.end()) {
+            return "n/a";
+        } else {
+            return it->second;
+        }
+    }
+
     bool is_pwm_on() const { return _tpdo1.pwm_on.load(); }
     bool has_error() const { return _tpdo1.error.load(); }
-    bool has_warning() const { return _tpdo1.warning.load(); }
+    bool has_any_warning() const { return _tpdo1.warning.load(); }
     OperatingMode opmode() const { return _tpdo1.opmode.load(); }
+    std::string_view opmode_str() const {
+        auto it = opmode_names.find(opmode());
+        if (it == opmode_names.end()) {
+            return "n/a";
+        } else {
+            return it->second;
+        }
+    }
+
     ControlMode ctlmode() const { return _tpdo1.ctlmode.load(); }
+    std::string_view ctlmode_str() const {
+        auto it = ctlmode_names.find(ctlmode());
+        if (it == ctlmode_names.end()) {
+            return "n/a";
+        } else {
+            return it->second;
+        }
+    }
+
     ControlLoop ctlloop() const { return _tpdo1.ctlloop.load(); }
+    std::string_view ctlloop_str() const {
+        auto it = ctlloop_names.find(ctlloop());
+        if (it == ctlloop_names.end()) {
+            return "n/a";
+        } else {
+            return it->second;
+        }
+    }
+
         // TODO precharge state
         // TODO calibration state
     bool is_manual_field_enabled() const { return _tpdo1.manual_field.load(); }
@@ -109,7 +145,7 @@ public:
     int16_t speed() const { return _tpdo3.speed.load(); }
     int16_t angle() const { return _tpdo3.angle.load(); }
 
-    bool has_errors() const {
+    bool has_any_error() const {
         for (auto& entry : _errors) {
             if (entry.load() != 0) {
                 return true;

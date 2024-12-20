@@ -20,6 +20,7 @@
 #include <ui/watchplot/watchplot.h>
 
 #include <ui/ucanopen_servers/shm80/controlpanel/controlpanel.h>
+#include <ui/ucanopen_servers/shm80/datapanel/datapanel.h>
 #include <ui/ucanopen_servers/shm80/statuspanel/statuspanel.h>
 
 #include <ui/ucanopen_servers/moyka/panel/panel.h>
@@ -206,9 +207,16 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                       "Watch SDO",
                                                       true);
 
+        auto datapanel = std::make_shared<ui::shm80::DataPanel>(
+                shm_drive_80_server,
+                ICON_MDI_TABLE " TPDO Data",
+                "TPDO Data",
+                true);
+
         views.push_back(controlpanel);
         views.push_back(statuspanel);
         views.push_back(watchpanel);
+        views.push_back(datapanel);
 
         watchplots.push_back(std::make_shared<ui::WatchPlot>(shm_drive_80_server,
                                                              "Plot 1",
