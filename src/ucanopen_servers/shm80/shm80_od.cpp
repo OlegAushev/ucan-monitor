@@ -1,10 +1,10 @@
 #include "shm80_server.h"
 
-
 namespace shm80 {
 
 using namespace ucanopen;
 
+// clang-format off
 extern const ucanopen::ObjectDictionary object_dictionary = {
 .config = {
     .watch_category = "watch",
@@ -89,93 +89,109 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3000, 0x0E}, {"config", "ucanopen", "rpdo3_id",         "",     OD_ACCESS_RW, OD_UINT32}},
 {{0x3000, 0x0F}, {"config", "ucanopen", "rpdo4_id",         "",     OD_ACCESS_RW, OD_UINT32}},
 //############################################################################################
-{{0x3001, 0x01}, {"config", "syslog", "enabled_errors",     "",     OD_ACCESS_RW, OD_UINT32}},
-{{0x3001, 0x02}, {"config", "syslog", "fatal_errors",       "",     OD_ACCESS_RW, OD_UINT32}},
-{{0x3001, 0x03}, {"config", "syslog", "mcu_maxtemp",        "o",    OD_ACCESS_RW, OD_FLOAT32}},
-//#####################################################################################################
-{{0x3002, 0x01}, {"config", "drive", "fwd_rotation_direction",  "",         OD_ACCESS_RW, OD_INT32}},
-// {{0x3002, 0x02}, {"config", "drive", "brk_braking_speed",       "rpm",      OD_ACCESS_RW, OD_FLOAT32}},
-// {{0x3002, 0x03}, {"config", "drive", "brk_start_current",       "A",        OD_ACCESS_RW, OD_FLOAT32}},
-// {{0x3002, 0x04}, {"config", "drive", "brk_speed_threshold",     "rad/s",    OD_ACCESS_RW, OD_FLOAT32}},
-// {{0x3002, 0x05}, {"config", "drive", "brk_duration_threshold",  "ms",       OD_ACCESS_RW, OD_UINT32}},
-// {{0x3002, 0x06}, {"config", "drive", "rls_speed_limit",         "rpm",      OD_ACCESS_RW, OD_FLOAT32}},
-// {{0x3002, 0x07}, {"config", "drive", "rls_angle_kp",            "",         OD_ACCESS_RW, OD_FLOAT32}},
-// {{0x3002, 0x08}, {"config", "drive", "rls_current_limit",       "A",        OD_ACCESS_RW, OD_FLOAT32}},
-// {{0x3002, 0x09}, {"config", "drive", "rls_release_diffangle",   "rad",      OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x0A}, {"config", "drive", "trk_speed_limit",         "rpm",      OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x0B}, {"config", "drive", "trk_angle_kP",            "",         OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x0C}, {"config", "drive", "trk_angle_threshold",     "rad",      OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x0D}, {"config", "drive", "trk_rad_per_mm",          "rad/mm",   OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x0E}, {"config", "drive", "watchdog_timeout",        "ms",       OD_ACCESS_RW, OD_UINT32}},
-{{0x3002, 0x0F}, {"config", "drive", "torque_slope",            "pu/s",     OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x10}, {"config", "drive", "speed_slope",             "rpm/s",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x11}, {"config", "drive", "angle_slope",             "rad/s",    OD_ACCESS_RW, OD_FLOAT32}},
-//#################################################################################################
-{{0x3003, 0x01}, {"config", "motor", "parameters_specified",    "",     OD_ACCESS_RO, OD_BOOL}},
-{{0x3003, 0x02}, {"config", "motor", "pole_pairs",              "",     OD_ACCESS_RW, OD_INT32}},
-{{0x3003, 0x03}, {"config", "motor", "R",                       "Ohm",  OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3003, 0x04}, {"config", "motor", "Ld",                      "H",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3003, 0x05}, {"config", "motor", "Lq",                      "H",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3003, 0x06}, {"config", "motor", "psi",                     "Wb",   OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3003, 0x07}, {"config", "motor", "otp",                     "oC",   OD_ACCESS_RW, OD_FLOAT32}},
-//#####################################################################################
-{{0x3004, 0x01}, {"config", "converter", "uvp_dc",  "V",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3004, 0x02}, {"config", "converter", "ovp_dc",  "V",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3004, 0x03}, {"config", "converter", "ocp_ac",  "A",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3004, 0x04}, {"config", "converter", "otp_ph",  "oC",   OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3004, 0x05}, {"config", "converter", "otp_pcb", "oC",   OD_ACCESS_RW, OD_FLOAT32}},
-//#####################################################################################################
-{{0x3005, 0x01}, {"config", "model_basic", "motor_current_limit",   "A",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3005, 0x02}, {"config", "model_basic", "gener_current_limit",   "A",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3005, 0x03}, {"config", "model_basic", "speed_limit",           "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3005, 0x04}, {"config", "model_basic", "flux_weakening_limit",  "A",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3005, 0x05}, {"config", "model_basic", "dq_advance_angle",     "o",    OD_ACCESS_RW, OD_FLOAT32}},
-//#############################################################################################
-{{0x3006, 0x01}, {"config", "model_controllers", "speed_kP",        "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x02}, {"config", "model_controllers", "speed_kI",        "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x03}, {"config", "model_controllers", "speed_limit_kP",  "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x04}, {"config", "model_controllers", "iD_kP",           "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x05}, {"config", "model_controllers", "iD_kI",           "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x06}, {"config", "model_controllers", "iQ_kP",           "", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3006, 0x07}, {"config", "model_controllers", "iQ_kI",           "", OD_ACCESS_RW, OD_FLOAT32}},
-//#######################################################################
+{{0x3001, 0x01}, {"config", "syslog", "sys_enabled_errors",         "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x02}, {"config", "syslog", "settings_enabled_errors",    "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x03}, {"config", "syslog", "can_enabled_errors",         "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x04}, {"config", "syslog", "sensors_enabled_errors",     "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x05}, {"config", "syslog", "motor_enabled_errors",       "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x06}, {"config", "syslog", "converter_enabled_errors",   "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x07}, {"config", "syslog", "model_enabled_errors",       "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x08}, {"config", "syslog", "resolver_enabled_errors",    "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x09}, {"config", "syslog", "pdm_enabled_errors",         "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x0A}, {"config", "syslog", "isolation_enabled_errors",   "",     OD_ACCESS_RW, OD_UINT32}},
+//##############################################################################
+{{0x3002, 0x01}, {"config", "drive", "forward_direction",   "",     OD_ACCESS_RO, OD_INT16}},
+{{0x3002, 0x02}, {"config", "drive", "runout_speed",        "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3002, 0x03}, {"config", "drive", "torque_slope",        "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3002, 0x04}, {"config", "drive", "speed_slope",         "rpm/s",OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3002, 0x05}, {"config", "drive", "watchdog_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
+//##############################################################################
+{{0x3003, 0x01}, {"config", "motor", "parameters_specified","",     OD_ACCESS_RO, OD_BOOL}},
+{{0x3003, 0x02}, {"config", "motor", "pole_pairs",          "",     OD_ACCESS_RW, OD_INT16}},
+{{0x3003, 0x03}, {"config", "motor", "R",                   "Ohm",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3003, 0x04}, {"config", "motor", "Ld",                  "H",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3003, 0x05}, {"config", "motor", "kLd",                 "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3003, 0x06}, {"config", "motor", "Lq",                  "H",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3003, 0x07}, {"config", "motor", "kLq",                 "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3003, 0x08}, {"config", "motor", "psi",                 "Wb",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3003, 0x09}, {"config", "motor", "otp_aw",              "oC",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3003, 0x0A}, {"config", "motor", "otp_fw",              "oC",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3003, 0x0B}, {"config", "motor", "fan_temp_on",         "oC",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3003, 0x0C}, {"config", "motor", "fan_temp_off",        "oC",   OD_ACCESS_RW, OD_FLOAT32}},
+//##############################################################################
+{{0x3004, 0x01}, {"config", "converter", "uvp_dc",          "V",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x02}, {"config", "converter", "ovp_dc",          "V",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x03}, {"config", "converter", "ocp_phase",       "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x04}, {"config", "converter", "ocp_field",       "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x05}, {"config", "converter", "otp_phase",       "oC",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x06}, {"config", "converter", "otp_field",       "oC",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x07}, {"config", "converter", "otp_pcb",         "oC",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x08}, {"config", "converter", "fan_temp_on",     "oC",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x09}, {"config", "converter", "fan_temp_off",    "oC",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x0A}, {"config", "converter", "kp_exc_current",  "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x0B}, {"config", "converter", "ki_exc_current",  "",     OD_ACCESS_RW, OD_FLOAT32}},
+//##############################################################################
+{{0x3005, 0x01}, {"config", "model_basic", "iSMot_limit",       "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x02}, {"config", "model_basic", "iSGen_limit",       "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x03}, {"config", "model_basic", "iF_limit",          "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x04}, {"config", "model_basic", "speed_limit",       "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x05}, {"config", "model_basic", "iDFluxWeak_limit",  "A",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x06}, {"config", "model_basic", "iF_coeff",          "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x07}, {"config", "model_basic", "torque_max_speed_limit", "rpm", OD_ACCESS_RW, OD_FLOAT32}},
+//##############################################################################
+{{0x3006, 0x01}, {"config", "model_controllers", "speed_kP",    "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x02}, {"config", "model_controllers", "speed_kI",    "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x03}, {"config", "model_controllers", "iD_kP",       "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x04}, {"config", "model_controllers", "iD_kI",       "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x05}, {"config", "model_controllers", "iQ_kP",       "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x06}, {"config", "model_controllers", "iQ_kI",       "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x07}, {"config", "model_controllers", "fluxweak_kP", "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3006, 0x08}, {"config", "model_controllers", "fluxweak_kI", "", OD_ACCESS_RW, OD_FLOAT32}},
+//##############################################################################
 {{0x3007, 0x01}, {"config", "mras", "kP", "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3007, 0x02}, {"config", "mras", "kI", "", OD_ACCESS_RW, OD_FLOAT32}},
-//#############################################################################################
-{{0x3008, 0x01}, {"config", "ac_current_sensors", "phase_a_gain",      "",     OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3008, 0x02}, {"config", "ac_current_sensors", "phase_b_gain",      "",     OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3008, 0x03}, {"config", "ac_current_sensors", "phase_c_gain",      "",     OD_ACCESS_RW, OD_FLOAT32}},
-//##########################################################################################################################################################################################################################################################################################################
-{{0x3009, 0x01}, {"config", "angle_sensor", "install_direction",                "",     OD_ACCESS_RW, OD_INT32}},
-{{0x3009, 0x02}, {"config", "angle_sensor", "install_offset",                   "rad",  OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3009, 0x03}, {"config", "angle_sensor", "spi_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3009, 0x04}, {"config", "angle_sensor", "adc_speed_filter_time_constant",   "",     OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3009, 0x05}, {"config", "angle_sensor", "enable_offset_array",              "",     OD_ACCESS_RW, OD_BOOL}},
-//##########################################################################################################################################################################################################################################################################################################
-{{0x300A, 0x01}, {"config", "calibration", "approach_current",              "A",        OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300A, 0x02}, {"config", "calibration", "clamp_current",                 "A",        OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300A, 0x03}, {"config", "calibration", "approach_speed",                "rpm",      OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300A, 0x04}, {"config", "calibration", "release_speed",                 "rpm",      OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300A, 0x05}, {"config", "calibration", "approach_start_current",        "A",        OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300A, 0x06}, {"config", "calibration", "approach_start_duration",       "ms",       OD_ACCESS_RW, OD_UINT32}},
-{{0x300A, 0x07}, {"config", "calibration", "touch_detection_speed",         "rpm",      OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300A, 0x08}, {"config", "calibration", "touch_detection_start_delay",   "ms",       OD_ACCESS_RW, OD_UINT32}},
-{{0x300A, 0x09}, {"config", "calibration", "calibration_release_distance",  "mm",       OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300A, 0x0A}, {"config", "calibration", "release_distance",              "mm",       OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300A, 0x0B}, {"config", "calibration", "stage1_max_duration",           "ms",       OD_ACCESS_RW, OD_UINT32}},
-{{0x300A, 0x0C}, {"config", "calibration", "stage2_max_duration",           "ms",       OD_ACCESS_RW, OD_UINT32}},
-{{0x300A, 0x0D}, {"config", "calibration", "stage3_max_duration",           "ms",       OD_ACCESS_RW, OD_UINT32}},
-{{0x300A, 0x0E}, {"config", "calibration", "stage4_max_duration",           "ms",       OD_ACCESS_RW, OD_UINT32}},
-{{0x300A, 0x0F}, {"config", "calibration", "stage5_max_duration",           "ms",       OD_ACCESS_RW, OD_UINT32}},
-
-
-// {{0x1A00, 0x00}, {}},
-// {{0x1A01, 0x00}, {}},
-// {{0x1A01, 0x01}, {"tpdo2", "converter", "vDC", "V", OD_ACCESS_RO, OD_UINT16}},
-// {{0x1A01, 0x02}, {"tpdo2", "model", "iS", "A", OD_ACCESS_RO, OD_UINT16}},
-
+//##############################################################################
+{{0x3008, 0x01}, {"config", "pdm", "dclink_charge_threshold",       "V",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3008, 0x02}, {"config", "pdm", "bypass_voltage_threshold",      "V",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3008, 0x03}, {"config", "pdm", "dclink_charge_timeout_ms",      "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3008, 0x04}, {"config", "pdm", "charging_contactor_holdup_ms",  "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3008, 0x05}, {"config", "pdm", "dclink_discharge_threshold",    "V",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3008, 0x06}, {"config", "pdm", "dclink_discharge_timeout_ms",   "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3008, 0x07}, {"config", "pdm", "switch_timeout_ms",             "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3008, 0x08}, {"config", "pdm", "pause_ms",                      "ms",   OD_ACCESS_RW, OD_UINT32}},
+//##############################################################################
+{{0x3009, 0x01}, {"config", "phase_current_sensor", "gain_a",           "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3009, 0x02}, {"config", "phase_current_sensor", "gain_b",           "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3009, 0x03}, {"config", "phase_current_sensor", "gain_c",           "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3009, 0x04}, {"config", "phase_current_sensor", "offset_a",         "A",OD_ACCESS_RO, OD_FLOAT32}},
+{{0x3009, 0x05}, {"config", "phase_current_sensor", "offset_b",         "A",OD_ACCESS_RO, OD_FLOAT32}},
+{{0x3009, 0x06}, {"config", "phase_current_sensor", "offset_c",         "A",OD_ACCESS_RO, OD_FLOAT32}},
+{{0x3009, 0x07}, {"config", "phase_current_sensor", "offset_threshold", "A",OD_ACCESS_RW, OD_FLOAT32}},
+//##############################################################################
+{{0x300A, 0x01}, {"config", "field_current_sensor", "gain",             "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300A, 0x02}, {"config", "field_current_sensor", "offset",           "", OD_ACCESS_RO, OD_FLOAT32}},
+{{0x300A, 0x03}, {"config", "field_current_sensor", "offset_threshold", "", OD_ACCESS_RW, OD_FLOAT32}},
+//##############################################################################
+{{0x300B, 0x01}, {"config", "dc_voltage_sensor",    "gain",             "", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300B, 0x02}, {"config", "dc_voltage_sensor",    "offset",           "", OD_ACCESS_RW, OD_FLOAT32}},
+//##############################################################################
+{{0x300C, 0x01}, {"config", "resolver", "pole_pairs",               "",     OD_ACCESS_RW, OD_INT16}},
+{{0x300C, 0x02}, {"config", "resolver", "install_direction",        "",     OD_ACCESS_RO, OD_INT16}},
+{{0x300C, 0x03}, {"config", "resolver", "install_offset",           "rad",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x300C, 0x04}, {"config", "resolver", "observer_natural_freq",    "rad/s",OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300C, 0x05}, {"config", "resolver", "observer_damping_factor",  "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300C, 0x06}, {"config", "resolver", "exc_factor",               "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300C, 0x07}, {"config", "resolver", "sin_offset",               "V",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x300C, 0x08}, {"config", "resolver", "cos_offset",               "V",    OD_ACCESS_RO, OD_FLOAT32}},
+//##############################################################################
+{{0x300D, 0x01}, {"config", "resolver_calibration", "phase_current",        "pu",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x01}, {"config", "resolver_calibration", "field_current ",       "pu",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x01}, {"config", "resolver_calibration", "dir_detection_angle",  "o",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x01}, {"config", "resolver_calibration", "phase_slope",          "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x01}, {"config", "resolver_calibration", "field_slope",          "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x01}, {"config", "resolver_calibration", "angle_slope",          "o",    OD_ACCESS_RW, OD_FLOAT32}},
+//##############################################################################
 }
 };
-
 
 } // namespace shm80

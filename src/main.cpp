@@ -213,27 +213,38 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                 "TPDO Data",
                 true);
 
+        serversetuppanel =
+                std::make_shared<ui::ServerSetupPanel>(shm_drive_80_server,
+                                                       ICON_MDI_TOOLS " Setup",
+                                                       "Setup",
+                                                       false);
+
         views.push_back(controlpanel);
         views.push_back(statuspanel);
         views.push_back(watchpanel);
         views.push_back(datapanel);
+        views.push_back(serversetuppanel);
 
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(shm_drive_80_server,
-                                                             "Plot 1",
-                                                             "Watch Plot 1",
-                                                             true));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(shm_drive_80_server,
-                                                             "Plot 2",
-                                                             "Watch Plot 2",
-                                                             false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(shm_drive_80_server,
-                                                             "Plot 3",
-                                                             "Watch Plot 3",
-                                                             false));
-        watchplots.push_back(std::make_shared<ui::WatchPlot>(shm_drive_80_server,
-                                                             "Plot 4",
-                                                             "Watch Plot 4",
-                                                             false));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(shm_drive_80_server,
+                                                "Plot 1",
+                                                "Watch Plot 1",
+                                                true));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(shm_drive_80_server,
+                                                "Plot 2",
+                                                "Watch Plot 2",
+                                                false));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(shm_drive_80_server,
+                                                "Plot 3",
+                                                "Watch Plot 3",
+                                                false));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(shm_drive_80_server,
+                                                "Plot 4",
+                                                "Watch Plot 4",
+                                                false));
     } else if (server_name == "project-moyka") {
         glfwMaximizeWindow(window);
         glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
