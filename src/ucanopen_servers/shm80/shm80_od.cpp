@@ -185,11 +185,11 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300C, 0x08}, {"config", "resolver", "cos_offset",               "V",    OD_ACCESS_RO, OD_FLOAT32}},
 //##############################################################################
 {{0x300D, 0x01}, {"config", "resolver_calibration", "phase_current",        "pu",   OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300D, 0x01}, {"config", "resolver_calibration", "field_current ",       "pu",   OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300D, 0x01}, {"config", "resolver_calibration", "dir_detection_angle",  "o",    OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300D, 0x01}, {"config", "resolver_calibration", "phase_slope",          "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300D, 0x01}, {"config", "resolver_calibration", "field_slope",          "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300D, 0x01}, {"config", "resolver_calibration", "angle_slope",          "o",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x02}, {"config", "resolver_calibration", "field_current ",       "pu",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x03}, {"config", "resolver_calibration", "dir_detection_angle",  "o",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x04}, {"config", "resolver_calibration", "phase_slope",          "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x05}, {"config", "resolver_calibration", "field_slope",          "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300D, 0x06}, {"config", "resolver_calibration", "angle_slope",          "o",    OD_ACCESS_RW, OD_FLOAT32}},
 //##############################################################################
 }
 };
