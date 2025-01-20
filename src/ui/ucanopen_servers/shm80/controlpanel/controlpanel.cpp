@@ -225,7 +225,8 @@ void ControlPanel::_draw_normal_mode_controls() {
         ImGui::PopItemWidth();
     });
 
-    if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Control Loop", ImGuiTreeNodeFlags_Framed)) {
+    if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Control Loop",
+                                ImGuiTreeNodeFlags_Framed)) {
         // control loop
         ImGui::RadioButton("Closed Loop",
                            &_ctlloop_v,
@@ -346,9 +347,13 @@ void ControlPanel::_draw_actions() {
 
     if (ImGui::CollapsingHeader(ICON_MDI_CAR_WRENCH " Service Actions",
                                 ImGuiTreeNodeFlags_Framed)) {
-        if (ImGui::Button(ICON_MDI_SHIELD_REFRESH " Clear Errors",
-                          ImVec2{-1.f, 0.f})) {
+        if (ImGui::Button(ICON_MDI_BROOM " Clear Errors", ImVec2{-1.f, 0.f})) {
             _server->exec("ctl", "sys", "clear_errors");
+        }
+
+        if (ImGui::Button(ICON_MDI_CHIP " Reset Driver Fault",
+                          ImVec2(-1.f, 0.f))) {
+            _server->exec("ctl", "drive", "reset_driver_fault");
         }
 
         if (ImGui::Button(ICON_MDI_RESTART " Reset MCU", ImVec2{-1.f, 0.f})) {
