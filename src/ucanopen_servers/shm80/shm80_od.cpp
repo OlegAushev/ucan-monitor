@@ -66,11 +66,9 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x51}, {"watch", "resolver",  "speed",    "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x52}, {"watch", "resolver",  "angle",    "o",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x53}, {"watch", "resolver",  "sinmax",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x54}, {"watch", "resolver",  "sinoff",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x55}, {"watch", "resolver",  "sinmin",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x56}, {"watch", "resolver",  "cosmax",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x57}, {"watch", "resolver",  "cosoff",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x58}, {"watch", "resolver",  "cosmin",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x54}, {"watch", "resolver",  "sinmin",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x55}, {"watch", "resolver",  "cosmax",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x56}, {"watch", "resolver",  "cosmin",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
 
 //############################################################################################
 {{0x3000, 0x01}, {"config", "ucanopen", "node_id",          "",     OD_ACCESS_RW, OD_UINT32}},
