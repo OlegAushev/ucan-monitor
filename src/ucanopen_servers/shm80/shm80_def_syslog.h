@@ -220,6 +220,18 @@ private:
         "Load resolver calibration default config.",
         "Write resolver calibration config - ok.",
         "Write resolver calibration config - fail.",
+
+        "Read isolation controller config - ok.",
+        "Read isolation controller config - fail.",
+        "Load isolation controller default config.",
+        "Write isolation controller config - ok.",
+        "Write isolation controller config - fail.",
+
+        "Read throttle controller config - ok.",
+        "Read throttle controller config - fail.",
+        "Load throttle controller default config.",
+        "Write throttle controller config - ok.",
+        "Write throttle controller config - fail.",
     };
     static inline const std::vector<std::string_view> can_messages_ = {
         "CAN SDO-request is lost."};

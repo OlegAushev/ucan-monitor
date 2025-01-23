@@ -189,6 +189,17 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300D, 0x05}, {"config", "resolver_calibration", "field_slope",          "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300D, 0x06}, {"config", "resolver_calibration", "angle_slope",          "o",    OD_ACCESS_RW, OD_FLOAT32}},
 //##############################################################################
+//
+//##############################################################################
+{{0x300F, 0x01}, {"config", "throttle_controller", "enabled",           "",     OD_ACCESS_RW, OD_BOOL}},
+{{0x300F, 0x02}, {"config", "throttle_controller", "can_id",            "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x300F, 0x03}, {"config", "throttle_controller", "timeout",           "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x300F, 0x04}, {"config", "throttle_controller", "control_mode",      "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x300F, 0x05}, {"config", "throttle_controller", "speed_ref_posmin",  "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300F, 0x06}, {"config", "throttle_controller", "speed_ref_posmax",  "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300F, 0x07}, {"config", "throttle_controller", "speed_ref_negmin",  "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300F, 0x08}, {"config", "throttle_controller", "speed_ref_negmax",  "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
+
 }
 };
 
