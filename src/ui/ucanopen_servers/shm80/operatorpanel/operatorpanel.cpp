@@ -22,6 +22,223 @@ void OperatorPanel::draw() {
 
     ImGui::SetWindowSize({1024, 576});
 
+    {
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
+        ImGui::BeginChild("Преобразователь",
+                          ImVec2(500, 560),
+                          ImGuiChildFlags_Border,
+                          window_flags);
+        ImGui::SeparatorText("Преобразователь");
+
+        static ImGuiTableFlags flags =
+                ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+        if (ImGui::BeginTable("converter_table", 2, flags)) {
+            ImGui::TableSetupColumn("Параметр");
+            ImGui::TableSetupColumn("Значение",
+                                    ImGuiTableColumnFlags_WidthFixed,
+                                    140.f);
+            ImGui::TableHeadersRow();
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_CAR_BATTERY " Напряжение [В]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("580");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура A [°C]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("79");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура B [°C]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("81");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура C [°C]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("78");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура F [°C]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("78");
+
+            ImGui::EndTable();
+        }
+
+        // Heartbeat indicator
+        if (true) {
+            ui::util::BlinkingText(ICON_MDI_NETWORK,
+                                   std::chrono::milliseconds{750},
+                                   ui::colors::icon_green,
+                                   ui::colors::icon_inactive);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+            ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+            ImGui::PopStyleColor();
+        }
+
+        // Drive state indicator
+        ImGui::SameLine();
+        ImGui::PushItemWidth(300);
+        std::string state = "В СЕТИ | ГОТОВ";
+        ImGui::InputText("##state",
+                         state.data(),
+                         state.size(),
+                         ImGuiInputTextFlags_ReadOnly);
+        ImGui::PopItemWidth();
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::TextUnformatted("Аварийно низкое напряжение");
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::TextUnformatted("Аварийно высокое напряжение");
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::TextUnformatted("Аварийно высокий фазный ток");
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::TextUnformatted("Аварийно высокий ток возб.");
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::TextUnformatted("Перегрев");
+
+        ImGui::EndChild();
+    }
+
+    ImGui::SameLine();
+
+    {
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
+        ImGui::BeginChild("Двигатель",
+                          ImVec2(500, 560),
+                          ImGuiChildFlags_Border,
+                          window_flags);
+        ImGui::SeparatorText("Двигатель");
+
+        static ImGuiTableFlags flags =
+                ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+        if (ImGui::BeginTable("motor_table", 2, flags)) {
+            ImGui::TableSetupColumn("Параметр");
+            ImGui::TableSetupColumn("Значение",
+                                    ImGuiTableColumnFlags_WidthFixed,
+                                    140.f);
+            ImGui::TableHeadersRow();
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_SPEEDOMETER " Частота [об/мин]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("1802");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_CURRENT_AC " Ток ОС [A]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("145");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_CURRENT_DC " Ток ОВ [A]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("8");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура ОС [°C]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("102");
+
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура ОВ [°C]");
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("185");
+
+            ImGui::EndTable();
+        }
+
+        float throttle_pct = 0.73f * 200.f - 100.f;
+        ImGui::PushItemWidth(200);
+        ImGui::SliderFloat(ICON_MDI_SPEEDOMETER "##accl_slider",
+                           &throttle_pct,
+                           -100.f,
+                           100.0f,
+                           "%.0f",
+                           ImGuiSliderFlags_NoInput);
+        ImGui::PopItemWidth();
+
+        float speed = 1802.f;
+
+        ImGui::SameLine();
+        if (speed < 0) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED " R");
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+        if (speed == 0) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED " N");
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+        if (speed > 0) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED " D");
+        ImGui::PopStyleColor();
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::TextUnformatted("Отказ датчика положения");
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::TextUnformatted("Перегрев обмотки статора");
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+        ImGui::TextUnformatted("Перегрев обмотки возбуждения");
+
+        ImGui::EndChild();
+    }
+
     ImGui::End();
 }
 
