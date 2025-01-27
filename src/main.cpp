@@ -21,6 +21,7 @@
 
 #include <ui/ucanopen_servers/shm80/controlpanel/controlpanel.h>
 #include <ui/ucanopen_servers/shm80/datapanel/datapanel.h>
+#include <ui/ucanopen_servers/shm80/operatorpanel/operatorpanel.hpp>
 #include <ui/ucanopen_servers/shm80/statuspanel/statuspanel.h>
 
 #include <ui/ucanopen_servers/moyka/panel/panel.h>
@@ -111,7 +112,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf",
                                  base_fontsize,
                                  NULL,
-                                 io.Fonts->GetGlyphRangesDefault());
+                                 io.Fonts->GetGlyphRangesCyrillic());
 
     // merge in icons from Font Awesome
     static const ImWchar icons_ranges[] = {ICON_MIN_MDI, ICON_MAX_MDI, 0};
@@ -219,11 +220,18 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                        "Setup",
                                                        false);
 
+        auto operatorpanel =
+                std::make_shared<ui::shm80::OperatorPanel>(shm_drive_80_server,
+                                                           "Operator View",
+                                                           "Operator View",
+                                                           false);
+
         views.push_back(controlpanel);
         views.push_back(statuspanel);
         views.push_back(watchpanel);
         views.push_back(datapanel);
         views.push_back(serversetuppanel);
+        views.push_back(operatorpanel);
 
         watchplots.push_back(
                 std::make_shared<ui::WatchPlot>(shm_drive_80_server,
