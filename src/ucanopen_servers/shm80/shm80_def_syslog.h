@@ -42,6 +42,7 @@ private:
         "iph_sensor_failure",
         "if_sensor_failure"};
     static inline const std::vector<std::string_view> motor_errors_ = {
+        "overtemp"
         "aw_overtemp",
         "fw_overtemp"};
     static inline const std::vector<std::string_view> converter_errors_ = {
@@ -57,7 +58,10 @@ private:
         "phase_b_fault",
         "phase_c_fault",
         "field_module_fault",
-        "phase_overtemp",
+        "phase_module_overtemp",
+        "phase_a_overtemp",
+        "phase_b_overtemp",
+        "phase_c_overtemp",
         "field_overtemp",
         "pcb_overtemp"};
     static inline const std::vector<std::string_view> model_errors_{};
@@ -95,9 +99,16 @@ private:
         "counter_freeze"};
     static inline const std::vector<std::string_view> sensors_warnings_ = {};
     static inline const std::vector<std::string_view> motor_warnings_ = {
-        "overheat"};
+        "overheat",
+        "aw_overheat",
+        "fw_overheat"};
     static inline const std::vector<std::string_view> converter_warnings_ = {
-        "overheat"};
+        "phase_module_overheat",
+        "phase_a_overheat",
+        "phase_b_overheat",
+        "phase_c_overheat",
+        "field_module_overheat",
+        "pcb_overheat"};
     static inline const std::vector<std::string_view> model_warnings_{};
     static inline const std::vector<std::string_view> resolver_warnings_{
         "calibration_stage1",
