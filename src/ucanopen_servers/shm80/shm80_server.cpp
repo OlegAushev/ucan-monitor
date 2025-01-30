@@ -82,8 +82,8 @@ void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo2) == 8);
     CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
 
-    _tpdo2.dc_voltage.store(tpdo.dc_voltage);
-    _tpdo2.stator_current.store(tpdo.stator_current);
+    _tpdo2.dc_voltage.store(tpdo.dc_voltage / 10.f);
+    _tpdo2.stator_current.store(tpdo.stator_current / 10.f);
     _tpdo2.field_current.store(tpdo.field_current);
 }
 
