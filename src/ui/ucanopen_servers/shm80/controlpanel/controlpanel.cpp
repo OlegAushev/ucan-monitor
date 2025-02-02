@@ -362,13 +362,13 @@ void ControlPanel::_draw_actions() {
 
         if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE " Calibrate Angle Sensor",
                           ImVec2{-1.f, 0.f})) {
-            _server->exec("ctl", "drive", "calibrate");
+            _server->exec("ctl", "drive", "calibrate_resolver");
         }
 
         if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE
                           " Save Calibration Results",
                           ImVec2{-1.f, 0.f})) {
-            _server->exec("ctl", "angsens", "save_calibration");
+            _server->exec("ctl", "drive", "save_resolver_config");
         }
     }
 }

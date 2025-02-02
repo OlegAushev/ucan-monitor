@@ -27,7 +27,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x2000, 0x02}, {"ctl", "sys", "clear_errors", "", OD_ACCESS_WO, OD_EXEC}},
 
 {{0x2001, 0x01}, {"ctl", "drive", "reset_driver_fault",     "", OD_ACCESS_WO, OD_EXEC}},
-{{0x2001, 0x02}, {"ctl", "drive", "calibrate",              "", OD_ACCESS_WO, OD_EXEC}},
+{{0x2001, 0x02}, {"ctl", "drive", "calibrate_resolver",     "", OD_ACCESS_WO, OD_EXEC}},
+{{0x2001, 0x03}, {"ctl", "drive", "save_resolver_config",   "", OD_ACCESS_WO, OD_EXEC}},
 
 //##########################################################################################################################################################################################################################################################################################################
 {{0x5000, 0x01}, {"watch", "sys",       "uptime",       "s",    OD_ACCESS_RO, OD_FLOAT32}},
@@ -126,8 +127,9 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3004, 0x07}, {"config", "converter", "otp_pcb",         "oC",   OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3004, 0x08}, {"config", "converter", "fan_temp_on",     "oC",   OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3004, 0x09}, {"config", "converter", "fan_temp_off",    "oC",   OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3004, 0x0A}, {"config", "converter", "kp_exc_current",  "",     OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3004, 0x0B}, {"config", "converter", "ki_exc_current",  "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x0A}, {"config", "converter", "kp_field_current","",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x0B}, {"config", "converter", "ki_field_current","",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3004, 0x0C}, {"config", "converter", "active_discharge","",     OD_ACCESS_RW, OD_BOOL}},
 //##############################################################################
 {{0x3005, 0x01}, {"config", "model_basic", "iSMot_limit",       "A",    OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x02}, {"config", "model_basic", "iSGen_limit",       "A",    OD_ACCESS_RW, OD_FLOAT32}},
