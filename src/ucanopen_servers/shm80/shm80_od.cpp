@@ -101,9 +101,11 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 //##############################################################################
 {{0x3002, 0x01}, {"config", "drive", "forward_direction",   "",     OD_ACCESS_RO, OD_INT16}},
 {{0x3002, 0x02}, {"config", "drive", "runout_speed",        "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x03}, {"config", "drive", "torque_slope",        "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x04}, {"config", "drive", "speed_slope",         "rpm/s",OD_ACCESS_RW, OD_FLOAT32}},
-{{0x3002, 0x05}, {"config", "drive", "watchdog_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3002, 0x03}, {"config", "drive", "stopping_torque",     "pu",   OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3002, 0x04}, {"config", "drive", "stopping_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3002, 0x05}, {"config", "drive", "torque_slope",        "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3002, 0x06}, {"config", "drive", "speed_slope",         "rpm/s",OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3002, 0x07}, {"config", "drive", "watchdog_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
 //##############################################################################
 {{0x3003, 0x01}, {"config", "motor", "parameters_specified","",     OD_ACCESS_RO, OD_BOOL}},
 {{0x3003, 0x02}, {"config", "motor", "pole_pairs",          "",     OD_ACCESS_RW, OD_INT16}},
