@@ -193,7 +193,13 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300D, 0x05}, {"config", "resolver_calibration", "field_slope",          "pu/s", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300D, 0x06}, {"config", "resolver_calibration", "angle_slope",          "o",    OD_ACCESS_RW, OD_FLOAT32}},
 //##############################################################################
-//
+{{0x300E, 0x01}, {"config", "insulation", "enabled",                "",     OD_ACCESS_RW, OD_BOOL}},
+{{0x300E, 0x02}, {"config", "insulation", "min_batt_voltage",       "V",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300E, 0x03}, {"config", "insulation", "testing_period",         "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x300E, 0x04}, {"config", "insulation", "delay_before_adc",       "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x300E, 0x05}, {"config", "insulation", "insulation_low_limit",   "Ohm",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300E, 0x06}, {"config", "insulation", "insulation_pos",         "Ohm",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x300E, 0x07}, {"config", "insulation", "insulation_neg",         "Ohm",  OD_ACCESS_RO, OD_FLOAT32}},
 //##############################################################################
 {{0x300F, 0x01}, {"config", "throttle_controller", "enabled",           "",     OD_ACCESS_RW, OD_BOOL}},
 {{0x300F, 0x02}, {"config", "throttle_controller", "can_id",            "",     OD_ACCESS_RW, OD_UINT32}},
