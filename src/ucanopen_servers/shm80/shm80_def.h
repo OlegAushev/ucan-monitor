@@ -26,18 +26,18 @@ struct CobTpdo1 {
     uint16_t ctlloop : 2;
 
     uint16_t pdm_state : 3;
-    uint16_t calibration_state : 3;
+    uint16_t instester_state : 3;
     uint16_t manual_field : 1;
-    uint16_t _reserved1 : 1;
+    uint16_t _reserved1_ : 1;
 
-    uint16_t _reserved2 : 8;
+    uint16_t _reserved2_ : 8;
 
-    uint16_t _reserved3;
+    uint16_t _reserved3_;
 
-    uint16_t _reserved4 : 8;
+    uint16_t _reserved4_ : 8;
 
     uint16_t counter : 2;
-    uint16_t _reserved5 : 6;
+    uint16_t _reserved5_ : 6;
 };
 
 struct CobTpdo2 {
@@ -45,12 +45,12 @@ struct CobTpdo2 {
 
     int16_t stator_current;
 
-    uint16_t _reserved1;
+    uint16_t _reserved1_;
 
     uint16_t field_current : 8;
 
     uint16_t counter : 2;
-    uint16_t _reserved2 : 6;
+    uint16_t _reserved2_ : 6;
 };
 
 struct CobTpdo3 {
@@ -58,12 +58,12 @@ struct CobTpdo3 {
 
     int16_t angle;
 
-    uint16_t _reserved1;
+    uint16_t _reserved1_;
 
-    uint16_t _reserved2 : 8;
+    uint16_t _reserved2_ : 8;
 
     uint16_t counter : 2;
-    uint16_t _reserved3 : 6;
+    uint16_t _reserved3_ : 6;
 };
 
 struct CobTpdo4 {
@@ -71,7 +71,7 @@ struct CobTpdo4 {
     uint16_t warnings;
     uint16_t domain : 8;
     uint16_t counter : 2;
-    uint16_t _reserved : 6;
+    uint16_t _reserved_ : 6;
 };
 
 struct CobRpdo1 {
@@ -80,18 +80,18 @@ struct CobRpdo1 {
     uint16_t start : 1;
     uint16_t ctlmode : 1;
     uint16_t isotest_dis : 1;
-    uint16_t _reserved1 : 3;
+    uint16_t _reserved1_ : 3;
 
-    uint16_t _reserved2 : 8;
+    uint16_t _reserved2_ : 8;
 
     int16_t ref_torque;
 
     int16_t ref_speed;
 
-    uint16_t _reserved3 : 8;
+    uint16_t _reserved3_ : 8;
 
     uint16_t counter : 2;
-    uint16_t _reserved4 : 6;
+    uint16_t _reserved4_ : 6;
 };
 
 struct CobRpdo2 {
@@ -107,7 +107,7 @@ struct CobRpdo2 {
     uint16_t opmode : 2;
     uint16_t ctlloop : 2;
     uint16_t manual_field : 1;
-    uint16_t _reserved : 1;
+    uint16_t _reserved_ : 1;
 };
 
 enum class DriveState {
@@ -182,5 +182,14 @@ inline const std::unordered_map<ControlLoop, std::string_view> ctlloop_names = {
     {ControlLoop::open, "open"},
     {ControlLoop::semiclosed, "semiclosed"},
     {ControlLoop::openvolt, "openvolt"}};
+
+inline const std::vector<std::string_view> pdm_states = {"disconnected",
+                                                         "charging",
+                                                         "ready",
+                                                         "discharging",
+                                                         "error"};
+
+inline const std::vector<std::string_view> insulation_tester_states =
+        {"init", "standby", "measuring P", "measuring N", "processing"};
 
 } // namespace shm80

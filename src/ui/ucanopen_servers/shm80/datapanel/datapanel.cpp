@@ -12,9 +12,7 @@ DataPanel::DataPanel(std::shared_ptr<::shm80::Server> server,
                      const std::string& menu_title,
                      const std::string& window_title,
                      bool open)
-        : View(menu_title, window_title, open),
-          server_(server)
-{}
+        : View(menu_title, window_title, open), server_(server) {}
 
 void DataPanel::draw() {
     ImGui::Begin(_window_title.c_str(), &_opened);
@@ -27,7 +25,6 @@ void DataPanel::draw() {
     draw_tpdo4_table();
     ImGui::End();
 }
-
 
 void DataPanel::draw_tpdo1_table() {
     if (server_->tpdo_service.good(ucanopen::CobTpdo::tpdo1)) {
@@ -44,8 +41,8 @@ void DataPanel::draw_tpdo1_table() {
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO1");
 
-    static ImGuiTableFlags flags = ImGuiTableFlags_Borders |
-                                   ImGuiTableFlags_RowBg;
+    static ImGuiTableFlags flags =
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo1_table", 2, flags)) {
         ImGui::TableSetupColumn("Parameter");
         ImGui::TableSetupColumn("Value");
@@ -125,11 +122,12 @@ void DataPanel::draw_tpdo1_table() {
         } else {
             ImGui::TextUnformatted("no");
         }
+
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Field Control");
         ImGui::TableSetColumnIndex(1);
-        if (server_->is_manual_field_enabled()) {
+        if (server_->manual_field_enabled()) {
             ImGui::TextUnformatted("manual");
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                    ui::colors::table_bg_yellow);
@@ -137,10 +135,21 @@ void DataPanel::draw_tpdo1_table() {
             ImGui::TextUnformatted("auto");
         }
 
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("PDM State");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::TextUnformatted(server_->pdm_state().data());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Ins. Tester State");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::TextUnformatted(server_->insulation_tester_state().data());
+
         ImGui::EndTable();
     }
 }
-
 
 void DataPanel::draw_tpdo2_table() {
     if (server_->tpdo_service.good(ucanopen::CobTpdo::tpdo2)) {
@@ -157,8 +166,8 @@ void DataPanel::draw_tpdo2_table() {
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO2");
 
-    static ImGuiTableFlags flags = ImGuiTableFlags_Borders |
-                                   ImGuiTableFlags_RowBg;
+    static ImGuiTableFlags flags =
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo2_table", 2, flags)) {
         ImGui::TableSetupColumn("Parameter");
         ImGui::TableSetupColumn("Value");
@@ -201,7 +210,6 @@ void DataPanel::draw_tpdo2_table() {
     }
 }
 
-
 void DataPanel::draw_tpdo3_table() {
     if (server_->tpdo_service.good(ucanopen::CobTpdo::tpdo3)) {
         ui::util::BlinkingText(ICON_MDI_NETWORK,
@@ -217,8 +225,8 @@ void DataPanel::draw_tpdo3_table() {
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO3");
 
-    static ImGuiTableFlags flags = ImGuiTableFlags_Borders |
-                                   ImGuiTableFlags_RowBg;
+    static ImGuiTableFlags flags =
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo3_table", 2, flags)) {
         ImGui::TableSetupColumn("Parameter");
         ImGui::TableSetupColumn("Value");
@@ -255,7 +263,6 @@ void DataPanel::draw_tpdo3_table() {
     }
 }
 
-
 void DataPanel::draw_tpdo4_table() {
     if (server_->tpdo_service.good(ucanopen::CobTpdo::tpdo4)) {
         ui::util::BlinkingText(ICON_MDI_NETWORK,
@@ -271,8 +278,8 @@ void DataPanel::draw_tpdo4_table() {
     ImGui::SameLine();
     ImGui::SeparatorText("TPDO4");
 
-    static ImGuiTableFlags flags = ImGuiTableFlags_Borders |
-                                   ImGuiTableFlags_RowBg;
+    static ImGuiTableFlags flags =
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo4_table", 2, flags)) {
         ImGui::TableSetupColumn("Parameter");
         ImGui::TableSetupColumn("Value");
