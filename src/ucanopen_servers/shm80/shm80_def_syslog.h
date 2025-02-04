@@ -23,7 +23,7 @@ public:
         "model",
         "resolver",
         "pdm",
-        "isolation"};
+        "insulation"};
     static constexpr std::array<std::string_view, 6> levels =
             {"      ", "[info]", "[ ok ]", "[warn]", "[fail]", "[crit]"};
 private:
@@ -74,7 +74,7 @@ private:
         "dclink_discharge_timeout",
         "incorrect_switch_state",
         "error_state"};
-    static inline const std::vector<std::string_view> isolation_errors_{};
+    static inline const std::vector<std::string_view> insulation_errors_{};
 public:
     static inline const std::array<std::vector<std::string_view>,
                                    domains.size()>
@@ -87,7 +87,7 @@ public:
                       model_errors_,
                       resolver_errors_,
                       pdm_errors_,
-                      isolation_errors_};
+                      insulation_errors_};
 private:
     static inline const std::vector<std::string_view> sys_warnings_ = {};
     static inline const std::vector<std::string_view> settings_warnings_ = {};
@@ -119,7 +119,9 @@ private:
         "dclink_charging",
         "dclink_holdup",
         "dclink_discharging"};
-    static inline const std::vector<std::string_view> isolation_warnings_{};
+    static inline const std::vector<std::string_view> insulation_warnings_{
+        "low_insulation",
+        "invalid_result"};
 public:
     static inline const std::array<std::vector<std::string_view>,
                                    domains.size()>
@@ -132,7 +134,7 @@ public:
                         model_warnings_,
                         resolver_warnings_,
                         pdm_warnings_,
-                        isolation_warnings_};
+                        insulation_warnings_};
 private:
     static inline const std::vector<std::string_view> sys_messages_ = {
         "Boot CPU1...",
