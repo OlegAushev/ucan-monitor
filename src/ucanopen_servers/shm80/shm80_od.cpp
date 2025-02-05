@@ -178,8 +178,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300B, 0x02}, {"config", "dc_voltage_sensor",    "offset",           "", OD_ACCESS_RW, OD_FLOAT32}},
 //##############################################################################
 {{0x300C, 0x01}, {"config", "resolver", "pole_pairs",               "",     OD_ACCESS_RW, OD_INT16}},
-{{0x300C, 0x02}, {"config", "resolver", "install_direction",        "",     OD_ACCESS_RO, OD_INT16}},
-{{0x300C, 0x03}, {"config", "resolver", "install_offset",           "rad",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x300C, 0x02}, {"config", "resolver", "install_direction",        "",     OD_ACCESS_RW, OD_INT16}},
+{{0x300C, 0x03}, {"config", "resolver", "install_offset",           "rad",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300C, 0x04}, {"config", "resolver", "observer_natural_freq",    "rad/s",OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300C, 0x05}, {"config", "resolver", "observer_damping_factor",  "",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300C, 0x06}, {"config", "resolver", "exc_factor",               "",     OD_ACCESS_RW, OD_FLOAT32}},
