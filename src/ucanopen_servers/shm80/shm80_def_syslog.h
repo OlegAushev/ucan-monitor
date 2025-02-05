@@ -36,7 +36,8 @@ private:
         "read_error",
         "write_error"};
     static inline const std::vector<std::string_view> can_errors_ = {
-        "connection_lost"};
+        "vcu_connection_lost",
+        "throttle_connection_lost"};
     static inline const std::vector<std::string_view> sensors_errors_ = {
         "vdc_sensor_failure",
         "iph_sensor_failure",
@@ -94,9 +95,10 @@ private:
     static inline const std::vector<std::string_view> can_warnings_ = {
         "error",
         "overrun",
-        "connection_lost",
+        "vcu_connection_lost",
         "checksum_mismatch",
-        "counter_freeze"};
+        "counter_freeze",
+        "throttle_invalid_signal"};
     static inline const std::vector<std::string_view> sensors_warnings_ = {};
     static inline const std::vector<std::string_view> motor_warnings_ = {
         "overheat",
