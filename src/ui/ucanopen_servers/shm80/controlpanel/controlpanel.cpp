@@ -62,6 +62,7 @@ void ControlPanel::draw() {
     _draw_testing_mode_controls();
 
     _draw_actions();
+    _draw_popups();
 
     _update_refs();
 
@@ -357,18 +358,18 @@ void ControlPanel::_draw_actions() {
         }
 
         if (ImGui::Button(ICON_MDI_RESTART " Reset MCU", ImVec2{-1.f, 0.f})) {
-            _server->exec("ctl", "sys", "reset_device");
+            ImGui::OpenPopup("Warning!##reset_device");
         }
 
         if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE " Calibrate Angle Sensor",
                           ImVec2{-1.f, 0.f})) {
-            _server->exec("ctl", "drive", "calibrate_resolver");
+            ImGui::OpenPopup("Warning!##calibrate_resolver");
         }
 
         if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE
                           " Save Calibration Results",
                           ImVec2{-1.f, 0.f})) {
-            _server->exec("ctl", "drive", "save_resolver_config");
+            ImGui::OpenPopup("Warning!##save_resolver_config");
         }
     }
 }
@@ -378,46 +379,10 @@ void ControlPanel::_draw_popups() {
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-    if (ImGui::BeginPopupModal("Warning!##calibration",
+    if (ImGui::BeginPopupModal("Warning!##reset_device",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Calibration procedure is about to begin.");
-        ImGui::Separator();
-
-        if (ImGui::Button("Cancel", ImVec2(120, 0))) {
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::SetItemDefaultFocus();
-        ImGui::SameLine();
-        if (ImGui::Button("Ok", ImVec2(120, 0))) {
-            _server->exec("ctl", "drive", "calibrate");
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::EndPopup();
-    }
-
-    if (ImGui::BeginPopupModal("Warning!##direction",
-                               NULL,
-                               ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Default rotation direction will be changed.");
-        ImGui::Separator();
-
-        if (ImGui::Button("Cancel", ImVec2(120, 0))) {
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::SetItemDefaultFocus();
-        ImGui::SameLine();
-        if (ImGui::Button("Ok", ImVec2(120, 0))) {
-            _server->exec("ctl", "drive", "invert_rotdir");
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::EndPopup();
-    }
-
-    if (ImGui::BeginPopupModal("Warning!##device_reset",
-                               NULL,
-                               ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Device will be reset.");
+        ImGui::Text("Device will be reset. Continue?");
         ImGui::Separator();
 
         if (ImGui::Button("Cancel", ImVec2(120, 0))) {
@@ -427,6 +392,42 @@ void ControlPanel::_draw_popups() {
         ImGui::SameLine();
         if (ImGui::Button("Ok", ImVec2(120, 0))) {
             _server->exec("ctl", "sys", "reset_device");
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::BeginPopupModal("Warning!##calibrate_resolver",
+                               NULL,
+                               ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("Calibration procedure is about to begin. Continue?");
+        ImGui::Separator();
+
+        if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        if (ImGui::Button("Ok", ImVec2(120, 0))) {
+            _server->exec("ctl", "drive", "calibrate_resolver");
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::BeginPopupModal("Warning!##save_resolver_config",
+                               NULL,
+                               ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("Calibration results will be overwritten. Continue?");
+        ImGui::Separator();
+
+        if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        if (ImGui::Button("Ok", ImVec2(120, 0))) {
+            _server->exec("ctl", "drive", "save_resolver_config");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
