@@ -136,15 +136,15 @@ inline const std::unordered_set<int> drive_state_values = {
 
 inline const std::unordered_map<DriveState, std::string_view>
         drive_state_names = {
-            {DriveState::init, "init"},
-            {DriveState::standby, "standby"},
-            {DriveState::powering_up, "powering_up"},
-            {DriveState::powering_down, "powering_down"},
-            {DriveState::ready, "ready"},
-            {DriveState::running, "running"},
-            {DriveState::stopping, "stopping"},
-            {DriveState::calibrating, "calibrating"},
-            {DriveState::testing, "testing"},
+            {DriveState::init, "инициализация"},
+            {DriveState::standby, "ожидание"},
+            {DriveState::powering_up, "включение"},
+            {DriveState::powering_down, "выключение"},
+            {DriveState::ready, "готов"},
+            {DriveState::running, "работа"},
+            {DriveState::stopping, "останов"},
+            {DriveState::calibrating, "калибровка"},
+            {DriveState::testing, "тестирование"},
 };
 
 enum class OperatingMode { normal, testing };
@@ -155,8 +155,8 @@ inline const std::unordered_set<int> opmode_values = {
 };
 
 inline const std::map<OperatingMode, std::string_view> opmode_names = {
-    {OperatingMode::normal, "normal"},
-    {OperatingMode::testing, "testing"},
+    {OperatingMode::normal, "нормальный"},
+    {OperatingMode::testing, "тестирование"},
 };
 
 enum class ControlMode { torque, speed };

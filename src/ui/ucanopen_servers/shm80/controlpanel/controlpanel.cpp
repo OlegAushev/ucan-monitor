@@ -73,7 +73,7 @@ void ControlPanel::_draw_dash() {
     // Uptime
     ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE);
     ImGui::SameLine();
-    ImGui::PushItemWidth(120);
+    ImGui::PushItemWidth(140);
     auto uptime = _server->watch_service.string_value("sys", "uptime");
     ImGui::InputText("##uptime",
                      uptime.data(),
@@ -96,7 +96,7 @@ void ControlPanel::_draw_dash() {
     // Drive state indicator
     ImGui::SameLine();
     std::string state(_server->drive_state_str());
-    ImGui::PushItemWidth(120);
+    ImGui::PushItemWidth(140);
     ImGui::InputText("##state",
                      state.data(),
                      state.size(),
@@ -106,7 +106,7 @@ void ControlPanel::_draw_dash() {
     // Operation mode selection
     ImGui::PushItemWidth(200);
     auto opmode_preview = opmode_names.at(_opmode).data();
-    if (ImGui::BeginCombo("Operating Mode", opmode_preview)) {
+    if (ImGui::BeginCombo("Режим Работы", opmode_preview)) {
         for (const auto& mode : opmode_names) {
             bool is_selected = (mode.first == _opmode);
             if (ImGui::Selectable(mode.second.data(), is_selected)) {
@@ -119,14 +119,14 @@ void ControlPanel::_draw_dash() {
     ImGui::PopItemWidth();
 
     // emergency
-    ToggleButton(ICON_MDI_ALERT_OUTLINE " Emergency " ICON_MDI_ALERT_OUTLINE,
+    ToggleButton(ICON_MDI_ALERT_OUTLINE "   АВАРИЯ   " ICON_MDI_ALERT_OUTLINE,
                  _emergency,
                  ImVec2{200, 0});
     ImGui::SameLine();
     ImGui::TextDisabled("(F2)");
 
     // wakeup
-    ToggleButton(ICON_MDI_POWER_ON " Power On/Off " ICON_MDI_POWER_OFF,
+    ToggleButton(ICON_MDI_POWER_ON " ВХ.ПИТАНИЕ " ICON_MDI_POWER_OFF,
                  _power,
                  ImVec2{200, 0});
     ImGui::SameLine();
@@ -134,7 +134,7 @@ void ControlPanel::_draw_dash() {
 
     // start/stop
     ToggleButton(ICON_MDI_PLAY_CIRCLE_OUTLINE
-                 " Start/Stop " ICON_MDI_STOP_CIRCLE_OUTLINE,
+                 " СТАРТ/СТОП " ICON_MDI_STOP_CIRCLE_OUTLINE,
                  _start,
                  ImVec2{200, 0});
     ImGui::SameLine();
@@ -168,7 +168,7 @@ void ControlPanel::_draw_normal_mode_controls() {
     bool selected = _opmode == OperatingMode::normal;
     ui::util::Switchable run_mode_header(selected, []() {
         ImGui::SameLine();
-        ImGui::SeparatorText("Normal Mode");
+        ImGui::SeparatorText("Нормальный Режим");
     });
 
     if (!selected) {
@@ -180,13 +180,13 @@ void ControlPanel::_draw_normal_mode_controls() {
                        &_ctlmode_v,
                        std::to_underlying(ControlMode::torque));
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-        ImGui::SetTooltip("Torque mode");
+        ImGui::SetTooltip("Управление моментом");
     }
     ImGui::SameLine();
 
     util::Switchable torque_input(_ctlmode == ControlMode::torque, [this]() {
-        ImGui::PushItemWidth(200);
-        if (ImGui::InputFloat("Torque [%]",
+        ImGui::PushItemWidth(140);
+        if (ImGui::InputFloat("Момент [%]",
                               &_ref_torque_pct,
                               1.0f,
                               100.0f,
@@ -205,13 +205,13 @@ void ControlPanel::_draw_normal_mode_controls() {
                        &_ctlmode_v,
                        std::to_underlying(::shm80::ControlMode::speed));
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-        ImGui::SetTooltip("Speed mode");
+        ImGui::SetTooltip("Управление скоростью");
     }
     ImGui::SameLine();
 
     util::Switchable speed_input(_ctlmode == ControlMode::speed, [this]() {
-        ImGui::PushItemWidth(200);
-        if (ImGui::InputScalar("Speed [rpm]",
+        ImGui::PushItemWidth(140);
+        if (ImGui::InputScalar("Скорость [об/мин]",
                                ImGuiDataType_S16,
                                &_ref_speed,
                                NULL,
@@ -226,20 +226,20 @@ void ControlPanel::_draw_normal_mode_controls() {
         ImGui::PopItemWidth();
     });
 
-    if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Control Loop",
+    if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Режим СУ",
                                 ImGuiTreeNodeFlags_Framed)) {
         // control loop
-        ImGui::RadioButton("Closed Loop",
+        ImGui::RadioButton("Замкнутый",
                            &_ctlloop_v,
                            std::to_underlying(::shm80::ControlLoop::closed));
-        ImGui::RadioButton("Open Loop",
+        ImGui::RadioButton("Разомкнутый, ток",
                            &_ctlloop_v,
                            std::to_underlying(::shm80::ControlLoop::open));
         ImGui::RadioButton(
-                "Semi-Closed Loop",
+                "Замкнутый + iD",
                 &_ctlloop_v,
                 std::to_underlying(::shm80::ControlLoop::semiclosed));
-        ImGui::RadioButton("Voltage Loop",
+        ImGui::RadioButton("Разомкнутый, напр.",
                            &_ctlloop_v,
                            std::to_underlying(::shm80::ControlLoop::openvolt));
 
@@ -250,7 +250,7 @@ void ControlPanel::_draw_normal_mode_controls() {
             // do nothing
             break;
         case ControlLoop::open:
-            if (ImGui::InputFloat("D-Current [%]",
+            if (ImGui::InputFloat("Ток D [%]",
                                   &_ref_current_pct,
                                   0.1f,
                                   100.0f,
@@ -259,7 +259,7 @@ void ControlPanel::_draw_normal_mode_controls() {
                 _ref_current_pct = std::clamp(_ref_current_pct, 0.0f, 100.0f);
             }
             if (_ref_speed == 0) {
-                if (ImGui::InputInt("Angle [deg]",
+                if (ImGui::InputInt("Угол [°]",
                                     &_ref_angle,
                                     1,
                                     100,
@@ -269,7 +269,7 @@ void ControlPanel::_draw_normal_mode_controls() {
             }
             break;
         case ControlLoop::semiclosed:
-            if (ImGui::InputFloat("D-Current [%]",
+            if (ImGui::InputFloat("Ток D [%]",
                                   &_ref_current_pct,
                                   0.1f,
                                   100.0f,
@@ -280,7 +280,7 @@ void ControlPanel::_draw_normal_mode_controls() {
             }
             break;
         case ControlLoop::openvolt:
-            if (ImGui::InputFloat("Voltage [%]",
+            if (ImGui::InputFloat("Напряжение [%]",
                                   &_ref_voltage_pct,
                                   0.1f,
                                   100.0f,
@@ -289,7 +289,7 @@ void ControlPanel::_draw_normal_mode_controls() {
                 _ref_voltage_pct = std::clamp(_ref_voltage_pct, 0.0f, 100.0f);
             }
             if (_ref_speed == 0) {
-                if (ImGui::InputInt("Angle [deg]",
+                if (ImGui::InputInt("Угол [°]",
                                     &_ref_angle,
                                     1,
                                     100,
@@ -303,13 +303,13 @@ void ControlPanel::_draw_normal_mode_controls() {
         ImGui::PopItemWidth();
     }
 
-    if (ImGui::CollapsingHeader(ICON_MDI_INDUCTION " Field Control",
+    if (ImGui::CollapsingHeader(ICON_MDI_INDUCTION " Управление Возбуждением",
                                 ImGuiTreeNodeFlags_Framed)) {
-        ImGui::Checkbox("Manual", &_manual_field);
+        ImGui::Checkbox("Ручной Режим", &_manual_field);
 
         util::Switchable field_control(_manual_field, [this]() {
-            ImGui::PushItemWidth(200);
-            if (ImGui::InputFloat("Field Current [%]",
+            ImGui::PushItemWidth(140);
+            if (ImGui::InputFloat("Ток Возбуждения [%]",
                                   &_ref_field_pct,
                                   1.0f,
                                   100.0f,
@@ -339,38 +339,51 @@ void ControlPanel::_draw_testing_mode_controls() {
     bool selected = _opmode == ::shm80::OperatingMode::testing;
     ui::util::Switchable hwtest_mode_header(selected, []() {
         ImGui::SameLine();
-        ImGui::SeparatorText("Hardware Test Mode");
+        ImGui::SeparatorText("Режим Проверки Оборудования");
     });
 }
 
 void ControlPanel::_draw_actions() {
     ImGui::SeparatorText("");
 
-    if (ImGui::CollapsingHeader(ICON_MDI_CAR_WRENCH " Service Actions",
+    if (ImGui::CollapsingHeader(ICON_MDI_CAR_WRENCH " Доп. Действия",
                                 ImGuiTreeNodeFlags_Framed)) {
-        if (ImGui::Button(ICON_MDI_BROOM " Clear Errors", ImVec2{-1.f, 0.f})) {
+        ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2{0.f, 0.5f});
+
+        if (ImGui::Button(ICON_MDI_BROOM " Сбросить Ошибки",
+                          ImVec2{-1.f, 0.f})) {
             _server->exec("ctl", "sys", "clear_errors");
         }
 
-        if (ImGui::Button(ICON_MDI_CHIP " Reset Driver Fault",
+        if (ImGui::Button(ICON_MDI_CHIP " Сбросить Ошибки Драйверов",
                           ImVec2(-1.f, 0.f))) {
             _server->exec("ctl", "drive", "reset_driver_fault");
         }
 
-        if (ImGui::Button(ICON_MDI_RESTART " Reset MCU", ImVec2{-1.f, 0.f})) {
-            ImGui::OpenPopup("Warning!##reset_device");
+        if (ImGui::Button(ICON_MDI_RESTART " Перезапустить Инвертор",
+                          ImVec2{-1.f, 0.f})) {
+            ImGui::OpenPopup("Внимание!##reset_device");
         }
 
-        if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE " Calibrate Angle Sensor",
+        if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE " Калибровать ДПР",
                           ImVec2{-1.f, 0.f})) {
-            ImGui::OpenPopup("Warning!##calibrate_resolver");
+            ImGui::OpenPopup("Внимание!##calibrate_resolver");
         }
 
-        if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE
-                          " Save Calibration Results",
+        if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE " Сохранить Калибровку",
                           ImVec2{-1.f, 0.f})) {
-            ImGui::OpenPopup("Warning!##save_resolver_config");
+            ImGui::OpenPopup("Внимание!##save_resolver_config");
         }
+
+        if (ImGui::Button("Отключить 3ф Драйвера", ImVec2{-1.f, 0.f})) {
+            _server->exec("ctl", "drive", "disable_phase_driver");
+        }
+
+        if (ImGui::Button("Отключить 1ф Драйвера", ImVec2{-1.f, 0.f})) {
+            _server->exec("ctl", "drive", "disable_field_driver");
+        }
+
+        ImGui::PopStyleVar();
     }
 }
 
@@ -379,54 +392,54 @@ void ControlPanel::_draw_popups() {
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
-    if (ImGui::BeginPopupModal("Warning!##reset_device",
+    if (ImGui::BeginPopupModal("Внимание!##reset_device",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Device will be reset. Continue?");
+        ImGui::Text("Инвертор будет перезапущен. Продолжить?");
         ImGui::Separator();
 
-        if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+        if (ImGui::Button("Нет", ImVec2(120, 0))) {
             ImGui::CloseCurrentPopup();
         }
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
-        if (ImGui::Button("Ok", ImVec2(120, 0))) {
+        if (ImGui::Button("Да", ImVec2(120, 0))) {
             _server->exec("ctl", "sys", "reset_device");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
     }
 
-    if (ImGui::BeginPopupModal("Warning!##calibrate_resolver",
+    if (ImGui::BeginPopupModal("Внимание!##calibrate_resolver",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Calibration procedure is about to begin. Continue?");
+        ImGui::Text("Запускается процедура калибровки. Продолжить?");
         ImGui::Separator();
 
-        if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+        if (ImGui::Button("Нет", ImVec2(120, 0))) {
             ImGui::CloseCurrentPopup();
         }
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
-        if (ImGui::Button("Ok", ImVec2(120, 0))) {
+        if (ImGui::Button("Да", ImVec2(120, 0))) {
             _server->exec("ctl", "drive", "calibrate_resolver");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
     }
 
-    if (ImGui::BeginPopupModal("Warning!##save_resolver_config",
+    if (ImGui::BeginPopupModal("Внимание!##save_resolver_config",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Calibration results will be overwritten. Continue?");
+        ImGui::Text("Результаты калибровки будут перезаписаны. Продолжить?");
         ImGui::Separator();
 
-        if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+        if (ImGui::Button("Нет", ImVec2(120, 0))) {
             ImGui::CloseCurrentPopup();
         }
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
-        if (ImGui::Button("Ok", ImVec2(120, 0))) {
+        if (ImGui::Button("Да", ImVec2(120, 0))) {
             _server->exec("ctl", "drive", "save_resolver_config");
             ImGui::CloseCurrentPopup();
         }

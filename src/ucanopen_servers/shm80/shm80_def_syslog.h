@@ -14,21 +14,21 @@ private:
     static constexpr size_t domain_count = 10;
 public:
     static constexpr std::array<std::string_view, domain_count> domains = {
-        "sys",
-        "settings",
-        "can",
-        "sensors",
-        "motor",
-        "converter",
-        "model",
-        "resolver",
-        "pdm",
-        "insulation"};
+        "Система",
+        "Настройки",
+        "CAN",
+        "Датчики",
+        "Двигатель",
+        "Инвертор",
+        "Модель",
+        "ДПР",
+        "PDM",
+        "Изоляция"};
     static constexpr std::array<std::string_view, 6> levels =
             {"      ", "[info]", "[ ok ]", "[warn]", "[fail]", "[crit]"};
 private:
     static inline const std::vector<std::string_view> sys_errors_ = {
-        "emergency_stop",
+        "аварийный останов",
         "watchdog_timeout",
         "invalid_config"};
     static inline const std::vector<std::string_view> settings_errors_ = {
