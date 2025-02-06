@@ -30,22 +30,22 @@ private:
     static inline const std::vector<std::string_view> sys_errors_ = {
         "аварийный останов",
         "watchdog_timeout",
-        "invalid_config"};
+        "недопустимые настройки"};
     static inline const std::vector<std::string_view> settings_errors_ = {
-        "no_nonvolatile_memory",
-        "read_error",
-        "write_error"};
+        "отсутствует внеш. память",
+        "ошибка чтения",
+        "ошибка записи"};
     static inline const std::vector<std::string_view> can_errors_ = {
-        "vcu_connection_lost",
-        "throttle_connection_lost"};
+        "потеря связи с КВУ",
+        "потеря связи с ОУ"};
     static inline const std::vector<std::string_view> sensors_errors_ = {
-        "vdc_sensor_failure",
-        "iph_sensor_failure",
-        "if_sensor_failure"};
+        "отказ датчика напряжения",
+        "отказ датчика тока якоря",
+        "отказ датчика тока возб."};
     static inline const std::vector<std::string_view> motor_errors_ = {
-        "overtemp"
-        "aw_overtemp",
-        "fw_overtemp"};
+        "перегрев"
+        "перегрев обмотки якоря",
+        "перегрев обмотки возб."};
     static inline const std::vector<std::string_view> converter_errors_ = {
         "dc_undervoltage",
         "dc_overvoltage",

@@ -121,7 +121,10 @@ void ControlPanel::_draw_dash() {
     // emergency
     ToggleButton(ICON_MDI_ALERT_OUTLINE "   АВАРИЯ   " ICON_MDI_ALERT_OUTLINE,
                  _emergency,
-                 ImVec2{200, 0});
+                 ImVec2{200, 0},
+                 ui::ToggleButtonColors{ui::colors::red_button,
+                                        ui::colors::red_button_hovered,
+                                        ui::colors::red_button_active});
     ImGui::SameLine();
     ImGui::TextDisabled("(F2)");
 
@@ -303,7 +306,7 @@ void ControlPanel::_draw_normal_mode_controls() {
         ImGui::PopItemWidth();
     }
 
-    if (ImGui::CollapsingHeader(ICON_MDI_INDUCTION " Управление Возбуждением",
+    if (ImGui::CollapsingHeader(ICON_MDI_INDUCTION " Управление Током Возб.",
                                 ImGuiTreeNodeFlags_Framed)) {
         ImGui::Checkbox("Ручной Режим", &_manual_field);
 
@@ -346,23 +349,41 @@ void ControlPanel::_draw_testing_mode_controls() {
 void ControlPanel::_draw_actions() {
     ImGui::SeparatorText("");
 
+    ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2{0.f, 0.5f});
+
+    ImGui::PushStyleColor(ImGuiCol_Button, ui::colors::yellow_button);
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
+                          ui::colors::yellow_button_hovered);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive,
+                          ui::colors::yellow_button_active);
+
+    if (ImGui::Button(ICON_MDI_BROOM " Сбросить Ошибки", ImVec2{-1.f, 0.f})) {
+        _server->exec("ctl", "sys", "clear_errors");
+    }
+
+    ImGui::PopStyleColor(3);
+
+    ImGui::PushStyleColor(ImGuiCol_Button, ui::colors::red_button);
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
+                          ui::colors::red_button_hovered);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ui::colors::red_button_active);
+
+    if (ImGui::Button(ICON_MDI_RESTART " Перезапустить Инвертор",
+                      ImVec2{-1.f, 0.f})) {
+        ImGui::OpenPopup("Внимание!##reset_device");
+    }
+
+    ImGui::PopStyleColor(3);
+
+    ImGui::PopStyleVar();
+
     if (ImGui::CollapsingHeader(ICON_MDI_CAR_WRENCH " Доп. Действия",
                                 ImGuiTreeNodeFlags_Framed)) {
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2{0.f, 0.5f});
 
-        if (ImGui::Button(ICON_MDI_BROOM " Сбросить Ошибки",
-                          ImVec2{-1.f, 0.f})) {
-            _server->exec("ctl", "sys", "clear_errors");
-        }
-
         if (ImGui::Button(ICON_MDI_CHIP " Сбросить Ошибки Драйверов",
                           ImVec2(-1.f, 0.f))) {
             _server->exec("ctl", "drive", "reset_driver_fault");
-        }
-
-        if (ImGui::Button(ICON_MDI_RESTART " Перезапустить Инвертор",
-                          ImVec2{-1.f, 0.f})) {
-            ImGui::OpenPopup("Внимание!##reset_device");
         }
 
         if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE " Калибровать ДПР",
@@ -370,16 +391,28 @@ void ControlPanel::_draw_actions() {
             ImGui::OpenPopup("Внимание!##calibrate_resolver");
         }
 
-        if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE " Сохранить Калибровку",
+        if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE
+                          " Сохранить Результаты Калибровки",
                           ImVec2{-1.f, 0.f})) {
             ImGui::OpenPopup("Внимание!##save_resolver_config");
         }
 
-        if (ImGui::Button("Отключить 3ф Драйвера", ImVec2{-1.f, 0.f})) {
+        ImGui::PopStyleVar();
+    }
+
+    if (ImGui::CollapsingHeader(ICON_MDI_BUG " Отладка",
+                                ImGuiTreeNodeFlags_Framed)) {
+        ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2{0.f, 0.5f});
+
+        if (ImGui::Button(ICON_MDI_NUMERIC_3_BOX_OUTLINE
+                          " Отключить 3ф Драйвер",
+                          ImVec2{-1.f, 0.f})) {
             _server->exec("ctl", "drive", "disable_phase_driver");
         }
 
-        if (ImGui::Button("Отключить 1ф Драйвера", ImVec2{-1.f, 0.f})) {
+        if (ImGui::Button(ICON_MDI_NUMERIC_1_BOX_OUTLINE
+                          " Отключить 1ф Драйвер",
+                          ImVec2{-1.f, 0.f})) {
             _server->exec("ctl", "drive", "disable_field_driver");
         }
 

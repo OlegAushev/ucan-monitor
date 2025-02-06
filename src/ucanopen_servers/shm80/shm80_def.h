@@ -166,8 +166,8 @@ inline const std::unordered_set<int> ctlmode_values = {
     std::to_underlying(ControlMode::speed)};
 
 inline const std::unordered_map<ControlMode, std::string_view> ctlmode_names = {
-    {ControlMode::torque, "torque"},
-    {ControlMode::speed, "speed"}};
+    {ControlMode::torque, "момент"},
+    {ControlMode::speed, "скорость"}};
 
 enum class ControlLoop { closed, open, semiclosed, openvolt };
 
@@ -178,18 +178,18 @@ inline const std::unordered_set<int> ctlloop_values = {
     std::to_underlying(ControlLoop::openvolt)};
 
 inline const std::unordered_map<ControlLoop, std::string_view> ctlloop_names = {
-    {ControlLoop::closed, "closed"},
-    {ControlLoop::open, "open"},
-    {ControlLoop::semiclosed, "semiclosed"},
-    {ControlLoop::openvolt, "openvolt"}};
+    {ControlLoop::closed, "замкнутый"},
+    {ControlLoop::open, "разомкнутый"},
+    {ControlLoop::semiclosed, "замкнутый 2"},
+    {ControlLoop::openvolt, "разомкнутый 2"}};
 
-inline const std::vector<std::string_view> pdm_states = {"disconnected",
-                                                         "charging",
-                                                         "ready",
-                                                         "discharging",
-                                                         "error"};
+inline const std::vector<std::string_view> pdm_states = {"откл",
+                                                         "заряд",
+                                                         "готов",
+                                                         "разряд",
+                                                         "ошибка"};
 
 inline const std::vector<std::string_view> insulation_tester_states =
-        {"init", "standby", "measuring P", "measuring N", "processing"};
+        {"ини-ция", "ожидание", "изм+", "изм-", "обработка"};
 
 } // namespace shm80

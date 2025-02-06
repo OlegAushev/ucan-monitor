@@ -44,13 +44,13 @@ void DataPanel::draw_tpdo1_table() {
     static ImGuiTableFlags flags =
             ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo1_table", 2, flags)) {
-        ImGui::TableSetupColumn("Parameter");
-        ImGui::TableSetupColumn("Value");
+        ImGui::TableSetupColumn("Параметр");
+        ImGui::TableSetupColumn("Значение");
         ImGui::TableHeadersRow();
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Raw Data [hex]");
+        ImGui::TextUnformatted("Сообщение [hex]");
         ImGui::TableSetColumnIndex(1);
         auto payload = server_->tpdo_service.data(ucanopen::CobTpdo::tpdo1);
         ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X",
@@ -65,85 +65,85 @@ void DataPanel::draw_tpdo1_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Drive State");
+        ImGui::TextUnformatted("Состояние");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(server_->drive_state_str().data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Operating Mode");
+        ImGui::TextUnformatted("Режим Работы");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(server_->opmode_str().data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Control Mode");
+        ImGui::TextUnformatted("Режим Управления");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(server_->ctlmode_str().data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Control Loop");
+        ImGui::TextUnformatted("Режим СУ");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(server_->ctlloop_str().data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("PWM");
+        ImGui::TextUnformatted("ШИМ");
         ImGui::TableSetColumnIndex(1);
         if (server_->is_pwm_on()) {
-            ImGui::TextUnformatted("on");
+            ImGui::TextUnformatted("вкл");
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                    ui::colors::table_bg_green);
         } else {
-            ImGui::TextUnformatted("off");
+            ImGui::TextUnformatted("выкл");
         }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Errors");
+        ImGui::TextUnformatted("Ошибки");
         ImGui::TableSetColumnIndex(1);
         if (server_->has_any_error()) {
-            ImGui::TextUnformatted("yes");
+            ImGui::TextUnformatted("да");
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                    ui::colors::table_bg_red);
         } else {
-            ImGui::TextUnformatted("no");
+            ImGui::TextUnformatted("нет");
         }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Warnings");
+        ImGui::TextUnformatted("Предупреждения");
         ImGui::TableSetColumnIndex(1);
         if (server_->has_any_warning()) {
-            ImGui::TextUnformatted("yes");
+            ImGui::TextUnformatted("да");
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                    ui::colors::table_bg_yellow);
         } else {
-            ImGui::TextUnformatted("no");
+            ImGui::TextUnformatted("нет");
         }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Field Control");
+        ImGui::TextUnformatted("Режим Возб.");
         ImGui::TableSetColumnIndex(1);
         if (server_->manual_field_enabled()) {
-            ImGui::TextUnformatted("manual");
+            ImGui::TextUnformatted("ручной");
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                    ui::colors::table_bg_yellow);
         } else {
-            ImGui::TextUnformatted("auto");
+            ImGui::TextUnformatted("авто");
         }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("PDM State");
+        ImGui::TextUnformatted("Состояние PDM");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(server_->pdm_state().data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Ins. Tester State");
+        ImGui::TextUnformatted("Изоляция");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(server_->insulation_tester_state().data());
 
@@ -169,13 +169,13 @@ void DataPanel::draw_tpdo2_table() {
     static ImGuiTableFlags flags =
             ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo2_table", 2, flags)) {
-        ImGui::TableSetupColumn("Parameter");
-        ImGui::TableSetupColumn("Value");
+        ImGui::TableSetupColumn("Параметр");
+        ImGui::TableSetupColumn("Значение");
         ImGui::TableHeadersRow();
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Raw Data [hex]");
+        ImGui::TextUnformatted("Сообщение [hex]");
         ImGui::TableSetColumnIndex(1);
         auto payload = server_->tpdo_service.data(ucanopen::CobTpdo::tpdo2);
         ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X",
@@ -190,19 +190,19 @@ void DataPanel::draw_tpdo2_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("DC Voltage [V]");
+        ImGui::TextUnformatted("Напряжение ЗПТ [В]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.1f", server_->dc_voltage());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Stator Current [A]");
+        ImGui::TextUnformatted("Ток Якоря [А]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.1f", server_->stator_current());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Field Current [A]");
+        ImGui::TextUnformatted("Ток Возб. [А]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.1f", server_->field_current());
 
@@ -228,13 +228,13 @@ void DataPanel::draw_tpdo3_table() {
     static ImGuiTableFlags flags =
             ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo3_table", 2, flags)) {
-        ImGui::TableSetupColumn("Parameter");
-        ImGui::TableSetupColumn("Value");
+        ImGui::TableSetupColumn("Параметр");
+        ImGui::TableSetupColumn("Значения");
         ImGui::TableHeadersRow();
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Raw Data [hex]");
+        ImGui::TextUnformatted("Сообщение [hex]");
         ImGui::TableSetColumnIndex(1);
         auto payload = server_->tpdo_service.data(ucanopen::CobTpdo::tpdo3);
         ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X",
@@ -249,13 +249,13 @@ void DataPanel::draw_tpdo3_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Speed [rpm]");
+        ImGui::TextUnformatted("Скорость [об/мин]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%d", server_->speed());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Angle [deg]");
+        ImGui::TextUnformatted("Угол [°]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%d", server_->angle());
 
@@ -281,13 +281,13 @@ void DataPanel::draw_tpdo4_table() {
     static ImGuiTableFlags flags =
             ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("tpdo4_table", 2, flags)) {
-        ImGui::TableSetupColumn("Parameter");
-        ImGui::TableSetupColumn("Value");
+        ImGui::TableSetupColumn("Параметр");
+        ImGui::TableSetupColumn("Значение");
         ImGui::TableHeadersRow();
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Raw Data [hex]");
+        ImGui::TextUnformatted("Сообщение [hex]");
         ImGui::TableSetColumnIndex(1);
         auto payload = server_->tpdo_service.data(ucanopen::CobTpdo::tpdo4);
         ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X",
