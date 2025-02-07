@@ -196,13 +196,13 @@ void DataPanel::draw_tpdo2_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Ток Якоря [А]");
+        ImGui::TextUnformatted("Ток ОЯ [А]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.1f", server_->stator_current());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Ток Возб. [А]");
+        ImGui::TextUnformatted("Ток ОВ [А]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.1f", server_->field_current());
 

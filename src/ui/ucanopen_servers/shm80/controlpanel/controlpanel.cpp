@@ -306,7 +306,7 @@ void ControlPanel::_draw_normal_mode_controls() {
         ImGui::PopItemWidth();
     }
 
-    if (ImGui::CollapsingHeader(ICON_MDI_INDUCTION " Управление Током Возб.",
+    if (ImGui::CollapsingHeader(ICON_MDI_INDUCTION " Управление Током ОВ",
                                 ImGuiTreeNodeFlags_Framed)) {
         ImGui::Checkbox("Ручной Режим", &_manual_field);
 
@@ -342,7 +342,7 @@ void ControlPanel::_draw_testing_mode_controls() {
     bool selected = _opmode == ::shm80::OperatingMode::testing;
     ui::util::Switchable hwtest_mode_header(selected, []() {
         ImGui::SameLine();
-        ImGui::SeparatorText("Режим Проверки Оборудования");
+        ImGui::SeparatorText("Режим Тестирования");
     });
 }
 
