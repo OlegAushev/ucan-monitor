@@ -51,7 +51,7 @@ private:
         std::atomic<ControlMode> ctlmode{ControlMode::torque};
         std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
 
-        std::atomic<std::string_view> pdm_state{"n/a"};
+        std::atomic<std::string_view> pdu_state{"n/a"};
         std::atomic<std::string_view> calibration_state{"n/a"};
         std::atomic<std::string_view> insulation_tester_state{"n/a"};
 
@@ -141,7 +141,7 @@ public:
         }
     }
 
-    std::string_view pdm_state() const { return _tpdo1.pdm_state.load(); }
+    std::string_view pdu_state() const { return _tpdo1.pdu_state.load(); }
     std::string_view insulation_tester_state() const {
         return _tpdo1.insulation_tester_state.load();
     }

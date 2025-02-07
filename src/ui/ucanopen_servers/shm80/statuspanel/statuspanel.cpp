@@ -42,7 +42,7 @@ void StatusPanel::draw() {
         if (ImGui::TreeNode(syslog::domains[domain_idx].data())) {
             // draw error table
             if (syslog::errors[domain_idx].size() != 0) {
-                ImGui::SeparatorText("Errors");
+                ImGui::SeparatorText("Ошибки");
                 static ImGuiTableFlags flags =
                         ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
                 if (ImGui::BeginTable("error_table", 1, flags)) {
@@ -65,7 +65,7 @@ void StatusPanel::draw() {
 
             // draw warning table
             if (syslog::warnings[domain_idx].size() != 0) {
-                ImGui::SeparatorText("Warnings");
+                ImGui::SeparatorText("Предупреждения");
                 static ImGuiTableFlags flags =
                         ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
                 if (ImGui::BeginTable("warning_table", 1, flags)) {

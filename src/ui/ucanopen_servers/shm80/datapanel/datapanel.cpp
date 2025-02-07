@@ -137,9 +137,9 @@ void DataPanel::draw_tpdo1_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Состояние PDM");
+        ImGui::TextUnformatted("Состояние PDU");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(server_->pdm_state().data());
+        ImGui::TextUnformatted(server_->pdu_state().data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);

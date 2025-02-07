@@ -16,20 +16,20 @@ public:
     static constexpr std::array<std::string_view, domain_count> domains = {
         "Система",
         "Настройки",
-        "CAN",
+        "CAN-сеть",
         "Датчики",
         "Двигатель",
         "Инвертор",
         "Модель",
         "ДПР",
-        "PDM",
+        "Питание",
         "Изоляция"};
     static constexpr std::array<std::string_view, 6> levels =
             {"      ", "[info]", "[ ok ]", "[warn]", "[fail]", "[crit]"};
 private:
     static inline const std::vector<std::string_view> sys_errors_ = {
         "аварийный останов",
-        "watchdog_timeout",
+        "прогр. сторожевой таймер",
         "недопустимые настройки"};
     static inline const std::vector<std::string_view> settings_errors_ = {
         "отсутствует внеш. память",
@@ -40,41 +40,40 @@ private:
         "потеря связи с ОУ"};
     static inline const std::vector<std::string_view> sensors_errors_ = {
         "отказ датчика напряжения",
-        "отказ датчика тока якоря",
-        "отказ датчика тока возб."};
+        "отказ датчика тока ОЯ",
+        "отказ датчика тока ОВ"};
     static inline const std::vector<std::string_view> motor_errors_ = {
         "перегрев"
-        "перегрев обмотки якоря",
-        "перегрев обмотки возб."};
+        "перегрев ОЯ",
+        "перегрев ОВ"};
     static inline const std::vector<std::string_view> converter_errors_ = {
-        "dc_undervoltage",
-        "dc_overvoltage",
-        "phase_overcurrent",
-        "phase_a_overcurrent",
-        "phase_b_overcurrent",
-        "phase_c_overcurrent",
-        "field_overcurrent",
-        "phase_module_fault",
-        "phase_a_fault",
-        "phase_b_fault",
-        "phase_c_fault",
-        "field_module_fault",
-        "phase_module_overtemp",
-        "phase_a_overtemp",
-        "phase_b_overtemp",
-        "phase_c_overtemp",
-        "field_overtemp",
-        "pcb_overtemp"};
+        "низкое напряжение ЗПТ",
+        "высокое напряжение ЗПТ",
+        "сверхток ОЯ",
+        "сверхток ОЯ-ф.A",
+        "сверхток ОЯ-ф.B",
+        "сверхток ОЯ-ф.C",
+        "сверхток ОВ",
+        "ошибка модуля ОЯ",
+        "ошибка модуля ОЯ-ф.A",
+        "ошибка модуля ОЯ-ф.B",
+        "ошибка модуля ОЯ-ф.C",
+        "ошибка модуля ОВ",
+        "перегрев модуля ОЯ",
+        "перегрев модуля ОЯ-ф.A",
+        "перегрев модуля ОЯ-ф.B",
+        "перегрев модуля ОЯ-ф.C",
+        "перегрев модуля ОВ",
+        "перегрев ПП"};
     static inline const std::vector<std::string_view> model_errors_{};
     static inline const std::vector<std::string_view> resolver_errors_{
-        "invalid_configuration",
-        "observer_failure"};
-    static inline const std::vector<std::string_view> pdm_errors_{
-        "dclink_charge_failure",
-        "dclink_charge_timeout",
-        "dclink_discharge_timeout",
-        "incorrect_switch_state",
-        "error_state"};
+        "ошибка наблюдателя"};
+    static inline const std::vector<std::string_view> pdu_errors_{
+        "ошибка заряда ЗПТ",
+        "превышено время заряда ЗПТ",
+        "превышено время разряда ЗПТ",
+        "некорректное состояние контакторов",
+        "ошибка"};
     static inline const std::vector<std::string_view> insulation_errors_{};
 public:
     static inline const std::array<std::vector<std::string_view>,
@@ -87,43 +86,44 @@ public:
                       converter_errors_,
                       model_errors_,
                       resolver_errors_,
-                      pdm_errors_,
+                      pdu_errors_,
                       insulation_errors_};
 private:
     static inline const std::vector<std::string_view> sys_warnings_ = {};
     static inline const std::vector<std::string_view> settings_warnings_ = {};
     static inline const std::vector<std::string_view> can_warnings_ = {
-        "error",
-        "overrun",
-        "vcu_connection_lost",
-        "checksum_mismatch",
-        "counter_freeze",
-        "throttle_invalid_signal"};
+        "ошибки в сети",
+        "потеря сообщений",
+        "потеря связи с КВУ",
+        "ошибка контрольной суммы",
+        "ошибка циклического счётчика",
+        "ошибка контроллера газа"};
     static inline const std::vector<std::string_view> sensors_warnings_ = {};
     static inline const std::vector<std::string_view> motor_warnings_ = {
-        "overheat",
-        "aw_overheat",
-        "fw_overheat"};
+        "перегрев",
+        "перегрев ОЯ",
+        "перегрев ОВ"};
     static inline const std::vector<std::string_view> converter_warnings_ = {
-        "phase_module_overheat",
-        "phase_a_overheat",
-        "phase_b_overheat",
-        "phase_c_overheat",
-        "field_module_overheat",
-        "pcb_overheat"};
+        "перегрев модуля ОЯ",
+        "перегрев модуля ОЯ-ф.A",
+        "перегрев модуля ОЯ-ф.B",
+        "перегрев модуля ОЯ-ф.C",
+        "перегрев модуля ОВ",
+        "перегрев ПП"};
+
     static inline const std::vector<std::string_view> model_warnings_{};
     static inline const std::vector<std::string_view> resolver_warnings_{
-        "calibration_stage1",
-        "calibration_stage2",
-        "calibration_stage3"};
-    static inline const std::vector<std::string_view> pdm_warnings_{
-        "dclink_disconnected",
-        "dclink_charging",
-        "dclink_holdup",
-        "dclink_discharging"};
+        "калибровка, этап 1",
+        "калибровка, этап 2",
+        "калибровка, этап 3"};
+    static inline const std::vector<std::string_view> pdu_warnings_{
+        "ЗПТ отключено",
+        "Заряд ЗПТ",
+        "Заряд ЗПТ, выдержка",
+        "Разряд ЗПТ"};
     static inline const std::vector<std::string_view> insulation_warnings_{
-        "low_insulation",
-        "invalid_result"};
+        "низкое значение",
+        "ошибка измерения"};
 public:
     static inline const std::array<std::vector<std::string_view>,
                                    domains.size()>
@@ -135,7 +135,7 @@ public:
                         converter_warnings_,
                         model_warnings_,
                         resolver_warnings_,
-                        pdm_warnings_,
+                        pdu_warnings_,
                         insulation_warnings_};
 private:
     static inline const std::vector<std::string_view> sys_messages_ = {
@@ -206,11 +206,11 @@ private:
         "Write mras config - ok.",
         "Write mras config - fail.",
 
-        "Read pdm config - ok.",
-        "Read pdm config - fail.",
-        "Load pdm default config.",
-        "Write pdm config - ok.",
-        "Write pdm config - fail.",
+        "Read pdu config - ok.",
+        "Read pdu config - fail.",
+        "Load pdu default config.",
+        "Write pdu config - ok.",
+        "Write pdu config - fail.",
 
         "Read phase current sensor config - ok.",
         "Read phase current sensor config - fail.",
@@ -261,7 +261,7 @@ private:
     static inline const std::vector<std::string_view> converter_messages_ = {};
     static inline const std::vector<std::string_view> model_messages_{};
     static inline const std::vector<std::string_view> resolver_messages_{};
-    static inline const std::vector<std::string_view> pdm_messages_{};
+    static inline const std::vector<std::string_view> pdu_messages_{};
     static inline const std::vector<std::string_view> isolation_messages_{};
 public:
     static inline const std::array<std::vector<std::string_view>,
@@ -274,7 +274,7 @@ public:
                         converter_messages_,
                         model_messages_,
                         resolver_messages_,
-                        pdm_messages_,
+                        pdu_messages_,
                         isolation_messages_};
 private:
     syslog();

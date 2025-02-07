@@ -77,10 +77,10 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
 
     _tpdo1.manual_field.store(tpdo.manual_field);
 
-    if (tpdo.pdm_state < pdm_states.size()) {
-        _tpdo1.pdm_state = pdm_states[tpdo.pdm_state];
+    if (tpdo.pdu_state < pdu_states.size()) {
+        _tpdo1.pdu_state = pdu_states[tpdo.pdu_state];
     } else {
-        _tpdo1.pdm_state = "n/a";
+        _tpdo1.pdu_state = "n/a";
     }
 
     if (tpdo.instester_state < insulation_tester_states.size()) {
