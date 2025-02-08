@@ -1,31 +1,25 @@
 #include "mainview.h"
-#include <ui/util/togglebutton.h>
 #include <icons/IconsMaterialDesignIcons.h>
-
+#include <ui/util/togglebutton.h>
 
 namespace ui {
-
 
 MainView::MainView(std::shared_ptr<ui::Options> options,
                    const std::vector<std::shared_ptr<View>>& views,
                    const std::vector<std::shared_ptr<View>>& tools,
                    const std::vector<std::shared_ptr<WatchPlot>>& watchplots)
-        : _options(options)
-        , _views(views)
-        , _tools(tools)
-        , _watchplots(watchplots)
-{}
-
+        : _options(options),
+          _views(views),
+          _tools(tools),
+          _watchplots(watchplots) {}
 
 void MainView::draw() {
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar
-                                  | ImGuiWindowFlags_NoDocking
-                                  | ImGuiWindowFlags_NoResize
-                                  | ImGuiWindowFlags_NoMove
-                                  | ImGuiWindowFlags_NoTitleBar
-                                  | ImGuiWindowFlags_NoCollapse
-                                  | ImGuiWindowFlags_NoBringToFrontOnFocus
-                                  | ImGuiWindowFlags_NoNavFocus;
+    ImGuiWindowFlags window_flags =
+            ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking |
+            ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+            ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+            ImGuiWindowFlags_NoBringToFrontOnFocus |
+            ImGuiWindowFlags_NoNavFocus;
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -60,26 +54,34 @@ void MainView::draw() {
         }
     }
 
-    if (_show_options)      { _options->draw(_show_options); }
-    if (_show_demo)         { ImGui::ShowDemoWindow(); ImPlot::ShowDemoWindow(); }
-    
+    if (_show_options) {
+        _options->draw(_show_options);
+    }
+    if (_show_demo) {
+        ImGui::ShowDemoWindow();
+        ImPlot::ShowDemoWindow();
+    }
+
     ImGui::End();
 }
-
 
 void MainView::_draw_menubar() {
     if (ImGui::BeginMenuBar()) {
 
-        if (ImGui::BeginMenu("Menu")) {
-            ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2( 2, 2 ) );
-            if (ImGui::MenuItem(ICON_MDI_COG " Options")) { _show_options = true; }
+        if (ImGui::BeginMenu("Меню")) {
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+            if (ImGui::MenuItem(ICON_MDI_COG " Настройка")) {
+                _show_options = true;
+            }
             ImGui::PopStyleVar();
             ImGui::Separator();
-            if (ImGui::MenuItem("Quit", "Alt+F4")) { _should_close = true; }
+            if (ImGui::MenuItem("Выход", "Alt+F4")) {
+                _should_close = true;
+            }
             ImGui::EndMenu();
         }
 
-        if (ImGui::BeginMenu("View")) {
+        if (ImGui::BeginMenu("Панели")) {
             for (auto& view : _views) {
                 auto opened = view->opened();
                 ImGui::MenuItem(view->menu_title().c_str(), nullptr, &opened);
@@ -88,21 +90,23 @@ void MainView::_draw_menubar() {
             ImGui::EndMenu();
         }
 
-        if (ImGui::BeginMenu("Tools")) {
+        if (ImGui::BeginMenu("Инструменты")) {
             for (auto& tool : _tools) {
                 auto opened = tool->opened();
                 ImGui::MenuItem(tool->menu_title().c_str(), nullptr, &opened);
                 tool->toggle(opened);
             }
-            ImGui::MenuItem(ICON_MDI_HELP" Example", nullptr, &_show_demo);
+            ImGui::MenuItem(ICON_MDI_HELP " Пример", nullptr, &_show_demo);
             ImGui::EndMenu();
         }
 
-        if (ImGui::BeginMenu("Plots")) {
-            if (ImGui::BeginMenu(ICON_MDI_CHART_LINE" Watch")) {
+        if (ImGui::BeginMenu("Диаграммы")) {
+            if (ImGui::BeginMenu(ICON_MDI_CHART_LINE " Набл. Переменные")) {
                 for (auto& watchplot : _watchplots) {
                     auto opened = watchplot->opened();
-                    ImGui::MenuItem(watchplot->menu_title().c_str(), nullptr, &opened);
+                    ImGui::MenuItem(watchplot->menu_title().c_str(),
+                                    nullptr,
+                                    &opened);
                     watchplot->toggle(opened);
                 }
                 // ImGui::Checkbox("Enabled##", &_show_watchplots);
@@ -125,6 +129,5 @@ void MainView::_draw_menubar() {
         ImGui::EndMenuBar();
     }
 }
-
 
 } // namespace ui

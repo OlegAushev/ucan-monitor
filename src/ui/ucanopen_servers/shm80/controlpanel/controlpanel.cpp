@@ -312,7 +312,7 @@ void ControlPanel::_draw_normal_mode_controls() {
 
         util::Switchable field_control(_manual_field, [this]() {
             ImGui::PushItemWidth(140);
-            if (ImGui::InputFloat("Ток Возбуждения [%]",
+            if (ImGui::InputFloat("Ток ОВ [%]",
                                   &_ref_field_pct,
                                   1.0f,
                                   100.0f,
@@ -431,12 +431,12 @@ void ControlPanel::_draw_popups() {
         ImGui::Text("Инвертор будет перезапущен. Продолжить?");
         ImGui::Separator();
 
-        if (ImGui::Button("Нет", ImVec2(120, 0))) {
+        if (ImGui::Button(ICON_MDI_CANCEL " Нет", ImVec2(120, 0))) {
             ImGui::CloseCurrentPopup();
         }
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
-        if (ImGui::Button("Да", ImVec2(120, 0))) {
+        if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
             _server->exec("ctl", "sys", "reset_device");
             ImGui::CloseCurrentPopup();
         }
@@ -449,12 +449,12 @@ void ControlPanel::_draw_popups() {
         ImGui::Text("Запускается процедура калибровки. Продолжить?");
         ImGui::Separator();
 
-        if (ImGui::Button("Нет", ImVec2(120, 0))) {
+        if (ImGui::Button(ICON_MDI_CANCEL " Нет", ImVec2(120, 0))) {
             ImGui::CloseCurrentPopup();
         }
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
-        if (ImGui::Button("Да", ImVec2(120, 0))) {
+        if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
             _server->exec("ctl", "drive", "calibrate_resolver");
             ImGui::CloseCurrentPopup();
         }
@@ -467,12 +467,12 @@ void ControlPanel::_draw_popups() {
         ImGui::Text("Результаты калибровки будут перезаписаны. Продолжить?");
         ImGui::Separator();
 
-        if (ImGui::Button("Нет", ImVec2(120, 0))) {
+        if (ImGui::Button(ICON_MDI_CANCEL " Нет", ImVec2(120, 0))) {
             ImGui::CloseCurrentPopup();
         }
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
-        if (ImGui::Button("Да", ImVec2(120, 0))) {
+        if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
             _server->exec("ctl", "drive", "save_resolver_config");
             ImGui::CloseCurrentPopup();
         }

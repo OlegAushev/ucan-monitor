@@ -192,38 +192,38 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
         auto controlpanel = std::make_shared<ui::shm80::ControlPanel>(
                 shm_drive_80_server,
-                ICON_MDI_GAMEPAD_OUTLINE " Control",
-                "Control",
+                ICON_MDI_GAMEPAD_OUTLINE " Управление",
+                "Управление",
                 true);
 
         auto statuspanel = std::make_shared<ui::shm80::StatusPanel>(
                 shm_drive_80_server,
-                ICON_MDI_INFORMATION_OUTLINE " Status",
-                "Status",
+                ICON_MDI_INFORMATION_OUTLINE " Статус",
+                "Статус",
                 true);
 
         watchpanel = std::make_shared<ui::WatchPanel>(shm_drive_80_server,
                                                       ICON_MDI_TABLE_EYE
-                                                      " Watch SDO",
-                                                      "Watch SDO",
+                                                      " Набл. Переменные",
+                                                      "Набл. Переменные",
                                                       true);
 
         auto datapanel = std::make_shared<ui::shm80::DataPanel>(
                 shm_drive_80_server,
-                ICON_MDI_TABLE " TPDO Data",
-                "TPDO Data",
+                ICON_MDI_TABLE " Данные TPDO",
+                "Данные TPDO",
                 true);
 
-        serversetuppanel =
-                std::make_shared<ui::ServerSetupPanel>(shm_drive_80_server,
-                                                       ICON_MDI_TOOLS " Setup",
-                                                       "Setup",
-                                                       false);
+        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(
+                shm_drive_80_server,
+                ICON_MDI_TOOLS " Настройка",
+                "Настройка",
+                false);
 
         auto operatorpanel =
                 std::make_shared<ui::shm80::OperatorPanel>(shm_drive_80_server,
-                                                           "Operator View",
-                                                           "Operator View",
+                                                           "Панель Оператора",
+                                                           "Панель Оператора",
                                                            false);
 
         views.push_back(controlpanel);
@@ -235,23 +235,23 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
         watchplots.push_back(
                 std::make_shared<ui::WatchPlot>(shm_drive_80_server,
-                                                "Plot 1",
-                                                "Watch Plot 1",
+                                                "Панель диаграмм 1",
+                                                "Панель Диаграмм 1",
                                                 true));
         watchplots.push_back(
                 std::make_shared<ui::WatchPlot>(shm_drive_80_server,
-                                                "Plot 2",
-                                                "Watch Plot 2",
+                                                "Панель диаграмм 2",
+                                                "Панель диаграмм 2",
                                                 false));
         watchplots.push_back(
                 std::make_shared<ui::WatchPlot>(shm_drive_80_server,
-                                                "Plot 3",
-                                                "Watch Plot 3",
+                                                "Панель диаграмм 3",
+                                                "Панель диаграмм 3",
                                                 false));
         watchplots.push_back(
                 std::make_shared<ui::WatchPlot>(shm_drive_80_server,
-                                                "Plot 4",
-                                                "Watch Plot 4",
+                                                "Панель диаграмм 4",
+                                                "Панель диаграмм 4",
                                                 false));
     } else if (server_name == "project-moyka") {
         glfwMaximizeWindow(window);

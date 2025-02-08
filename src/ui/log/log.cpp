@@ -1,18 +1,18 @@
 #include "log.h"
 
-
 namespace ui {
 
-
-Log::Log() : View(ICON_MDI_MESSAGE_FAST_OUTLINE" Log", "Log", true) {
+Log::Log() : View(ICON_MDI_MESSAGE_FAST_OUTLINE " Лог", "Лог", true) {
     _stream = std::make_shared<std::stringstream>();
 }
-
 
 void Log::draw() {
     ImGui::Begin(_window_title.c_str(), &_opened);
 
-    if (ImGui::BeginChild("Log Scrolling Region", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
+    if (ImGui::BeginChild("Log Scrolling Region",
+                          ImVec2(0, 0),
+                          true,
+                          ImGuiWindowFlags_HorizontalScrollbar)) {
         //ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4, 1)); // Tighten spacing
         std::string newline;
         if (std::getline(*_stream, newline)) {
@@ -33,6 +33,5 @@ void Log::draw() {
 
     ImGui::End();
 }
-
 
 } // namespace ui

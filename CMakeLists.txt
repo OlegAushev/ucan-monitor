@@ -48,14 +48,14 @@ find_package(OpenGL REQUIRED)
 file(GLOB imgui_sources CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/include/imgui/*.cpp
     ${PROJECT_SOURCE_DIR}/include/implot/*.cpp
-    ${PROJECT_SOURCE_DIR}/include/imguifiledialog/*.cpp 
+    ${PROJECT_SOURCE_DIR}/include/imguifiledialog/*.cpp
 )
 file(GLOB imgui_backend_sources CONFIGURE_DEPENDS
     ${PROJECT_SOURCE_DIR}/include/imgui/backends/*glfw*.cpp
     ${PROJECT_SOURCE_DIR}/include/imgui/backends/*opengl3*.cpp
 )
 
-set(imgui_incdirs 
+set(imgui_incdirs
     ${PROJECT_SOURCE_DIR}/include/imgui
     ${PROJECT_SOURCE_DIR}/include/implot
 )
@@ -74,7 +74,7 @@ add_executable(${executable}
 if(NOT MULTI_SERVER)
     target_compile_definitions(${executable} PRIVATE
         SINGLE_SERVER="${SERVER}"
-    ) 
+    )
 endif()
 
 target_compile_definitions(${executable} PRIVATE
@@ -112,8 +112,8 @@ endif()
 ################################################################################
 # Compiler Options and Features
 target_compile_options(${executable} PRIVATE
-    #$<$<CONFIG:Debug>:-Og -g3 -ggdb>
-    #$<$<CONFIG:Release>:-Og -g0>
+    $<$<CONFIG:Debug>:-Og -ggdb>
+    $<$<CONFIG:Release>:-O3 -g0>
     -Wall
     -Wextra
     -Wpedantic
@@ -150,5 +150,5 @@ install(TARGETS ${CMAKE_PROJECT_NAME}
 )
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/assets
-    DESTINATION /app   
+    DESTINATION /app
 )
