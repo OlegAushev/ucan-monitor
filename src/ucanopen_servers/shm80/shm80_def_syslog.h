@@ -118,9 +118,9 @@ private:
         "калибровка, этап 3"};
     static inline const std::vector<std::string_view> pdu_warnings_{
         "ЗПТ отключено",
-        "Заряд ЗПТ",
-        "Заряд ЗПТ, выдержка",
-        "Разряд ЗПТ"};
+        "заряд ЗПТ",
+        "заряд ЗПТ, выдержка",
+        "разряд ЗПТ"};
     static inline const std::vector<std::string_view> insulation_warnings_{
         "низкое значение",
         "ошибка измерения"};
