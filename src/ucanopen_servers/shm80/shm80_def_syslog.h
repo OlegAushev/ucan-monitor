@@ -206,11 +206,11 @@ private:
         "Write mras config - ok.",
         "Write mras config - fail.",
 
-        "Read pdu config - ok.",
-        "Read pdu config - fail.",
-        "Load pdu default config.",
-        "Write pdu config - ok.",
-        "Write pdu config - fail.",
+        "Read precharge config - ok.",
+        "Read precharge config - fail.",
+        "Load precharge default config.",
+        "Write precharge config - ok.",
+        "Write precharge config - fail.",
 
         "Read phase current sensor config - ok.",
         "Read phase current sensor config - fail.",
