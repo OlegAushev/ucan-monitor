@@ -101,7 +101,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3001, 0x09}, {"config", "syslog", "pdu_enabled_errors",         "",     OD_ACCESS_RW, OD_UINT32}},
 {{0x3001, 0x0A}, {"config", "syslog", "isolation_enabled_errors",   "",     OD_ACCESS_RW, OD_UINT32}},
 //##############################################################################
-{{0x3002, 0x01}, {"config", "drive", "forward_direction",   "",     OD_ACCESS_RO, OD_INT16}},
+{{0x3002, 0x01}, {"config", "drive", "forward_direction",   "",     OD_ACCESS_RW, OD_INT16}},
 {{0x3002, 0x02}, {"config", "drive", "runout_speed",        "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3002, 0x03}, {"config", "drive", "stopping_torque",     "pu",   OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3002, 0x04}, {"config", "drive", "stopping_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
