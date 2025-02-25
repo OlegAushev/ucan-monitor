@@ -37,7 +37,8 @@ private:
         "ошибка записи"};
     static inline const std::vector<std::string_view> can_errors_ = {
         "потеря связи с КВУ",
-        "потеря связи с ОУ"};
+        "потеря связи с ОУ",
+        "потеря связи с РП"};
     static inline const std::vector<std::string_view> sensors_errors_ = {
         "отказ датчика напряжения",
         "отказ датчика тока ОЯ",
@@ -68,12 +69,13 @@ private:
     static inline const std::vector<std::string_view> model_errors_{};
     static inline const std::vector<std::string_view> resolver_errors_{
         "ошибка наблюдателя"};
-    static inline const std::vector<std::string_view> pdu_errors_{
+    static inline const std::vector<std::string_view> precharge_errors_{
         "ошибка заряда ЗПТ",
         "превышено время заряда ЗПТ",
         "превышено время разряда ЗПТ",
         "некорректное состояние контакторов",
-        "ошибка"};
+        "ошибка",
+        "ошибка внешнего устройства"};
     static inline const std::vector<std::string_view> insulation_errors_{};
 public:
     static inline const std::array<std::vector<std::string_view>,
@@ -86,7 +88,7 @@ public:
                       converter_errors_,
                       model_errors_,
                       resolver_errors_,
-                      pdu_errors_,
+                      precharge_errors_,
                       insulation_errors_};
 private:
     static inline const std::vector<std::string_view> sys_warnings_ = {};
@@ -97,7 +99,8 @@ private:
         "потеря связи с КВУ",
         "ошибка контрольной суммы",
         "ошибка циклического счётчика",
-        "ошибка контроллера газа"};
+        "ошибка контроллера газа",
+        "ошибка циклического счётчика РП"};
     static inline const std::vector<std::string_view> sensors_warnings_ = {};
     static inline const std::vector<std::string_view> motor_warnings_ = {
         "перегрев",
@@ -110,13 +113,12 @@ private:
         "перегрев модуля ОЯ-ф.C",
         "перегрев модуля ОВ",
         "перегрев ПП"};
-
     static inline const std::vector<std::string_view> model_warnings_{};
     static inline const std::vector<std::string_view> resolver_warnings_{
         "калибровка, этап 1",
         "калибровка, этап 2",
         "калибровка, этап 3"};
-    static inline const std::vector<std::string_view> pdu_warnings_{
+    static inline const std::vector<std::string_view> precharge_warnings_{
         "ЗПТ отключено",
         "заряд ЗПТ",
         "заряд ЗПТ, выдержка",
@@ -135,7 +137,7 @@ public:
                         converter_warnings_,
                         model_warnings_,
                         resolver_warnings_,
-                        pdu_warnings_,
+                        precharge_warnings_,
                         insulation_warnings_};
 private:
     static inline const std::vector<std::string_view> sys_messages_ = {
