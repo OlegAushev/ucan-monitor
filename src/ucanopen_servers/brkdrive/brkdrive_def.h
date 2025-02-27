@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <cstdint>
 #include <cstring>
 #include <map>
@@ -11,9 +10,7 @@
 #include <utility>
 #include <vector>
 
-
 namespace brkdrive {
-
 
 struct CobTpdo1 {
     float angle;
@@ -37,7 +34,6 @@ struct CobTpdo1 {
     uint8_t _reserved2 : 6;
 };
 
-
 struct CobTpdo2 {
     float ref_angle;
 
@@ -51,24 +47,27 @@ struct CobTpdo2 {
     uint8_t _reserved5 : 6;
 };
 
-
 struct CobTpdo3 {
     int16_t speed;
 
-    uint8_t _reserved1;
+    uint8_t pcba_temp;
 
-    uint8_t _reserved2;
+    uint8_t pcbb_temp;
 
-    uint8_t _reserved3;
+    uint8_t pcbc_temp;
 
-    uint8_t _reserved4;
+    uint8_t mota_temp;
 
-    uint8_t _reserved5;
+    uint8_t motb_temp;
 
     uint8_t counter : 2;
-    uint8_t _reserved6 : 6;
-};
+    uint8_t _reserved : 6;
 
+    static constexpr int32_t temp_offset = 60;
+    static constexpr int32_t get_temp_value(uint8_t v) {
+        return static_cast<int32_t>(v) - temp_offset;
+    }
+};
 
 struct CobTpdo4 {
     uint32_t errors;
@@ -77,7 +76,6 @@ struct CobTpdo4 {
     uint8_t counter : 2;
     uint8_t _reserved2 : 6;
 };
-
 
 //----------------------------------------------------------------------------------------------------------------------
 struct CobRpdo1 {
@@ -93,7 +91,6 @@ struct CobRpdo1 {
     uint8_t counter : 2;
     uint8_t _reserved2 : 6;
 };
-
 
 struct CobRpdo2 {
     uint8_t opmode : 2;
@@ -113,7 +110,6 @@ struct CobRpdo2 {
     uint8_t _reserved4 : 6;
 };
 
-
 struct CobRpdo3 {
     int16_t ref_dcurr;
 
@@ -126,7 +122,6 @@ struct CobRpdo3 {
     uint8_t counter : 2;
     uint8_t _reserved2 : 6;
 };
-
 
 //----------------------------------------------------------------------------------------------------------------------
 inline const std::vector<std::string> syslog_messages = {
@@ -178,30 +173,25 @@ inline const std::vector<std::string> syslog_messages = {
     "@syslog: [ fail ] Save angle sensor calibration data - fail.",
 
     "@syslog: [  ok  ] Abgle sensor calibration completed successfully.",
-    "@syslog: [  ok  ] Abgle sensor calibration terminated."
-};
+    "@syslog: [  ok  ] Abgle sensor calibration terminated."};
 
-
-inline const std::vector<std::string> error_list = {
-    "emergency_stop",
-    "can_bus_no_conn",
-    "dc_undervoltage",
-    "dc_overvoltage",
-    "dc_overcurrent",
-    "module_fault",
-    "ac_overcurrent",
-    "converter_overtemp",
-    "motor_overtemp",
-    "vdc_sensor_fault",
-    "iac_sensor_fault",
-    "eeprom_error",
-    "invalid_config",
-    "watchdog_timeout",
-    "iac_sensor_overcurrent",
-    "mcu_overtemp",
-    "calibration_timeout"
-};
-
+inline const std::vector<std::string> error_list = {"emergency_stop",
+                                                    "can_bus_no_conn",
+                                                    "dc_undervoltage",
+                                                    "dc_overvoltage",
+                                                    "dc_overcurrent",
+                                                    "module_fault",
+                                                    "ac_overcurrent",
+                                                    "converter_overtemp",
+                                                    "motor_overtemp",
+                                                    "vdc_sensor_fault",
+                                                    "iac_sensor_fault",
+                                                    "eeprom_error",
+                                                    "invalid_config",
+                                                    "watchdog_timeout",
+                                                    "iac_sensor_overcurrent",
+                                                    "mcu_overtemp",
+                                                    "calibration_timeout"};
 
 inline const std::vector<std::string> warning_list = {
     "can_bus_error",
@@ -216,7 +206,6 @@ inline const std::vector<std::string> warning_list = {
     "pcbtemp_b_no_conn",
     "pcbtemp_c_no_conn",
 };
-
 
 enum class DriveState {
     init,
@@ -233,8 +222,7 @@ enum class DriveState {
     angsens_cal
 };
 
-
-inline const std::unordered_set<int> drive_state_values {
+inline const std::unordered_set<int> drive_state_values{
     std::to_underlying(DriveState::init),
     std::to_underlying(DriveState::standby),
     std::to_underlying(DriveState::powerup),
@@ -246,61 +234,41 @@ inline const std::unordered_set<int> drive_state_values {
     std::to_underlying(DriveState::calibrating),
     std::to_underlying(DriveState::hwtest),
     std::to_underlying(DriveState::stop),
-    std::to_underlying(DriveState::angsens_cal)
-};
+    std::to_underlying(DriveState::angsens_cal)};
 
+inline const std::unordered_map<DriveState, std::string_view>
+        drive_state_names = {{DriveState::init, "init"},
+                             {DriveState::standby, "standby"},
+                             {DriveState::powerup, "powerup"},
+                             {DriveState::ready, "ready"},
+                             {DriveState::working, "working"},
+                             {DriveState::running, "running"},
+                             {DriveState::tracking, "tracking"},
+                             {DriveState::powerdown, "powerdown"},
+                             {DriveState::calibrating, "calibrating"},
+                             {DriveState::hwtest, "hwtest"},
+                             {DriveState::stop, "stop"},
+                             {DriveState::angsens_cal, "angsens_cal"}};
 
-inline const std::unordered_map<DriveState, std::string_view> drive_state_names = {
-    {DriveState::init, "init"},
-    {DriveState::standby, "standby"},
-    {DriveState::powerup, "powerup"},
-    {DriveState::ready, "ready"},
-    {DriveState::working, "working"},
-    {DriveState::running, "running"},
-    {DriveState::tracking, "tracking"},
-    {DriveState::powerdown, "powerdown"},
-    {DriveState::calibrating, "calibrating"},
-    {DriveState::hwtest, "hwtest"},
-    {DriveState::stop, "stop"},
-    {DriveState::angsens_cal, "angsens_cal"}
-};
-
-
-enum class OperatingStatus {
-    inoperable,
-    operable,
-    calibrating
-};
-
+enum class OperatingStatus { inoperable, operable, calibrating };
 
 inline const std::unordered_set<int> opstatus_values = {
     std::to_underlying(OperatingStatus::inoperable),
     std::to_underlying(OperatingStatus::operable),
-    std::to_underlying(OperatingStatus::calibrating)
-};
+    std::to_underlying(OperatingStatus::calibrating)};
 
+inline const std::unordered_map<OperatingStatus, std::string_view>
+        opstatus_names = {{OperatingStatus::inoperable, "inoperable"},
+                          {OperatingStatus::operable, "operable"},
+                          {OperatingStatus::calibrating, "calibrating"}};
 
-inline const std::unordered_map<OperatingStatus, std::string_view> opstatus_names = {
-    {OperatingStatus::inoperable, "inoperable"},
-    {OperatingStatus::operable, "operable"},
-    {OperatingStatus::calibrating, "calibrating"}
-};
-
-
-enum class OperatingMode {
-    normal,
-    run,
-    track,
-    hwtest
-};
-
+enum class OperatingMode { normal, run, track, hwtest };
 
 inline const std::unordered_set<int> opmode_values = {
     std::to_underlying(OperatingMode::normal),
     std::to_underlying(OperatingMode::run),
     std::to_underlying(OperatingMode::track),
-    std::to_underlying(OperatingMode::hwtest)
-};
+    std::to_underlying(OperatingMode::hwtest)};
 
 inline const std::map<OperatingMode, std::string_view> opmode_names = {
     {OperatingMode::normal, "normal"},
@@ -309,48 +277,29 @@ inline const std::map<OperatingMode, std::string_view> opmode_names = {
     {OperatingMode::hwtest, "hwtest"},
 };
 
-
-enum class ControlMode {
-    torque,
-    speed
-};
-
+enum class ControlMode { torque, speed };
 
 inline const std::unordered_set<int> ctlmode_values = {
     std::to_underlying(ControlMode::torque),
-    std::to_underlying(ControlMode::speed)
-};
-
+    std::to_underlying(ControlMode::speed)};
 
 inline const std::unordered_map<ControlMode, std::string_view> ctlmode_names = {
     {ControlMode::torque, "torque"},
-    {ControlMode::speed, "speed"}
-};
+    {ControlMode::speed, "speed"}};
 
-
-enum class ControlLoop {
-    closed,
-    open,
-    semiclosed,
-    openvolt
-};
-
+enum class ControlLoop { closed, open, semiclosed, openvolt };
 
 inline const std::unordered_set<int> ctlloop_values = {
     std::to_underlying(ControlLoop::closed),
     std::to_underlying(ControlLoop::open),
     std::to_underlying(ControlLoop::semiclosed),
-    std::to_underlying(ControlLoop::openvolt)
-};
-
+    std::to_underlying(ControlLoop::openvolt)};
 
 inline const std::unordered_map<ControlLoop, std::string_view> ctlloop_names = {
     {ControlLoop::closed, "closed"},
     {ControlLoop::open, "open"},
     {ControlLoop::semiclosed, "semiclosed"},
-    {ControlLoop::openvolt, "openvolt"}
-};
-
+    {ControlLoop::openvolt, "openvolt"}};
 
 enum class CalibrationState {
     standby,
@@ -362,8 +311,7 @@ enum class CalibrationState {
     completed
 };
 
-
-inline const std::unordered_set<int> calibration_state_values {
+inline const std::unordered_set<int> calibration_state_values{
     std::to_underlying(CalibrationState::standby),
     std::to_underlying(CalibrationState::stage1),
     std::to_underlying(CalibrationState::stage2),
@@ -373,16 +321,15 @@ inline const std::unordered_set<int> calibration_state_values {
     std::to_underlying(CalibrationState::completed),
 };
 
-
-inline const std::unordered_map<CalibrationState, std::string_view> calibration_state_names = {
-    {CalibrationState::standby, "standby"},
-    {CalibrationState::stage1, "stage1"},
-    {CalibrationState::stage2, "stage2"},
-    {CalibrationState::stage3, "stage3"},
-    {CalibrationState::stage4, "stage4"},
-    {CalibrationState::stage5, "stage5"},
-    {CalibrationState::completed, "completed"},
+inline const std::unordered_map<CalibrationState, std::string_view>
+        calibration_state_names = {
+            {CalibrationState::standby, "standby"},
+            {CalibrationState::stage1, "stage1"},
+            {CalibrationState::stage2, "stage2"},
+            {CalibrationState::stage3, "stage3"},
+            {CalibrationState::stage4, "stage4"},
+            {CalibrationState::stage5, "stage5"},
+            {CalibrationState::completed, "completed"},
 };
-
 
 } // namespace brkdrive

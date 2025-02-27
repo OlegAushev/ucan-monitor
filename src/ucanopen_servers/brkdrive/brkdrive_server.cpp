@@ -1,33 +1,49 @@
 #include "brkdrive_server.h"
 #include <boost/crc.hpp>
 
-
 namespace brkdrive {
 
-Server::Server(std::shared_ptr<can::Socket> socket, ucanopen::NodeId node_id, const std::string& name)
-        : ucanopen::Server(socket, node_id, name, object_dictionary)
-        , ucanopen::SdoSubscriber(sdo_service) {
-    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo1, std::chrono::milliseconds(1000),
-                               [this](ucanopen::can_payload payload) { this->_handle_tpdo1(payload); });
-    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2, std::chrono::milliseconds(1000),
-                               [this](ucanopen::can_payload payload) { this->_handle_tpdo2(payload); });
-    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3, std::chrono::milliseconds(1000),
-                               [this](ucanopen::can_payload payload) { this->_handle_tpdo3(payload); });
-    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4, std::chrono::milliseconds(1000),
-                               [this](ucanopen::can_payload payload) { this->_handle_tpdo4(payload); });
+Server::Server(std::shared_ptr<can::Socket> socket,
+               ucanopen::NodeId node_id,
+               const std::string& name)
+        : ucanopen::Server(socket, node_id, name, object_dictionary),
+          ucanopen::SdoSubscriber(sdo_service) {
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo1,
+                               std::chrono::milliseconds(1000),
+                               [this](ucanopen::can_payload payload) {
+                                   this->_handle_tpdo1(payload);
+                               });
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo2,
+                               std::chrono::milliseconds(1000),
+                               [this](ucanopen::can_payload payload) {
+                                   this->_handle_tpdo2(payload);
+                               });
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo3,
+                               std::chrono::milliseconds(1000),
+                               [this](ucanopen::can_payload payload) {
+                                   this->_handle_tpdo3(payload);
+                               });
+    tpdo_service.register_tpdo(ucanopen::CobTpdo::tpdo4,
+                               std::chrono::milliseconds(1000),
+                               [this](ucanopen::can_payload payload) {
+                                   this->_handle_tpdo4(payload);
+                               });
 
-    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1, std::chrono::milliseconds(100),
-                               [this](){ return this->_create_rpdo1(); });
-    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2, std::chrono::milliseconds(100),
-                               [this](){ return this->_create_rpdo2(); });
-    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3, std::chrono::milliseconds(100),
-                               [this](){ return this->_create_rpdo3(); });
+    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1,
+                               std::chrono::milliseconds(100),
+                               [this]() { return this->_create_rpdo1(); });
+    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2,
+                               std::chrono::milliseconds(100),
+                               [this]() { return this->_create_rpdo2(); });
+    rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3,
+                               std::chrono::milliseconds(100),
+                               [this]() { return this->_create_rpdo3(); });
 }
 
-
-ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
-                                                 [[maybe_unused]] ucanopen::SdoType sdo_type,
-                                                 ucanopen::ExpeditedSdoData data) {
+ucanopen::FrameHandlingStatus
+Server::handle_sdo(ucanopen::ODEntryIter entry,
+                   [[maybe_unused]] ucanopen::SdoType sdo_type,
+                   ucanopen::ExpeditedSdoData data) {
     if (entry->second.name == "syslog_message") {
         auto message_id = data.u32();
         if ((message_id != 0) && (message_id < syslog_messages.size())) {
@@ -38,9 +54,8 @@ ucanopen::FrameHandlingStatus Server::handle_sdo(ucanopen::ODEntryIter entry,
     return ucanopen::FrameHandlingStatus::success;
 }
 
-
 //----------------------------------------------------------------------------------------------------------------------
-void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
+void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo1) == 8);
     CobTpdo1 tpdo = ucanopen::from_payload<CobTpdo1>(payload);
 
@@ -79,7 +94,6 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload){
     _tpdo1.trkcompleted.store(tpdo.trkcompleted);
 }
 
-
 void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo2) == 8);
     CobTpdo2 tpdo = ucanopen::from_payload<CobTpdo2>(payload);
@@ -88,16 +102,19 @@ void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {
     _tpdo2.ref_brake.store(tpdo.ref_brake / 100.f);
 }
 
-
 void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo3) == 8);
     CobTpdo3 tpdo = ucanopen::from_payload<CobTpdo3>(payload);
 
     _tpdo3.speed.store(tpdo.speed);
+    _tpdo3.pcba_temp.store(CobTpdo3::get_temp_value(tpdo.pcba_temp));
+    _tpdo3.pcbb_temp.store(CobTpdo3::get_temp_value(tpdo.pcbb_temp));
+    _tpdo3.pcbc_temp.store(CobTpdo3::get_temp_value(tpdo.pcbc_temp));
+    _tpdo3.mota_temp.store(CobTpdo3::get_temp_value(tpdo.mota_temp));
+    _tpdo3.motb_temp.store(CobTpdo3::get_temp_value(tpdo.motb_temp));
 }
 
-
-void Server::_handle_tpdo4(const ucanopen::can_payload& payload){
+void Server::_handle_tpdo4(const ucanopen::can_payload& payload) {
     static_assert(sizeof(CobTpdo4) == 8);
     CobTpdo4 tpdo = ucanopen::from_payload<CobTpdo4>(payload);
 
@@ -105,12 +122,11 @@ void Server::_handle_tpdo4(const ucanopen::can_payload& payload){
     _tpdo4.warnings.store(tpdo.warnings);
 }
 
-
 //----------------------------------------------------------------------------------------------------------------------
 ucanopen::can_payload Server::_create_rpdo1() {
     static_assert(sizeof(CobRpdo1) == 8);
     static unsigned int counter = 0;
-    
+
     CobRpdo1 rpdo{};
 
     rpdo.ref_angle = _rpdo1.ref_angle.load();
@@ -123,7 +139,6 @@ ucanopen::can_payload Server::_create_rpdo1() {
 
     return ucanopen::to_payload<CobRpdo1>(rpdo);
 }
-
 
 ucanopen::can_payload Server::_create_rpdo2() {
     static_assert(sizeof(CobRpdo2) == 8);
@@ -142,7 +157,6 @@ ucanopen::can_payload Server::_create_rpdo2() {
     return ucanopen::to_payload<CobRpdo2>(rpdo);
 }
 
-
 ucanopen::can_payload Server::_create_rpdo3() {
     static_assert(sizeof(CobRpdo3) == 8);
     static unsigned int counter = 0;
@@ -157,6 +171,5 @@ ucanopen::can_payload Server::_create_rpdo3() {
 
     return ucanopen::to_payload<CobRpdo3>(rpdo);
 }
-
 
 } // namespace brkdrive
