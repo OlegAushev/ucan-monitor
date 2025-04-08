@@ -147,6 +147,80 @@ void DataPanel::draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(server_->insulation_tester_state().data());
 
+        // Discrete Signals
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Дискретные Вх/Вых");
+        ImGui::TableSetColumnIndex(1);
+
+        if (server_->din_ship_failure()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        } else if (server_->din_ship_failure_warning()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        }
+        ImGui::TextUnformatted(ICON_MDI_FERRY);
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+
+        if (server_->dout_drive_failure()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        }
+        ImGui::TextUnformatted(ICON_MDI_ENGINE);
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        ImGui::TextUnformatted(ICON_MDI_DRAG_VERTICAL_VARIANT);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+
+        if (server_->dout_power_request()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        }
+        ImGui::TextUnformatted(ICON_MDI_POWER);
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+
+        if (server_->dout_drive_ready()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        ImGui::TextUnformatted(ICON_MDI_DRAG_VERTICAL_VARIANT);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+
+        if (server_->din_start()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        }
+        ImGui::TextUnformatted(ICON_MDI_SPEEDOMETER);
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+
+        if (server_->dout_drive_started()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+        ImGui::PopStyleColor();
+
         ImGui::EndTable();
     }
 }

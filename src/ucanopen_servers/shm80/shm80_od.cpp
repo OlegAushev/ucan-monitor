@@ -163,6 +163,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3008, 0x06}, {"config", "precharge", "dclink_discharge_timeout_ms",   "ms",   OD_ACCESS_RW, OD_UINT32}},
 {{0x3008, 0x07}, {"config", "precharge", "switch_timeout_ms",             "ms",   OD_ACCESS_RW, OD_UINT32}},
 {{0x3008, 0x08}, {"config", "precharge", "pause_ms",                      "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3008, 0x09}, {"config", "precharge", "charging_off_at_ready",         "",     OD_ACCESS_RW, OD_BOOL}},
 //##############################################################################
 {{0x3009, 0x01}, {"config", "phase_current_sensor", "gain_a",           "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3009, 0x02}, {"config", "phase_current_sensor", "gain_b",           "", OD_ACCESS_RW, OD_FLOAT32}},
@@ -211,7 +212,16 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300F, 0x06}, {"config", "throttle_controller", "speed_ref_posmax",  "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300F, 0x07}, {"config", "throttle_controller", "speed_ref_negmin",  "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300F, 0x08}, {"config", "throttle_controller", "speed_ref_negmax",  "rpm",  OD_ACCESS_RW, OD_FLOAT32}},
-
+//##############################################################################
+{{0x3010, 0x01}, {"config", "can_pdu", "enabled",       "",     OD_ACCESS_RW, OD_BOOL}},
+{{0x3010, 0x02}, {"config", "can_pdu", "rx_can_id",     "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3010, 0x03}, {"config", "can_pdu", "tx_can_id",     "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3010, 0x04}, {"config", "can_pdu", "rx_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3010, 0x05}, {"config", "can_pdu", "tx_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
+//##############################################################################
+{{0x3011, 0x01}, {"config", "digital_io", "enabled",        "",     OD_ACCESS_RW, OD_BOOL}},
+{{0x3011, 0x02}, {"config", "digital_io", "signal_set",     "",     OD_ACCESS_RW, OD_UINT32}},
+//##############################################################################
 }
 };
 

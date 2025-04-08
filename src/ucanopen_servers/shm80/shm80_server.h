@@ -56,6 +56,14 @@ private:
         std::atomic<std::string_view> insulation_tester_state{"n/a"};
 
         std::atomic<bool> manual_field{false};
+
+        std::atomic<bool> din_ship_failure_warning{false};
+        std::atomic<bool> din_ship_failure{false};
+        std::atomic<bool> din_start{false};
+        std::atomic<bool> dout_power_request{false};
+        std::atomic<bool> dout_drive_ready{false};
+        std::atomic<bool> dout_drive_started{false};
+        std::atomic<bool> dout_drive_failure{false};
     } _tpdo1;
 
     struct {
@@ -147,6 +155,22 @@ public:
     }
 
     bool manual_field_enabled() const { return _tpdo1.manual_field.load(); }
+
+    bool din_ship_failure_warning() const {
+        return _tpdo1.din_ship_failure_warning.load();
+    };
+    bool din_ship_failure() const { return _tpdo1.din_ship_failure.load(); };
+    bool din_start() const { return _tpdo1.din_start.load(); };
+    bool dout_power_request() const {
+        return _tpdo1.dout_power_request.load();
+    };
+    bool dout_drive_ready() const { return _tpdo1.dout_drive_ready.load(); };
+    bool dout_drive_started() const {
+        return _tpdo1.dout_drive_started.load();
+    };
+    bool dout_drive_failure() const {
+        return _tpdo1.dout_drive_failure.load();
+    };
 
     float dc_voltage() const { return _tpdo2.dc_voltage.load(); }
     float stator_current() const { return _tpdo2.stator_current.load(); }

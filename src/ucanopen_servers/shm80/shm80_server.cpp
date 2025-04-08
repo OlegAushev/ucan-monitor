@@ -89,6 +89,14 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     } else {
         _tpdo1.insulation_tester_state = "n/a";
     }
+
+    _tpdo1.din_ship_failure_warning = tpdo.din_ship_failure_warning;
+    _tpdo1.din_ship_failure = tpdo.din_ship_failure;
+    _tpdo1.din_start = tpdo.din_start;
+    _tpdo1.dout_drive_failure = tpdo.dout_drive_failure;
+    _tpdo1.dout_power_request = tpdo.dout_power_request;
+    _tpdo1.dout_drive_ready = tpdo.dout_drive_ready;
+    _tpdo1.dout_drive_started = tpdo.dout_drive_started;
 }
 
 void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {

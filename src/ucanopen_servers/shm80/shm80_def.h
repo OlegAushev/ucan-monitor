@@ -34,7 +34,14 @@ struct CobTpdo1 {
 
     uint16_t _reserved3_;
 
-    uint16_t _reserved4_ : 8;
+    uint16_t din_ship_failure_warning : 1;
+    uint16_t din_ship_failure : 1;
+    uint16_t din_start : 1;
+    uint16_t dout_power_request : 1;
+    uint16_t dout_drive_ready : 1;
+    uint16_t dout_drive_started : 1;
+    uint16_t dout_drive_failure : 1;
+    uint16_t _reserved4_ : 1;
 
     uint16_t counter : 2;
     uint16_t _reserved5_ : 6;
