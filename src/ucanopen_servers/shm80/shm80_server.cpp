@@ -77,10 +77,10 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
 
     _tpdo1.manual_field.store(tpdo.manual_field);
 
-    if (tpdo.pdu_state < pdu_states.size()) {
-        _tpdo1.pdu_state = pdu_states[tpdo.pdu_state];
+    if (tpdo.pdu_precharge_state < precharge_states.size()) {
+        _tpdo1.pdu_precharge_state = precharge_states[tpdo.pdu_precharge_state];
     } else {
-        _tpdo1.pdu_state = "n/a";
+        _tpdo1.pdu_precharge_state = "n/a";
     }
 
     if (tpdo.instester_state < insulation_tester_states.size()) {
@@ -89,6 +89,10 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     } else {
         _tpdo1.insulation_tester_state = "n/a";
     }
+
+    _tpdo1.pdu_main_contactor = tpdo.pdu_main_contactor;
+    _tpdo1.pdu_charging_contactor = tpdo.pdu_charging_contactor;
+    _tpdo1.pdu_bypassing_contactor = tpdo.pdu_bypassing_contactor;
 
     _tpdo1.din_ship_failure_warning = tpdo.din_ship_failure_warning;
     _tpdo1.din_ship_failure = tpdo.din_ship_failure;

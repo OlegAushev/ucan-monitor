@@ -25,12 +25,15 @@ struct CobTpdo1 {
     uint16_t ctlmode : 1;
     uint16_t ctlloop : 2;
 
-    uint16_t pdu_state : 3;
+    uint16_t pdu_precharge_state : 3;
     uint16_t instester_state : 3;
     uint16_t manual_field : 1;
     uint16_t _reserved1_ : 1;
 
-    uint16_t _reserved2_ : 8;
+    uint16_t pdu_main_contactor : 1;
+    uint16_t pdu_charging_contactor : 1;
+    uint16_t pdu_bypassing_contactor : 1;
+    uint16_t _reserved2_ : 5;
 
     uint16_t _reserved3_;
 
@@ -190,11 +193,8 @@ inline const std::unordered_map<ControlLoop, std::string_view> ctlloop_names = {
     {ControlLoop::semiclosed, "замкнутый 2"},
     {ControlLoop::openvolt, "разомкнутый 2"}};
 
-inline const std::vector<std::string_view> pdu_states = {"откл",
-                                                         "заряд",
-                                                         "готов",
-                                                         "разряд",
-                                                         "ошибка"};
+inline const std::vector<std::string_view> precharge_states =
+        {"...", "откл", "заряд", "пауза", "готов", "разряд", "ошибка"};
 
 inline const std::vector<std::string_view> insulation_tester_states =
         {"ини-ция", "ожидание", "изм+", "изм-", "обработка"};

@@ -51,11 +51,15 @@ private:
         std::atomic<ControlMode> ctlmode{ControlMode::torque};
         std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
 
-        std::atomic<std::string_view> pdu_state{"n/a"};
+        std::atomic<std::string_view> pdu_precharge_state{"n/a"};
         std::atomic<std::string_view> calibration_state{"n/a"};
         std::atomic<std::string_view> insulation_tester_state{"n/a"};
 
         std::atomic<bool> manual_field{false};
+
+        std::atomic<bool> pdu_main_contactor{false};
+        std::atomic<bool> pdu_charging_contactor{false};
+        std::atomic<bool> pdu_bypassing_contactor{false};
 
         std::atomic<bool> din_ship_failure_warning{false};
         std::atomic<bool> din_ship_failure{false};
@@ -149,12 +153,22 @@ public:
         }
     }
 
-    std::string_view pdu_state() const { return _tpdo1.pdu_state.load(); }
+    std::string_view pdu_precharge_state() const {
+        return _tpdo1.pdu_precharge_state.load();
+    }
     std::string_view insulation_tester_state() const {
         return _tpdo1.insulation_tester_state.load();
     }
 
     bool manual_field_enabled() const { return _tpdo1.manual_field.load(); }
+
+    bool pdu_main_contactor() const { return _tpdo1.pdu_main_contactor.load(); }
+    bool pdu_charging_contactor() const {
+        return _tpdo1.pdu_charging_contactor.load();
+    }
+    bool pdu_bypassing_contactor() const {
+        return _tpdo1.pdu_bypassing_contactor.load();
+    }
 
     bool din_ship_failure_warning() const {
         return _tpdo1.din_ship_failure_warning.load();

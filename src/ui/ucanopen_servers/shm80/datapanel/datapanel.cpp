@@ -139,7 +139,43 @@ void DataPanel::draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Состояние PDU");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(server_->pdu_state().data());
+        ImGui::TextUnformatted(server_->pdu_precharge_state().data());
+
+        // PDU Contactors
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Контакторы PDU");
+        ImGui::TableSetColumnIndex(1);
+
+        if (server_->pdu_main_contactor()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH_CLOSED);
+            ImGui::PopStyleColor();
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH);
+            ImGui::PopStyleColor();
+        }
+        ImGui::SameLine();
+        if (server_->pdu_charging_contactor()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH_CLOSED);
+            ImGui::PopStyleColor();
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH);
+            ImGui::PopStyleColor();
+        }
+        ImGui::SameLine();
+        if (server_->pdu_bypassing_contactor()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH_CLOSED);
+            ImGui::PopStyleColor();
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH);
+            ImGui::PopStyleColor();
+        }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
