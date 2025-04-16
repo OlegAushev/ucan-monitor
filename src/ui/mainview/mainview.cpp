@@ -7,19 +7,15 @@ namespace ui {
 MainView::MainView(std::shared_ptr<ui::Options> options,
                    const std::vector<std::shared_ptr<View>>& views,
                    const std::vector<std::shared_ptr<View>>& tools,
-                   const std::vector<std::shared_ptr<WatchPlot>>& watchplots)
+                   const std::vector<std::shared_ptr<WatchPlot>>& watchplots,
+                   ImGuiWindowFlags window_flags)
         : _options(options),
           _views(views),
           _tools(tools),
-          _watchplots(watchplots) {}
+          _watchplots(watchplots),
+          _window_flags(window_flags) {}
 
 void MainView::draw() {
-    ImGuiWindowFlags window_flags =
-            ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking |
-            ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
-            ImGuiWindowFlags_NoBringToFrontOnFocus |
-            ImGuiWindowFlags_NoNavFocus;
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -27,7 +23,7 @@ void MainView::draw() {
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("uCAN-Monitor Main View", nullptr, window_flags);
+    ImGui::Begin("uCAN-Monitor Main View", nullptr, _window_flags);
     ImGui::PopStyleVar();
 
     // Submit the DockSpace

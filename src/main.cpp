@@ -20,6 +20,7 @@
 #include <ui/watchplot/watchplot.h>
 
 #include <ui/ucanopen_servers/shm80/controlpanel/controlpanel.h>
+#include <ui/ucanopen_servers/shm80/dashboard/dashboard.hpp>
 #include <ui/ucanopen_servers/shm80/datapanel/datapanel.h>
 #include <ui/ucanopen_servers/shm80/operatorpanel/operatorpanel.hpp>
 #include <ui/ucanopen_servers/shm80/statuspanel/statuspanel.h>
@@ -50,12 +51,11 @@
 #include <csv_writer/csv_writer.h>
 #include <reference_manager/reference_manager.h>
 
-const std::vector<std::string> server_names = {"SHM-Drive-80",
-                                               "project-moyka",
-                                               "srmdrive",
+const std::vector<std::string> server_names = {"shm-drive-80",
+                                               "moyka-dashboard-2",
+                                               "moyka-dashboard",
                                                "atv-vcu",
-                                               "brake-drive",
-                                               "loco-drive"};
+                                               "brake-drive"};
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -170,6 +170,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
             std::make_shared<ucanopen::Client>(ucanopen::NodeId(127),
                                                can_socket);
 
+    std::optional<ImGuiWindowFlags> mainview_window_flags;
     std::vector<std::shared_ptr<ui::View>> views;
     std::vector<std::shared_ptr<ui::View>> tools;
     views.push_back(gui_log);
@@ -183,7 +184,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 #else
     std::string server_name = SINGLE_SERVER;
 #endif
-    if (server_name == "SHM-Drive-80") {
+    if (server_name == "shm-drive-80") {
         auto shm_drive_80_server =
                 std::make_shared<shm80::Server>(can_socket,
                                                 ucanopen::NodeId(0x01),
@@ -253,7 +254,27 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                 "Панель диаграмм 4",
                                                 "Панель диаграмм 4",
                                                 false));
-    } else if (server_name == "project-moyka") {
+    } else if (server_name == "moyka-dashboard-2") {
+        glfwMaximizeWindow(window);
+        glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
+        mainview_window_flags =
+                ui::MainView::default_window_flags & ~ImGuiWindowFlags_MenuBar;
+
+        auto shm_drive_80_server =
+                std::make_shared<shm80::Server>(can_socket,
+                                                ucanopen::NodeId(0x01),
+                                                server_name);
+        ucanopen_client->register_server(shm_drive_80_server);
+
+        auto dashboard = std::make_shared<ui::shm80::Dashboard>(
+                shm_drive_80_server,
+                ICON_MDI_TABLE " Приборная панель",
+                "Приборная панель",
+                true);
+
+        views.push_back(dashboard);
+        gui_log->toggle(false);
+    } else if (server_name == "moyka-dashboard") {
         glfwMaximizeWindow(window);
         glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
 
@@ -266,7 +287,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         auto panel = std::make_shared<ui::moyka::Panel>(moyka_server,
                                                         ICON_MDI_GAUGE " Panel",
                                                         ICON_MDI_GAUGE,
-                                                        "true");
+                                                        true);
         watchpanel = std::make_shared<ui::WatchPanel>(moyka_server,
                                                       ICON_MDI_TABLE_EYE
                                                       " Watch SDO",
@@ -519,8 +540,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
     // GUI Creation
     auto options = std::make_shared<ui::Options>(can_socket, ucanopen_client);
-    auto mainview =
-            std::make_shared<ui::MainView>(options, views, tools, watchplots);
+    auto mainview = std::make_shared<ui::MainView>(
+            options,
+            views,
+            tools,
+            watchplots,
+            mainview_window_flags.value_or(ui::MainView::default_window_flags));
 
     // Main View Loop
     while (!glfwWindowShouldClose(window) && !mainview->should_close()) {
