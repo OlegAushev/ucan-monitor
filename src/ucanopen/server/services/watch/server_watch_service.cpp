@@ -1,14 +1,13 @@
 #include "server_watch_service.h"
 #include <bsclog/bsclog.h>
 
-
 namespace ucanopen {
 
-
-ServerWatchService::ServerWatchService(impl::Server& server, ServerSdoService& sdo_service)
-        : SdoSubscriber(sdo_service)
-        , _server(server)
-        , _sdo_service(sdo_service) {
+ServerWatchService::ServerWatchService(impl::Server& server,
+                                       ServerSdoService& sdo_service)
+        : SdoSubscriber(sdo_service),
+          _server(server),
+          _sdo_service(sdo_service) {
     _daq_timepoint = std::chrono::steady_clock::now();
 
     for (const auto& [key, object] : _server.dictionary().entries) {
@@ -16,11 +15,11 @@ ServerWatchService::ServerWatchService(impl::Server& server, ServerSdoService& s
         if (object.category == _server.dictionary().config.watch_category) {
             _objects.push_back(&object);
             _object_daq_enabled.push_back(true);
-            _data.insert({WatchKey{object.subcategory, object.name}, {ExpeditedSdoData{}, "n/a"}});
+            _data.insert({WatchKey{object.subcategory, object.name},
+                          {ExpeditedSdoData{}, "н/д"}});
         }
     }
 }
-
 
 void ServerWatchService::send() {
     std::shared_lock lock(_objects_mtx);
@@ -30,8 +29,8 @@ void ServerWatchService::send() {
             static size_t i = 0;
             if (_object_daq_enabled[i]) {
                 _sdo_service.read(_server.dictionary().config.watch_category,
-                            _objects[i]->subcategory,
-                            _objects[i]->name);
+                                  _objects[i]->subcategory,
+                                  _objects[i]->name);
                 _daq_timepoint = now;
             }
             i = (i + 1) % _objects.size();
@@ -39,14 +38,16 @@ void ServerWatchService::send() {
     }
 }
 
-
-FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
+FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry,
+                                                   SdoType sdo_type,
+                                                   ExpeditedSdoData sdo_data) {
     const auto& [key, object] = *entry;
 
-    if ((object.category == _server.dictionary().config.watch_category) && (sdo_type == SdoType::response_to_read)) {
+    if ((object.category == _server.dictionary().config.watch_category) &&
+        (sdo_type == SdoType::response_to_read)) {
         WatchKey watch_key{object.subcategory, object.name};
         std::lock_guard<std::mutex> lock(_data_mtx);
-        
+
         auto data = _data.find(watch_key);
         if (data == _data.end()) {
             return FrameHandlingStatus::irrelevant_frame;
@@ -58,6 +59,5 @@ FrameHandlingStatus ServerWatchService::handle_sdo(ODEntryIter entry, SdoType sd
     }
     return FrameHandlingStatus::irrelevant_frame;
 }
-
 
 } // namespace ucanopen

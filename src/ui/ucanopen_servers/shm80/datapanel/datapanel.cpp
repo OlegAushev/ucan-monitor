@@ -369,6 +369,18 @@ void DataPanel::draw_tpdo3_table() {
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%d", server_->angle());
 
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Положение селектора");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::TextUnformatted(gear_names.at(server_->gear()).data());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Газ [%]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%d", server_->throttle());
+
         ImGui::EndTable();
     }
 }

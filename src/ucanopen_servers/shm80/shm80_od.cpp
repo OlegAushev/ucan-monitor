@@ -73,6 +73,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x55}, {"watch", "resolver",  "cosmax",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x56}, {"watch", "resolver",  "cosmin",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
 
+{{0x5000, 0x61}, {"watch", "pdu",       "v_batt",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
+
 //############################################################################################
 {{0x3000, 0x01}, {"config", "ucanopen", "node_id",          "",     OD_ACCESS_RW, OD_UINT32}},
 {{0x3000, 0x02}, {"config", "ucanopen", "heartbeat_period", "ms",   OD_ACCESS_RW, OD_UINT32}},

@@ -108,6 +108,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
     // Fonts
     float base_fontsize = 20.0f;
+#ifdef SINGLE_SERVER
+    if (std::string{SINGLE_SERVER} == std::string{"moyka-dashboard-2"} ||
+        std::string{SINGLE_SERVER} == std::string{"moyka-dashboard"}) {
+        base_fontsize = 35.0f;
+    }
+#endif
     float icon_fontsize = base_fontsize;
     io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf",
                                  base_fontsize,

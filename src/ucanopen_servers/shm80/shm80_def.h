@@ -70,10 +70,11 @@ struct CobTpdo3 {
 
     uint16_t _reserved1_;
 
-    uint16_t _reserved2_ : 8;
+    uint16_t throttle : 8;
 
     uint16_t counter : 2;
-    uint16_t _reserved3_ : 6;
+    uint16_t _reserved2_ : 2;
+    uint16_t gear : 4;
 };
 
 struct CobTpdo4 {
@@ -157,6 +158,19 @@ inline const std::unordered_map<DriveState, std::string_view>
             {DriveState::testing, "тестирование"},
 };
 
+inline const std::unordered_map<DriveState, std::string_view>
+        drive_state_names_upper = {
+            {DriveState::init, "ИНИЦИАЛИЗАЦИЯ"},
+            {DriveState::standby, "ОЖИДАНИЕ"},
+            {DriveState::powering_up, "ВКЛЮЧЕНИЕ"},
+            {DriveState::powering_down, "ВЫКЛЮЧЕНИЕ"},
+            {DriveState::ready, "ГОТОВ"},
+            {DriveState::running, "РАБОТА"},
+            {DriveState::stopping, "ОСТАНОВ"},
+            {DriveState::calibrating, "КАЛИБРОВКА"},
+            {DriveState::testing, "ТЕСТИРОВАНИЕ"},
+};
+
 enum class OperatingMode { normal, testing };
 
 inline const std::unordered_set<int> opmode_values = {
@@ -198,5 +212,20 @@ inline const std::vector<std::string_view> precharge_states =
 
 inline const std::vector<std::string_view> insulation_tester_states =
         {"ини-ция", "ожидание", "изм+", "изм-", "обработка"};
+
+enum class Gear {
+    neutral = 0x00,
+    drive = 0x01,
+    drive_pre = 0x02,
+    reverse_pre = 0x04,
+    reverse = 0x08
+};
+
+inline const std::unordered_map<Gear, std::string_view> gear_names = {
+    {Gear::neutral, "N"},
+    {Gear::drive, "D"},
+    {Gear::drive_pre, "D*"},
+    {Gear::reverse_pre, "R*"},
+    {Gear::reverse, "R"}};
 
 } // namespace shm80

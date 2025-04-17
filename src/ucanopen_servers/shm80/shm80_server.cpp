@@ -80,14 +80,14 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     if (tpdo.pdu_precharge_state < precharge_states.size()) {
         _tpdo1.pdu_precharge_state = precharge_states[tpdo.pdu_precharge_state];
     } else {
-        _tpdo1.pdu_precharge_state = "n/a";
+        _tpdo1.pdu_precharge_state = "н/д";
     }
 
     if (tpdo.instester_state < insulation_tester_states.size()) {
         _tpdo1.insulation_tester_state =
                 insulation_tester_states[tpdo.instester_state];
     } else {
-        _tpdo1.insulation_tester_state = "n/a";
+        _tpdo1.insulation_tester_state = "н/д";
     }
 
     _tpdo1.pdu_main_contactor = tpdo.pdu_main_contactor;
@@ -118,6 +118,25 @@ void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
 
     _tpdo3.speed.store(tpdo.speed);
     _tpdo3.angle.store(tpdo.angle);
+    _tpdo3.throttle_pct = std::clamp<uint8_t>(tpdo.throttle, 0, 100);
+
+    switch (tpdo.gear) {
+    case std::to_underlying(Gear::neutral):
+        _tpdo3.gear = Gear::neutral;
+        break;
+    case std::to_underlying(Gear::drive):
+        _tpdo3.gear = Gear::drive;
+        break;
+    case std::to_underlying(Gear::drive_pre):
+        _tpdo3.gear = Gear::drive_pre;
+        break;
+    case std::to_underlying(Gear::reverse_pre):
+        _tpdo3.gear = Gear::reverse_pre;
+        break;
+    case std::to_underlying(Gear::reverse):
+        _tpdo3.gear = Gear::reverse;
+        break;
+    }
 }
 
 void Server::_handle_tpdo4(const ucanopen::can_payload& payload) {

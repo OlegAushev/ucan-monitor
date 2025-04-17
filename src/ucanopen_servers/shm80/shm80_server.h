@@ -51,9 +51,9 @@ private:
         std::atomic<ControlMode> ctlmode{ControlMode::torque};
         std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
 
-        std::atomic<std::string_view> pdu_precharge_state{"n/a"};
-        std::atomic<std::string_view> calibration_state{"n/a"};
-        std::atomic<std::string_view> insulation_tester_state{"n/a"};
+        std::atomic<std::string_view> pdu_precharge_state{"н/д"};
+        std::atomic<std::string_view> calibration_state{"н/д"};
+        std::atomic<std::string_view> insulation_tester_state{"н/д"};
 
         std::atomic<bool> manual_field{false};
 
@@ -79,6 +79,8 @@ private:
     struct {
         std::atomic<int16_t> speed{0};
         std::atomic<int16_t> angle{0};
+        std::atomic<uint8_t> throttle_pct{0};
+        std::atomic<Gear> gear{Gear::neutral};
     } _tpdo3;
 
     std::array<std::atomic_uint32_t, syslog::domains.size()> _errors{};
@@ -114,7 +116,16 @@ public:
     std::string_view drive_state_str() const {
         auto it = drive_state_names.find(drive_state());
         if (it == drive_state_names.end()) {
-            return "n/a";
+            return "н/д";
+        } else {
+            return it->second;
+        }
+    }
+
+    std::string_view drive_state_str_upper() const {
+        auto it = drive_state_names_upper.find(drive_state());
+        if (it == drive_state_names_upper.end()) {
+            return "Н/Д";
         } else {
             return it->second;
         }
@@ -127,7 +138,7 @@ public:
     std::string_view opmode_str() const {
         auto it = opmode_names.find(opmode());
         if (it == opmode_names.end()) {
-            return "n/a";
+            return "н/д";
         } else {
             return it->second;
         }
@@ -137,7 +148,7 @@ public:
     std::string_view ctlmode_str() const {
         auto it = ctlmode_names.find(ctlmode());
         if (it == ctlmode_names.end()) {
-            return "n/a";
+            return "н/д";
         } else {
             return it->second;
         }
@@ -147,7 +158,7 @@ public:
     std::string_view ctlloop_str() const {
         auto it = ctlloop_names.find(ctlloop());
         if (it == ctlloop_names.end()) {
-            return "n/a";
+            return "н/д";
         } else {
             return it->second;
         }
@@ -192,6 +203,8 @@ public:
 
     int16_t speed() const { return _tpdo3.speed.load(); }
     int16_t angle() const { return _tpdo3.angle.load(); }
+    uint8_t throttle() const { return _tpdo3.throttle_pct.load(); }
+    Gear gear() const { return _tpdo3.gear.load(); }
 
     bool has_any_error() const {
         for (auto& entry : _errors) {
