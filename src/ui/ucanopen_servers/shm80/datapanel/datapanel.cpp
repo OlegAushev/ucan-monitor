@@ -149,31 +149,43 @@ void DataPanel::draw_tpdo1_table() {
 
         if (server_->pdu_main_contactor()) {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH_CLOSED);
+            ImGui::TextUnformatted("ВХ" ICON_MDI_ELECTRIC_SWITCH_CLOSED);
             ImGui::PopStyleColor();
         } else {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH);
+            ImGui::TextUnformatted("ВХ" ICON_MDI_ELECTRIC_SWITCH);
             ImGui::PopStyleColor();
         }
+
         ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        ImGui::TextUnformatted(ICON_MDI_DRAG_VERTICAL_VARIANT);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+
         if (server_->pdu_charging_contactor()) {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH_CLOSED);
+            ImGui::TextUnformatted("ЗАРЯД" ICON_MDI_ELECTRIC_SWITCH_CLOSED);
             ImGui::PopStyleColor();
         } else {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH);
+            ImGui::TextUnformatted("ЗАРЯД" ICON_MDI_ELECTRIC_SWITCH);
             ImGui::PopStyleColor();
         }
+
         ImGui::SameLine();
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        ImGui::TextUnformatted(ICON_MDI_DRAG_VERTICAL_VARIANT);
+        ImGui::PopStyleColor();
+        ImGui::SameLine();
+
         if (server_->pdu_bypassing_contactor()) {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH_CLOSED);
+            ImGui::TextUnformatted("ШУНТ" ICON_MDI_ELECTRIC_SWITCH_CLOSED);
             ImGui::PopStyleColor();
         } else {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-            ImGui::TextUnformatted(ICON_MDI_ELECTRIC_SWITCH);
+            ImGui::TextUnformatted("ШУНТ" ICON_MDI_ELECTRIC_SWITCH);
             ImGui::PopStyleColor();
         }
 

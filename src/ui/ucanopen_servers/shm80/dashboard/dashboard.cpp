@@ -25,17 +25,16 @@ void Dashboard::draw() {
     {
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
         ImGui::BeginChild("Преобразователь",
-                          ImVec2(500, 560),
+                          ImVec2(600, 720),
                           ImGuiChildFlags_Border,
                           window_flags);
         ImGui::SeparatorText("Преобразователь");
 
         // Heartbeat indicator
         if (server_->heartbeat_service.good()) {
-            ui::util::BlinkingText(ICON_MDI_NETWORK,
-                                   std::chrono::milliseconds{750},
-                                   ui::colors::icon_green,
-                                   ui::colors::icon_inactive);
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+            ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+            ImGui::PopStyleColor();
         } else {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
             ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
@@ -44,7 +43,7 @@ void Dashboard::draw() {
 
         // Drive state indicator
         ImGui::SameLine();
-        ImGui::PushItemWidth(300);
+        ImGui::PushItemWidth(460);
         std::string network_status;
         if (server_->heartbeat_service.good()) {
             network_status = "В СЕТИ";
@@ -52,13 +51,22 @@ void Dashboard::draw() {
             network_status = "НЕ В СЕТИ";
         }
 
-        std::string state(server_->drive_state_str_upper());
+        std::string state;
+        if (server_->has_error()) {
+            state = "ОШИБКА";
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_red);
+        } else {
+            state = server_->drive_state_str_upper();
+            auto color = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, color);
+        }
         std::string status = network_status + " | " + state;
 
         ImGui::InputText("##status",
                          status.data(),
                          status.size(),
                          ImGuiInputTextFlags_ReadOnly);
+        ImGui::PopStyleColor();
         ImGui::PopItemWidth();
 
         static ImGuiTableFlags flags =
@@ -123,47 +131,8 @@ void Dashboard::draw() {
             ImGui::EndTable();
         }
 
-        // Heartbeat indicator
-        if (true) {
-            ui::util::BlinkingText(ICON_MDI_NETWORK,
-                                   std::chrono::milliseconds{750},
-                                   ui::colors::icon_green,
-                                   ui::colors::icon_inactive);
-        } else {
-            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-            ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
-            ImGui::PopStyleColor();
-        }
-
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::TextUnformatted("Аварийно низкое напряжение");
-
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::TextUnformatted("Аварийно высокое напряжение");
-
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::TextUnformatted("Аварийно высокий фазный ток");
-
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::TextUnformatted("Аварийно высокий ток возб.");
-
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::TextUnformatted("Перегрев");
+        draw_discretes();
+        draw_pdu();
 
         ImGui::EndChild();
     }
@@ -173,10 +142,60 @@ void Dashboard::draw() {
     {
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
         ImGui::BeginChild("Двигатель",
-                          ImVec2(500, 560),
+                          ImVec2(600, 720),
                           ImGuiChildFlags_Border,
                           window_flags);
         ImGui::SeparatorText("Двигатель");
+
+        if (server_->can_throttle_good()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+            ImGui::TextUnformatted(ICON_MDI_SPEEDOMETER);
+            ImGui::PopStyleColor();
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+            ImGui::TextUnformatted(ICON_MDI_SPEEDOMETER);
+            ImGui::PopStyleColor();
+        }
+
+        ImGui::SameLine();
+        float throttle_pct = server_->throttle();
+        ImGui::PushItemWidth(200);
+        ImGui::SliderFloat("##accl_slider",
+                           &throttle_pct,
+                           0.f,
+                           100.0f,
+                           "%.0f",
+                           ImGuiSliderFlags_NoInput);
+        ImGui::PopItemWidth();
+
+        ImGui::SameLine();
+        Gear gear = server_->gear();
+
+        if (gear == Gear::reverse || gear == Gear::reverse_pre) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED "R");
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+        if (gear == Gear::neutral) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED "N");
+        ImGui::PopStyleColor();
+
+        ImGui::SameLine();
+        if (gear == Gear::drive || gear == Gear::drive_pre) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        }
+        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED "D");
+        ImGui::PopStyleColor();
 
         static ImGuiTableFlags flags =
                 ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
@@ -191,96 +210,180 @@ void Dashboard::draw() {
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted(ICON_MDI_SPEEDOMETER " Частота [об/мин]");
             ImGui::TableSetColumnIndex(1);
-            ImGui::TextUnformatted("1802");
+            ImGui::Text("%d", server_->speed());
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            ImGui::TextUnformatted(ICON_MDI_CURRENT_AC " Ток ОС [A]");
+            ImGui::TextUnformatted(ICON_MDI_CURRENT_AC " Ток ОЯ [A]");
             ImGui::TableSetColumnIndex(1);
-            ImGui::TextUnformatted("145");
+            ImGui::Text("%.1f", server_->stator_current());
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted(ICON_MDI_CURRENT_DC " Ток ОВ [A]");
             ImGui::TableSetColumnIndex(1);
-            ImGui::TextUnformatted("8");
+            ImGui::Text("%.1f", server_->field_current());
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура ОС [°C]");
+            ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура ОЯ [°C]");
             ImGui::TableSetColumnIndex(1);
-            ImGui::TextUnformatted("102");
+            ImGui::TextUnformatted(
+                    server_->watch_service.string_value("motor", "tAW")
+                            .c_str());
+            color_cell(server_->watch_service.value("motor", "tAW").f32(),
+                       motor_warn_temp,
+                       motor_err_temp);
 
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
             ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура ОВ [°C]");
             ImGui::TableSetColumnIndex(1);
-            ImGui::TextUnformatted("185");
+            ImGui::TextUnformatted(
+                    server_->watch_service.string_value("motor", "tFW")
+                            .c_str());
+            color_cell(server_->watch_service.value("motor", "tFW").f32(),
+                       motor_warn_temp,
+                       motor_err_temp);
 
             ImGui::EndTable();
         }
-
-        float throttle_pct = 0.73f * 200.f - 100.f;
-        ImGui::PushItemWidth(200);
-        ImGui::SliderFloat(ICON_MDI_SPEEDOMETER "##accl_slider",
-                           &throttle_pct,
-                           -100.f,
-                           100.0f,
-                           "%.0f",
-                           ImGuiSliderFlags_NoInput);
-        ImGui::PopItemWidth();
-
-        float speed = 1802.f;
-
-        ImGui::SameLine();
-        if (speed < 0) {
-            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        } else {
-            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-        }
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED " R");
-        ImGui::PopStyleColor();
-
-        ImGui::SameLine();
-        if (speed == 0) {
-            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        } else {
-            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-        }
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED " N");
-        ImGui::PopStyleColor();
-
-        ImGui::SameLine();
-        if (speed > 0) {
-            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        } else {
-            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-        }
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED " D");
-        ImGui::PopStyleColor();
-
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::TextUnformatted("Отказ датчика положения");
-
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::TextUnformatted("Перегрев обмотки статора");
-
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-        ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-        ImGui::PopStyleColor();
-        ImGui::SameLine();
-        ImGui::TextUnformatted("Перегрев обмотки возбуждения");
-
         ImGui::EndChild();
     }
 
     ImGui::End();
+}
+
+void Dashboard::draw_discretes() {
+    ImGui::TextUnformatted("ВХ/ВЫХ:");
+
+    ImGui::SameLine();
+
+    if (server_->din_ship_failure()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+    } else if (server_->din_ship_failure_warning()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    }
+    ImGui::TextUnformatted(ICON_MDI_FERRY);
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+
+    if (server_->dout_drive_failure()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    }
+    ImGui::TextUnformatted(ICON_MDI_ENGINE);
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    ImGui::TextUnformatted(ICON_MDI_DRAG_VERTICAL_VARIANT);
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+
+    if (server_->dout_power_request()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    }
+    ImGui::TextUnformatted(ICON_MDI_POWER);
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+
+    if (server_->dout_drive_ready()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    ImGui::TextUnformatted(ICON_MDI_DRAG_VERTICAL_VARIANT);
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+
+    if (server_->din_start()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    }
+    ImGui::TextUnformatted(ICON_MDI_SPEEDOMETER);
+    ImGui::PopStyleColor();
+
+    ImGui::SameLine();
+
+    if (server_->dout_drive_started()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    }
+    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
+    ImGui::PopStyleColor();
+}
+
+void Dashboard::draw_pdu() {
+    if (server_->can_pdu_good()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::SameLine();
+    ImGui::TextUnformatted("ПДУ:");
+    ImGui::SameLine();
+
+    if (server_->pdu_main_contactor()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted("ВХ" ICON_MDI_ELECTRIC_SWITCH_CLOSED);
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted("ВХ" ICON_MDI_ELECTRIC_SWITCH);
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    ImGui::TextUnformatted(ICON_MDI_DRAG_VERTICAL_VARIANT);
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+
+    if (server_->pdu_charging_contactor()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted("ЗАРЯД" ICON_MDI_ELECTRIC_SWITCH_CLOSED);
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted("ЗАРЯД" ICON_MDI_ELECTRIC_SWITCH);
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+    ImGui::TextUnformatted(ICON_MDI_DRAG_VERTICAL_VARIANT);
+    ImGui::PopStyleColor();
+    ImGui::SameLine();
+
+    if (server_->pdu_bypassing_contactor()) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+        ImGui::TextUnformatted("ШУНТ" ICON_MDI_ELECTRIC_SWITCH_CLOSED);
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted("ШУНТ" ICON_MDI_ELECTRIC_SWITCH);
+        ImGui::PopStyleColor();
+    }
 }
 
 } // namespace shm80

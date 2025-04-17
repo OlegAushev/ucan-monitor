@@ -77,6 +77,8 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
 
     _tpdo1.manual_field.store(tpdo.manual_field);
 
+    _tpdo1.can_pdu_good.store(tpdo.can_pdu_good);
+
     if (tpdo.pdu_precharge_state < precharge_states.size()) {
         _tpdo1.pdu_precharge_state = precharge_states[tpdo.pdu_precharge_state];
     } else {
@@ -118,6 +120,7 @@ void Server::_handle_tpdo3(const ucanopen::can_payload& payload) {
 
     _tpdo3.speed.store(tpdo.speed);
     _tpdo3.angle.store(tpdo.angle);
+    _tpdo3.can_throttle_good.store(tpdo.can_throttle_good);
     _tpdo3.throttle_pct = std::clamp<uint8_t>(tpdo.throttle, 0, 100);
 
     switch (tpdo.gear) {

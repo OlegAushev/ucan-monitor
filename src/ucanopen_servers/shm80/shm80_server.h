@@ -57,6 +57,8 @@ private:
 
         std::atomic<bool> manual_field{false};
 
+        std::atomic<bool> can_pdu_good{false};
+
         std::atomic<bool> pdu_main_contactor{false};
         std::atomic<bool> pdu_charging_contactor{false};
         std::atomic<bool> pdu_bypassing_contactor{false};
@@ -80,6 +82,7 @@ private:
         std::atomic<int16_t> speed{0};
         std::atomic<int16_t> angle{0};
         std::atomic<uint8_t> throttle_pct{0};
+        std::atomic<bool> can_throttle_good{false};
         std::atomic<Gear> gear{Gear::neutral};
     } _tpdo3;
 
@@ -173,6 +176,8 @@ public:
 
     bool manual_field_enabled() const { return _tpdo1.manual_field.load(); }
 
+    bool can_pdu_good() const { return _tpdo1.can_pdu_good.load(); }
+
     bool pdu_main_contactor() const { return _tpdo1.pdu_main_contactor.load(); }
     bool pdu_charging_contactor() const {
         return _tpdo1.pdu_charging_contactor.load();
@@ -204,6 +209,7 @@ public:
     int16_t speed() const { return _tpdo3.speed.load(); }
     int16_t angle() const { return _tpdo3.angle.load(); }
     uint8_t throttle() const { return _tpdo3.throttle_pct.load(); }
+    bool can_throttle_good() const { return _tpdo3.can_throttle_good.load(); }
     Gear gear() const { return _tpdo3.gear.load(); }
 
     bool has_any_error() const {

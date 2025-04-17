@@ -28,14 +28,14 @@ struct CobTpdo1 {
     uint16_t pdu_precharge_state : 3;
     uint16_t instester_state : 3;
     uint16_t manual_field : 1;
-    uint16_t _reserved1_ : 1;
+    uint16_t can_pdu_good : 1;
 
     uint16_t pdu_main_contactor : 1;
     uint16_t pdu_charging_contactor : 1;
     uint16_t pdu_bypassing_contactor : 1;
-    uint16_t _reserved2_ : 5;
+    uint16_t _reserved1_ : 5;
 
-    uint16_t _reserved3_;
+    uint16_t _reserved2_;
 
     uint16_t din_ship_failure_warning : 1;
     uint16_t din_ship_failure : 1;
@@ -44,10 +44,10 @@ struct CobTpdo1 {
     uint16_t dout_drive_ready : 1;
     uint16_t dout_drive_started : 1;
     uint16_t dout_drive_failure : 1;
-    uint16_t _reserved4_ : 1;
+    uint16_t _reserved3_ : 1;
 
     uint16_t counter : 2;
-    uint16_t _reserved5_ : 6;
+    uint16_t _reserved4_ : 6;
 };
 
 struct CobTpdo2 {
@@ -73,7 +73,8 @@ struct CobTpdo3 {
     uint16_t throttle : 8;
 
     uint16_t counter : 2;
-    uint16_t _reserved2_ : 2;
+    uint16_t _reserved2_ : 1;
+    uint16_t can_throttle_good : 1;
     uint16_t gear : 4;
 };
 

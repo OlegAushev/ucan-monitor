@@ -11,7 +11,7 @@ namespace shm80 {
 
 class Dashboard : public ui::View {
 private:
-    static constexpr float converter_warn_temp = -280.f;
+    static constexpr float converter_warn_temp = 70.f;
     static constexpr float converter_err_temp = 80.f;
     static constexpr float motor_warn_temp = 70.f;
     static constexpr float motor_err_temp = 80.f;
@@ -33,6 +33,9 @@ public:
               const std::string& window_title,
               bool open);
     virtual void draw() override;
+private:
+    void draw_discretes();
+    void draw_pdu();
 };
 
 } // namespace shm80
