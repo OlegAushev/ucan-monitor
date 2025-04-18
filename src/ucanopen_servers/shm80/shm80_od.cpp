@@ -165,7 +165,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3008, 0x06}, {"config", "precharge", "dclink_discharge_timeout_ms",   "ms",   OD_ACCESS_RW, OD_UINT32}},
 {{0x3008, 0x07}, {"config", "precharge", "switch_timeout_ms",             "ms",   OD_ACCESS_RW, OD_UINT32}},
 {{0x3008, 0x08}, {"config", "precharge", "pause_ms",                      "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3008, 0x09}, {"config", "precharge", "charging_off_at_ready",         "",     OD_ACCESS_RW, OD_BOOL}},
+{{0x3008, 0x09}, {"config", "precharge", "switch_charging_off_at_ready",  "",     OD_ACCESS_RW, OD_BOOL}},
 //##############################################################################
 {{0x3009, 0x01}, {"config", "phase_current_sensor", "gain_a",           "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3009, 0x02}, {"config", "phase_current_sensor", "gain_b",           "", OD_ACCESS_RW, OD_FLOAT32}},

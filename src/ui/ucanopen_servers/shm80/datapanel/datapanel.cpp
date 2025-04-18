@@ -140,6 +140,10 @@ void DataPanel::draw_tpdo1_table() {
         ImGui::TextUnformatted("Состояние PDU");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(server_->pdu_precharge_state().data());
+        if (!server_->pdu_good()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_red);
+        }
 
         // PDU Contactors
         ImGui::TableNextRow();
@@ -187,6 +191,11 @@ void DataPanel::draw_tpdo1_table() {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
             ImGui::TextUnformatted("ШУНТ" ICON_MDI_ELECTRIC_SWITCH);
             ImGui::PopStyleColor();
+        }
+
+        if (!server_->pdu_good()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_red);
         }
 
         ImGui::TableNextRow();
@@ -386,12 +395,20 @@ void DataPanel::draw_tpdo3_table() {
         ImGui::TextUnformatted("Положение селектора");
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(gear_names.at(server_->gear()).data());
+        if (!server_->throttle_good()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_red);
+        }
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Газ [%]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%d", server_->throttle());
+        if (!server_->throttle_good()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_red);
+        }
 
         ImGui::EndTable();
     }

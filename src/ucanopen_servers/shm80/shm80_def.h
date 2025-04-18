@@ -28,7 +28,7 @@ struct CobTpdo1 {
     uint16_t pdu_precharge_state : 3;
     uint16_t instester_state : 3;
     uint16_t manual_field : 1;
-    uint16_t can_pdu_good : 1;
+    uint16_t pdu_good : 1;
 
     uint16_t pdu_main_contactor : 1;
     uint16_t pdu_charging_contactor : 1;
@@ -74,7 +74,7 @@ struct CobTpdo3 {
 
     uint16_t counter : 2;
     uint16_t _reserved2_ : 1;
-    uint16_t can_throttle_good : 1;
+    uint16_t throttle_good : 1;
     uint16_t gear : 4;
 };
 

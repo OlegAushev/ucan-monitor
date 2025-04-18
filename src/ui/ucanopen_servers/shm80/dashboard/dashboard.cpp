@@ -147,7 +147,7 @@ void Dashboard::draw() {
                           window_flags);
         ImGui::SeparatorText("Двигатель");
 
-        if (server_->can_throttle_good()) {
+        if (server_->throttle_good()) {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
             ImGui::TextUnformatted(ICON_MDI_SPEEDOMETER);
             ImGui::PopStyleColor();
@@ -329,7 +329,7 @@ void Dashboard::draw_discretes() {
 }
 
 void Dashboard::draw_pdu() {
-    if (server_->can_pdu_good()) {
+    if (server_->pdu_good()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
         ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
         ImGui::PopStyleColor();

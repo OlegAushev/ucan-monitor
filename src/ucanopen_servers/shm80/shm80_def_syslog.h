@@ -28,24 +28,48 @@ public:
     static constexpr std::array<std::string_view, 6> levels =
             {"      ", "[info]", "[ ok ]", "[warn]", "[fail]", "[crit]"};
 private:
+    // general
     static inline const std::vector<std::string_view> sys_errors_ = {
         "аварийный останов",
         "прогр. сторожевой таймер",
         "недопустимые настройки"};
+    static inline const std::vector<std::string_view> sys_warnings_ = {};
+
+    // settings
     static inline const std::vector<std::string_view> settings_errors_ = {
         "отсутствует внеш. память",
         "ошибка чтения",
         "ошибка записи"};
+    static inline const std::vector<std::string_view> settings_warnings_ = {};
+
+    // can
     static inline const std::vector<std::string_view> can_errors_ = {
         "потеря связи с КВУ"};
+    static inline const std::vector<std::string_view> can_warnings_ = {
+        "ошибки в сети",
+        "потеря сообщений",
+        "потеря связи с КВУ",
+        "ошибка контрольной суммы",
+        "ошибка циклического счётчика"};
+
+    // sensors
     static inline const std::vector<std::string_view> sensors_errors_ = {
         "отказ датчика напряжения",
         "отказ датчика тока ОЯ",
         "отказ датчика тока ОВ"};
+    static inline const std::vector<std::string_view> sensors_warnings_ = {};
+
+    // motor
     static inline const std::vector<std::string_view> motor_errors_ = {
         "перегрев"
         "перегрев ОЯ",
         "перегрев ОВ"};
+    static inline const std::vector<std::string_view> motor_warnings_ = {
+        "перегрев",
+        "перегрев ОЯ",
+        "перегрев ОВ"};
+
+    // converter
     static inline const std::vector<std::string_view> converter_errors_ = {
         "низкое напряжение ЗПТ",
         "высокое напряжение ЗПТ",
@@ -65,20 +89,55 @@ private:
         "перегрев модуля ОЯ-ф.C",
         "перегрев модуля ОВ",
         "перегрев ПП"};
+    static inline const std::vector<std::string_view> converter_warnings_ = {
+        "перегрев модуля ОЯ",
+        "перегрев модуля ОЯ-ф.A",
+        "перегрев модуля ОЯ-ф.B",
+        "перегрев модуля ОЯ-ф.C",
+        "перегрев модуля ОВ",
+        "перегрев ПП"};
+
+    // model
     static inline const std::vector<std::string_view> model_errors_{};
+    static inline const std::vector<std::string_view> model_warnings_{};
+
+    // resolver
     static inline const std::vector<std::string_view> resolver_errors_{
         "ошибка наблюдателя"};
+    static inline const std::vector<std::string_view> resolver_warnings_{
+        "калибровка, этап 1",
+        "калибровка, этап 2",
+        "калибровка, этап 3"};
+
+    // pdu
     static inline const std::vector<std::string_view> pdu_errors_{
         "ошибка заряда ЗПТ",
         "превышено время заряда ЗПТ",
         "превышено время разряда ЗПТ",
         "некорректное состояние контакторов",
-        "ошибка",
-        "ошибка внешнего устройства",
-        "потеря связи"};
+        "ошибка устройства",
+        "потеря связи",
+        "низкое напряжение АБ",
+        "высокое напряжение АБ"};
+    static inline const std::vector<std::string_view> pdu_warnings_{
+        "ЗПТ отключено",
+        "заряд ЗПТ",
+        "заряд ЗПТ, выдержка",
+        "разряд ЗПТ",
+        "ошибка циклического счётчика"};
+
+    // insulation
     static inline const std::vector<std::string_view> insulation_errors_{};
+    static inline const std::vector<std::string_view> insulation_warnings_{
+        "низкое значение",
+        "ошибка измерения"};
+
+    // throttle
     static inline const std::vector<std::string_view> throtlle_errors_{
         "потеря связи"};
+    static inline const std::vector<std::string_view> throttle_warnings_{
+        "ошибка старта",
+        "неверное сообщение"};
 public:
     static inline const std::array<std::vector<std::string_view>,
                                    domains.size()>
@@ -93,45 +152,6 @@ public:
                       pdu_errors_,
                       insulation_errors_,
                       throtlle_errors_};
-private:
-    static inline const std::vector<std::string_view> sys_warnings_ = {};
-    static inline const std::vector<std::string_view> settings_warnings_ = {};
-    static inline const std::vector<std::string_view> can_warnings_ = {
-        "ошибки в сети",
-        "потеря сообщений",
-        "потеря связи с КВУ",
-        "ошибка контрольной суммы",
-        "ошибка циклического счётчика"};
-    static inline const std::vector<std::string_view> sensors_warnings_ = {};
-    static inline const std::vector<std::string_view> motor_warnings_ = {
-        "перегрев",
-        "перегрев ОЯ",
-        "перегрев ОВ"};
-    static inline const std::vector<std::string_view> converter_warnings_ = {
-        "перегрев модуля ОЯ",
-        "перегрев модуля ОЯ-ф.A",
-        "перегрев модуля ОЯ-ф.B",
-        "перегрев модуля ОЯ-ф.C",
-        "перегрев модуля ОВ",
-        "перегрев ПП"};
-    static inline const std::vector<std::string_view> model_warnings_{};
-    static inline const std::vector<std::string_view> resolver_warnings_{
-        "калибровка, этап 1",
-        "калибровка, этап 2",
-        "калибровка, этап 3"};
-    static inline const std::vector<std::string_view> pdu_warnings_{
-        "ЗПТ отключено",
-        "заряд ЗПТ",
-        "заряд ЗПТ, выдержка",
-        "разряд ЗПТ",
-        "ошибка циклического счётчика"};
-    static inline const std::vector<std::string_view> insulation_warnings_{
-        "низкое значение",
-        "ошибка измерения"};
-    static inline const std::vector<std::string_view> throttle_warnings_{
-        "ошибка старта",
-        "неверное сообщение"};
-public:
     static inline const std::array<std::vector<std::string_view>,
                                    domains.size()>
             warnings = {sys_warnings_,
@@ -250,11 +270,11 @@ private:
         "Write resolver calibration config - ok.",
         "Write resolver calibration config - fail.",
 
-        "Read isolation controller config - ok.",
-        "Read isolation controller config - fail.",
-        "Load isolation controller default config.",
-        "Write isolation controller config - ok.",
-        "Write isolation controller config - fail.",
+        "Read insulation controller config - ok.",
+        "Read insulation controller config - fail.",
+        "Load insulation controller default config.",
+        "Write insulation controller config - ok.",
+        "Write insulation controller config - fail.",
 
         "Read throttle controller config - ok.",
         "Read throttle controller config - fail.",
