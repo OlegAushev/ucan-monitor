@@ -219,6 +219,9 @@ void DataPanel::draw_tpdo1_table() {
         }
         ImGui::TextUnformatted(ICON_MDI_FERRY);
         ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Авария в системе судна (вх)");
+        }
 
         ImGui::SameLine();
 
@@ -229,6 +232,9 @@ void DataPanel::draw_tpdo1_table() {
         }
         ImGui::TextUnformatted(ICON_MDI_ENGINE);
         ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Авария в тяговом контуре (вых)");
+        }
 
         ImGui::SameLine();
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
@@ -243,6 +249,9 @@ void DataPanel::draw_tpdo1_table() {
         }
         ImGui::TextUnformatted(ICON_MDI_POWER);
         ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Запрос высокого напряженияc (вых)");
+        }
 
         ImGui::SameLine();
 
@@ -253,6 +262,9 @@ void DataPanel::draw_tpdo1_table() {
         }
         ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
         ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Система тягового привода готова (вых)");
+        }
 
         ImGui::SameLine();
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
@@ -267,6 +279,9 @@ void DataPanel::draw_tpdo1_table() {
         }
         ImGui::TextUnformatted(ICON_MDI_SPEEDOMETER);
         ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Требование реализовать момент на валу (вх)");
+        }
 
         ImGui::SameLine();
 
@@ -277,6 +292,9 @@ void DataPanel::draw_tpdo1_table() {
         }
         ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
         ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Контур хода реализует момент (вых)");
+        }
 
         ImGui::EndTable();
     }

@@ -79,19 +79,18 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 //############################################################################################
 {{0x3000, 0x01}, {"config", "ucanopen", "node_id",          "",     OD_ACCESS_RW, OD_UINT32}},
 {{0x3000, 0x02}, {"config", "ucanopen", "heartbeat_period", "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x03}, {"config", "ucanopen", "sync_period",      "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x04}, {"config", "ucanopen", "tpdo1_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x05}, {"config", "ucanopen", "tpdo2_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x06}, {"config", "ucanopen", "tpdo3_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x07}, {"config", "ucanopen", "tpdo4_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x08}, {"config", "ucanopen", "rpdo1_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x09}, {"config", "ucanopen", "rpdo2_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x0A}, {"config", "ucanopen", "rpdo3_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x0B}, {"config", "ucanopen", "rpdo4_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x0C}, {"config", "ucanopen", "rpdo1_id",         "",     OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x0D}, {"config", "ucanopen", "rpdo2_id",         "",     OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x0E}, {"config", "ucanopen", "rpdo3_id",         "",     OD_ACCESS_RW, OD_UINT32}},
-{{0x3000, 0x0F}, {"config", "ucanopen", "rpdo4_id",         "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x03}, {"config", "ucanopen", "tpdo1_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x04}, {"config", "ucanopen", "tpdo2_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x05}, {"config", "ucanopen", "tpdo3_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x06}, {"config", "ucanopen", "tpdo4_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x07}, {"config", "ucanopen", "rpdo1_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x08}, {"config", "ucanopen", "rpdo2_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x09}, {"config", "ucanopen", "rpdo3_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x0A}, {"config", "ucanopen", "rpdo4_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x0B}, {"config", "ucanopen", "rpdo1_id",         "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x0C}, {"config", "ucanopen", "rpdo2_id",         "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x0D}, {"config", "ucanopen", "rpdo3_id",         "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3000, 0x0E}, {"config", "ucanopen", "rpdo4_id",         "",     OD_ACCESS_RW, OD_UINT32}},
 //############################################################################################
 {{0x3001, 0x01}, {"config", "syslog", "sys_enabled_errors",         "",     OD_ACCESS_RW, OD_UINT32}},
 {{0x3001, 0x02}, {"config", "syslog", "settings_enabled_errors",    "",     OD_ACCESS_RW, OD_UINT32}},
@@ -224,8 +223,9 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 //##############################################################################
 {{0x3011, 0x01}, {"config", "digital_io", "enabled",        "",     OD_ACCESS_RW, OD_BOOL}},
 {{0x3011, 0x02}, {"config", "digital_io", "signal_set",     "",     OD_ACCESS_RW, OD_UINT32}},
-{{0x3011, 0x03}, {"config", "digital_io", "main_contactor_on_delay",    "", OD_ACCESS_RW, OD_UINT32}},
-{{0x3011, 0x04}, {"config", "digital_io", "power_up_delay",             "", OD_ACCESS_RW, OD_UINT32}},
+{{0x3011, 0x03}, {"config", "digital_io", "power_request_delay",        "", OD_ACCESS_RW, OD_UINT32}},
+{{0x3011, 0x04}, {"config", "digital_io", "main_contactor_on_delay",    "", OD_ACCESS_RW, OD_UINT32}},
+{{0x3011, 0x05}, {"config", "digital_io", "power_up_delay",             "", OD_ACCESS_RW, OD_UINT32}},
 //##############################################################################
 }
 };
