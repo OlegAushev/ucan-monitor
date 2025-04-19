@@ -25,6 +25,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 
 {{0x2000, 0x01}, {"ctl", "sys", "reset_device", "", OD_ACCESS_WO, OD_EXEC}},
 {{0x2000, 0x02}, {"ctl", "sys", "clear_errors", "", OD_ACCESS_WO, OD_EXEC}},
+{{0x2000, 0x03}, {"ctl", "sys", "emergency",    "", OD_ACCESS_WO, OD_EXEC}},
 
 {{0x2001, 0x01}, {"ctl", "drive", "reset_driver_fault",     "", OD_ACCESS_WO, OD_EXEC}},
 {{0x2001, 0x02}, {"ctl", "drive", "calibrate_resolver",     "", OD_ACCESS_WO, OD_EXEC}},
@@ -223,6 +224,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 //##############################################################################
 {{0x3011, 0x01}, {"config", "digital_io", "enabled",        "",     OD_ACCESS_RW, OD_BOOL}},
 {{0x3011, 0x02}, {"config", "digital_io", "signal_set",     "",     OD_ACCESS_RW, OD_UINT32}},
+{{0x3011, 0x03}, {"config", "digital_io", "main_contactor_on_delay",    "", OD_ACCESS_RW, OD_UINT32}},
+{{0x3011, 0x04}, {"config", "digital_io", "power_up_delay",             "", OD_ACCESS_RW, OD_UINT32}},
 //##############################################################################
 }
 };

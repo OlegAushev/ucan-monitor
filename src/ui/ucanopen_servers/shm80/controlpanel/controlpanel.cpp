@@ -35,6 +35,10 @@ void ControlPanel::_update_refs() {
     _server->set_opmode(_opmode);
 
     _server->toggle_emergency(_emergency);
+    if (_emergency) {
+        _server->exec("ctl", "sys", "emergency");
+    }
+
     _server->toggle_power(_power);
     _server->toggle_start(_start);
 

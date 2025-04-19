@@ -167,6 +167,7 @@ public:
                         throttle_warnings_};
 private:
     static inline const std::vector<std::string_view> sys_messages_ = {
+        "",
         "Boot CPU1...",
         "Boot CPU2...",
         "CPU1 is ready.",
@@ -334,7 +335,7 @@ public:
     SyslogMessage(uint32_t data) { *this = std::bit_cast<SyslogMessage>(data); }
 
     bool valid() const {
-        if (domain_ == UINT8_MAX && level_ == UINT8_MAX && id_ == UINT16_MAX) {
+        if (domain_ == 0 && id_ == 0) {
             return false;
         }
         if (domain_ >= syslog::domains.size() ||
