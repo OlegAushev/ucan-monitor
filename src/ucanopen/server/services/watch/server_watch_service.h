@@ -16,7 +16,7 @@ class ServerWatchService : public SdoSubscriber {
 private:
     impl::Server& _server;
     ServerSdoService& _sdo_service;
-    bool _enabled{false};
+    bool _enabled{true};
     std::chrono::milliseconds _period{1000};
     std::chrono::time_point<std::chrono::steady_clock> _daq_timepoint;
 

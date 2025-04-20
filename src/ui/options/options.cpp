@@ -8,12 +8,8 @@ Options::Options(std::shared_ptr<can::Socket> socket,
     _socket = socket;
     _client = ucanopen_client;
 
-    _client->enable_sync();
     _client->set_sync_period(std::chrono::milliseconds(_client_sync_period));
-    _client->enable_tpdo();
     for (const auto& server : _client->server_names()) {
-        _client->enable_rpdo_on_server(server);
-        _client->enable_watch_on_server(server);
         _client->set_watch_period_on_server(
                 server,
                 std::chrono::milliseconds(_server_watch_period));

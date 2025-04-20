@@ -263,6 +263,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     } else if (server_name == "moyka-dashboard-2") {
         glfwMaximizeWindow(window);
         glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
+
+        io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
+        io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
         mainview_window_flags =
                 ui::MainView::default_window_flags & ~ImGuiWindowFlags_MenuBar;
 
@@ -280,6 +285,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 
         views.push_back(dashboard);
         gui_log->toggle(false);
+
+        shm_drive_80_server->rpdo_service.disable();
     } else if (server_name == "moyka-dashboard") {
         glfwMaximizeWindow(window);
         glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
@@ -563,6 +570,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+#ifdef SINGLE_SERVER
+        if (std::string{SINGLE_SERVER} == std::string{"moyka-dashboard-2"} ||
+            std::string{SINGLE_SERVER} == std::string{"moyka-dashboard"}) {
+            static size_t i = 0;
+            const std::array<double, 2> pos = {100, 200};
+            glfwSetCursorPos(window, pos[i], pos[i]);
+            i = (i + 1) % pos.size();
+        }
+#endif
         mainview->draw();
 
         // Rendering
