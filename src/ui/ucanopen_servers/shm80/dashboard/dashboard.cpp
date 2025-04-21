@@ -389,13 +389,16 @@ void Dashboard::draw_throttle() {
     ImGui::SameLine();
     ImGui::PushItemWidth(-1);
     std::string network_status;
-    if (server_->throttle_good()) {
+    if (!server_->throttle_good()) {
+        network_status = "НЕ В СЕТИ";
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_red);
+    } else if ((server_->warnings()[10] & (uint16_t(1) << 0)) != 0) {
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_yellow);
+        network_status = "В СЕТИ";
+    } else {
         network_status = "В СЕТИ";
         auto color = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
         ImGui::PushStyleColor(ImGuiCol_FrameBg, color);
-    } else {
-        network_status = "НЕ В СЕТИ";
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_red);
     }
 
     ImGui::InputText("##status",
@@ -453,14 +456,28 @@ void Dashboard::draw_errors() {
     }
 
     uint32_t const errors = server_->errors()[domain];
+    uint16_t const warnings = server_->warnings()[domain];
     std::stringstream stream;
     stream << std::setfill('0') << std::setw(2) << std::dec << domain << ":"
-           << "0x" << std::setfill('0') << std::setw(8) << std::hex << errors;
+           << "0x" << std::setfill('0') << std::setw(8) << std::hex << errors
+           << '|' << "0x" << std::setfill('0') << std::setw(4) << std::hex
+           << warnings;
     std::string errors_str = stream.str();
+
+    if (errors != 0) {
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_red);
+    } else if (warnings != 0) {
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_yellow);
+    } else {
+        auto color = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, color);
+    }
 
     ImGui::PushItemWidth(-1);
     ImGui::InputText("##errors", errors_str.data(), errors_str.size());
     ImGui::PopItemWidth();
+
+    ImGui::PopStyleColor();
 }
 
 } // namespace shm80
