@@ -15,6 +15,7 @@ private:
     static constexpr float converter_err_temp = 80.f;
     static constexpr float motor_warn_temp = 70.f;
     static constexpr float motor_err_temp = 80.f;
+    static constexpr float motor_speed_max = 8000;
     void color_cell(float val, float warn_val, float err_val) {
         if (val > err_val) {
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
@@ -34,8 +35,15 @@ public:
               bool open);
     virtual void draw() override;
 private:
+    void draw_converter();
+    void draw_motor();
     void draw_discretes();
     void draw_pdu();
+    void draw_throttle();
+    void draw_errors();
+private:
+    std::chrono::time_point<std::chrono::steady_clock> error_update_timepoint_;
+    std::chrono::milliseconds error_update_period_{1000};
 };
 
 } // namespace shm80
