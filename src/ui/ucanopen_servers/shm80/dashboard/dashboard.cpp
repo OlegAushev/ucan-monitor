@@ -33,7 +33,7 @@ void Dashboard::draw() {
         // Heartbeat indicator
         if (server_->heartbeat_service.good()) {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-            ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+            ImGui::TextUnformatted(ICON_MDI_NETWORK);
             ImGui::PopStyleColor();
         } else {
             ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
@@ -331,7 +331,7 @@ void Dashboard::draw_discretes() {
 void Dashboard::draw_pdu() {
     if (server_->pdu_good()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::TextUnformatted(ICON_MDI_NETWORK);
         ImGui::PopStyleColor();
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
