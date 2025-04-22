@@ -38,7 +38,7 @@ void Dashboard::draw() {
 void Dashboard::draw_converter() {
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
     ImGui::BeginChild("Преобразователь",
-                      ImVec2(600, 520),
+                      topcell_size,
                       ImGuiChildFlags_Border,
                       window_flags);
     ImGui::SeparatorText("Преобразователь");
@@ -153,7 +153,7 @@ void Dashboard::draw_converter() {
 void Dashboard::draw_motor() {
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
     ImGui::BeginChild("Двигатель",
-                      ImVec2(600, 520),
+                      topcell_size,
                       ImGuiChildFlags_Border,
                       window_flags);
     ImGui::SeparatorText("Двигатель");
@@ -212,8 +212,15 @@ void Dashboard::draw_motor() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура ОЖ1 [°C]");
+        char const* icon1;
+        if (!server_->gearsensors_good()) {
+            icon1 = ICON_MDI_CLOSE_NETWORK;
+        } else {
+            icon1 = ICON_MDI_THERMOMETER;
+        }
+        ImGui::Text("%s %s", icon1, "Температура ОЖ1 [°C]");
         ImGui::TableSetColumnIndex(1);
+
         ImGui::TextUnformatted(
                 server_->watch_service.string_value("reduction_gear", "tIn")
                         .c_str());
@@ -223,8 +230,15 @@ void Dashboard::draw_motor() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура ОЖ2 [°C]");
+        char const* icon2;
+        if (!server_->gearsensors_good()) {
+            icon2 = ICON_MDI_CLOSE_NETWORK;
+        } else {
+            icon2 = ICON_MDI_THERMOMETER;
+        }
+        ImGui::Text("%s %s", icon2, "Температура ОЖ2 [°C]");
         ImGui::TableSetColumnIndex(1);
+
         ImGui::TextUnformatted(
                 server_->watch_service.string_value("reduction_gear", "tOut")
                         .c_str());
@@ -314,7 +328,7 @@ void Dashboard::draw_discretes() {
 void Dashboard::draw_pdu() {
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
     ImGui::BeginChild("ПДУ",
-                      ImVec2(600, 200),
+                      bottomcell_size,
                       ImGuiChildFlags_Border,
                       window_flags);
     ImGui::SeparatorText("ПДУ");
@@ -415,7 +429,7 @@ void Dashboard::draw_pdu() {
 void Dashboard::draw_throttle() {
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
     ImGui::BeginChild("Контроллер хода",
-                      ImVec2(600, 200),
+                      bottomcell_size,
                       ImGuiChildFlags_Border,
                       window_flags);
     ImGui::SeparatorText("Контроллер хода");

@@ -103,6 +103,8 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     _tpdo1.dout_power_request = tpdo.dout_power_request;
     _tpdo1.dout_drive_ready = tpdo.dout_drive_ready;
     _tpdo1.dout_drive_started = tpdo.dout_drive_started;
+
+    _tpdo1.gearsensors_good.store(tpdo.gearsensors_good);
 }
 
 void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {

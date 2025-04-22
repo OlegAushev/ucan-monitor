@@ -47,6 +47,8 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> error_update_timepoint_;
     std::chrono::milliseconds error_update_period_{1000};
     static constexpr float table_val_width = 140.f;
+    static constexpr ImVec2 topcell_size{628, 556};
+    static constexpr ImVec2 bottomcell_size{628, 200};
 };
 
 } // namespace shm80
