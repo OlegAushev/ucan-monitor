@@ -297,11 +297,11 @@ private:
         "Write DIO controller config - ok.",
         "Write DIO controller config - fail.",
 
-        "Read CAN gear sensors config - ok.",
-        "Read CAN gear sensors config - fail.",
-        "Load CAN gear sensors default config.",
-        "Write CAN gear sensors config - ok.",
-        "Write CAN gear sensors config - fail.",
+        "Read CAN gear temperature sensor config - ok.",
+        "Read CAN gear temperature sensor config - fail.",
+        "Load CAN gear temperature sensor default config.",
+        "Write CAN gear temperature sensor config - ok.",
+        "Write CAN gear temperature sensor config - fail.",
     };
     static inline const std::vector<std::string_view> can_messages_ = {
         "CAN SDO-request is lost."};

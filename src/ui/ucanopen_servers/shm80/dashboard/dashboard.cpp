@@ -213,7 +213,7 @@ void Dashboard::draw_motor() {
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         char const* icon1;
-        if (!server_->gearsensors_good()) {
+        if (!server_->geartempsensor_good()) {
             icon1 = ICON_MDI_CLOSE_NETWORK;
         } else {
             icon1 = ICON_MDI_THERMOMETER;
@@ -231,7 +231,7 @@ void Dashboard::draw_motor() {
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
         char const* icon2;
-        if (!server_->gearsensors_good()) {
+        if (!server_->geartempsensor_good()) {
             icon2 = ICON_MDI_CLOSE_NETWORK;
         } else {
             icon2 = ICON_MDI_THERMOMETER;

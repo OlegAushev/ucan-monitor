@@ -48,7 +48,7 @@ struct CobTpdo1 {
 
     uint16_t counter : 2;
     uint16_t _reserved4_ : 2;
-    uint16_t gearsensors_good : 1;
+    uint16_t geartempsensor_good : 1;
     uint16_t _reserved5_ : 3;
 };
 
