@@ -65,13 +65,13 @@ void Dashboard::draw_converter() {
     }
 
     std::string state;
-    if (server_->has_error() || !server_->heartbeat_service.good()) {
+    bool const is_in_error =
+            server_->has_error() || !server_->heartbeat_service.good();
+    if (is_in_error) {
         state = "ОШИБКА";
         ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_red);
     } else {
         state = server_->drive_state_str_upper();
-        auto color = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, color);
     }
     std::string status = network_status + " | " + state;
 
@@ -79,7 +79,9 @@ void Dashboard::draw_converter() {
                      status.data(),
                      status.size(),
                      ImGuiInputTextFlags_ReadOnly);
-    ImGui::PopStyleColor();
+    if (is_in_error) {
+        ImGui::PopStyleColor();
+    }
     ImGui::PopItemWidth();
 
     static ImGuiTableFlags flags =
@@ -88,12 +90,13 @@ void Dashboard::draw_converter() {
         ImGui::TableSetupColumn("Параметр");
         ImGui::TableSetupColumn("Значение",
                                 ImGuiTableColumnFlags_WidthFixed,
-                                140.f);
-        ImGui::TableHeadersRow();
+                                table_val_width);
+        // ImGui::TableHeadersRow();
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted(ICON_MDI_CAR_BATTERY " Напряжение [В]");
+        ImGui::TextUnformatted(ICON_MDI_ALPHA_V_CIRCLE_OUTLINE
+                               " Напряжение ЗПТ [В]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.1f", server_->dc_voltage());
 
@@ -166,8 +169,8 @@ void Dashboard::draw_motor() {
         ImGui::TableSetupColumn("Параметр");
         ImGui::TableSetupColumn("Значение",
                                 ImGuiTableColumnFlags_WidthFixed,
-                                140.f);
-        ImGui::TableHeadersRow();
+                                table_val_width);
+        // ImGui::TableHeadersRow();
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
@@ -177,13 +180,13 @@ void Dashboard::draw_motor() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted(ICON_MDI_CURRENT_AC " Ток ОЯ [A]");
+        ImGui::TextUnformatted(ICON_MDI_ALPHA_I_CIRCLE_OUTLINE " Ток ОЯ [A]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.1f", server_->stator_current());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted(ICON_MDI_CURRENT_DC " Ток ОВ [A]");
+        ImGui::TextUnformatted(ICON_MDI_ALPHA_I_CIRCLE_OUTLINE " Ток ОВ [A]");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%.1f", server_->field_current());
 
@@ -206,6 +209,28 @@ void Dashboard::draw_motor() {
         color_cell(server_->watch_service.value("motor", "tFW").f32(),
                    motor_warn_temp,
                    motor_err_temp);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура ОЖ1 [°C]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::TextUnformatted(
+                server_->watch_service.string_value("reduction_gear", "tIn")
+                        .c_str());
+        color_cell(server_->watch_service.value("reduction_gear", "tIn").f32(),
+                   reduction_gear_warn_temp,
+                   reduction_gear_err_temp);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted(ICON_MDI_THERMOMETER " Температура ОЖ2 [°C]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::TextUnformatted(
+                server_->watch_service.string_value("reduction_gear", "tOut")
+                        .c_str());
+        color_cell(server_->watch_service.value("reduction_gear", "tOut").f32(),
+                   reduction_gear_warn_temp,
+                   reduction_gear_err_temp);
 
         ImGui::EndTable();
     }
@@ -307,21 +332,40 @@ void Dashboard::draw_pdu() {
     ImGui::SameLine();
     ImGui::PushItemWidth(-1);
     std::string network_status;
-    if (server_->pdu_good()) {
-        network_status = "В СЕТИ";
-        auto color = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, color);
-    } else {
+    if (!server_->pdu_good()) {
         network_status = "НЕ В СЕТИ";
         ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_red);
+    } else {
+        network_status = "В СЕТИ";
     }
 
     ImGui::InputText("##status",
                      network_status.data(),
                      network_status.size(),
                      ImGuiInputTextFlags_ReadOnly);
-    ImGui::PopStyleColor();
+    if (!server_->pdu_good()) {
+        ImGui::PopStyleColor();
+    }
     ImGui::PopItemWidth();
+
+    static ImGuiTableFlags flags =
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+    if (ImGui::BeginTable("converter_table", 2, flags)) {
+        ImGui::TableSetupColumn("Параметр");
+        ImGui::TableSetupColumn("Значение",
+                                ImGuiTableColumnFlags_WidthFixed,
+                                table_val_width);
+        // ImGui::TableHeadersRow();
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted(ICON_MDI_CAR_BATTERY " Напряжение АБ [В]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%.1f",
+                    server_->watch_service.value("pdu", "v_batt").f32());
+
+        ImGui::EndTable();
+    }
 
     if (server_->pdu_main_contactor()) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
@@ -391,21 +435,22 @@ void Dashboard::draw_throttle() {
     std::string network_status;
     if (!server_->throttle_good()) {
         network_status = "НЕ В СЕТИ";
+        network_status.append(" | ВКЛ N");
         ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_red);
-    } else if ((server_->warnings()[10] & (uint16_t(1) << 0)) != 0) {
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_yellow);
-        network_status = "В СЕТИ";
     } else {
         network_status = "В СЕТИ";
-        auto color = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, color);
+        if ((server_->warnings()[10] & (uint16_t(1) << 0)) != 0) {
+            network_status.append(" | ВКЛ N");
+        }
     }
 
     ImGui::InputText("##status",
                      network_status.data(),
                      network_status.size(),
                      ImGuiInputTextFlags_ReadOnly);
-    ImGui::PopStyleColor();
+    if (!server_->throttle_good()) {
+        ImGui::PopStyleColor();
+    }
     ImGui::PopItemWidth();
 
     Gear gear = server_->gear();
@@ -445,9 +490,6 @@ void Dashboard::draw_throttle() {
 }
 
 void Dashboard::draw_errors() {
-    ImGui::TextUnformatted(ICON_MDI_ALERT);
-    ImGui::SameLine();
-
     static size_t domain = 0;
     if (std::chrono::steady_clock::now() - error_update_timepoint_ >
         error_update_period_) {
@@ -465,19 +507,21 @@ void Dashboard::draw_errors() {
     std::string errors_str = stream.str();
 
     if (errors != 0) {
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_red);
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
     } else if (warnings != 0) {
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, ui::colors::icon_yellow);
-    } else {
-        auto color = ImGui::GetStyleColorVec4(ImGuiCol_FrameBg);
-        ImGui::PushStyleColor(ImGuiCol_FrameBg, color);
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
     }
+
+    ImGui::TextUnformatted(ICON_MDI_ALERT);
+    if (errors != 0 || warnings != 0) {
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::SameLine();
 
     ImGui::PushItemWidth(-1);
     ImGui::InputText("##errors", errors_str.data(), errors_str.size());
     ImGui::PopItemWidth();
-
-    ImGui::PopStyleColor();
 }
 
 } // namespace shm80

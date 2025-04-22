@@ -15,6 +15,8 @@ private:
     static constexpr float converter_err_temp = 80.f;
     static constexpr float motor_warn_temp = 70.f;
     static constexpr float motor_err_temp = 80.f;
+    static constexpr float reduction_gear_warn_temp = 70.f;
+    static constexpr float reduction_gear_err_temp = 80.f;
     static constexpr float motor_speed_max = 8000;
     void color_cell(float val, float warn_val, float err_val) {
         if (val > err_val) {
@@ -44,6 +46,7 @@ private:
 private:
     std::chrono::time_point<std::chrono::steady_clock> error_update_timepoint_;
     std::chrono::milliseconds error_update_period_{1000};
+    static constexpr float table_val_width = 140.f;
 };
 
 } // namespace shm80
