@@ -22,9 +22,9 @@ public:
         "Инвертор",
         "Модель",
         "ДПР",
-        "Питание",
+        "ПДУ",
         "Изоляция",
-        "Контроллер газа"};
+        "Контроллер хода"};
     static constexpr std::array<std::string_view, 6> levels =
             {"      ", "[info]", "[ ok ]", "[warn]", "[fail]", "[crit]"};
 private:
@@ -44,13 +44,19 @@ private:
 
     // can
     static inline const std::vector<std::string_view> can_errors_ = {
-        "потеря связи с КВУ"};
+        "КВУ: потеря связи",
+        "ПДУ: потеря связи",
+        "Контроллер хода: потеря связи",
+        "Датчики редуктора: потеря связи"};
     static inline const std::vector<std::string_view> can_warnings_ = {
         "ошибки в сети",
         "потеря сообщений",
-        "потеря связи с КВУ",
-        "ошибка контрольной суммы",
-        "ошибка циклического счётчика"};
+        "КВУ: потеря связи",
+        "КВУ: ошибка контрольной суммы",
+        "КВУ: ошибка циклического счётчика",
+        "ПДУ: ошибка циклического счётчика",
+        "Контроллер хода: ошибка в сообщении",
+        "Датчики редуктора: ошибка циклического счётчика"};
 
     // sensors
     static inline const std::vector<std::string_view> sensors_errors_ = {
@@ -116,15 +122,13 @@ private:
         "превышено время разряда ЗПТ",
         "некорректное состояние контакторов",
         "ошибка устройства",
-        "потеря связи",
         "низкое напряжение АБ",
         "высокое напряжение АБ"};
     static inline const std::vector<std::string_view> pdu_warnings_{
         "ЗПТ отключено",
         "заряд ЗПТ",
         "заряд ЗПТ, выдержка",
-        "разряд ЗПТ",
-        "ошибка циклического счётчика"};
+        "разряд ЗПТ"};
 
     // insulation
     static inline const std::vector<std::string_view> insulation_errors_{};
@@ -133,11 +137,9 @@ private:
         "ошибка измерения"};
 
     // throttle
-    static inline const std::vector<std::string_view> throtlle_errors_{
-        "потеря связи"};
+    static inline const std::vector<std::string_view> throtlle_errors_{};
     static inline const std::vector<std::string_view> throttle_warnings_{
-        "ошибка старта",
-        "неверное сообщение"};
+        "ошибка старта"};
 public:
     static inline const std::array<std::vector<std::string_view>,
                                    domains.size()>
@@ -294,6 +296,12 @@ private:
         "Load DIO controller default config.",
         "Write DIO controller config - ok.",
         "Write DIO controller config - fail.",
+
+        "Read CAN gear sensors config - ok.",
+        "Read CAN gear sensors config - fail.",
+        "Load CAN gear sensors default config.",
+        "Write CAN gear sensors config - ok.",
+        "Write CAN gear sensors config - fail.",
     };
     static inline const std::vector<std::string_view> can_messages_ = {
         "CAN SDO-request is lost."};
