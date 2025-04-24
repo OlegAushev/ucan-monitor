@@ -11,13 +11,13 @@ namespace shm80 {
 
 class Dashboard : public ui::View {
 private:
-    static constexpr float converter_warn_temp = 70.f;
-    static constexpr float converter_err_temp = 80.f;
-    static constexpr float motor_warn_temp = 70.f;
-    static constexpr float motor_err_temp = 80.f;
-    static constexpr float reduction_gear_warn_temp = 70.f;
-    static constexpr float reduction_gear_err_temp = 80.f;
-    static constexpr float motor_speed_max = 8000;
+    static constexpr float converter_warn_temp = 100.f;
+    static constexpr float converter_err_temp = 110.f;
+    static constexpr float motor_warn_temp = 120.f;
+    static constexpr float motor_err_temp = 140.f;
+    static constexpr float reduction_gear_warn_temp = 80.f;
+    static constexpr float reduction_gear_err_temp = 90.f;
+    static constexpr float motor_speed_max = 5000;
     void color_cell(float val, float warn_val, float err_val) {
         if (val > err_val) {
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,

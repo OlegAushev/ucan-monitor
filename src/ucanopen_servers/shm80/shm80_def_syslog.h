@@ -67,7 +67,7 @@ private:
 
     // motor
     static inline const std::vector<std::string_view> motor_errors_ = {
-        "перегрев"
+        "перегрев",
         "перегрев ОЯ",
         "перегрев ОВ"};
     static inline const std::vector<std::string_view> motor_warnings_ = {
