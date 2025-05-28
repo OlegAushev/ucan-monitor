@@ -504,38 +504,67 @@ void Dashboard::draw_throttle() {
 }
 
 void Dashboard::draw_errors() {
-    static size_t domain = 0;
-    if (std::chrono::steady_clock::now() - error_update_timepoint_ >
-        error_update_period_) {
-        domain = (domain + 1) % ::shm80::syslog::domains.size();
-        error_update_timepoint_ = std::chrono::steady_clock::now();
-    }
-
-    uint32_t const errors = server_->errors()[domain];
-    uint16_t const warnings = server_->warnings()[domain];
+    static size_t domain{0};
     std::stringstream stream;
-    stream << std::setfill('0') << std::setw(2) << std::dec << domain << ":"
-           << "0x" << std::setfill('0') << std::setw(8) << std::hex << errors
-           << '|' << "0x" << std::setfill('0') << std::setw(4) << std::hex
-           << warnings;
-    std::string errors_str = stream.str();
 
-    if (errors != 0) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-    } else if (warnings != 0) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
+    std::array<uint32_t, syslog::domains.size()> errors{};
+    std::array<uint16_t, syslog::domains.size()> warnings{};
+    bool has_any_error{false};
+    bool has_any_warning{false};
+
+    for (auto i{0uz}; i <= syslog::domains.size(); ++i) {
+        errors[i] = server_->errors()[i].load();
+        warnings[i] = server_->warnings()[i].load();
+        if (errors[i] != 0) {
+            has_any_error = true;
+        }
+        if (warnings[i] != 0) {
+            has_any_warning = true;
+        }
     }
 
-    ImGui::TextUnformatted(ICON_MDI_ALERT);
-    if (errors != 0 || warnings != 0) {
+    uint32_t domain_errors{0};
+    uint16_t domain_warnings{0};
+
+    if (has_any_error || has_any_warning) {
+        if (std::chrono::steady_clock::now() - error_update_timepoint_ >
+            error_update_period_) {
+            while (domain_errors == 0 && domain_warnings == 0) {
+                domain = (domain + 1) % ::shm80::syslog::domains.size();
+                domain_errors = errors[domain];
+                domain_warnings = warnings[domain];
+                error_update_timepoint_ = std::chrono::steady_clock::now();
+            }
+        } else {
+            domain_errors = errors[domain];
+            domain_warnings = warnings[domain];
+        }
+
+        stream << std::setfill('0') << std::setw(2) << std::dec << domain << ":"
+               << "0x" << std::setfill('0') << std::setw(8) << std::hex
+               << domain_errors << '|' << "0x" << std::setfill('0')
+               << std::setw(4) << std::hex << domain_warnings;
+    }
+
+    std::string errors_str{stream.str()};
+
+    util::Switchable error_indicator(has_any_error || has_any_warning, [&]() {
+        if (domain_errors != 0) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        } else if (domain_warnings != 0) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
+        } else {
+            ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_inactive);
+        }
+        ImGui::TextUnformatted(ICON_MDI_ALERT);
         ImGui::PopStyleColor();
-    }
 
-    ImGui::SameLine();
+        ImGui::SameLine();
 
-    ImGui::PushItemWidth(-1);
-    ImGui::InputText("##errors", errors_str.data(), errors_str.size());
-    ImGui::PopItemWidth();
+        ImGui::PushItemWidth(-1);
+        ImGui::InputText("##errors", errors_str.data(), errors_str.size());
+        ImGui::PopItemWidth();
+    });
 }
 
 } // namespace shm80
