@@ -204,6 +204,18 @@ void DataPanel::draw_tpdo1_table() {
         ImGui::TableSetColumnIndex(1);
         ImGui::TextUnformatted(server_->insulation_tester_state().data());
 
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Ослабление поля");
+        ImGui::TableSetColumnIndex(1);
+        if (server_->flux_weakening()) {
+            ImGui::TextUnformatted("вкл");
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_green);
+        } else {
+            ImGui::TextUnformatted("выкл");
+        }
+
         // Discrete Signals
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);

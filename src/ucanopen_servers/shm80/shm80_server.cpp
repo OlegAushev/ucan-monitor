@@ -105,6 +105,7 @@ void Server::_handle_tpdo1(const ucanopen::can_payload& payload) {
     _tpdo1.dout_drive_started = tpdo.dout_drive_started;
 
     _tpdo1.geartempsensor_good.store(tpdo.geartempsensor_good);
+    _tpdo1.flux_weakening.store(tpdo.flux_weakening);
 }
 
 void Server::_handle_tpdo2(const ucanopen::can_payload& payload) {

@@ -72,6 +72,7 @@ private:
         std::atomic<bool> dout_drive_failure{false};
 
         std::atomic<bool> geartempsensor_good{false};
+        std::atomic<bool> flux_weakening{false};
     } _tpdo1;
 
     struct {
@@ -207,6 +208,8 @@ public:
     bool geartempsensor_good() const {
         return _tpdo1.geartempsensor_good.load();
     }
+
+    bool flux_weakening() const { return _tpdo1.flux_weakening.load(); }
 
     float dc_voltage() const { return _tpdo2.dc_voltage.load(); }
     float stator_current() const { return _tpdo2.stator_current.load(); }
