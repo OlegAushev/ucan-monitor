@@ -106,7 +106,8 @@ private:
 
     // model
     static inline const std::vector<std::string_view> model_errors_{};
-    static inline const std::vector<std::string_view> model_warnings_{};
+    static inline const std::vector<std::string_view> model_warnings_{
+        "ослабление поля"};
 
     // resolver
     static inline const std::vector<std::string_view> resolver_errors_{

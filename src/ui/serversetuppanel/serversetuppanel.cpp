@@ -205,13 +205,20 @@ void ServerSetupPanel::_draw_setup() {
 
         case ucanopen::OD_UINT32: {
             uint32_t value_u32 = parameter_value.value().u32();
+            char const* format{NULL};
+            ImGuiInputTextFlags flags{ImGuiInputTextFlags_EnterReturnsTrue};
+            if (selected_category_iter->second[selected_object_idx]->unit ==
+                "hex") {
+                format = "%08X";
+                flags |= ImGuiInputTextFlags_CharsHexadecimal;
+            }
             if (ImGui::InputScalar("Значение",
                                    ImGuiDataType_U32,
                                    &value_u32,
                                    NULL,
                                    NULL,
-                                   NULL,
-                                   ImGuiInputTextFlags_EnterReturnsTrue)) {
+                                   format,
+                                   flags)) {
                 _server->write(
                         _server->dictionary().config.config_category,
                         selected_category_iter->first,
