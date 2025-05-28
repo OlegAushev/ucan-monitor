@@ -32,7 +32,8 @@ private:
     static inline const std::vector<std::string_view> sys_errors_ = {
         "аварийный останов",
         "прогр. сторожевой таймер",
-        "недопустимые настройки"};
+        "недопустимые настройки",
+        "нештатное отключение"};
     static inline const std::vector<std::string_view> sys_warnings_ = {};
 
     // settings
