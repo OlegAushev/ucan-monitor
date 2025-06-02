@@ -331,6 +331,33 @@ void ControlPanel::_draw_normal_mode_controls() {
             ImGui::PopItemWidth();
         });
     }
+
+    if (ImGui::CollapsingHeader(ICON_MDI_ANGLE_ACUTE " Коррекция угла ДПР",
+                                ImGuiTreeNodeFlags_Framed)) {
+        static float angle{
+            _server->watch_service.value("model", "angCorr").f32()};
+        static std::chrono::time_point<std::chrono::steady_clock>
+                update_timepoint{std::chrono::steady_clock::now()};
+        auto now{std::chrono::steady_clock::now()};
+        if (now - update_timepoint > std::chrono::milliseconds{1000}) {
+            angle = _server->watch_service.value("model", "angCorr").f32();
+            update_timepoint = now;
+        }
+
+        ImGui::PushItemWidth(-1);
+        if (ImGui::SliderFloat("##angle_correction",
+                               &angle,
+                               -180.0f,
+                               180.0f,
+                               "%.0f° эл.")) {
+            _server->write("ctl",
+                           "drive",
+                           "set_angle_correction",
+                           ucanopen::ExpeditedSdoData{angle});
+            update_timepoint = now;
+        }
+        ImGui::PopItemWidth();
+    }
 }
 
 void ControlPanel::_draw_testing_mode_controls() {

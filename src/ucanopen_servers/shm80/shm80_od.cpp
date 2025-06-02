@@ -32,6 +32,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x2001, 0x03}, {"ctl", "drive", "save_resolver_config",   "", OD_ACCESS_WO, OD_EXEC}},
 {{0x2001, 0x04}, {"ctl", "drive", "disable_phase_driver",   "", OD_ACCESS_WO, OD_EXEC}},
 {{0x2001, 0x05}, {"ctl", "drive", "disable_field_driver",   "", OD_ACCESS_WO, OD_EXEC}},
+{{0x2001, 0x06}, {"ctl", "drive", "set_angle_correction",   "", OD_ACCESS_WO, OD_FLOAT32}},
 
 //##########################################################################################################################################################################################################################################################################################################
 {{0x5000, 0x01}, {"watch", "sys",       "uptime",       "s",    OD_ACCESS_RO, OD_FLOAT32}},
@@ -58,6 +59,11 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x28}, {"watch", "model",     "vQ",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x29}, {"watch", "model",     "vS",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x2A}, {"watch", "model",     "angD",     "°",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x2B}, {"watch", "model",     "sElec",    "VA",   OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x2C}, {"watch", "model",     "pElec",    "W",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x2D}, {"watch", "model",     "phi",      "°",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x2E}, {"watch", "model",     "psi",      "°",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x2F}, {"watch", "model",     "angCorr",  "°",    OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5000, 0x31}, {"watch", "motor",     "tAW",  "°C",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x32}, {"watch", "motor",     "tFW",  "°C",    OD_ACCESS_RO, OD_FLOAT32}},
@@ -147,6 +153,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3005, 0x05}, {"config", "model_basic", "iDFluxWeak_limit",  "A",    OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x06}, {"config", "model_basic", "iF_coeff",          "",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x07}, {"config", "model_basic", "torque_max_speed_limit", "rpm", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x08}, {"config", "model_basic", "angle_correction",  "°",    OD_ACCESS_RW, OD_FLOAT32}},
 //##############################################################################
 {{0x3006, 0x01}, {"config", "model_controllers", "speed_kP",    "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3006, 0x02}, {"config", "model_controllers", "speed_kI",    "", OD_ACCESS_RW, OD_FLOAT32}},
