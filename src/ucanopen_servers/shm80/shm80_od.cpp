@@ -33,6 +33,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x2001, 0x04}, {"ctl", "drive", "disable_phase_driver",   "", OD_ACCESS_WO, OD_EXEC}},
 {{0x2001, 0x05}, {"ctl", "drive", "disable_field_driver",   "", OD_ACCESS_WO, OD_EXEC}},
 {{0x2001, 0x06}, {"ctl", "drive", "set_angle_correction",   "", OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x07}, {"ctl", "drive", "set_vD_limit_factor",    "", OD_ACCESS_WO, OD_FLOAT32}},
 
 //##########################################################################################################################################################################################################################################################################################################
 {{0x5000, 0x01}, {"watch", "sys",       "uptime",       "s",    OD_ACCESS_RO, OD_FLOAT32}},
@@ -84,6 +85,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 
 {{0x5000, 0x71}, {"watch", "reduction_gear",    "tIn",  "°C",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x72}, {"watch", "reduction_gear",    "tOut", "°C",    OD_ACCESS_RO, OD_FLOAT32}},
+
+{{0x5000, 0xF1}, {"watch", "model",     "vDLim",    "",     OD_ACCESS_RO, OD_FLOAT32}},
 //############################################################################################
 {{0x3000, 0x01}, {"config", "ucanopen", "node_id",          "",     OD_ACCESS_RW, OD_UINT32}},
 {{0x3000, 0x02}, {"config", "ucanopen", "heartbeat_period", "ms",   OD_ACCESS_RW, OD_UINT32}},
@@ -154,6 +157,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3005, 0x06}, {"config", "model_basic", "iF_coeff",          "",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x07}, {"config", "model_basic", "torque_max_speed_limit", "rpm", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x08}, {"config", "model_basic", "angle_correction",  "°",    OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x09}, {"config", "model_basic", "vD_limit_factor",   "",     OD_ACCESS_RW, OD_FLOAT32}},
 //##############################################################################
 {{0x3006, 0x01}, {"config", "model_controllers", "speed_kP",    "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3006, 0x02}, {"config", "model_controllers", "speed_kI",    "", OD_ACCESS_RW, OD_FLOAT32}},

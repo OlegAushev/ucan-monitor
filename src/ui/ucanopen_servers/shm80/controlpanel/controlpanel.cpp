@@ -358,6 +358,29 @@ void ControlPanel::_draw_normal_mode_controls() {
         }
         ImGui::PopItemWidth();
     }
+
+    if (ImGui::CollapsingHeader(ICON_MDI_KNOB " Ограничение vD",
+                                ImGuiTreeNodeFlags_Framed)) {
+        static float vD_limit{
+            _server->watch_service.value("model", "vDLim").f32()};
+        static std::chrono::time_point<std::chrono::steady_clock>
+                update_timepoint{std::chrono::steady_clock::now()};
+        auto now{std::chrono::steady_clock::now()};
+        if (now - update_timepoint > std::chrono::milliseconds{1000}) {
+            vD_limit = _server->watch_service.value("model", "vDLim").f32();
+            update_timepoint = now;
+        }
+
+        ImGui::PushItemWidth(-1);
+        if (ImGui::SliderFloat("##vD_limit", &vD_limit, 0.0f, 1.0f, "%.3f")) {
+            _server->write("ctl",
+                           "drive",
+                           "set_vD_limit_factor",
+                           ucanopen::ExpeditedSdoData{vD_limit});
+            update_timepoint = now;
+        }
+        ImGui::PopItemWidth();
+    }
 }
 
 void ControlPanel::_draw_testing_mode_controls() {
