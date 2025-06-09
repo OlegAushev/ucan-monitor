@@ -49,6 +49,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x18}, {"watch", "converter", "tC",   "°C",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x19}, {"watch", "converter", "tF",   "°C",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x1A}, {"watch", "converter", "tPCB", "°C",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x1B}, {"watch", "converter", "tMCU", "°C",   OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5000, 0x21}, {"watch", "model",     "iS",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x22}, {"watch", "model",     "iD",       "A",    OD_ACCESS_RO, OD_FLOAT32}},
@@ -73,6 +74,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x42}, {"watch", "drive",     "torque",       "%",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x43}, {"watch", "drive",     "speedRef",     "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x44}, {"watch", "drive",     "speed",        "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x45}, {"watch", "drive",     "speedFilt",    "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
+
 
 {{0x5000, 0x51}, {"watch", "resolver",  "speed",    "rpm",  OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x52}, {"watch", "resolver",  "angle",    "°",    OD_ACCESS_RO, OD_FLOAT32}},
@@ -158,6 +161,11 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3005, 0x07}, {"config", "model_basic", "torque_max_speed_limit", "rpm", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x08}, {"config", "model_basic", "angle_correction",  "°",    OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3005, 0x09}, {"config", "model_basic", "vD_limit_factor",   "",     OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x0A}, {"config", "model_basic", "auto_angle_correction",                 "bool",         OD_ACCESS_RW, OD_BOOL}},
+{{0x3005, 0x0B}, {"config", "model_basic", "angle_correction_init",                 "°",            OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x0C}, {"config", "model_basic", "angle_correction_bend",                 "rpm",          OD_ACCESS_RW, OD_FLOAT32}},
+{{0x3005, 0x0D}, {"config", "model_basic", "angle_correction_slope_per_1000rpm",    "°/1000rpm",    OD_ACCESS_RW, OD_FLOAT32}},
+
 //##############################################################################
 {{0x3006, 0x01}, {"config", "model_controllers", "speed_kP",    "", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3006, 0x02}, {"config", "model_controllers", "speed_kI",    "", OD_ACCESS_RW, OD_FLOAT32}},
@@ -206,6 +214,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300C, 0x06}, {"config", "resolver", "exc_factor",               "",     OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300C, 0x07}, {"config", "resolver", "sin_offset",               "V",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x300C, 0x08}, {"config", "resolver", "cos_offset",               "V",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x300C, 0x09}, {"config", "resolver", "speedfilter_timeconstant", "s",    OD_ACCESS_RW, OD_FLOAT32}},
+
 //##############################################################################
 {{0x300D, 0x01}, {"config", "resolver_calibration", "phase_current",        "pu",   OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300D, 0x02}, {"config", "resolver_calibration", "field_current ",       "pu",   OD_ACCESS_RW, OD_FLOAT32}},
