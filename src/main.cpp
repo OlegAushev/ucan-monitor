@@ -56,7 +56,8 @@ const std::vector<std::string> server_names = {"shm-drive-80",
                                                "moyka-dashboard-2",
                                                "moyka-dashboard",
                                                "atv-vcu",
-                                               "brake-drive"};
+                                               "brake-drive",
+                                               "srmdrive"};
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
