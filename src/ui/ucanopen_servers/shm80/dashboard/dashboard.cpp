@@ -512,7 +512,7 @@ void Dashboard::draw_errors() {
     bool has_any_error{false};
     bool has_any_warning{false};
 
-    for (auto i{0uz}; i <= syslog::domains.size(); ++i) {
+    for (auto i{0uz}; i < syslog::domains.size(); ++i) {
         errors[i] = server_->errors()[i].load();
         warnings[i] = server_->warnings()[i].load();
         if (errors[i] != 0) {
