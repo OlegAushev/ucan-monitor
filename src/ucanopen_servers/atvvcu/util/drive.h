@@ -32,7 +32,7 @@ private:
     std::atomic_bool _debug_mode{false};
     std::atomic_bool _ref_debug_mode{false};
 
-    std::array<std::atomic<Data>, 4> _data{};
+    std::array<std::atomic<Data>, 4> _data;
 
     std::array<std::atomic_bool, 4> _ref_ctlmode{};
     std::array<std::atomic_bool, 4> _ref_enable{};
@@ -48,7 +48,7 @@ private:
 public:
     bool debug_mode() const { return _debug_mode.load(); }
     void toggle_debug_mode(bool dbg_enabled) { _ref_debug_mode.store(dbg_enabled); }
-    
+
     std::array<Data, 4> data() const {
         std::array<Data, 4> ret;
         std::copy(_data.begin(), _data.end(), ret.begin());
