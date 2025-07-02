@@ -26,6 +26,10 @@
 #include <ui/ucanopen_servers/shm80/statuspanel/statuspanel.h>
 #include <ui/ucanopen_servers/shm80/throttlecontroller/throttlecontroller.hpp>
 
+#include <ui/ucanopen_servers/sevpress/controlpanel/controlpanel.hpp>
+#include <ui/ucanopen_servers/sevpress/datapanel/datapanel.hpp>
+#include <ui/ucanopen_servers/sevpress/statuspanel/statuspanel.hpp>
+
 #include <ui/ucanopen_servers/moyka/panel/panel.h>
 
 #include <ui/ucanopen_servers/srmdrive/controlpanel/controlpanel.h>
@@ -551,6 +555,69 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                              "Plot 4",
                                                              "Watch Plot 4",
                                                              false));
+    } else if (server_name == "sevpress") {
+        auto sevpress_server =
+                std::make_shared<sevpress::Server>(can_socket,
+                                                ucanopen::NodeId(0x01),
+                                                server_name);
+        ucanopen_client->register_server(sevpress_server);
+
+        auto controlpanel = std::make_shared<ui::sevpress::ControlPanel>(
+                sevpress_server,
+                ICON_MDI_GAMEPAD_OUTLINE " Управление",
+                "Управление",
+                true);
+
+        auto statuspanel = std::make_shared<ui::sevpress::StatusPanel>(
+                sevpress_server,
+                ICON_MDI_INFORMATION_OUTLINE " Статус",
+                "Статус",
+                true);
+
+        watchpanel = std::make_shared<ui::WatchPanel>(sevpress_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Набл. Переменные",
+                                                      "Набл. Переменные",
+                                                      true);
+
+        auto datapanel = std::make_shared<ui::sevpress::DataPanel>(
+                sevpress_server,
+                ICON_MDI_TABLE " Данные TPDO",
+                "Данные TPDO",
+                true);
+
+        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(
+                sevpress_server,
+                ICON_MDI_TOOLS " Настройка",
+                "Настройка",
+                false);
+
+        views.push_back(controlpanel);
+        views.push_back(statuspanel);
+        views.push_back(watchpanel);
+        views.push_back(datapanel);
+        views.push_back(serversetuppanel);
+
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(sevpress_server,
+                                                "Панель диаграмм 1",
+                                                "Панель Диаграмм 1",
+                                                true));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(sevpress_server,
+                                                "Панель диаграмм 2",
+                                                "Панель диаграмм 2",
+                                                false));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(sevpress_server,
+                                                "Панель диаграмм 3",
+                                                "Панель диаграмм 3",
+                                                false));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(sevpress_server,
+                                                "Панель диаграмм 4",
+                                                "Панель диаграмм 4",
+                                                false));
     } else {
         // TODO Error
     }
