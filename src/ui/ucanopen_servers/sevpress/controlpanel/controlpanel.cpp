@@ -373,6 +373,21 @@ void ControlPanel::_draw_testing_mode_controls() {
         ImGui::SameLine();
         ImGui::SeparatorText("Режим Тестирования");
     });
+
+    if (!selected) {
+        return;
+    }
+
+    ImGui::PushItemWidth(140);
+    if (ImGui::InputFloat("Коэф. Заполнения [%]",
+                          &_ref_torque_pct,
+                          1.0f,
+                          100.0f,
+                          "%.2f",
+                          ImGuiInputTextFlags_EnterReturnsTrue)) {
+        _ref_torque_pct = std::clamp(_ref_torque_pct, -100.0f, 100.0f);
+    }
+    ImGui::PopItemWidth();
 }
 
 void ControlPanel::_draw_actions() {
