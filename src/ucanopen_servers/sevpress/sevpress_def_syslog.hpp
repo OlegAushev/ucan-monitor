@@ -11,10 +11,16 @@ namespace sevpress {
 
 class syslog {
 private:
-  static constexpr size_t domain_count{6};
+  static constexpr size_t domain_count{7};
 public:
   static constexpr std::array<std::string_view, domain_count> domains{
-      "Система", "Настройки", "CAN-сеть", "Датчики", "Двигатель", "Инвертор"};
+      "Система",
+      "Настройки",
+      "CAN-сеть",
+      "Датчики",
+      "Двигатель",
+      "Инвертор",
+      "ДПР"};
   static constexpr std::array<std::string_view, 6> levels{
       "      ", "[info]", "[ ok ]", "[warn]", "[fail]", "[crit]"};
 private:
@@ -46,15 +52,12 @@ private:
 
   // sensors
   static inline std::vector<std::string_view> const sensors_errors_{
-      "отказ датчика напряжения",
-      "отказ датчика тока"};
+      "отказ датчика напряжения", "отказ датчика тока"};
   static inline std::vector<std::string_view> const sensors_warnings_{};
 
   // motor
-  static inline std::vector<std::string_view> const motor_errors_{
-      "перегрев"};
-  static inline std::vector<std::string_view> const motor_warnings_{
-      "перегрев"};
+  static inline std::vector<std::string_view> const motor_errors_{"перегрев"};
+  static inline std::vector<std::string_view> const motor_warnings_{"перегрев"};
 
   // converter
   static inline std::vector<std::string_view> const converter_errors_{
@@ -72,30 +75,37 @@ private:
       "перегрев силового модуля",
       "перегрев МК"};
   static inline std::vector<std::string_view> const converter_warnings_{
-      "перегрев силового модуля",
-      "перегрев МК"};
+      "перегрев силового модуля", "перегрев МК"};
+
+  // hall
+  static inline std::vector<std::string_view> const hall_errors_{
+      "отказ"
+  };
+  static inline std::vector<std::string_view> const hall_warnings_{
+      "отказ"
+  };
+
 public:
   static inline std::array<std::vector<std::string_view>, domains.size()> const
-      errors = {sys_errors_,
-                settings_errors_,
-                can_errors_,
-                sensors_errors_,
-                motor_errors_,
-                converter_errors_};
+      errors = {
+          sys_errors_,
+          settings_errors_,
+          can_errors_,
+          sensors_errors_,
+          motor_errors_,
+          converter_errors_};
   static inline std::array<std::vector<std::string_view>, domains.size()> const
-      warnings = {sys_warnings_,
-                  settings_warnings_,
-                  can_warnings_,
-                  sensors_warnings_,
-                  motor_warnings_,
-                  converter_warnings_};
+      warnings = {
+          sys_warnings_,
+          settings_warnings_,
+          can_warnings_,
+          sensors_warnings_,
+          motor_warnings_,
+          converter_warnings_};
 private:
   static inline std::vector<std::string_view> const sys_messages_ = {
       "",
-      "Boot CPU1...",
-      "Boot CPU2...",
-      "CPU1 is ready.",
-      "CPU2 is ready.",
+      "Boot...",
       "Device is ready.",
       "Cannot perform operation - device is busy.",
       "Device is in error state.",
@@ -159,23 +169,11 @@ private:
       "Write mras config - ok.",
       "Write mras config - fail.",
 
-      "Read precharge config - ok.",
-      "Read precharge config - fail.",
-      "Load precharge default config.",
-      "Write precharge config - ok.",
-      "Write precharge config - fail.",
-
       "Read phase current sensor config - ok.",
       "Read phase current sensor config - fail.",
       "Load phase current sensor default config.",
       "Write phase current sensor config - ok.",
       "Write phase current sensor config - fail.",
-
-      "Read field current sensor config - ok.",
-      "Read field current sensor config - fail.",
-      "Load field current sensor default config.",
-      "Write field current sensor config - ok.",
-      "Write field current sensor config - fail.",
 
       "Read dc voltage sensor config - ok.",
       "Read dc voltage sensor config - fail.",
@@ -183,47 +181,11 @@ private:
       "Write dc voltage sensor config - ok.",
       "Write dc voltage sensor config - fail.",
 
-      "Read resolver config - ok.",
-      "Read resolver config - fail.",
-      "Load resolver default config.",
-      "Write resolver config - ok.",
-      "Write resolver config - fail.",
-
-      "Read resolver calibration config - ok.",
-      "Read resolver calibration config - fail.",
-      "Load resolver calibration default config.",
-      "Write resolver calibration config - ok.",
-      "Write resolver calibration config - fail.",
-
-      "Read insulation controller config - ok.",
-      "Read insulation controller config - fail.",
-      "Load insulation controller default config.",
-      "Write insulation controller config - ok.",
-      "Write insulation controller config - fail.",
-
-      "Read throttle controller config - ok.",
-      "Read throttle controller config - fail.",
-      "Load throttle controller default config.",
-      "Write throttle controller config - ok.",
-      "Write throttle controller config - fail.",
-
-      "Read CAN-PDU config - ok.",
-      "Read CAN-PDU config - fail.",
-      "Load CAN-PDU default config.",
-      "Write CAN-PDU config - ok.",
-      "Write CAN-PDU config - fail.",
-
-      "Read DIO controller config - ok.",
-      "Read DIO controller config - fail.",
-      "Load DIO controller default config.",
-      "Write DIO controller config - ok.",
-      "Write DIO controller config - fail.",
-
-      "Read CAN gear temperature sensor config - ok.",
-      "Read CAN gear temperature sensor config - fail.",
-      "Load CAN gear temperature sensor default config.",
-      "Write CAN gear temperature sensor config - ok.",
-      "Write CAN gear temperature sensor config - fail.",
+      "Read position sensor config - ok.",
+      "Read position sensor config - fail.",
+      "Load position sensor default config.",
+      "Write position sensor config - ok.",
+      "Write position sensor config - fail.",
   };
   static inline std::vector<std::string_view> const can_messages_ = {
       "CAN SDO-request is lost."};
@@ -236,12 +198,13 @@ private:
   static inline std::vector<std::string_view> const isolation_messages_{};
 public:
   static inline std::array<std::vector<std::string_view>, domains.size()> const
-      messages = {sys_messages_,
-                  settings_messages_,
-                  can_messages_,
-                  sensors_messages_,
-                  motor_messages_,
-                  converter_messages_};
+      messages = {
+          sys_messages_,
+          settings_messages_,
+          can_messages_,
+          sensors_messages_,
+          motor_messages_,
+          converter_messages_};
 private:
   syslog();
 public:

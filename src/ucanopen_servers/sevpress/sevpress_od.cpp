@@ -91,6 +91,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3001, 0x04}, {"config", "syslog", "sensors_enabled_errors",   "hex",  OD_ACCESS_RW, OD_UINT32}},
 {{0x3001, 0x05}, {"config", "syslog", "motor_enabled_errors",     "hex",  OD_ACCESS_RW, OD_UINT32}},
 {{0x3001, 0x06}, {"config", "syslog", "converter_enabled_errors", "hex",  OD_ACCESS_RW, OD_UINT32}},
+{{0x3001, 0x07}, {"config", "syslog", "hall_enabled_errors",      "hex",  OD_ACCESS_RW, OD_UINT32}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x3002, 0x01}, {"config", "drive", "forward_direction", "",       OD_ACCESS_RW, OD_INT32}},
 {{0x3002, 0x02}, {"config", "drive", "torque_slope",      "pu/s",   OD_ACCESS_RW, OD_FLOAT32}},
