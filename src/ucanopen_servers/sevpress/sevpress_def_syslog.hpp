@@ -189,6 +189,12 @@ private:
       "Load position sensor default config.",
       "Write position sensor config - ok.",
       "Write position sensor config - fail.",
+
+      "Read position sensor emulator config - ok.",
+      "Read position sensor emulator config - fail.",
+      "Load position sensor emulator default config.",
+      "Write position sensor emulator config - ok.",
+      "Write position sensor emulator config - fail.",
   };
   static inline std::vector<std::string_view> const can_messages_ = {
       "CAN SDO-request is lost."};
