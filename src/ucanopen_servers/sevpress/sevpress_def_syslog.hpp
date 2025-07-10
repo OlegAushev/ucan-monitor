@@ -82,11 +82,13 @@ private:
 
   // hall
   static inline std::vector<std::string_view> const hall_errors_{
-      "отказ"
-  };
+    "отказ", "ошибка калибровки"};
   static inline std::vector<std::string_view> const hall_warnings_{
-      "отказ"
-  };
+      "отказ",
+      "калибровка, этап 1",
+      "калибровка, этап 2",
+      "калибровка, этап 3",
+      "калибровка, обработка"};
 
 public:
   static inline std::array<std::vector<std::string_view>, domains.size()> const
@@ -96,7 +98,8 @@ public:
           can_errors_,
           sensors_errors_,
           motor_errors_,
-          converter_errors_};
+          converter_errors_,
+          hall_errors_};
   static inline std::array<std::vector<std::string_view>, domains.size()> const
       warnings = {
           sys_warnings_,
@@ -104,7 +107,8 @@ public:
           can_warnings_,
           sensors_warnings_,
           motor_warnings_,
-          converter_warnings_};
+          converter_warnings_,
+          hall_warnings_};
 private:
   static inline std::vector<std::string_view> const sys_messages_ = {
       "",

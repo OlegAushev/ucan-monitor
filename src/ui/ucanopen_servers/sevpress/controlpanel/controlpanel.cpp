@@ -432,13 +432,13 @@ void ControlPanel::_draw_actions() {
 
         if (ImGui::Button(ICON_MDI_COMPASS_OUTLINE " Калибровать ДПР",
                           ImVec2{-1.f, 0.f})) {
-            ImGui::OpenPopup("Внимание!##calibrate_resolver");
+            ImGui::OpenPopup("Внимание!##calibrate_angle_sensor");
         }
 
         if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE
                           " Сохранить Результаты Калибровки",
                           ImVec2{-1.f, 0.f})) {
-            ImGui::OpenPopup("Внимание!##save_resolver_config");
+            ImGui::OpenPopup("Внимание!##save_angle_sensor_config");
         }
 
         ImGui::PopStyleVar();
@@ -487,7 +487,7 @@ void ControlPanel::_draw_popups() {
         ImGui::EndPopup();
     }
 
-    if (ImGui::BeginPopupModal("Внимание!##calibrate_resolver",
+    if (ImGui::BeginPopupModal("Внимание!##calibrate_angle_sensor",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::Text("Запускается процедура калибровки. Продолжить?");
@@ -499,13 +499,13 @@ void ControlPanel::_draw_popups() {
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
         if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
-            _server->exec("ctl", "drive", "calibrate_resolver");
+            _server->exec("ctl", "drive", "calibrate_angle_sensor");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
     }
 
-    if (ImGui::BeginPopupModal("Внимание!##save_resolver_config",
+    if (ImGui::BeginPopupModal("Внимание!##save_angle_sensor_config",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::Text("Результаты калибровки будут перезаписаны. Продолжить?");
@@ -517,7 +517,7 @@ void ControlPanel::_draw_popups() {
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
         if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
-            _server->exec("ctl", "drive", "save_resolver_config");
+            _server->exec("ctl", "drive", "save_angle_sensor_config");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();

@@ -18,8 +18,8 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x100A, 0x02}, {"info", "sys", "firmware_branch", "", OD_ACCESS_CONST, OD_STRING}},
 
 {{0x1010, 0x01}, {"ctl", "sys", "save_all_parameters", "", OD_ACCESS_WO, OD_EXEC}},
-{{0x1011, 0x01}, {"ctl", "sys", "restore_all_default_parameters", "", OD_ACCESS_WO}},
-{{0x1011, 0x04}, {"ctl", "sys", "restore_default_parameter",        "", OD_ACCESS_WO}},
+{{0x1011, 0x01}, {"ctl", "sys", "restore_all_default_parameters", "", OD_ACCESS_WO, OD_EXEC}},
+{{0x1011, 0x04}, {"ctl", "sys", "restore_default_parameter",        "", OD_ACCESS_WO, OD_EXEC}},
 
 {{0x1018, 0x04}, {"info", "sys", "serial_number", "", OD_ACCESS_CONST, OD_UINT32}},
 
@@ -185,6 +185,11 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300D, 0x0A}, {"config", "hall_emulator", "sector_3_entry_neg", "°",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300D, 0x0B}, {"config", "hall_emulator", "sector_4_entry_neg", "°",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300D, 0x0C}, {"config", "hall_emulator", "sector_5_entry_neg", "°",  OD_ACCESS_RW, OD_FLOAT32}},
+//##########################################################################################################################################################################################################################################################################################################
+{{0x300E, 0x01}, {"config", "hall_calibrator", "phase_current",       "pu",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300E, 0x02}, {"config", "hall_calibrator", "phase_current_slope", "pu",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300E, 0x03}, {"config", "hall_calibrator", "speed",               "rpm", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300E, 0x04}, {"config", "hall_calibrator", "elrevolution_num",    "",    OD_ACCESS_RW, OD_INT32}},
 //##########################################################################################################################################################################################################################################################################################################
 }
 };

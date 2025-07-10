@@ -126,6 +126,7 @@ enum class DriveState {
   running,
   stopping,
   testing,
+  calibrating,
 };
 
 inline std::unordered_set<int> const drive_state_values = {
@@ -137,7 +138,7 @@ inline std::unordered_set<int> const drive_state_values = {
     std::to_underlying(DriveState::running),
     std::to_underlying(DriveState::stopping),
     std::to_underlying(DriveState::testing),
-    // std::to_underlying(DriveState::calibrating),
+    std::to_underlying(DriveState::calibrating),
 };
 
 inline std::unordered_map<DriveState, std::string_view> const
@@ -150,7 +151,7 @@ inline std::unordered_map<DriveState, std::string_view> const
         {DriveState::running, "работа"},
         {DriveState::stopping, "останов"},
         {DriveState::testing, "тестирование"},
-        // {DriveState::calibrating, "калибровка"},
+        {DriveState::calibrating, "калибровка"},
 };
 
 inline std::unordered_map<DriveState, std::string_view> const
@@ -163,7 +164,7 @@ inline std::unordered_map<DriveState, std::string_view> const
         {DriveState::running, "РАБОТА"},
         {DriveState::stopping, "ОСТАНОВ"},
         {DriveState::testing, "ТЕСТИРОВАНИЕ"},
-        // {DriveState::calibrating, "КАЛИБРОВКА"},
+        {DriveState::calibrating, "КАЛИБРОВКА"},
 };
 
 enum class OperatingMode {
