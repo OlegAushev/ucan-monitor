@@ -87,6 +87,7 @@ private:
     "ошибка опр-ия секторов",
     "ошибка опр-ия пол. углов",
     "ошибка опр-ия отр. углов",
+    "калибровка отменена"
   };
   static inline std::vector<std::string_view> const hall_warnings_{
       "отказ",
