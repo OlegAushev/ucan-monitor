@@ -85,6 +85,9 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x56}, {"watch", "resolver",  "cosmin",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5000, 0x61}, {"watch", "pdu",       "v_batt",   "V",    OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x62}, {"watch", "pdu",   "uptime",   "s",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x63}, {"watch", "pdu",   "tMCU",     "°C", OD_ACCESS_RO, OD_FLOAT32}},
+
 
 {{0x5000, 0x71}, {"watch", "reduction_gear",    "tIn",  "°C",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x72}, {"watch", "reduction_gear",    "tOut", "°C",    OD_ACCESS_RO, OD_FLOAT32}},
@@ -242,6 +245,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3010, 0x03}, {"config", "can_pdu", "tx_can_id",     "",     OD_ACCESS_RW, OD_UINT32}},
 {{0x3010, 0x04}, {"config", "can_pdu", "rx_timeout",    "ms",   OD_ACCESS_RW, OD_UINT32}},
 {{0x3010, 0x05}, {"config", "can_pdu", "tx_period",     "ms",   OD_ACCESS_RW, OD_UINT32}},
+{{0x3010, 0x06}, {"config", "can_pdu", "rx_service_can_id", "", OD_ACCESS_RW, OD_UINT32}},
 //##############################################################################
 {{0x3011, 0x01}, {"config", "digital_io", "enabled",        "",     OD_ACCESS_RW, OD_BOOL}},
 {{0x3011, 0x02}, {"config", "digital_io", "signal_set",     "",     OD_ACCESS_RW, OD_UINT32}},
