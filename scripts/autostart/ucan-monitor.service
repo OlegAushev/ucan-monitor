@@ -1,0 +1,11 @@
+[Unit]
+Description=Start UCAN-Monitor
+After=ucan-cansocket.service
+[Service]
+Type=exec
+ExecStart=/home/cve/start-ucan-monitor.sh
+Restart=always
+RestartSec=2s
+TimeoutSec=infinity
+[Install]
+WantedBy=default.target

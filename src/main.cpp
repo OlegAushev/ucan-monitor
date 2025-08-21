@@ -269,9 +269,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                 "Панель диаграмм 4",
                                                 false));
     } else if (server_name == "moyka-dashboard-2") {
-        glfwMaximizeWindow(window);
-        glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
-
+        glfwSetWindowAttrib(window, GLFW_AUTO_ICONIFY, GLFW_FALSE);
         GLFWmonitor* monitor = glfwGetPrimaryMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
         glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);

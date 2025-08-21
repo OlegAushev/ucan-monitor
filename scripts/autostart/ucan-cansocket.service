@@ -1,0 +1,7 @@
+[Unit]
+Description=Start CAN socket
+[Service]
+Type=oneshot
+ExecStart=/usr/sbin/socketcan_enable.sh can0 250000
+[Install]
+WantedBy=default.target
