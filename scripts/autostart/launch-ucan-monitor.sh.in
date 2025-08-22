@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-executable_dir=/home/oleg/dev/pc/ucan-monitor/bin
+executable_dir="__project_dir__/bin"
 executable=ucan-monitor
 
 if [ -d "$executable_dir" ]

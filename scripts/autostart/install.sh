@@ -1,20 +1,57 @@
 #!/bin/bash
 #
-sudo cp -i ucan-cansocket.service /etc/systemd/system
-sudo cp socketcan_enable.sh /usr/sbin
-cd /usr/sbin
-sudo chmod a+x socketcan_enable.sh
-cd -
-#
-sudo systemctl daemon-reload
-sudo systemctl enable ucan-cansocket.service
-#
-mkdir -p $HOME/.local/share/systemd/user
-cp -i ucan-monitor.service $HOME/.local/share/systemd/user
-cp -i start-ucan-monitor.sh $HOME
-cd $HOME
-chmod a+x start-ucan-monitor.sh
-cd -
-#
+set -e
+
+# Get the absolute path of the project root
+project_dir="$(cd "$(dirname "$0")/../.." && pwd)"
+echo "Project root is '$project_dir'"
+
+# Setup systemd user service
+systemd_user_dir="$HOME/.local/share/systemd/user"
+systemd_user_service_name="ucan-monitor.service"
+ucan_monitor_service_template="$(dirname "$0")/ucan-monitor.service.in"
+ucan_monitor_service="$(dirname "$0")/$systemd_user_service_name"
+
+# Generate service unit configuration file
+sed "s|__project_dir__|$project_dir|g" "$ucan_monitor_service_template" > "$ucan_monitor_service"
+echo "Generated $systemd_user_service_name unit file: '$ucan_monitor_service'"
+
+echo "Checking '$systemd_user_dir'..."
+if [ ! -d "$systemd_user_dir" ]
+then
+  mkdir -p "$systemd_user_dir"
+  echo "Created '$systemd_user_dir'"
+else
+  echo "'$systemd_user_dir' already exists"
+fi
+
+cp "$ucan_monitor_service" "$systemd_user_dir"
+echo "Copied $systemd_user_service_name unit file to '$systemd_user_dir'"
+
+echo "Enabling $systemd_user_service_name..."
 systemctl --user daemon-reload
-systemctl --user enable ucan-cansocket.service
+systemctl --user enable "$systemd_user_service_name"
+
+# Setup systemd system service
+systemd_system_dir="/etc/systemd/system"
+systemd_system_service_name="ucan-cansocket.service"
+ucan_cansocket_service="$(dirname "$0")/$systemd_system_service_name"
+
+cansocket_system_script_dir="/usr/sbin"
+cansocket_enable_script="$(dirname "$0")/../socketcan_enable.sh"
+cansocket_system_script="$cansocket_system_script_dir/socketcan_enable.sh"
+
+echo "Installing CAN socket script to '$cansocket_system_script_dir'..."
+sudo cp "$cansocket_enable_script" "$cansocket_system_script_dir"
+sudo chmod +x "$cansocket_system_script"
+echo "Installed '$cansocket_system_script' and made it executable"
+
+sudo cp "$ucan_cansocket_service" "$systemd_system_dir"
+echo "Copied $systemd_system_service_name unit file to '$systemd_system_dir'"
+
+echo "Enabling $systemd_system_service_name..."
+sudo systemctl daemon-reload
+sudo systemctl enable "$systemd_system_service_name"
+
+echo "Done"
+exit 0

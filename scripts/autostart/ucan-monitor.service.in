@@ -1,9 +1,10 @@
 [Unit]
-Description=Start UCAN-Monitor
+Description=Launch UCAN-Monitor at OS start
 After=ucan-cansocket.service
 [Service]
 Type=exec
-ExecStart=/home/cve/start-ucan-monitor.sh
+WorkingDirectory=__project_dir__/bin
+ExecStart=__project_dir__/bin/ucan-monitor
 Restart=always
 RestartSec=2s
 TimeoutSec=infinity
