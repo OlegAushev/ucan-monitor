@@ -6,6 +6,7 @@ project_dir="$(cd "$(dirname "$0")/../.." && pwd)"
 build_dir="$project_dir/build"
 bin_target="$project_dir/bin/ucan-monitor"
 
+echo "Starting installation"
 echo "Project root is '$project_dir'"
 
 # --- Build ---
@@ -90,5 +91,5 @@ echo "Enabling $systemd_system_service_name..."
 sudo systemctl daemon-reload
 sudo systemctl enable "$systemd_system_service_name"
 
-echo "Done"
+echo "installation complete"
 exit 0
