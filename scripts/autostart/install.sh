@@ -2,16 +2,34 @@
 #
 set -euo pipefail
 
+# Function to detect Raspberry Pi
+is_raspberry_pi() {
+  # Check /proc/device-tree/model (newer RPi)
+  if [ -f /proc/device-tree/model ]; then
+    if grep -qi "raspberry" /proc/device-tree/model; then
+      return 0
+    fi
+  fi
+
+  # Fallback: check /proc/cpuinfo for older RPi models
+  if grep -qE "BCM|Raspberry Pi" /proc/cpuinfo 2>/dev/null; then
+    return 0
+  fi
+
+  return 1
+}
+
 project_dir="$(cd "$(dirname "$0")/../.." && pwd)"
 build_dir="$project_dir/build"
 bin_target="$project_dir/bin/ucan-monitor"
 
+echo "Starting installation"
 echo "Project root is '$project_dir'"
 
 # --- Build ---
 if [ -f "$bin_target" ]
 then
-    echo "Binary already exists, skipping build"
+    echo "Binary already exists, build skipped"
 else
   mkdir -p "$build_dir"
 
@@ -90,5 +108,41 @@ echo "Enabling $systemd_system_service_name..."
 sudo systemctl daemon-reload
 sudo systemctl enable "$systemd_system_service_name"
 
-echo "Done"
+# --- SPI-CAN converter setup for Raspberry Pi ---
+if is_raspberry_pi
+then
+  firmware_config_file="/boot/firmware/config.txt"
+  firmware_configuration_marker="Custom config for SPI-CAN converter"
+  firmware_custom_configuration=$(cat <<EOF
+#
+# $firmware_configuration_marker
+dtoverlay=mcp2515-can0,oscillator=12000000,interrupt=12
+dtoverlay=spi-bcm2835-overlay
+EOF
+)
+
+  echo "Configuring SPI-CAN..."
+
+  # Create file if it doesn't exist
+  if [ ! -f "$firmware_config_file" ]
+  then
+    sudo mkdir -p "$(dirname "$firmware_config_file")"
+    sudo touch "$firmware_config_file"
+    echo "Created '$firmware_config_file'"
+  fi
+
+  # Append custom configuration if not already present
+  if ! grep -Fq "$firmware_configuration_marker" "$firmware_config_file"
+  then
+    echo "$firmware_custom_configuration" | sudo tee -a "$firmware_config_file" > /dev/null
+    echo "Added $firmware_configuration_marker to '$firmware_config_file'"
+  else
+    echo "$firmware_configuration_marker already present in '$firmware_config_file'"
+  fi
+
+else
+  echo "Raspberry Pi is not detected, skipping SPI-CAN configuration"
+fi
+
+echo "Installation complete!"
 exit 0
