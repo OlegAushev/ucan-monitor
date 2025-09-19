@@ -10,6 +10,8 @@
 #include <ucanopen/server/services/sdo/server_sdo_service.h>
 #include <vector>
 
+class CsvLogger;
+
 namespace ucanopen {
 
 class ServerWatchService : public SdoSubscriber {
@@ -38,8 +40,10 @@ private:
     std::map<WatchKey, WatchCurrentData> _data;
     mutable std::mutex _data_mtx;
 
+    std::unique_ptr<CsvLogger> _logger;
 public:
     ServerWatchService(impl::Server& server, ServerSdoService& sdo_service);
+    ~ServerWatchService();
     void send();
     virtual FrameHandlingStatus handle_sdo(ODEntryIter entry,
                                            SdoType sdo_type,
