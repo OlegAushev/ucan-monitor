@@ -1,6 +1,6 @@
 #include "server_watch_service.h"
 #include <bsclog/bsclog.h>
-#include "csv_logger/csv_logger.hpp"
+#include "csv_logger/csv_logger_num.hpp"
 
 namespace ucanopen {
 
@@ -9,7 +9,7 @@ ServerWatchService::ServerWatchService(impl::Server& server,
         : SdoSubscriber(sdo_service),
           _server(server),
           _sdo_service(sdo_service),
-          _logger(std::make_unique<CsvLogger>("logs", 5 * 1024 * 1024, std::chrono::days{7})) {
+          _logger(std::make_unique<CsvLogger>(CsvLogger::Config{"logs", 1 * 1024 * 1024, 500})) {
     _daq_timepoint = std::chrono::steady_clock::now();
 
     for (const auto& [key, object] : _server.dictionary().entries) {
