@@ -189,11 +189,6 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300C, 0x03}, {"config", "hall_calibrator", "speed",               "rpm", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300C, 0x04}, {"config", "hall_calibrator", "elrevolution_num",    "",    OD_ACCESS_RW, OD_INT32}},
 //##########################################################################################################################################################################################################################################################################################################
-{{0x300E, 0x01}, {"config", "hall_calibrator", "phase_current",       "pu",  OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300E, 0x02}, {"config", "hall_calibrator", "phase_current_slope", "pu",  OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300E, 0x03}, {"config", "hall_calibrator", "speed",               "rpm", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300E, 0x04}, {"config", "hall_calibrator", "elrevolution_num",    "",    OD_ACCESS_RW, OD_INT32}},
-//##########################################################################################################################################################################################################################################################################################################
 }
 };
 
