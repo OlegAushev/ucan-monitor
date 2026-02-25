@@ -71,21 +71,15 @@ void DataPanel::draw_tpdo1_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Режим Работы");
-        ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(server_->opmode_str().data());
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Режим Управления");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(server_->ctlmode_str().data());
+        ImGui::TextUnformatted(server_->control_mode_str().data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Режим СУ");
+        ImGui::TextUnformatted("Режим Модели");
         ImGui::TableSetColumnIndex(1);
-        ImGui::TextUnformatted(server_->ctlloop_str().data());
+        ImGui::TextUnformatted(server_->model_mode_str().data());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);

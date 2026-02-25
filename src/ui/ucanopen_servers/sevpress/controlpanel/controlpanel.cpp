@@ -23,6 +23,8 @@ void ControlPanel::_reset_refs() {
     _ref_angle = 0;
     _ref_current_pct = 0;
     _ref_voltage_pct = 0;
+    _model_mode = ModelMode::idle;
+    _model_mode_v = std::to_underlying(ModelMode::idle);
 }
 
 void ControlPanel::_update_refs() {
@@ -30,8 +32,6 @@ void ControlPanel::_update_refs() {
         _server->has_any_error() != 0) {
         _start = false;
     }
-
-    _server->set_opmode(_opmode);
 
     _server->toggle_emergency(_emergency);
     if (_emergency) {
@@ -41,16 +41,37 @@ void ControlPanel::_update_refs() {
     _server->toggle_power(_power);
     _server->toggle_start(_start);
 
-    _ctlmode = static_cast<ControlMode>(_ctlmode_v);
-    _ctlloop = static_cast<ControlLoop>(_ctlloop_v);
-    _server->set_ctlmode(_ctlmode);
-    _server->set_ctlloop(_ctlloop);
+    _control_mode = static_cast<ControlMode>(_control_mode_v);
+    _model_mode = static_cast<ModelMode>(_model_mode_v);
+    _server->set_control_mode(_control_mode);
+    _server->set_model_mode(_model_mode);
 
-    _server->set_ref_torque(_ref_torque_pct / 100.0f);
-    _server->set_ref_speed(_ref_speed);
-    _server->set_ref_angle(_ref_angle);
-    _server->set_ref_current(_ref_current_pct / 100.0f);
-    _server->set_ref_voltage(_ref_voltage_pct / 100.0f);
+    switch (_control_mode) {
+    case ControlMode::torque:
+        _server->set_ref(static_cast<int16_t>(_ref_torque_pct * 100.0f));
+        break;
+    case ControlMode::speed:
+        _server->set_ref(_ref_speed);
+        break;
+    case ControlMode::angle:
+        _server->set_ref(static_cast<int16_t>(_ref_angle));
+        break;
+    }
+
+    switch (_model_mode) {
+    case ModelMode::semiclosed:
+    case ModelMode::open_current:
+        _server->set_aux_ref(
+                static_cast<int16_t>(_ref_current_pct * 100.0f));
+        break;
+    case ModelMode::open_voltage:
+        _server->set_aux_ref(
+                static_cast<int16_t>(_ref_voltage_pct * 100.0f));
+        break;
+    default:
+        _server->set_aux_ref(0);
+        break;
+    }
 }
 
 void ControlPanel::draw() {
@@ -59,8 +80,7 @@ void ControlPanel::draw() {
     _read_keyboard();
 
     _draw_dash();
-    _draw_normal_mode_controls();
-    _draw_testing_mode_controls();
+    _draw_controls();
 
     _draw_actions();
     _draw_popups();
@@ -104,21 +124,6 @@ void ControlPanel::_draw_dash() {
                      ImGuiInputTextFlags_ReadOnly);
     ImGui::PopItemWidth();
 
-    // Operation mode selection
-    ImGui::PushItemWidth(200);
-    auto opmode_preview = opmode_names.at(_opmode).data();
-    if (ImGui::BeginCombo("Режим Работы", opmode_preview)) {
-        for (const auto& mode : opmode_names) {
-            bool is_selected = (mode.first == _opmode);
-            if (ImGui::Selectable(mode.second.data(), is_selected)) {
-                _opmode = mode.first;
-                _reset_refs();
-            }
-        }
-        ImGui::EndCombo();
-    }
-    ImGui::PopItemWidth();
-
     // emergency
     ToggleButton(ICON_MDI_ALERT_OUTLINE "   АВАРИЯ   " ICON_MDI_ALERT_OUTLINE,
                  _emergency,
@@ -159,120 +164,120 @@ void ControlPanel::_read_keyboard() {
     }
 }
 
-void ControlPanel::_draw_normal_mode_controls() {
-    bool enabled = _server->opmode() == OperatingMode::normal;
-    if (enabled) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-    } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-    }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-    ImGui::PopStyleColor();
-
-    bool selected = _opmode == OperatingMode::normal;
-    ui::util::Switchable run_mode_header(selected, []() {
-        ImGui::SameLine();
-        ImGui::SeparatorText("Нормальный Режим");
-    });
-
-    if (!selected) {
-        return;
-    }
+void ControlPanel::_draw_controls() {
+    ImGui::SeparatorText("Управление");
 
     // torque input
     ImGui::RadioButton("##torque_ctlmode",
-                       &_ctlmode_v,
+                       &_control_mode_v,
                        std::to_underlying(ControlMode::torque));
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
         ImGui::SetTooltip("Управление моментом");
     }
     ImGui::SameLine();
 
-    util::Switchable torque_input(_ctlmode == ControlMode::torque, [this]() {
-        ImGui::PushItemWidth(140);
-        if (ImGui::InputFloat("Момент [%]",
-                              &_ref_torque_pct,
-                              1.0f,
-                              100.0f,
-                              "%.2f",
-                              ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _ref_torque_pct = std::clamp(_ref_torque_pct, -100.0f, 100.0f);
-        }
-        if (_ctlmode != ControlMode::torque) {
-            _ref_torque_pct = 0;
-        }
-        ImGui::PopItemWidth();
-    });
+    util::Switchable torque_input(
+            _control_mode == ControlMode::torque, [this]() {
+                ImGui::PushItemWidth(140);
+                if (ImGui::InputFloat("Момент [%]",
+                                      &_ref_torque_pct,
+                                      1.0f,
+                                      100.0f,
+                                      "%.2f",
+                                      ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _ref_torque_pct =
+                            std::clamp(_ref_torque_pct, -100.0f, 100.0f);
+                }
+                if (_control_mode != ControlMode::torque) {
+                    _ref_torque_pct = 0;
+                }
+                ImGui::PopItemWidth();
+            });
 
     // speed input
     ImGui::RadioButton("##speed_ctlmode",
-                       &_ctlmode_v,
-                       std::to_underlying(::sevpress::ControlMode::speed));
+                       &_control_mode_v,
+                       std::to_underlying(ControlMode::speed));
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
         ImGui::SetTooltip("Управление скоростью");
     }
     ImGui::SameLine();
 
-    util::Switchable speed_input(_ctlmode == ControlMode::speed, [this]() {
-        ImGui::PushItemWidth(140);
-        if (ImGui::InputScalar("Скорость [об/мин]",
-                               ImGuiDataType_S16,
-                               &_ref_speed,
-                               NULL,
-                               NULL,
-                               NULL,
-                               ImGuiInputTextFlags_EnterReturnsTrue)) {
-            _ref_speed = std::clamp(_ref_speed, int16_t(-5000), int16_t(5000));
-        }
-        if (_ctlmode != ControlMode::speed) {
-            _ref_speed = 0;
-        }
-        ImGui::PopItemWidth();
-    });
+    util::Switchable speed_input(
+            _control_mode == ControlMode::speed, [this]() {
+                ImGui::PushItemWidth(140);
+                if (ImGui::InputScalar(
+                            "Скорость [об/мин]",
+                            ImGuiDataType_S16,
+                            &_ref_speed,
+                            NULL,
+                            NULL,
+                            NULL,
+                            ImGuiInputTextFlags_EnterReturnsTrue)) {
+                    _ref_speed =
+                            std::clamp(_ref_speed, int16_t(-5000), int16_t(5000));
+                }
+                if (_control_mode != ControlMode::speed) {
+                    _ref_speed = 0;
+                }
+                ImGui::PopItemWidth();
+            });
 
-    if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Режим СУ",
-                                ImGuiTreeNodeFlags_Framed)) {
-        // control loop
-        ImGui::RadioButton("Замкнутый",
-                           &_ctlloop_v,
-                           std::to_underlying(::sevpress::ControlLoop::closed));
-        ImGui::RadioButton("Разомкнутый, ток",
-                           &_ctlloop_v,
-                           std::to_underlying(::sevpress::ControlLoop::open));
-        ImGui::RadioButton(
-                "Замкнутый + iD",
-                &_ctlloop_v,
-                std::to_underlying(::sevpress::ControlLoop::semiclosed));
-        ImGui::RadioButton("Разомкнутый, напр.",
-                           &_ctlloop_v,
-                           std::to_underlying(::sevpress::ControlLoop::openvolt));
+    // angle input
+    ImGui::RadioButton("##angle_ctlmode",
+                       &_control_mode_v,
+                       std::to_underlying(ControlMode::angle));
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+        ImGui::SetTooltip("Управление углом");
+    }
+    ImGui::SameLine();
 
-        ImGui::PushItemWidth(200);
-
-        switch (_ctlloop) {
-        case ControlLoop::closed:
-            // do nothing
-            break;
-        case ControlLoop::open:
-            if (ImGui::InputFloat("Ток D [%]",
-                                  &_ref_current_pct,
-                                  0.1f,
-                                  100.0f,
-                                  "%.1f",
-                                  ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _ref_current_pct = std::clamp(_ref_current_pct, 0.0f, 100.0f);
-            }
-            if (_ref_speed == 0) {
-                if (ImGui::InputInt("Угол [°]",
+    util::Switchable angle_input(
+            _control_mode == ControlMode::angle, [this]() {
+                ImGui::PushItemWidth(140);
+                if (ImGui::InputInt("Угол [° эл.]",
                                     &_ref_angle,
                                     1,
                                     100,
                                     ImGuiInputTextFlags_EnterReturnsTrue)) {
-                    // _ref_angle = std::clamp(_ref_angle, 0, 360);
                 }
-            }
+                if (_control_mode != ControlMode::angle) {
+                    _ref_angle = 0;
+                }
+                ImGui::PopItemWidth();
+            });
+
+    if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Режим Модели",
+                                ImGuiTreeNodeFlags_Framed)) {
+        ImGui::RadioButton(
+                "Ожидание",
+                &_model_mode_v,
+                std::to_underlying(ModelMode::idle));
+        ImGui::RadioButton(
+                "Замкнутый",
+                &_model_mode_v,
+                std::to_underlying(ModelMode::closed));
+        ImGui::RadioButton(
+                "Полузамкнутый",
+                &_model_mode_v,
+                std::to_underlying(ModelMode::semiclosed));
+        ImGui::RadioButton(
+                "Разомкнутый I",
+                &_model_mode_v,
+                std::to_underlying(ModelMode::open_current));
+        ImGui::RadioButton(
+                "Разомкнутый V",
+                &_model_mode_v,
+                std::to_underlying(ModelMode::open_voltage));
+
+        ImGui::PushItemWidth(200);
+
+        switch (_model_mode) {
+        case ModelMode::idle:
+        case ModelMode::closed:
             break;
-        case ControlLoop::semiclosed:
+        case ModelMode::semiclosed:
+        case ModelMode::open_current:
             if (ImGui::InputFloat("Ток D [%]",
                                   &_ref_current_pct,
                                   0.1f,
@@ -283,23 +288,15 @@ void ControlPanel::_draw_normal_mode_controls() {
                         std::clamp(_ref_current_pct, -100.0f, 100.0f);
             }
             break;
-        case ControlLoop::openvolt:
-            if (ImGui::InputFloat("Напряжение [%]",
+        case ModelMode::open_voltage:
+            if (ImGui::InputFloat("Напряжение D [%]",
                                   &_ref_voltage_pct,
                                   0.1f,
                                   100.0f,
                                   "%.1f",
                                   ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _ref_voltage_pct = std::clamp(_ref_voltage_pct, 0.0f, 100.0f);
-            }
-            if (_ref_speed == 0) {
-                if (ImGui::InputInt("Угол [°]",
-                                    &_ref_angle,
-                                    1,
-                                    100,
-                                    ImGuiInputTextFlags_EnterReturnsTrue)) {
-                    // _ref_angle = std::clamp(_ref_angle, 0, 360);
-                }
+                _ref_voltage_pct =
+                        std::clamp(_ref_voltage_pct, 0.0f, 100.0f);
             }
             break;
         }
@@ -356,38 +353,6 @@ void ControlPanel::_draw_normal_mode_controls() {
         }
         ImGui::PopItemWidth();
     }
-}
-
-void ControlPanel::_draw_testing_mode_controls() {
-    bool enabled = _server->opmode() == ::sevpress::OperatingMode::testing;
-    if (enabled) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
-    } else {
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-    }
-    ImGui::TextUnformatted(ICON_MDI_SQUARE_ROUNDED);
-    ImGui::PopStyleColor();
-
-    bool selected = _opmode == ::sevpress::OperatingMode::testing;
-    ui::util::Switchable hwtest_mode_header(selected, []() {
-        ImGui::SameLine();
-        ImGui::SeparatorText("Режим Тестирования");
-    });
-
-    if (!selected) {
-        return;
-    }
-
-    ImGui::PushItemWidth(140);
-    if (ImGui::InputFloat("Коэф. Заполнения [%]",
-                          &_ref_torque_pct,
-                          1.0f,
-                          100.0f,
-                          "%.2f",
-                          ImGuiInputTextFlags_EnterReturnsTrue)) {
-        _ref_torque_pct = std::clamp(_ref_torque_pct, -100.0f, 100.0f);
-    }
-    ImGui::PopItemWidth();
 }
 
 void ControlPanel::_draw_actions() {

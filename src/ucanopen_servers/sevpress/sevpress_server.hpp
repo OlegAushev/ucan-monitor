@@ -26,29 +26,19 @@ private:
     std::atomic<bool> emergency_stop{false};
     std::atomic<bool> power{false};
     std::atomic<bool> start{false};
-    std::atomic<ControlMode> ctlmode{ControlMode::torque};
-    std::atomic<float> ref_torque{0};
-    std::atomic<int16_t> ref_speed{0};
+    std::atomic<ControlMode> control_mode{ControlMode::torque};
+    std::atomic<ModelMode> model_mode{ModelMode::idle};
+    std::atomic<int16_t> ref{0};
+    std::atomic<int16_t> aux_ref{0};
   } _rpdo1;
-
-  struct {
-    std::atomic<int16_t> ref_angle{0};
-    std::atomic<float> ref_current{0};
-    std::atomic<float> ref_voltage{0};
-    std::atomic<OperatingMode> opmode{OperatingMode::normal};
-    std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
-  } _rpdo2;
 
   struct {
     std::atomic<DriveState> drive_state{DriveState::init};
     std::atomic<bool> pwm_on{false};
     std::atomic<bool> error{false};
     std::atomic<bool> warning{false};
-    std::atomic<OperatingMode> opmode{OperatingMode::normal};
-    std::atomic<ControlMode> ctlmode{ControlMode::torque};
-    std::atomic<ControlLoop> ctlloop{ControlLoop::closed};
-
-    std::atomic<std::string_view> calibration_state{"н/д"};
+    std::atomic<ControlMode> control_mode{ControlMode::torque};
+    std::atomic<ModelMode> model_mode{ModelMode::idle};
   } _tpdo1;
 
   struct {
@@ -71,27 +61,13 @@ public:
 
   void toggle_start(bool v) { _rpdo1.start.store(v); }
 
-  void set_ctlmode(ControlMode v) { _rpdo1.ctlmode.store(v); }
+  void set_control_mode(ControlMode v) { _rpdo1.control_mode.store(v); }
 
-  void set_ref_torque(float v) {
-    _rpdo1.ref_torque.store(std::clamp(v, -1.0f, 1.0f));
-  }
+  void set_model_mode(ModelMode v) { _rpdo1.model_mode.store(v); }
 
-  void set_ref_speed(int16_t value) { _rpdo1.ref_speed.store(value); }
+  void set_ref(int16_t v) { _rpdo1.ref.store(v); }
 
-  void set_ref_angle(int16_t v) { _rpdo2.ref_angle.store(v); }
-
-  void set_ref_current(float v) {
-    _rpdo2.ref_current.store(std::clamp(v, -1.0f, 1.0f));
-  }
-
-  void set_ref_voltage(float v) {
-    _rpdo2.ref_voltage.store(std::clamp(v, 0.0f, 1.0f));
-  }
-
-  void set_opmode(OperatingMode v) { _rpdo2.opmode.store(v); }
-
-  void set_ctlloop(ControlLoop v) { _rpdo2.ctlloop.store(v); }
+  void set_aux_ref(int16_t v) { _rpdo1.aux_ref.store(v); }
 
   // TPDO
   DriveState drive_state() const { return _tpdo1.drive_state.load(); }
@@ -120,21 +96,10 @@ public:
 
   bool has_any_warning() const { return _tpdo1.warning.load(); }
 
-  OperatingMode opmode() const { return _tpdo1.opmode.load(); }
+  ControlMode control_mode() const { return _tpdo1.control_mode.load(); }
 
-  std::string_view opmode_str() const {
-    auto it = opmode_names.find(opmode());
-    if (it == opmode_names.end()) {
-      return "н/д";
-    } else {
-      return it->second;
-    }
-  }
-
-  ControlMode ctlmode() const { return _tpdo1.ctlmode.load(); }
-
-  std::string_view ctlmode_str() const {
-    auto it = ctlmode_names.find(ctlmode());
+  std::string_view control_mode_str() const {
+    auto it = ctlmode_names.find(control_mode());
     if (it == ctlmode_names.end()) {
       return "н/д";
     } else {
@@ -142,11 +107,11 @@ public:
     }
   }
 
-  ControlLoop ctlloop() const { return _tpdo1.ctlloop.load(); }
+  ModelMode model_mode() const { return _tpdo1.model_mode.load(); }
 
-  std::string_view ctlloop_str() const {
-    auto it = ctlloop_names.find(ctlloop());
-    if (it == ctlloop_names.end()) {
+  std::string_view model_mode_str() const {
+    auto it = model_mode_names.find(model_mode());
+    if (it == model_mode_names.end()) {
       return "н/д";
     } else {
       return it->second;
@@ -180,7 +145,6 @@ private:
   void _handle_tpdo4(ucanopen::can_payload const& payload);
 
   ucanopen::can_payload _create_rpdo1();
-  ucanopen::can_payload _create_rpdo2();
 };
 
 } // namespace sevpress

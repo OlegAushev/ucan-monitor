@@ -27,9 +27,6 @@ Server::Server(std::shared_ptr<can::Socket> socket,
   rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1,
                              std::chrono::milliseconds(100),
                              [this]() { return this->_create_rpdo1(); });
-  rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2,
-                             std::chrono::milliseconds(100),
-                             [this]() { return this->_create_rpdo2(); });
 }
 
 ucanopen::FrameHandlingStatus
@@ -59,16 +56,12 @@ void Server::_handle_tpdo1(ucanopen::can_payload const& payload) {
   _tpdo1.error.store(static_cast<bool>(tpdo.error));
   _tpdo1.warning.store(static_cast<bool>(tpdo.warning));
 
-  if (opmode_values.contains(tpdo.opmode)) {
-    _tpdo1.opmode.store(static_cast<OperatingMode>(tpdo.opmode));
+  if (ctlmode_values.contains(tpdo.control_mode)) {
+    _tpdo1.control_mode.store(static_cast<ControlMode>(tpdo.control_mode));
   }
 
-  if (ctlmode_values.contains(tpdo.ctlmode)) {
-    _tpdo1.ctlmode.store(static_cast<ControlMode>(tpdo.ctlmode));
-  }
-
-  if (ctlloop_values.contains(tpdo.ctlloop)) {
-    _tpdo1.ctlloop.store(static_cast<ControlLoop>(tpdo.ctlloop));
+  if (model_mode_values.contains(tpdo.model_mode)) {
+    _tpdo1.model_mode.store(static_cast<ModelMode>(tpdo.model_mode));
   }
 }
 
@@ -110,32 +103,15 @@ ucanopen::can_payload Server::_create_rpdo1() {
   rpdo.emergency = _rpdo1.emergency_stop.load();
   rpdo.power = _rpdo1.power.load();
   rpdo.start = _rpdo1.start.load();
-  rpdo.ctlmode = std::to_underlying(_rpdo1.ctlmode.load());
+  rpdo.control_mode = std::to_underlying(_rpdo1.control_mode.load());
+  rpdo.model_mode = std::to_underlying(_rpdo1.model_mode.load());
 
-  rpdo.torque_ref = 10000.0f * _rpdo1.ref_torque.load();
-  rpdo.speed_ref = _rpdo1.ref_speed.load();
+  rpdo.ref = _rpdo1.ref.load();
+  rpdo.aux_ref = _rpdo1.aux_ref.load();
 
   rpdo.counter = counter++;
 
   return ucanopen::to_payload<CobRpdo1>(rpdo);
-}
-
-ucanopen::can_payload Server::_create_rpdo2() {
-  static_assert(sizeof(CobRpdo2) == 8);
-  static unsigned int counter = 0;
-
-  CobRpdo2 rpdo{};
-
-  rpdo.angle_ref = _rpdo2.ref_angle.load();
-  rpdo.current_ref = 10000.f * _rpdo2.ref_current.load();
-  rpdo.voltage_ref = 10000.f * _rpdo2.ref_voltage.load();
-
-  rpdo.opmode = std::to_underlying(_rpdo2.opmode.load());
-  rpdo.ctlloop = std::to_underlying(_rpdo2.ctlloop.load());
-
-  rpdo.counter = counter++;
-
-  return ucanopen::to_payload<CobRpdo2>(rpdo);
 }
 
 } // namespace sevpress

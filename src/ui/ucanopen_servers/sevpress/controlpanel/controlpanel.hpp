@@ -21,18 +21,15 @@ private:
 
     float _ref_torque_pct{0.0f};
     int16_t _ref_speed{0};
-
     int _ref_angle{0};
     float _ref_current_pct{0.0f};
     float _ref_voltage_pct{0.0f};
 
-    ::sevpress::OperatingMode _opmode{::sevpress::OperatingMode::normal};
+    ::sevpress::ControlMode _control_mode{::sevpress::ControlMode::torque};
+    int _control_mode_v{std::to_underlying(::sevpress::ControlMode::torque)};
 
-    ::sevpress::ControlMode _ctlmode{::sevpress::ControlMode::torque};
-    int _ctlmode_v{std::to_underlying(::sevpress::ControlMode::torque)};
-
-    ::sevpress::ControlLoop _ctlloop{::sevpress::ControlLoop::closed};
-    int _ctlloop_v{std::to_underlying(::sevpress::ControlLoop::closed)};
+    ::sevpress::ModelMode _model_mode{::sevpress::ModelMode::idle};
+    int _model_mode_v{std::to_underlying(::sevpress::ModelMode::idle)};
 public:
     ControlPanel(std::shared_ptr<::sevpress::Server> server,
                  const std::string& menu_title,
@@ -41,8 +38,7 @@ public:
     virtual void draw() override;
 private:
     void _draw_dash();
-    void _draw_normal_mode_controls();
-    void _draw_testing_mode_controls();
+    void _draw_controls();
     void _draw_actions();
 
     void _draw_popups();
