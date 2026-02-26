@@ -250,15 +250,11 @@ void ControlPanel::_draw_controls() {
     if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Режим Модели",
                                 ImGuiTreeNodeFlags_Framed)) {
         ImGui::RadioButton(
-                "Ожидание",
-                &_model_mode_v,
-                std::to_underlying(ModelMode::idle));
-        ImGui::RadioButton(
                 "Замкнутый",
                 &_model_mode_v,
                 std::to_underlying(ModelMode::closed));
         ImGui::RadioButton(
-                "Полузамкнутый",
+                "Замкнутый 2",
                 &_model_mode_v,
                 std::to_underlying(ModelMode::semiclosed));
         ImGui::RadioButton(
@@ -269,6 +265,10 @@ void ControlPanel::_draw_controls() {
                 "Разомкнутый V",
                 &_model_mode_v,
                 std::to_underlying(ModelMode::open_voltage));
+        ImGui::RadioButton(
+                "Тест",
+                &_model_mode_v,
+                std::to_underlying(ModelMode::idle));
 
         ImGui::PushItemWidth(200);
 

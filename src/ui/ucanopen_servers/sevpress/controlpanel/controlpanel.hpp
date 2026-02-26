@@ -28,8 +28,8 @@ private:
     ::sevpress::ControlMode _control_mode{::sevpress::ControlMode::torque};
     int _control_mode_v{std::to_underlying(::sevpress::ControlMode::torque)};
 
-    ::sevpress::ModelMode _model_mode{::sevpress::ModelMode::idle};
-    int _model_mode_v{std::to_underlying(::sevpress::ModelMode::idle)};
+    ::sevpress::ModelMode _model_mode{::sevpress::ModelMode::closed};
+    int _model_mode_v{std::to_underlying(::sevpress::ModelMode::closed)};
 public:
     ControlPanel(std::shared_ptr<::sevpress::Server> server,
                  const std::string& menu_title,
