@@ -1,7 +1,7 @@
 # BasedOnStyle: LLVM
 Language: Cpp
 AccessModifierOffset: -2
-AlignAfterOpenBracket: AlwaysBreak
+AlignAfterOpenBracket: BlockIndent
 AlignArrayOfStructures: None
 AlignConsecutiveAssignments: None
 AlignConsecutiveBitFields: None
@@ -10,20 +10,20 @@ AlignConsecutiveMacros: None
 AlignConsecutiveShortCaseStatements:
   Enabled: false
 AlignEscapedNewlines: Left
-AlignOperands: Align
+AlignOperands: AlignAfterOperator #Align
 AlignTrailingComments:
   Kind: Always
   OverEmptyLines: 0
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowBreakBeforeNoexceptSpecifier: Never
-AllowShortBlocksOnASingleLine: Never
+AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseExpressionOnASingleLine: true
-AllowShortCaseLabelsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: true
 AllowShortCompoundRequirementOnASingleLine: true
-AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: Never
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLambdasOnASingleLine: All
 AllowShortLoopsOnASingleLine: false
 AlwaysBreakBeforeMultilineStrings: false
@@ -35,12 +35,13 @@ BitFieldColonSpacing: Both
 BracedInitializerIndentWidth: 4
 BreakAdjacentStringLiterals: true
 BreakAfterAttributes: Leave
-BreakAfterReturnType: Automatic
-BreakBeforeBinaryOperators: None
+BreakAfterReturnType: ExceptShortType
+BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Attach
 BreakBeforeConceptDeclarations: Always
 BreakBeforeInlineASMColon: OnlyMultiline
-BreakBeforeTernaryOperators: false
+BreakBeforeTernaryOperators: true
+BreakBinaryOperations: RespectPrecedence
 BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon
 BreakStringLiterals: false
@@ -73,7 +74,7 @@ MaxEmptyLinesToKeep: 1
 NamespaceIndentation: None
 PPIndentWidth: -1
 PackConstructorInitializers: NextLine
-PenaltyBreakAssignment: 2
+PenaltyBreakAssignment: 200
 PenaltyBreakBeforeFirstCallParameter: 19
 PenaltyBreakComment: 300
 PenaltyBreakFirstLessLess: 120
@@ -92,11 +93,11 @@ RemoveParentheses: Leave
 RemoveSemicolon: false
 RequiresClausePosition: OwnLineWithBrace
 RequiresExpressionIndentation: OuterScope
-SeparateDefinitionBlocks: Always
+SeparateDefinitionBlocks: Leave
 ShortNamespaceLines: 0
 SkipMacroDefinitionBody: false
 SortIncludes: CaseSensitive
-SortUsingDeclarations: LexicographicNumeric
+SortUsingDeclarations: Never
 SpaceAfterCStyleCast: false
 SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: false

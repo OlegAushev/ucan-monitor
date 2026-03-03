@@ -53,6 +53,7 @@ void Server::_handle_tpdo1(ucanopen::can_payload const& payload) {
   }
 
   _tpdo1.pwm_on.store(static_cast<bool>(tpdo.pwm_on));
+  _tpdo1.critical.store(static_cast<bool>(tpdo.critical));
   _tpdo1.error.store(static_cast<bool>(tpdo.error));
   _tpdo1.warning.store(static_cast<bool>(tpdo.warning));
 
@@ -85,13 +86,10 @@ void Server::_handle_tpdo4(ucanopen::can_payload const& payload) {
   static_assert(sizeof(CobTpdo4) == 8);
   CobTpdo4 tpdo = ucanopen::from_payload<CobTpdo4>(payload);
 
-  size_t domain = tpdo.domain;
-  if (domain >= syslog::domains.size()) {
-    return;
+  auto level = static_cast<size_t>(tpdo.level);
+  if (level < sys::diag::level_count) {
+    _status[level] = std::bitset<sys::status::status_count>(tpdo.flags);
   }
-
-  _errors[domain].store(tpdo.errors);
-  _warnings[domain].store(tpdo.warnings);
 }
 
 ucanopen::can_payload Server::_create_rpdo1() {

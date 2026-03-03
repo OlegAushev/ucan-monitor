@@ -3,6 +3,7 @@
 #include "sevpress_def.hpp"
 #include <algorithm>
 #include <atomic>
+#include <bitset>
 #include <bsclog/bsclog.h>
 #include <ucanopen/server/server.h>
 
@@ -35,6 +36,7 @@ private:
   struct {
     std::atomic<DriveState> drive_state{DriveState::init};
     std::atomic<bool> pwm_on{false};
+    std::atomic<bool> critical{false};
     std::atomic<bool> error{false};
     std::atomic<bool> warning{false};
     std::atomic<ControlMode> control_mode{ControlMode::torque};
@@ -51,8 +53,8 @@ private:
     std::atomic<int16_t> angle{0};
   } _tpdo3;
 
-  std::array<std::atomic_uint32_t, syslog::domains.size()> _errors{};
-  std::array<std::atomic_uint16_t, syslog::domains.size()> _warnings{};
+  std::array<std::bitset<sys::status::status_count>, sys::diag::level_count>
+      _status{};
 public:
   // RPDO
   void toggle_emergency(bool v) { _rpdo1.emergency_stop.store(v); }
@@ -126,18 +128,13 @@ public:
 
   int16_t angle() const { return _tpdo3.angle.load(); }
 
-  bool has_any_error() const {
-    for (auto& entry : _errors) {
-      if (entry.load() != 0) {
-        return true;
-      }
-    }
-    return false;
+  bool has_critical() const { return _tpdo1.critical.load(); }
+
+  auto const& status() const { return _status; }
+
+  bool has_status(sys::diag::level lv) const {
+    return _status[std::to_underlying(lv)].any();
   }
-
-  auto const& errors() const { return _errors; }
-
-  auto const& warnings() const { return _warnings; }
 private:
   void _handle_tpdo1(ucanopen::can_payload const& payload);
   void _handle_tpdo2(ucanopen::can_payload const& payload);

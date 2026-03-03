@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "sevpress_def_sys.hpp"
 #include "sevpress_def_syslog.hpp"
 
 namespace sevpress {
@@ -19,14 +20,14 @@ struct CobTpdo1 {
   uint8_t drive_state : 8;
 
   uint8_t pwm_on : 1;
+  uint8_t critical : 1;
   uint8_t error : 1;
   uint8_t warning : 1;
+  uint8_t _reserved1_ : 4;
+
   uint8_t control_mode : 2;
   uint8_t model_mode : 3;
-
-  uint8_t _reserved1_;
-
-  uint8_t _reserved2_;
+  uint8_t _reserved2_ : 3;
 
   uint8_t _reserved3_;
 
@@ -34,8 +35,10 @@ struct CobTpdo1 {
 
   uint8_t _reserved5_;
 
+  uint8_t _reserved6_;
+
   uint8_t counter : 2;
-  uint8_t _reserved6_ : 6;
+  uint8_t _reserved7_ : 6;
 };
 
 struct CobTpdo2 {
@@ -69,11 +72,15 @@ struct CobTpdo3 {
 };
 
 struct CobTpdo4 {
-  uint32_t errors;
-  uint16_t warnings;
-  uint8_t domain : 8;
-  uint8_t counter : 2;
-  uint8_t _reserved_ : 6;
+  uint64_t flags : sys::status::status_count;
+
+  uint64_t _reserved1_ : 64 - sys::status::status_count - 8 - 8;
+
+  uint64_t level : 2;
+  uint64_t _reserved2_ : 6;
+
+  uint64_t counter : 2;
+  uint64_t _reserved3_ : 6;
 };
 
 static_assert(sizeof(CobTpdo1) == 8);

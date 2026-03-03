@@ -95,9 +95,21 @@ void DataPanel::draw_tpdo1_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Крит. Ошибки");
+        ImGui::TableSetColumnIndex(1);
+        if (server_->has_critical()) {
+            ImGui::TextUnformatted("да");
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_red);
+        } else {
+            ImGui::TextUnformatted("нет");
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
         ImGui::TextUnformatted("Ошибки");
         ImGui::TableSetColumnIndex(1);
-        if (server_->has_any_error()) {
+        if (server_->has_error()) {
             ImGui::TextUnformatted("да");
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                    ui::colors::table_bg_red);
@@ -263,18 +275,6 @@ void DataPanel::draw_tpdo4_table() {
                     payload[5],
                     payload[6],
                     payload[7]);
-
-        // ImGui::TableNextRow();
-        // ImGui::TableSetColumnIndex(0);
-        // ImGui::TextUnformatted("Errors");
-        // ImGui::TableSetColumnIndex(1);
-        // ImGui::Text("%d",server_->errors());
-
-        // ImGui::TableNextRow();
-        // ImGui::TableSetColumnIndex(0);
-        // ImGui::TextUnformatted("Warnings");
-        // ImGui::TableSetColumnIndex(1);
-        // ImGui::Text("%d",server_->warnings());
 
         ImGui::EndTable();
     }

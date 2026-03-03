@@ -29,7 +29,7 @@ void ControlPanel::_reset_refs() {
 
 void ControlPanel::_update_refs() {
     if (!_server->tpdo_service.good(ucanopen::CobTpdo::tpdo1) ||
-        _server->has_any_error() != 0) {
+        _server->has_critical() || _server->has_error()) {
         _start = false;
     }
 
