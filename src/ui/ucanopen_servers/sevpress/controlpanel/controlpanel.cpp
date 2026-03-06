@@ -46,32 +46,11 @@ void ControlPanel::_update_refs() {
     _server->set_control_mode(_control_mode);
     _server->set_model_mode(_model_mode);
 
-    switch (_control_mode) {
-    case ControlMode::torque:
-        _server->set_ref(static_cast<int16_t>(_ref_torque_pct * 100.0f));
-        break;
-    case ControlMode::speed:
-        _server->set_ref(_ref_speed);
-        break;
-    case ControlMode::angle:
-        _server->set_ref(static_cast<int16_t>(_ref_angle));
-        break;
-    }
-
-    switch (_model_mode) {
-    case ModelMode::semiclosed:
-    case ModelMode::open_current:
-        _server->set_aux_ref(
-                static_cast<int16_t>(_ref_current_pct * 100.0f));
-        break;
-    case ModelMode::open_voltage:
-        _server->set_aux_ref(
-                static_cast<int16_t>(_ref_voltage_pct * 100.0f));
-        break;
-    default:
-        _server->set_aux_ref(0);
-        break;
-    }
+    _server->set_torque_ref(static_cast<int16_t>(_ref_torque_pct * 100.0f));
+    _server->set_speed_ref(_ref_speed);
+    _server->set_angle_ref(static_cast<int16_t>(_ref_angle));
+    _server->set_current_ref(static_cast<int16_t>(_ref_current_pct * 100.0f));
+    _server->set_voltage_ref(static_cast<uint16_t>(_ref_voltage_pct * 100.0f));
 }
 
 void ControlPanel::draw() {
@@ -250,10 +229,6 @@ void ControlPanel::_draw_controls() {
     if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Режим Модели",
                                 ImGuiTreeNodeFlags_Framed)) {
         ImGui::RadioButton(
-                "Ожидание",
-                &_model_mode_v,
-                std::to_underlying(ModelMode::idle));
-        ImGui::RadioButton(
                 "Замкнутый",
                 &_model_mode_v,
                 std::to_underlying(ModelMode::closed));
@@ -269,6 +244,10 @@ void ControlPanel::_draw_controls() {
                 "Разомкнутый V",
                 &_model_mode_v,
                 std::to_underlying(ModelMode::open_voltage));
+        ImGui::RadioButton(
+                "Тест",
+                &_model_mode_v,
+                std::to_underlying(ModelMode::idle));
 
         ImGui::PushItemWidth(200);
 
