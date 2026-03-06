@@ -94,30 +94,36 @@ struct CobRpdo1 {
   uint8_t power : 1;
   uint8_t start : 1;
   uint8_t control_mode : 2;    // torque/speed/angle
-  uint8_t model_mode : 3;      // idle/closed/semi/open_I/open_V
+  uint8_t _reserved1_ : 3;
 
-  uint8_t _reserved1_;         // Byte 1
+  uint8_t _reserved2_;         // Byte 1
 
-  // Bytes 2-3: primary reference (meaning depends on control_mode)
-  //   torque → signed_pu * 10000
-  //   speed  → RPM int16
-  //   angle  → edeg int16
-  int16_t ref;
+  int16_t torque_ref;          // Bytes 2-3: signed_pu * 10000
+  int16_t speed_ref;           // Bytes 4-5: RPM
 
-  // Bytes 4-5: auxiliary d-axis reference (meaning depends on model_mode)
-  //   semiclosed/open_current → Idref * 10000
-  //   open_voltage            → Vdref * 10000
-  //   closed/idle             → ignored
-  int16_t aux_ref;
-
-  uint8_t _reserved2_;         // Byte 6
+  uint8_t _reserved3_;         // Byte 6
 
   // Byte 7
   uint8_t counter : 2;
-  uint8_t _reserved3_ : 6;
+  uint8_t _reserved4_ : 6;
+};
+
+struct CobRpdo2 {
+  int16_t angle_ref;           // Bytes 0-1: edeg
+  int16_t current_ref;         // Bytes 2-3: Idref signed_pu * 10000
+  uint16_t voltage_ref;        // Bytes 4-5: Vdref unsigned_pu * 10000
+
+  // Byte 6
+  uint8_t model_mode : 3;     // idle/closed/semi/open_I/open_V
+  uint8_t _reserved1_ : 5;
+
+  // Byte 7
+  uint8_t counter : 2;
+  uint8_t _reserved2_ : 6;
 };
 
 static_assert(sizeof(CobRpdo1) == 8);
+static_assert(sizeof(CobRpdo2) == 8);
 
 enum class DriveState {
   init,

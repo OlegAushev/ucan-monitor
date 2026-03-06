@@ -27,6 +27,9 @@ Server::Server(std::shared_ptr<can::Socket> socket,
   rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1,
                              std::chrono::milliseconds(100),
                              [this]() { return this->_create_rpdo1(); });
+  rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2,
+                             std::chrono::milliseconds(100),
+                             [this]() { return this->_create_rpdo2(); });
 }
 
 ucanopen::FrameHandlingStatus
@@ -102,14 +105,29 @@ ucanopen::can_payload Server::_create_rpdo1() {
   rpdo.power = _rpdo1.power.load();
   rpdo.start = _rpdo1.start.load();
   rpdo.control_mode = std::to_underlying(_rpdo1.control_mode.load());
-  rpdo.model_mode = std::to_underlying(_rpdo1.model_mode.load());
 
-  rpdo.ref = _rpdo1.ref.load();
-  rpdo.aux_ref = _rpdo1.aux_ref.load();
+  rpdo.torque_ref = _rpdo1.torque_ref.load();
+  rpdo.speed_ref = _rpdo1.speed_ref.load();
 
   rpdo.counter = counter++;
 
   return ucanopen::to_payload<CobRpdo1>(rpdo);
+}
+
+ucanopen::can_payload Server::_create_rpdo2() {
+  static_assert(sizeof(CobRpdo2) == 8);
+  static unsigned int counter = 0;
+
+  CobRpdo2 rpdo{};
+
+  rpdo.angle_ref = _rpdo2.angle_ref.load();
+  rpdo.current_ref = _rpdo2.current_ref.load();
+  rpdo.voltage_ref = _rpdo2.voltage_ref.load();
+  rpdo.model_mode = std::to_underlying(_rpdo2.model_mode.load());
+
+  rpdo.counter = counter++;
+
+  return ucanopen::to_payload<CobRpdo2>(rpdo);
 }
 
 } // namespace sevpress

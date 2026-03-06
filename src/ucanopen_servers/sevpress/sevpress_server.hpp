@@ -28,10 +28,16 @@ private:
     std::atomic<bool> power{false};
     std::atomic<bool> start{false};
     std::atomic<ControlMode> control_mode{ControlMode::torque};
-    std::atomic<ModelMode> model_mode{ModelMode::idle};
-    std::atomic<int16_t> ref{0};
-    std::atomic<int16_t> aux_ref{0};
+    std::atomic<int16_t> torque_ref{0};
+    std::atomic<int16_t> speed_ref{0};
   } _rpdo1;
+
+  struct {
+    std::atomic<ModelMode> model_mode{ModelMode::idle};
+    std::atomic<int16_t> angle_ref{0};
+    std::atomic<int16_t> current_ref{0};
+    std::atomic<uint16_t> voltage_ref{0};
+  } _rpdo2;
 
   struct {
     std::atomic<DriveState> drive_state{DriveState::init};
@@ -65,11 +71,17 @@ public:
 
   void set_control_mode(ControlMode v) { _rpdo1.control_mode.store(v); }
 
-  void set_model_mode(ModelMode v) { _rpdo1.model_mode.store(v); }
+  void set_torque_ref(int16_t v) { _rpdo1.torque_ref.store(v); }
 
-  void set_ref(int16_t v) { _rpdo1.ref.store(v); }
+  void set_speed_ref(int16_t v) { _rpdo1.speed_ref.store(v); }
 
-  void set_aux_ref(int16_t v) { _rpdo1.aux_ref.store(v); }
+  void set_model_mode(ModelMode v) { _rpdo2.model_mode.store(v); }
+
+  void set_angle_ref(int16_t v) { _rpdo2.angle_ref.store(v); }
+
+  void set_current_ref(int16_t v) { _rpdo2.current_ref.store(v); }
+
+  void set_voltage_ref(uint16_t v) { _rpdo2.voltage_ref.store(v); }
 
   // TPDO
   DriveState drive_state() const { return _tpdo1.drive_state.load(); }
@@ -142,6 +154,7 @@ private:
   void _handle_tpdo4(ucanopen::can_payload const& payload);
 
   ucanopen::can_payload _create_rpdo1();
+  ucanopen::can_payload _create_rpdo2();
 };
 
 } // namespace sevpress
