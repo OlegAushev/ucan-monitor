@@ -42,6 +42,7 @@ private:
   struct {
     std::atomic<DriveState> drive_state{DriveState::init};
     std::atomic<bool> pwm_on{false};
+    std::atomic<bool> emergency{false};
     std::atomic<bool> critical{false};
     std::atomic<bool> error{false};
     std::atomic<bool> warning{false};
@@ -139,6 +140,8 @@ public:
   int16_t speed() const { return _tpdo3.speed.load(); }
 
   int16_t angle() const { return _tpdo3.angle.load(); }
+
+  bool has_emergency() const { return _tpdo1.emergency.load(); }
 
   bool has_critical() const { return _tpdo1.critical.load(); }
 

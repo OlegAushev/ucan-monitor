@@ -10,7 +10,7 @@ namespace sys::diag {
 
 inline constexpr size_t level_count = 4;
 
-enum class level : uint8_t { notice, warning, error, critical };
+enum class level : uint8_t { warning, error, critical, emergency };
 
 } // namespace sys::diag
 
@@ -25,8 +25,8 @@ struct i18n {
 
 struct emergency {
   static constexpr id_type id = 0;
-  static constexpr sys::diag::level level_min = sys::diag::level::critical;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_min = sys::diag::level::emergency;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {"Emergency", "Авария"};
 };
 
@@ -83,14 +83,14 @@ struct nvm_write_error {
 
 struct can_bus_error {
   static constexpr id_type id = 7;
-  static constexpr sys::diag::level level_min = sys::diag::level::notice;
+  static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::error;
   static constexpr i18n description = {"CAN bus error", "Ошибка шины CAN"};
 };
 
 struct can_overrun {
   static constexpr id_type id = 8;
-  static constexpr sys::diag::level level_min = sys::diag::level::notice;
+  static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::warning;
   static constexpr i18n description = {"CAN overrun", "Переполнение CAN"};
 };
@@ -215,7 +215,7 @@ struct uv_dc {
 struct ov_dc {
   static constexpr id_type id = 21;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "DC overvoltage",
       "Повышенное напряжение DC"
@@ -232,7 +232,7 @@ struct oc_dc {
 struct oc_phase {
   static constexpr id_type id = 23;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Phase overcurrent",
       "Превышение фазного тока"
@@ -242,7 +242,7 @@ struct oc_phase {
 struct oc_phase_a {
   static constexpr id_type id = 24;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Phase A overcurrent",
       "Превышение тока фазы A"
@@ -252,7 +252,7 @@ struct oc_phase_a {
 struct oc_phase_b {
   static constexpr id_type id = 25;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Phase B overcurrent",
       "Превышение тока фазы B"
@@ -262,7 +262,7 @@ struct oc_phase_b {
 struct oc_phase_c {
   static constexpr id_type id = 26;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Phase C overcurrent",
       "Превышение тока фазы C"
@@ -271,8 +271,8 @@ struct oc_phase_c {
 
 struct flt_pwr {
   static constexpr id_type id = 27;
-  static constexpr sys::diag::level level_min = sys::diag::level::critical;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_min = sys::diag::level::emergency;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Power module fault",
       "Неисправность силового модуля"
@@ -281,8 +281,8 @@ struct flt_pwr {
 
 struct flt_pwr_ah {
   static constexpr id_type id = 28;
-  static constexpr sys::diag::level level_min = sys::diag::level::critical;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_min = sys::diag::level::emergency;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Power module fault: A high",
       "Неисправность силового модуля: A high"
@@ -291,8 +291,8 @@ struct flt_pwr_ah {
 
 struct flt_pwr_al {
   static constexpr id_type id = 29;
-  static constexpr sys::diag::level level_min = sys::diag::level::critical;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_min = sys::diag::level::emergency;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Power module fault: A low",
       "Неисправность силового модуля: A low"
@@ -301,8 +301,8 @@ struct flt_pwr_al {
 
 struct flt_pwr_bh {
   static constexpr id_type id = 30;
-  static constexpr sys::diag::level level_min = sys::diag::level::critical;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_min = sys::diag::level::emergency;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Power module fault: B high",
       "Неисправность силового модуля: B high"
@@ -311,8 +311,8 @@ struct flt_pwr_bh {
 
 struct flt_pwr_bl {
   static constexpr id_type id = 31;
-  static constexpr sys::diag::level level_min = sys::diag::level::critical;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_min = sys::diag::level::emergency;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Power module fault: B low",
       "Неисправность силового модуля: B low"
@@ -321,8 +321,8 @@ struct flt_pwr_bl {
 
 struct flt_pwr_ch {
   static constexpr id_type id = 32;
-  static constexpr sys::diag::level level_min = sys::diag::level::critical;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_min = sys::diag::level::emergency;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Power module fault: C high",
       "Неисправность силового модуля: C high"
@@ -331,8 +331,8 @@ struct flt_pwr_ch {
 
 struct flt_pwr_cl {
   static constexpr id_type id = 33;
-  static constexpr sys::diag::level level_min = sys::diag::level::critical;
-  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr sys::diag::level level_min = sys::diag::level::emergency;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
       "Power module fault: C low",
       "Неисправность силового модуля: C low"

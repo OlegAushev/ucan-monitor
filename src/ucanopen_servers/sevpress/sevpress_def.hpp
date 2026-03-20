@@ -20,10 +20,11 @@ struct CobTpdo1 {
   uint8_t drive_state : 8;
 
   uint8_t pwm_on : 1;
-  uint8_t critical : 1;
-  uint8_t error : 1;
   uint8_t warning : 1;
-  uint8_t _reserved1_ : 4;
+  uint8_t error : 1;
+  uint8_t critical : 1;
+  uint8_t emergency : 1;
+  uint8_t _reserved1_ : 3;
 
   uint8_t control_mode : 2;
   uint8_t model_mode : 3;

@@ -56,6 +56,7 @@ void Server::_handle_tpdo1(ucanopen::can_payload const& payload) {
   }
 
   _tpdo1.pwm_on.store(static_cast<bool>(tpdo.pwm_on));
+  _tpdo1.emergency.store(static_cast<bool>(tpdo.emergency));
   _tpdo1.critical.store(static_cast<bool>(tpdo.critical));
   _tpdo1.error.store(static_cast<bool>(tpdo.error));
   _tpdo1.warning.store(static_cast<bool>(tpdo.warning));

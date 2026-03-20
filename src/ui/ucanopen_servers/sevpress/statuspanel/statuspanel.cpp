@@ -46,6 +46,7 @@ void StatusPanel::draw() {
             if (active) {
                 auto bg = [&]() {
                     switch (active_level) {
+                    case sys::diag::level::emergency:
                     case sys::diag::level::critical:
                     case sys::diag::level::error:
                         return ui::colors::table_bg_red;
@@ -58,7 +59,8 @@ void StatusPanel::draw() {
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, bg);
 
                 ImGui::TableSetColumnIndex(1);
-                if (active_level == sys::diag::level::critical) {
+                if (active_level == sys::diag::level::critical
+                    || active_level == sys::diag::level::emergency) {
                     ImGui::TextUnformatted(ICON_MDI_ALERT);
                 }
                 ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, bg);

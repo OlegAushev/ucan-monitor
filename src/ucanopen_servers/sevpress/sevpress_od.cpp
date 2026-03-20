@@ -27,10 +27,11 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x2000, 0x02}, {"ctl", "sys", "clear_errors", "", OD_ACCESS_WO, OD_EXEC}},
 {{0x2000, 0x03}, {"ctl", "sys", "emergency",    "", OD_ACCESS_WO, OD_EXEC}},
 
-{{0x2001, 0x01}, {"ctl", "drive", "calibrate_angle_sensor",   "", OD_ACCESS_WO, OD_EXEC}},
-{{0x2001, 0x02}, {"ctl", "drive", "save_angle_sensor_config", "", OD_ACCESS_WO, OD_EXEC}},
-{{0x2001, 0x03}, {"ctl", "drive", "set_angle_correction",     "", OD_ACCESS_WO, OD_FLOAT32}},
-{{0x2001, 0x04}, {"ctl", "drive", "set_vD_limit_factor",      "", OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x01}, {"ctl", "drive", "calibrate_angle_sensor",   "",   OD_ACCESS_WO, OD_EXEC}},
+{{0x2001, 0x02}, {"ctl", "drive", "save_angle_sensor_config", "",   OD_ACCESS_WO, OD_EXEC}},
+{{0x2001, 0x03}, {"ctl", "drive", "set_angle_correction",     "°",  OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x04}, {"ctl", "drive", "Vd_limit_factor",          "",   OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x05}, {"ctl", "drive", "pwm_freq",                 "Hz", OD_ACCESS_WO, OD_FLOAT32}},
 
 {{0x5000, 0x01}, {"watch", "sys", "uptime",     "s",  OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslogmsg",  "",   OD_ACCESS_RO, OD_UINT32}},
@@ -66,8 +67,9 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x5000, 0x51}, {"watch", "angle", "ref",    "°", OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x52}, {"watch", "angle", "actual", "°", OD_ACCESS_RO, OD_FLOAT32}},
 
-{{0x5000, 0x61}, {"watch", "model", "angCorr", "°", OD_ACCESS_RO, OD_FLOAT32}},
-{{0x5000, 0x62}, {"watch", "model", "Vdlim",   "",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x61}, {"watch", "model", "angCorr",  "°",  OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x62}, {"watch", "model", "Vdlim",    "",   OD_ACCESS_RO, OD_FLOAT32}},
+{{0x5000, 0x63}, {"watch", "model", "pwm_freq", "Hz", OD_ACCESS_RO, OD_FLOAT32}},
 
 {{0x5000, 0x71}, {"watch", "hall", "speed",   "rpm",    OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x72}, {"watch", "hall", "angle",   "°",      OD_ACCESS_RO, OD_FLOAT32}},

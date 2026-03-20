@@ -310,15 +310,43 @@ void ControlPanel::_draw_controls() {
         ImGui::PopItemWidth();
     }
 
-    if (ImGui::CollapsingHeader(ICON_MDI_KNOB " Ограничение vD",
+    if (ImGui::CollapsingHeader(ICON_MDI_SINE_WAVE " Частота ШИМ",
                                 ImGuiTreeNodeFlags_Framed)) {
-        static float vD_limit{
-            _server->watch_service.value("model", "vDLim").f32()};
+        static float pwm_freq{
+            _server->watch_service.value("model", "pwm_freq").f32() / 1000.0f};
         static std::chrono::time_point<std::chrono::steady_clock>
                 update_timepoint{std::chrono::steady_clock::now()};
         auto now{std::chrono::steady_clock::now()};
         if (now - update_timepoint > std::chrono::milliseconds{1000}) {
-            vD_limit = _server->watch_service.value("model", "vDLim").f32();
+            pwm_freq = _server->watch_service.value("model", "pwm_freq").f32()
+                       / 1000.0f;
+            update_timepoint = now;
+        }
+
+        ImGui::PushItemWidth(-1);
+        if (ImGui::SliderFloat("##pwm_freq",
+                               &pwm_freq,
+                               0.1f,
+                               30.0f,
+                               "%.1f кГц")) {
+            _server->write("ctl",
+                           "drive",
+                           "pwm_freq",
+                           ucanopen::ExpeditedSdoData{pwm_freq * 1000.0f});
+            update_timepoint = now;
+        }
+        ImGui::PopItemWidth();
+    }
+
+    if (ImGui::CollapsingHeader(ICON_MDI_KNOB " Ограничение Vd",
+                                ImGuiTreeNodeFlags_Framed)) {
+        static float vD_limit{
+            _server->watch_service.value("model", "Vdlim").f32()};
+        static std::chrono::time_point<std::chrono::steady_clock>
+                update_timepoint{std::chrono::steady_clock::now()};
+        auto now{std::chrono::steady_clock::now()};
+        if (now - update_timepoint > std::chrono::milliseconds{1000}) {
+            vD_limit = _server->watch_service.value("model", "Vdlim").f32();
             update_timepoint = now;
         }
 
@@ -326,7 +354,7 @@ void ControlPanel::_draw_controls() {
         if (ImGui::SliderFloat("##vD_limit", &vD_limit, 0.0f, 1.0f, "%.3f")) {
             _server->write("ctl",
                            "drive",
-                           "set_vD_limit_factor",
+                           "Vd_limit_factor",
                            ucanopen::ExpeditedSdoData{vD_limit});
             update_timepoint = now;
         }

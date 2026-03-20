@@ -95,12 +95,12 @@ void DataPanel::draw_tpdo1_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Крит. Ошибки");
+        ImGui::TextUnformatted("Предупреждения");
         ImGui::TableSetColumnIndex(1);
-        if (server_->has_critical()) {
+        if (server_->has_any_warning()) {
             ImGui::TextUnformatted("да");
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
-                                   ui::colors::table_bg_red);
+                                   ui::colors::table_bg_yellow);
         } else {
             ImGui::TextUnformatted("нет");
         }
@@ -119,12 +119,24 @@ void DataPanel::draw_tpdo1_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Предупреждения");
+        ImGui::TextUnformatted("Крит. Ошибки");
         ImGui::TableSetColumnIndex(1);
-        if (server_->has_any_warning()) {
+        if (server_->has_critical()) {
             ImGui::TextUnformatted("да");
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
-                                   ui::colors::table_bg_yellow);
+                                   ui::colors::table_bg_red);
+        } else {
+            ImGui::TextUnformatted("нет");
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Аварии");
+        ImGui::TableSetColumnIndex(1);
+        if (server_->has_emergency()) {
+            ImGui::TextUnformatted("да");
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_red);
         } else {
             ImGui::TextUnformatted("нет");
         }
