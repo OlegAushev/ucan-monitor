@@ -369,7 +369,17 @@ struct hall_calibration_terminated {
   };
 };
 
-inline constexpr size_t status_count = 37;
+struct motor_stall {
+  static constexpr id_type id = 37;
+  static constexpr sys::diag::level level_min = sys::diag::level::emergency;
+  static constexpr sys::diag::level level_max = sys::diag::level::emergency;
+  static constexpr i18n description = {
+      "Motor stall",
+      "Заклинивание двигателя"
+  };
+};
+
+inline constexpr size_t status_count = 38;
 
 inline constexpr std::array<std::string_view, status_count> names_ru = {
     emergency::description.ru,
@@ -409,6 +419,7 @@ inline constexpr std::array<std::string_view, status_count> names_ru = {
     hall_invalid_input::description.ru,
     hall_invalid_calibration::description.ru,
     hall_calibration_terminated::description.ru,
+    motor_stall::description.ru
 };
 
 } // namespace sys::status
