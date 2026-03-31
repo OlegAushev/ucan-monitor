@@ -19,6 +19,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 
 {{0x1010, 0x01}, {"ctl", "sys", "save_all_parameters", "", OD_ACCESS_WO, OD_EXEC}},
 {{0x1011, 0x01}, {"ctl", "sys", "restore_all_default_parameters", "", OD_ACCESS_WO, OD_EXEC}},
+{{0x1011, 0x03}, {"ctl", "sys", "erase_all_parameters", "", OD_ACCESS_WO, OD_EXEC}},
 {{0x1011, 0x04}, {"ctl", "sys", "restore_default_parameter",        "", OD_ACCESS_WO, OD_EXEC}},
 
 {{0x1018, 0x04}, {"info", "sys", "serial_number", "", OD_ACCESS_CONST, OD_UINT32}},
