@@ -23,6 +23,9 @@ void ControlPanel::_reset_refs() {
     _ref_angle = 0;
     _ref_current_pct = 0;
     _ref_voltage_pct = 0;
+    _ref_dc_a = 0;
+    _ref_dc_b = 0;
+    _ref_dc_c = 0;
     _model_mode = ModelMode::idle;
     _model_mode_v = std::to_underlying(ModelMode::idle);
 }
@@ -245,9 +248,9 @@ void ControlPanel::_draw_controls() {
                 &_model_mode_v,
                 std::to_underlying(ModelMode::open_voltage));
         ImGui::RadioButton(
-                "Тест",
+                "Тест ШИМ",
                 &_model_mode_v,
-                std::to_underlying(ModelMode::idle));
+                std::to_underlying(ModelMode::direct_pwm));
 
         ImGui::PushItemWidth(200);
 
@@ -276,6 +279,50 @@ void ControlPanel::_draw_controls() {
                                   ImGuiInputTextFlags_EnterReturnsTrue)) {
                 _ref_voltage_pct =
                         std::clamp(_ref_voltage_pct, 0.0f, 100.0f);
+            }
+            break;
+        case ModelMode::direct_pwm:
+            if (ImGui::InputFloat("Фаза A",
+                                  &_ref_dc_a,
+                                  0.01f,
+                                  0.1f,
+                                  "%.3f",
+                                  ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_dc_a = std::clamp(_ref_dc_a, 0.0f, 1.0f);
+                _server->write(
+                    "ctl",
+                    "drive",
+                    "dc_a",
+                    ucanopen::ExpeditedSdoData{_ref_dc_a}
+                );
+            }
+            if (ImGui::InputFloat("Фаза B",
+                                  &_ref_dc_b,
+                                  0.01f,
+                                  0.1f,
+                                  "%.3f",
+                                  ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_dc_b = std::clamp(_ref_dc_b, 0.0f, 1.0f);
+                _server->write(
+                    "ctl",
+                    "drive",
+                    "dc_b",
+                    ucanopen::ExpeditedSdoData{_ref_dc_b}
+                );
+            }
+            if (ImGui::InputFloat("Фаза C",
+                                  &_ref_dc_c,
+                                  0.01f,
+                                  0.1f,
+                                  "%.3f",
+                                  ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _ref_dc_c = std::clamp(_ref_dc_c, 0.0f, 1.0f);
+                _server->write(
+                    "ctl",
+                    "drive",
+                    "dc_c",
+                    ucanopen::ExpeditedSdoData{_ref_dc_c}
+                );
             }
             break;
         }

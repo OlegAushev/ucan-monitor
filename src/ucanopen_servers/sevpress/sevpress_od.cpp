@@ -33,6 +33,9 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x2001, 0x03}, {"ctl", "drive", "set_angle_correction",     "°",  OD_ACCESS_WO, OD_FLOAT32}},
 {{0x2001, 0x04}, {"ctl", "drive", "Vd_limit_factor",          "",   OD_ACCESS_WO, OD_FLOAT32}},
 {{0x2001, 0x05}, {"ctl", "drive", "pwm_freq",                 "Hz", OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x06}, {"ctl", "drive", "dc_a",                     "",   OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x07}, {"ctl", "drive", "dc_b",                     "",   OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x08}, {"ctl", "drive", "dc_c",                     "",   OD_ACCESS_WO, OD_FLOAT32}},
 
 {{0x5000, 0x01}, {"watch", "sys", "uptime",     "s",  OD_ACCESS_RO, OD_FLOAT32}},
 {{0x5000, 0x02}, {"watch", "sys", "syslogmsg",  "",   OD_ACCESS_RO, OD_UINT32}},
@@ -116,7 +119,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3001, 0x06}, {"config", "syslog", "converter_enabled_errors", "hex",  OD_ACCESS_RW, OD_UINT32}},
 {{0x3001, 0x07}, {"config", "syslog", "hall_enabled_errors",      "hex",  OD_ACCESS_RW, OD_UINT32}},
 //##########################################################################################################################################################################################################################################################################################################
-{{0x3002, 0x01}, {"config", "drive", "forward_direction", "",       OD_ACCESS_RW, OD_INT32}},
+{{0x3002, 0x01}, {"config", "drive", "phase_swap", "",       OD_ACCESS_RW, OD_INT32}},
 {{0x3002, 0x02}, {"config", "drive", "torque_slope",      "pu/s",   OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3002, 0x03}, {"config", "drive", "speed_slope",       "rpm/s",  OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3002, 0x04}, {"config", "drive", "runout_speed",      "rpm",    OD_ACCESS_RW, OD_FLOAT32}},

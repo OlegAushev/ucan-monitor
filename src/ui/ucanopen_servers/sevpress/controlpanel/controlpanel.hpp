@@ -24,6 +24,9 @@ private:
     int _ref_angle{0};
     float _ref_current_pct{0.0f};
     float _ref_voltage_pct{0.0f};
+    float _ref_dc_a{0.0f};
+    float _ref_dc_b{0.0f};
+    float _ref_dc_c{0.0f};
 
     ::sevpress::ControlMode _control_mode{::sevpress::ControlMode::torque};
     int _control_mode_v{std::to_underlying(::sevpress::ControlMode::torque)};

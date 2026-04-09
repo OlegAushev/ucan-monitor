@@ -197,7 +197,8 @@ enum class ModelMode {
   closed,
   semiclosed,
   open_current,
-  open_voltage
+  open_voltage,
+  direct_pwm
 };
 
 inline std::unordered_set<int> const model_mode_values = {
@@ -205,13 +206,15 @@ inline std::unordered_set<int> const model_mode_values = {
     std::to_underlying(ModelMode::closed),
     std::to_underlying(ModelMode::semiclosed),
     std::to_underlying(ModelMode::open_current),
-    std::to_underlying(ModelMode::open_voltage)};
+    std::to_underlying(ModelMode::open_voltage),
+    std::to_underlying(ModelMode::direct_pwm)};
 
 inline std::unordered_map<ModelMode, std::string_view> const model_mode_names = {
     {ModelMode::idle, "ожидание"},
     {ModelMode::closed, "замкнутый"},
     {ModelMode::semiclosed, "полузамкнутый"},
     {ModelMode::open_current, "разомкнутый I"},
-    {ModelMode::open_voltage, "разомкнутый V"}};
+    {ModelMode::open_voltage, "разомкнутый V"},
+    {ModelMode::direct_pwm, "тест ШИМ"}};
 
 } // namespace sevpress
