@@ -374,7 +374,7 @@ void ControlPanel::_draw_controls() {
         if (ImGui::SliderFloat("##pwm_freq",
                                &pwm_freq,
                                0.1f,
-                               30.0f,
+                               100.0f,
                                "%.1f кГц")) {
             _server->write("ctl",
                            "drive",
