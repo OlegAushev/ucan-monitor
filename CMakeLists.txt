@@ -12,7 +12,7 @@ project(ucan-monitor VERSION 1.0)
 ################################################################################
 # Options
 option(MULTI_SERVER "Multi-server build" ON)
-set(servers shm-drive-80 moyka-dashboard-2 moyka-dashboard atv-vcu brake-drive srmdrive sevpress)
+set(servers shm-drive-80 moyka-dashboard-2 moyka-dashboard atv-vcu brake-drive srmdrive sevpress adpt-etk-inverter)
 set(SERVER "" CACHE STRING "Selected single server")
 
 if (NOT MULTI_SERVER)
