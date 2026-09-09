@@ -34,6 +34,10 @@
 #include <ui/ucanopen_servers/adptetk/datapanel/datapanel.hpp>
 #include <ui/ucanopen_servers/adptetk/statuspanel/statuspanel.hpp>
 
+#include <ui/ucanopen_servers/pdu/controlpanel/controlpanel.hpp>
+#include <ui/ucanopen_servers/pdu/datapanel/datapanel.hpp>
+#include <ui/ucanopen_servers/pdu/statuspanel/statuspanel.hpp>
+
 #include <ui/ucanopen_servers/moyka/panel/panel.h>
 
 #include <ui/ucanopen_servers/srmdrive/controlpanel/controlpanel.h>
@@ -67,7 +71,8 @@ const std::vector<std::string> server_names = {"shm-drive-80",
                                                "brake-drive",
                                                "srmdrive",
                                                "sevpress",
-                                               "adpt-etk-inverter"};
+                                               "adpt-etk-inverter",
+                                               "h2-hess-pdu"};
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -688,6 +693,56 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                 "Панель диаграмм 4",
                                                 "Панель диаграмм 4",
                                                 false));
+    } else if (server_name == "h2-hess-pdu") {
+        auto pdu_server = std::make_shared<pdu::Server>(can_socket,
+                                                        ucanopen::NodeId(0x03),
+                                                        server_name);
+        ucanopen_client->register_server(pdu_server);
+
+        auto controlpanel = std::make_shared<ui::pdu::ControlPanel>(
+                pdu_server,
+                ICON_MDI_GAMEPAD_OUTLINE " Управление",
+                "Управление",
+                true);
+
+        auto statuspanel = std::make_shared<ui::pdu::StatusPanel>(
+                pdu_server,
+                ICON_MDI_INFORMATION_OUTLINE " Статус",
+                "Статус",
+                true);
+
+        watchpanel = std::make_shared<ui::WatchPanel>(pdu_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Набл. Переменные",
+                                                      "Набл. Переменные",
+                                                      true);
+
+        auto datapanel = std::make_shared<ui::pdu::DataPanel>(
+                pdu_server,
+                ICON_MDI_TABLE " Данные TPDO",
+                "Данные TPDO",
+                true);
+
+        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(
+                pdu_server,
+                ICON_MDI_TOOLS " Настройка",
+                "Настройка",
+                false);
+
+        views.push_back(controlpanel);
+        views.push_back(statuspanel);
+        views.push_back(watchpanel);
+        views.push_back(datapanel);
+        views.push_back(serversetuppanel);
+
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                pdu_server, "Панель диаграмм 1", "Панель Диаграмм 1", true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                pdu_server, "Панель диаграмм 2", "Панель диаграмм 2", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                pdu_server, "Панель диаграмм 3", "Панель диаграмм 3", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                pdu_server, "Панель диаграмм 4", "Панель диаграмм 4", false));
     } else {
         // TODO Error
     }
