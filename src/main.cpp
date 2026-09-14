@@ -34,6 +34,10 @@
 #include <ui/ucanopen_servers/adptetk/datapanel/datapanel.hpp>
 #include <ui/ucanopen_servers/adptetk/statuspanel/statuspanel.hpp>
 
+#include <ui/ucanopen_servers/adptbike/controlpanel/controlpanel.hpp>
+#include <ui/ucanopen_servers/adptbike/datapanel/datapanel.hpp>
+#include <ui/ucanopen_servers/adptbike/statuspanel/statuspanel.hpp>
+
 #include <ui/ucanopen_servers/pdu/controlpanel/controlpanel.hpp>
 #include <ui/ucanopen_servers/pdu/datapanel/datapanel.hpp>
 #include <ui/ucanopen_servers/pdu/statuspanel/statuspanel.hpp>
@@ -72,6 +76,7 @@ const std::vector<std::string> server_names = {"shm-drive-80",
                                                "srmdrive",
                                                "sevpress",
                                                "adpt-etk-inverter",
+                                               "adpt-bike-inverter",
                                                "h2-hess-pdu"};
 
 static void glfw_error_callback(int error, const char* description) {
@@ -693,6 +698,57 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                 "Панель диаграмм 4",
                                                 "Панель диаграмм 4",
                                                 false));
+    } else if (server_name == "adpt-bike-inverter") {
+        auto adptbike_server =
+                std::make_shared<adptbike::Server>(can_socket,
+                                                   ucanopen::NodeId(0x01),
+                                                   server_name);
+        ucanopen_client->register_server(adptbike_server);
+
+        auto controlpanel = std::make_shared<ui::adptbike::ControlPanel>(
+                adptbike_server,
+                ICON_MDI_GAMEPAD_OUTLINE " Управление",
+                "Управление",
+                true);
+
+        auto statuspanel = std::make_shared<ui::adptbike::StatusPanel>(
+                adptbike_server,
+                ICON_MDI_INFORMATION_OUTLINE " Статус",
+                "Статус",
+                true);
+
+        watchpanel = std::make_shared<ui::WatchPanel>(adptbike_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Набл. Переменные",
+                                                      "Набл. Переменные",
+                                                      true);
+
+        auto datapanel = std::make_shared<ui::adptbike::DataPanel>(
+                adptbike_server,
+                ICON_MDI_TABLE " Данные TPDO",
+                "Данные TPDO",
+                true);
+
+        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(
+                adptbike_server,
+                ICON_MDI_TOOLS " Настройка",
+                "Настройка",
+                false);
+
+        views.push_back(controlpanel);
+        views.push_back(statuspanel);
+        views.push_back(watchpanel);
+        views.push_back(datapanel);
+        views.push_back(serversetuppanel);
+
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                adptbike_server, "Панель диаграмм 1", "Панель Диаграмм 1", true));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                adptbike_server, "Панель диаграмм 2", "Панель диаграмм 2", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                adptbike_server, "Панель диаграмм 3", "Панель диаграмм 3", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                adptbike_server, "Панель диаграмм 4", "Панель диаграмм 4", false));
     } else if (server_name == "h2-hess-pdu") {
         auto pdu_server = std::make_shared<pdu::Server>(can_socket,
                                                         ucanopen::NodeId(0x03),
