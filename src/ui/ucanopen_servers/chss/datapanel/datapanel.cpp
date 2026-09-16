@@ -206,12 +206,12 @@ void DataPanel::draw_tpdo4_table() {
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0);
-        ImGui::TextUnformatted("Стадия");
+        ImGui::TextUnformatted("Состояние");
         ImGui::TableSetColumnIndex(1);
         ImGui::Text("%s (%u)",
-                    server_->stage_str().data(),
-                    static_cast<unsigned>(server_->stage()));
-        if (server_->stage() == std::to_underlying(::chss::Stage::lockout)) {
+                    server_->state_str().data(),
+                    static_cast<unsigned>(server_->state()));
+        if (server_->state() == std::to_underlying(::chss::State::lockout)) {
             ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                    ui::colors::table_bg_red);
         }

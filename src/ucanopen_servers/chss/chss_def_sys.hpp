@@ -223,7 +223,27 @@ struct fill_start_pressure_high {
   };
 };
 
-inline constexpr size_t status_count = 21;
+struct pressure_before_reducer_low {
+  static constexpr id_type id = 21;
+  static constexpr trouble::level level_min = trouble::level::error;
+  static constexpr trouble::level level_max = trouble::level::error;
+  static constexpr i18n description = {
+      "CHSS-P2 pressure low",
+      "давление СХКВ-Р2 ниже нормы"
+  };
+};
+
+struct pressure_after_reducer_low {
+  static constexpr id_type id = 22;
+  static constexpr trouble::level level_min = trouble::level::error;
+  static constexpr trouble::level level_max = trouble::level::error;
+  static constexpr i18n description = {
+      "CHSS-P3 pressure low",
+      "давление СХКВ-Р3 ниже нормы"
+  };
+};
+
+inline constexpr size_t status_count = 23;
 
 inline constexpr std::array<std::string_view, status_count> names_ru = {
     emergency::description.ru,
@@ -246,7 +266,9 @@ inline constexpr std::array<std::string_view, status_count> names_ru = {
     pressure_after_reducer_high::description.ru,
     storage_leak::description.ru,
     supply_filter_fouled::description.ru,
-    fill_start_pressure_high::description.ru
+    fill_start_pressure_high::description.ru,
+    pressure_before_reducer_low::description.ru,
+    pressure_after_reducer_low::description.ru
 };
 
 } // namespace status

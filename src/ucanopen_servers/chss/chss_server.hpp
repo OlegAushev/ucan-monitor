@@ -41,7 +41,7 @@ private:
     std::atomic<Mode> mode{Mode::storage};
     std::atomic<bool> supply_ready{false};
     std::atomic<bool> receiver_full{false};
-    std::atomic<uint8_t> stage{0};
+    std::atomic<uint8_t> state{0};
   } _tpdo4;
 
   std::array<std::bitset<status::status_count>, trouble::level_count> _status{};
@@ -109,13 +109,13 @@ public:
 
   bool receiver_full() const { return _tpdo4.receiver_full.load(); }
 
-  // Номер стадии принадлежит прошивке: показываем как есть, а имя — только
+  // Номер состояния принадлежит прошивке: показываем как есть, а имя — только
   // если номер известен клиенту.
-  uint8_t stage() const { return _tpdo4.stage.load(); }
+  uint8_t state() const { return _tpdo4.state.load(); }
 
-  std::string_view stage_str() const {
-    auto it = stage_names.find(static_cast<Stage>(stage()));
-    if (it == stage_names.end()) {
+  std::string_view state_str() const {
+    auto it = state_names.find(static_cast<State>(state()));
+    if (it == state_names.end()) {
       return "н/д";
     } else {
       return it->second;

@@ -104,16 +104,16 @@ void ControlPanel::_draw_dash() {
     ImGui::SameLine();
     ImGui::TextDisabled("(F2)");
 
-    // Стадия внутри режима
-    auto stage = _server->stage();
-    if (stage == std::to_underlying(::chss::Stage::lockout)) {
+    // Состояние внутри режима
+    auto state = _server->state();
+    if (state == std::to_underlying(::chss::State::lockout)) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
     }
-    ImGui::Text("Стадия: %s (%u)",
-                _server->stage_str().data(),
-                static_cast<unsigned>(stage));
+    ImGui::Text("Состояние: %s (%u)",
+                _server->state_str().data(),
+                static_cast<unsigned>(state));
     ImGui::PopStyleColor();
 
     _draw_fact(ICON_MDI_PIPE_VALVE " Подача установлена",

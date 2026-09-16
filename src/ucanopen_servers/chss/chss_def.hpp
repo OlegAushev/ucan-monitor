@@ -60,7 +60,7 @@ struct CobTpdo4 {
 
   uint8_t flags;           // supply_ready_mask | receiver_full_mask
 
-  uint8_t stage;           // Stage, только для диагностики
+  uint8_t state;           // State, только для диагностики
 
   uint8_t _reserved1_;
 
@@ -127,7 +127,7 @@ inline std::unordered_map<Mode, std::string_view> const mode_names_upper = {
 
 // Mirrors control::state::id (app/chss/control/fsm.hpp). Контракт не
 // фиксирует эти значения: они принадлежат прошивке и меняются вместе с ней.
-enum class Stage : uint8_t {
+enum class State : uint8_t {
   storage,  // клапаны закрыты, ресивер под контролем утечки
   filling,  // К7 открыт до заполнения ресивера
   supply,   // К9 открыт, подача на редуктор
@@ -135,19 +135,19 @@ enum class Stage : uint8_t {
   lockout,  // критическая неисправность: клапаны закрыты
 };
 
-inline std::unordered_set<int> const stage_values = {
-    std::to_underlying(Stage::storage),
-    std::to_underlying(Stage::filling),
-    std::to_underlying(Stage::supply),
-    std::to_underlying(Stage::purge),
-    std::to_underlying(Stage::lockout)};
+inline std::unordered_set<int> const state_values = {
+    std::to_underlying(State::storage),
+    std::to_underlying(State::filling),
+    std::to_underlying(State::supply),
+    std::to_underlying(State::purge),
+    std::to_underlying(State::lockout)};
 
-inline std::unordered_map<Stage, std::string_view> const stage_names = {
-    {Stage::storage, "хранение"},
-    {Stage::filling, "заправка"},
-    {Stage::supply, "подача"},
-    {Stage::purge, "продувка"},
-    {Stage::lockout, "блокировка"},
+inline std::unordered_map<State, std::string_view> const state_names = {
+    {State::storage, "хранение"},
+    {State::filling, "заправка"},
+    {State::supply, "подача"},
+    {State::purge, "продувка"},
+    {State::lockout, "блокировка"},
 };
 
 // Mirrors contract::valve_position (common/contract/position.hpp).

@@ -78,7 +78,7 @@ void Server::_handle_tpdo4(ucanopen::can_payload const& payload) {
 
   _tpdo4.supply_ready.store((tpdo.flags & supply_ready_mask) != 0);
   _tpdo4.receiver_full.store((tpdo.flags & receiver_full_mask) != 0);
-  _tpdo4.stage.store(tpdo.stage);
+  _tpdo4.state.store(tpdo.state);
 }
 
 ucanopen::can_payload Server::_create_rpdo1() {
