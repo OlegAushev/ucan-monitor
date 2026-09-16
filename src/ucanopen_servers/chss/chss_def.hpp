@@ -1,0 +1,169 @@
+#pragma once
+
+#include <cstdint>
+#include <string_view>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+
+#include "chss_def_sys.hpp"
+
+// PDO layouts mirror src/common/contract/chss/pdo.hpp of the h2-hess firmware.
+// Keep both in sync.
+
+namespace chss {
+
+struct CobTpdo1 {
+  uint64_t flags : status::status_count;
+
+  uint64_t _reserved1_ : 64 - status::status_count - 8 - 8;
+
+  uint64_t level : 2;
+  uint64_t _reserved2_ : 6;
+
+  uint64_t counter : 2;
+  uint64_t _reserved3_ : 6;
+};
+
+struct CobTpdo2 {
+  int16_t receiver_pressure;  // 0.1 atm/LSB, Р1-1
+
+  int16_t inflow_rate;        // 0.1 l/min/LSB, ИР1
+
+  int16_t fill_line_pressure; // 0.1 atm/LSB, Р1
+
+  uint8_t inlet_valve;        // ValvePosition, К7
+
+  uint8_t counter : 2;
+  uint8_t _reserved1_ : 6;
+};
+
+struct CobTpdo3 {
+  int16_t pressure_before_reducer; // 0.1 atm/LSB, Р2
+
+  int16_t pressure_after_reducer;  // 0.1 atm/LSB, Р3
+
+  uint8_t _reserved1_;
+
+  uint8_t _reserved2_;
+
+  uint8_t outlet_valve;            // ValvePosition, К9
+
+  uint8_t counter : 2;
+  uint8_t _reserved3_ : 6;
+};
+
+struct CobTpdo4 {
+  int16_t mcu_temperature; // 0.1 degC/LSB
+
+  uint8_t mode;            // Mode, сообщаемый узлом
+
+  uint8_t flags;           // supply_ready_mask | receiver_full_mask
+
+  uint8_t stage;           // Stage, только для диагностики
+
+  uint8_t _reserved1_;
+
+  uint8_t _reserved2_;
+
+  uint8_t counter : 2;
+  uint8_t _reserved3_ : 6;
+};
+
+static_assert(sizeof(CobTpdo1) == 8);
+static_assert(sizeof(CobTpdo2) == 8);
+static_assert(sizeof(CobTpdo3) == 8);
+static_assert(sizeof(CobTpdo4) == 8);
+
+inline constexpr uint8_t supply_ready_mask = 0x1;
+inline constexpr uint8_t receiver_full_mask = 0x2;
+
+// Режим, запрошенный мастером, и ручные уровни клапанов. Уровни действуют,
+// только пока СХКВ в продувке. Прошивка отвергает кадр с ненулевыми резервными
+// полями или со счётчиком не по порядку.
+struct CobRpdo1 {
+  uint8_t mode;        // Byte 0: режим (Mode)
+
+  uint8_t inlet_cmd;   // Byte 1: ValvePosition К7; только продувка
+  uint8_t outlet_cmd;  // Byte 2: ValvePosition К9; только продувка
+
+  uint8_t _reserved1_; // Byte 3
+  uint8_t _reserved2_; // Byte 4
+  uint8_t _reserved3_; // Byte 5
+  uint8_t _reserved4_; // Byte 6
+
+  // Byte 7
+  uint8_t counter : 2;
+  uint8_t _reserved5_ : 6;
+};
+
+static_assert(sizeof(CobRpdo1) == 8);
+
+// Mirrors contract::chss::mode (common/contract/chss/mode.hpp).
+enum class Mode : uint8_t {
+  storage,
+  filling,
+  supply,
+  purge
+};
+
+inline std::unordered_set<int> const mode_values = {
+    std::to_underlying(Mode::storage),
+    std::to_underlying(Mode::filling),
+    std::to_underlying(Mode::supply),
+    std::to_underlying(Mode::purge)};
+
+inline std::unordered_map<Mode, std::string_view> const mode_names = {
+    {Mode::storage, "хранение"},
+    {Mode::filling, "заправка"},
+    {Mode::supply, "подача"},
+    {Mode::purge, "продувка"}};
+
+inline std::unordered_map<Mode, std::string_view> const mode_names_upper = {
+    {Mode::storage, "ХРАНЕНИЕ"},
+    {Mode::filling, "ЗАПРАВКА"},
+    {Mode::supply, "ПОДАЧА"},
+    {Mode::purge, "ПРОДУВКА"}};
+
+// Mirrors control::state::id (app/chss/control/fsm.hpp). Контракт не
+// фиксирует эти значения: они принадлежат прошивке и меняются вместе с ней.
+enum class Stage : uint8_t {
+  storage,  // клапаны закрыты, ресивер под контролем утечки
+  filling,  // К7 открыт до заполнения ресивера
+  supply,   // К9 открыт, подача на редуктор
+  purge,    // клапаны отданы уровням из кадра
+  lockout,  // критическая неисправность: клапаны закрыты
+};
+
+inline std::unordered_set<int> const stage_values = {
+    std::to_underlying(Stage::storage),
+    std::to_underlying(Stage::filling),
+    std::to_underlying(Stage::supply),
+    std::to_underlying(Stage::purge),
+    std::to_underlying(Stage::lockout)};
+
+inline std::unordered_map<Stage, std::string_view> const stage_names = {
+    {Stage::storage, "хранение"},
+    {Stage::filling, "заправка"},
+    {Stage::supply, "подача"},
+    {Stage::purge, "продувка"},
+    {Stage::lockout, "блокировка"},
+};
+
+// Mirrors contract::valve_position (common/contract/position.hpp).
+enum class ValvePosition : uint8_t {
+  closed,
+  open
+};
+
+inline std::unordered_set<int> const valve_position_values = {
+    std::to_underlying(ValvePosition::closed),
+    std::to_underlying(ValvePosition::open)};
+
+inline std::unordered_map<ValvePosition, std::string_view> const
+    valve_position_names = {
+        {ValvePosition::closed, "закрыт"},
+        {ValvePosition::open, "открыт"},
+};
+
+} // namespace chss
