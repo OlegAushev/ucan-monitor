@@ -174,6 +174,13 @@ public:
   bool has_critical() const { return has_status(trouble::level::critical); }
 
   bool has_emergency() const { return has_status(trouble::level::emergency); }
+
+  // Активен ли статус на любом уровне — как trouble::active() в прошивке.
+  template<typename Status>
+  bool active(Status) const {
+    return std::ranges::any_of(
+        _status, [](auto const& lv) { return lv.test(Status::id); });
+  }
 private:
   void _handle_tpdo1(ucanopen::can_payload const& payload);
   void _handle_tpdo2(ucanopen::can_payload const& payload);

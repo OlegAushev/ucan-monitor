@@ -176,7 +176,17 @@ struct precharge_timeout {
   };
 };
 
-inline constexpr size_t status_count = 16;
+struct sensor_bypassed {
+  static constexpr id_type id = 16;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {
+      "sensor bypassed",
+      "датчик выведен из работы"
+  };
+};
+
+inline constexpr size_t status_count = 17;
 
 inline constexpr std::array<std::string_view, status_count> names_ru = {
     emergency::description.ru,
@@ -194,7 +204,8 @@ inline constexpr std::array<std::string_view, status_count> names_ru = {
     contactor_no_feedback::description.ru,
     sensor_failure_current::description.ru,
     sensor_failure_voltage::description.ru,
-    precharge_timeout::description.ru
+    precharge_timeout::description.ru,
+    sensor_bypassed::description.ru
 };
 
 } // namespace status

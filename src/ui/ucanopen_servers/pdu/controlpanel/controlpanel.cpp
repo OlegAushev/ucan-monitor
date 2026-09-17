@@ -59,6 +59,7 @@ void ControlPanel::draw() {
 
     _draw_dash();
     _draw_controls();
+    _draw_substitutes();
 
     _draw_actions();
     _draw_popups();
@@ -200,6 +201,22 @@ void ControlPanel::_draw_controls() {
         ImGui::SetTooltip("Контакторы отдаются ручным уровням");
     }
 
+    // Вместо выведенного из работы датчика PDU читает замещающее напряжение,
+    // записанное по SDO, и работает на нём как на показании: предзаряд и
+    // переключение идут как обычно, а на панели видно именно оно.
+    if (_server->active(::pdu::status::sensor_bypassed{})) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
+        ImGui::TextUnformatted(ICON_MDI_ALERT_OUTLINE
+                               " Датчики выведены из работы");
+        ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Напряжения выведенных датчиков заданы вручную.\n"
+                              "Какие датчики выведены — в настройке, категория "
+                              "sensor;\nзамещающие значения — в разделе "
+                              "«Замещающие Показания».");
+        }
+    }
+
     ImGui::SeparatorText("Управление");
 
     ToggleButton(ICON_MDI_TRANSMISSION_TOWER " ЗАПРОС ИНВЕРТОРА",
@@ -239,6 +256,59 @@ void ControlPanel::_draw_controls() {
                                  ImVec2{260, 0});
                 });
     }
+}
+
+void ControlPanel::_draw_substitutes() {
+    if (!ImGui::CollapsingHeader(ICON_MDI_BUG_OUTLINE " Замещающие Показания",
+                                 ImGuiTreeNodeFlags_Framed)) {
+        return;
+    }
+
+    // Напряжения выведенных из работы датчиков PDU берёт из этих значений, у
+    // установленных датчиков они ни на что не влияют. Живут значения в RAM
+    // PDU: после его перезапуска там снова нули, поэтому рядом с каждым полем
+    // видно, что супервизор получает сейчас.
+    bool const bypassed = _server->active(::pdu::status::sensor_bypassed{});
+    if (!bypassed) {
+        ImGui::TextDisabled("Доступно, когда датчики выведены из работы");
+    }
+
+    struct Field {
+        char const* label;
+        char const* name;
+        float reading;
+    };
+
+    // Единицы — те же, что у объектов debug/substitute в прошивке. PDU примет
+    // любое конечное значение.
+    std::array const fields{
+            Field{"Батарея [В]", "battery_voltage", _server->battery_voltage()},
+            Field{"Ветвь ЭХГ [В]", "fuelcell_voltage",
+                  _server->fuelcell_voltage()},
+            Field{"Ветвь инвертора [В]", "inverter_voltage",
+                  _server->inverter_voltage()},
+    };
+
+    util::Switchable substitutes(bypassed, [&]() {
+        ImGui::PushItemWidth(160);
+        for (auto i = 0uz; i < fields.size(); ++i) {
+            auto const& field = fields[i];
+            if (ImGui::InputFloat(field.label,
+                                  &_substitutes[i],
+                                  1.0f,
+                                  10.0f,
+                                  "%.1f",
+                                  ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _server->write("debug",
+                               "substitute",
+                               field.name,
+                               ucanopen::ExpeditedSdoData{_substitutes[i]});
+            }
+            ImGui::SameLine();
+            ImGui::TextDisabled("сейчас %.1f", field.reading);
+        }
+        ImGui::PopItemWidth();
+    });
 }
 
 void ControlPanel::_draw_actions() {
