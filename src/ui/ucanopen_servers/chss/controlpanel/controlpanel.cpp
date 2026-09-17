@@ -50,6 +50,7 @@ void ControlPanel::draw() {
 
     _draw_dash();
     _draw_controls();
+    _draw_substitutes();
 
     _draw_actions();
     _draw_popups();
@@ -199,6 +200,22 @@ void ControlPanel::_draw_controls() {
         ImGui::SetTooltip("Клапаны отдаются ручным уровням");
     }
 
+    // Вместо выведенного из работы датчика СХКВ читает замещающее значение,
+    // записанное по SDO, и работает на нём как на показании: все режимы и
+    // проверки остаются в силе, а на панели видно именно оно.
+    if (_server->active(::chss::status::sensor_bypassed{})) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
+        ImGui::TextUnformatted(ICON_MDI_ALERT_OUTLINE
+                               " Датчики выведены из работы");
+        ImGui::PopStyleColor();
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Показания выведенных датчиков заданы вручную.\n"
+                              "Какие датчики выведены — в настройке, категория "
+                              "sensor;\nзамещающие значения — в разделе "
+                              "«Замещающие Показания».");
+        }
+    }
+
     if (_server->mode() != _mode) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
         ImGui::Text(ICON_MDI_ALERT_OUTLINE " Запрошен режим «%s», СХКВ в «%s»",
@@ -226,6 +243,65 @@ void ControlPanel::_draw_controls() {
                                  ImVec2{260, 0});
                 });
     }
+}
+
+void ControlPanel::_draw_substitutes() {
+    if (!ImGui::CollapsingHeader(ICON_MDI_BUG_OUTLINE " Замещающие Показания",
+                                 ImGuiTreeNodeFlags_Framed)) {
+        return;
+    }
+
+    // Показания выведенных из работы датчиков СХКВ берёт из этих значений, у
+    // установленных датчиков они ни на что не влияют. Живут значения в RAM
+    // СХКВ: после её перезапуска там снова нули, поэтому рядом с каждым полем
+    // видно, что машина получает сейчас.
+    bool const bypassed = _server->active(::chss::status::sensor_bypassed{});
+    if (!bypassed) {
+        ImGui::TextDisabled("Доступно, когда датчики выведены из работы");
+    }
+
+    struct Field {
+        char const* label;
+        char const* name;
+        float reading;
+    };
+
+    // Единицы — те же, что у объектов debug/substitute в прошивке: давления в
+    // атм, расход в м³/ч (телеметрия несёт его в л/мин). СХКВ примет любое
+    // конечное значение; за окном достоверности оно изображает обрыв петли.
+    std::array const fields{
+            Field{"Р1-1 [атм]", "receiver_pressure",
+                  _server->receiver_pressure()},
+            Field{"Р1 [атм]", "fill_line_pressure",
+                  _server->fill_line_pressure()},
+            Field{"Р2 [атм]", "pressure_before_reducer",
+                  _server->pressure_before_reducer()},
+            Field{"Р3 [атм]", "pressure_after_reducer",
+                  _server->pressure_after_reducer()},
+            Field{"ИР1 [м³/ч]", "inflow_rate",
+                  _server->inflow_rate() * 0.06f},
+    };
+
+    util::Switchable substitutes(bypassed, [&]() {
+        ImGui::PushItemWidth(160);
+        for (auto i = 0uz; i < fields.size(); ++i) {
+            auto const& field = fields[i];
+            if (ImGui::InputFloat(field.label,
+                                  &_substitutes[i],
+                                  0.1f,
+                                  1.0f,
+                                  "%.1f",
+                                  ImGuiInputTextFlags_EnterReturnsTrue)) {
+                _server->write("debug",
+                               "substitute",
+                               field.name,
+                               ucanopen::ExpeditedSdoData{_substitutes[i]});
+            }
+            ImGui::SameLine();
+            ImGui::TextDisabled("сейчас %.1f", field.reading);
+        }
+        ImGui::PopItemWidth();
+    });
 }
 
 void ControlPanel::_draw_actions() {

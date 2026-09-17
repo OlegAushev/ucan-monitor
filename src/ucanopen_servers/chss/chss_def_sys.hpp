@@ -243,7 +243,17 @@ struct pressure_after_reducer_low {
   };
 };
 
-inline constexpr size_t status_count = 23;
+struct sensor_bypassed {
+  static constexpr id_type id = 23;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {
+      "sensor bypassed",
+      "датчик выведен из работы"
+  };
+};
+
+inline constexpr size_t status_count = 24;
 
 inline constexpr std::array<std::string_view, status_count> names_ru = {
     emergency::description.ru,
@@ -268,7 +278,8 @@ inline constexpr std::array<std::string_view, status_count> names_ru = {
     supply_filter_fouled::description.ru,
     fill_start_pressure_high::description.ru,
     pressure_before_reducer_low::description.ru,
-    pressure_after_reducer_low::description.ru
+    pressure_after_reducer_low::description.ru,
+    sensor_bypassed::description.ru
 };
 
 } // namespace status
