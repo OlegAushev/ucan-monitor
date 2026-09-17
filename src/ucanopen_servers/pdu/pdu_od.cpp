@@ -56,9 +56,13 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3001, 0x05}, {"config", "power", "contactor_fb_time",   "s", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3001, 0x06}, {"config", "power", "startup_delay",       "s", OD_ACCESS_RW, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
-{{0x3002, 0x01}, {"config", "sensor", "battery_voltage_installed",  "", OD_ACCESS_RW, OD_BOOL}},
-{{0x3002, 0x02}, {"config", "sensor", "fuelcell_voltage_installed", "", OD_ACCESS_RW, OD_BOOL}},
-{{0x3002, 0x03}, {"config", "sensor", "inverter_voltage_installed", "", OD_ACCESS_RW, OD_BOOL}},
+{{0x3002, 0x01}, {"config", "sensor", "battery_voltage_installed",       "", OD_ACCESS_RW, OD_BOOL}},
+{{0x3002, 0x02}, {"config", "sensor", "fuelcell_voltage_installed",      "", OD_ACCESS_RW, OD_BOOL}},
+{{0x3002, 0x03}, {"config", "sensor", "inverter_voltage_installed",      "", OD_ACCESS_RW, OD_BOOL}},
+{{0x3002, 0x04}, {"config", "sensor", "fuelcell_main_fb_installed",      "", OD_ACCESS_RW, OD_BOOL}},
+{{0x3002, 0x05}, {"config", "sensor", "fuelcell_precharge_fb_installed", "", OD_ACCESS_RW, OD_BOOL}},
+{{0x3002, 0x06}, {"config", "sensor", "inverter_main_fb_installed",      "", OD_ACCESS_RW, OD_BOOL}},
+{{0x3002, 0x07}, {"config", "sensor", "inverter_precharge_fb_installed", "", OD_ACCESS_RW, OD_BOOL}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x4000, 0x01}, {"debug", "substitute", "battery_voltage",  "V", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x4000, 0x02}, {"debug", "substitute", "fuelcell_voltage", "V", OD_ACCESS_RW, OD_FLOAT32}},
