@@ -108,7 +108,7 @@ struct can_master_connection_lost {
 struct can_master_invalid_frame {
   static constexpr id_type id = 9;
   static constexpr trouble::level level_min = trouble::level::warning;
-  static constexpr trouble::level level_max = trouble::level::error;
+  static constexpr trouble::level level_max = trouble::level::warning;
   static constexpr i18n description = {
       "master invalid frame",
       "некорректный кадр КВУ"

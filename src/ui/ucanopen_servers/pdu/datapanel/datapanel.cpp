@@ -112,7 +112,8 @@ void DataPanel::draw_branch_rows(const char* branch_name,
                                  ::pdu::ContactorPosition main_feedback,
                                  ::pdu::ContactorPosition precharge_command,
                                  ::pdu::ContactorPosition precharge_feedback,
-                                 ::pdu::BranchState state) {
+                                 ::pdu::BranchState state,
+                                 bool connected) {
     ImGui::TableNextRow();
     ImGui::TableSetColumnIndex(0);
     ImGui::Text("Напряжение %s [В]", branch_name);
@@ -155,6 +156,18 @@ void DataPanel::draw_branch_rows(const char* branch_name,
         ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
                                ui::colors::table_bg_red);
     }
+
+    ImGui::TableNextRow();
+    ImGui::TableSetColumnIndex(0);
+    ImGui::TextUnformatted("Ветвь подключена");
+    ImGui::TableSetColumnIndex(1);
+    if (connected) {
+        ImGui::TextUnformatted("да");
+        ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                               ui::colors::table_bg_green);
+    } else {
+        ImGui::TextUnformatted("нет");
+    }
 }
 
 void DataPanel::draw_tpdo2_table() {
@@ -175,7 +188,8 @@ void DataPanel::draw_tpdo2_table() {
                          server_->fuelcell_main_feedback(),
                          server_->fuelcell_precharge_command(),
                          server_->fuelcell_precharge_feedback(),
-                         server_->fuelcell_state());
+                         server_->fuelcell_state(),
+                         server_->fuelcell_connected());
 
         ImGui::EndTable();
     }
@@ -199,7 +213,8 @@ void DataPanel::draw_tpdo3_table() {
                          server_->inverter_main_feedback(),
                          server_->inverter_precharge_command(),
                          server_->inverter_precharge_feedback(),
-                         server_->inverter_state());
+                         server_->inverter_state(),
+                         server_->inverter_connected());
 
         ImGui::EndTable();
     }

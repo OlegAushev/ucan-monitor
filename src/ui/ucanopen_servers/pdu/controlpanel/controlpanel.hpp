@@ -51,6 +51,7 @@ private:
 
     void _draw_branch_state(const char* title,
                             ::pdu::BranchState state,
+                            bool connected,
                             ::pdu::ContactorPosition main_feedback,
                             ::pdu::ContactorPosition precharge_feedback,
                             float voltage,

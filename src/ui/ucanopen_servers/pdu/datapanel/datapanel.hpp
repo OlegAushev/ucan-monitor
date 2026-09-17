@@ -32,7 +32,8 @@ private:
                           ::pdu::ContactorPosition main_feedback,
                           ::pdu::ContactorPosition precharge_command,
                           ::pdu::ContactorPosition precharge_feedback,
-                          ::pdu::BranchState state);
+                          ::pdu::BranchState state,
+                          bool connected);
 };
 
 } // namespace pdu

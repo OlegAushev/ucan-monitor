@@ -26,6 +26,7 @@ private:
     std::atomic<ContactorPosition> precharge_command{ContactorPosition::open};
     std::atomic<ContactorPosition> precharge_feedback{ContactorPosition::open};
     std::atomic<BranchState> state{BranchState::disconnected};
+    std::atomic<bool> connected{false};
   };
 
   struct {
@@ -127,6 +128,8 @@ public:
 
   BranchState fuelcell_state() const { return _fuelcell.state.load(); }
 
+  bool fuelcell_connected() const { return _fuelcell.connected.load(); }
+
   std::string_view fuelcell_state_str() const {
     return branch_state_str(fuelcell_state());
   }
@@ -152,6 +155,8 @@ public:
   }
 
   BranchState inverter_state() const { return _inverter.state.load(); }
+
+  bool inverter_connected() const { return _inverter.connected.load(); }
 
   std::string_view inverter_state_str() const {
     return branch_state_str(inverter_state());
@@ -190,9 +195,9 @@ private:
   void _handle_branch_tpdo(Branch& branch,
                            int16_t voltage,
                            int16_t current,
-                           uint8_t main,
-                           uint8_t precharge,
-                           uint8_t state);
+                           ContactorReport main,
+                           ContactorReport precharge,
+                           BranchReport report);
 
   ucanopen::can_payload _create_rpdo1();
 };

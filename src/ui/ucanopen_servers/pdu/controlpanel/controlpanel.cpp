@@ -113,6 +113,7 @@ void ControlPanel::_draw_dash() {
 
     _draw_branch_state("Ветвь ЭХГ",
                        _server->fuelcell_state(),
+                       _server->fuelcell_connected(),
                        _server->fuelcell_main_feedback(),
                        _server->fuelcell_precharge_feedback(),
                        _server->fuelcell_voltage(),
@@ -120,6 +121,7 @@ void ControlPanel::_draw_dash() {
 
     _draw_branch_state("Ветвь инвертора",
                        _server->inverter_state(),
+                       _server->inverter_connected(),
                        _server->inverter_main_feedback(),
                        _server->inverter_precharge_feedback(),
                        _server->inverter_voltage(),
@@ -133,6 +135,7 @@ void ControlPanel::_draw_dash() {
 
 void ControlPanel::_draw_branch_state(const char* title,
                                       ::pdu::BranchState state,
+                                      bool connected,
                                       ::pdu::ContactorPosition main_feedback,
                                       ::pdu::ContactorPosition
                                               precharge_feedback,
@@ -154,10 +157,10 @@ void ControlPanel::_draw_branch_state(const char* title,
     ImGui::PopStyleColor();
     ImGui::SameLine();
 
-    if (state == ::pdu::BranchState::lockout) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
-    } else if (state == ::pdu::BranchState::connected) {
+    if (connected) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_green);
+    } else if (state == ::pdu::BranchState::lockout) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
     } else {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
     }
