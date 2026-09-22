@@ -34,6 +34,10 @@
 #include <ui/ucanopen_servers/adptetk/datapanel/datapanel.hpp>
 #include <ui/ucanopen_servers/adptetk/statuspanel/statuspanel.hpp>
 
+#include <ui/ucanopen_servers/psfb/controlpanel/controlpanel.hpp>
+#include <ui/ucanopen_servers/psfb/datapanel/datapanel.hpp>
+#include <ui/ucanopen_servers/psfb/statuspanel/statuspanel.hpp>
+
 #include <ui/ucanopen_servers/adptbike/controlpanel/controlpanel.hpp>
 #include <ui/ucanopen_servers/adptbike/datapanel/datapanel.hpp>
 #include <ui/ucanopen_servers/adptbike/statuspanel/statuspanel.hpp>
@@ -80,6 +84,7 @@ const std::vector<std::string> server_names = {"shm-drive-80",
                                                "srmdrive",
                                                "sevpress",
                                                "adpt-etk-inverter",
+                                               "adpt-etk-psfb-converter",
                                                "adpt-bike-inverter",
                                                "h2-hess-pdu",
                                                "h2-hess-chss"};
@@ -700,6 +705,69 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                 false));
         watchplots.push_back(
                 std::make_shared<ui::WatchPlot>(adptetk_server,
+                                                "Панель диаграмм 4",
+                                                "Панель диаграмм 4",
+                                                false));
+    } else if (server_name == "adpt-etk-psfb-converter") {
+        auto psfb_server =
+                std::make_shared<psfb::Server>(can_socket,
+                                               ucanopen::NodeId(0x01),
+                                               server_name);
+        ucanopen_client->register_server(psfb_server);
+
+        auto controlpanel = std::make_shared<ui::psfb::ControlPanel>(
+                psfb_server,
+                ICON_MDI_GAMEPAD_OUTLINE " Управление",
+                "Управление",
+                true);
+
+        auto statuspanel = std::make_shared<ui::psfb::StatusPanel>(
+                psfb_server,
+                ICON_MDI_INFORMATION_OUTLINE " Статус",
+                "Статус",
+                true);
+
+        watchpanel = std::make_shared<ui::WatchPanel>(psfb_server,
+                                                      ICON_MDI_TABLE_EYE
+                                                      " Набл. Переменные",
+                                                      "Набл. Переменные",
+                                                      true);
+
+        auto datapanel = std::make_shared<ui::psfb::DataPanel>(
+                psfb_server,
+                ICON_MDI_TABLE " Данные TPDO",
+                "Данные TPDO",
+                true);
+
+        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(
+                psfb_server,
+                ICON_MDI_TOOLS " Настройка",
+                "Настройка",
+                false);
+
+        views.push_back(controlpanel);
+        views.push_back(statuspanel);
+        views.push_back(watchpanel);
+        views.push_back(datapanel);
+        views.push_back(serversetuppanel);
+
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(psfb_server,
+                                                "Панель диаграмм 1",
+                                                "Панель Диаграмм 1",
+                                                true));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(psfb_server,
+                                                "Панель диаграмм 2",
+                                                "Панель диаграмм 2",
+                                                false));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(psfb_server,
+                                                "Панель диаграмм 3",
+                                                "Панель диаграмм 3",
+                                                false));
+        watchplots.push_back(
+                std::make_shared<ui::WatchPlot>(psfb_server,
                                                 "Панель диаграмм 4",
                                                 "Панель диаграмм 4",
                                                 false));

@@ -1,0 +1,308 @@
+#include "datapanel.hpp"
+#include <ui/util/checkbox_tristate.h>
+#include <ui/util/style.h>
+#include <ui/util/util.h>
+
+using namespace psfb;
+
+namespace ui {
+namespace psfb {
+
+DataPanel::DataPanel(std::shared_ptr<::psfb::Server> server,
+                     const std::string& menu_title,
+                     const std::string& window_title,
+                     bool open)
+        : View(menu_title, window_title, open), server_(server) {}
+
+void DataPanel::draw() {
+    ImGui::Begin(_window_title.c_str(), &_opened);
+    draw_tpdo1_table();
+    ImGui::NewLine();
+    draw_tpdo2_table();
+    ImGui::NewLine();
+    draw_tpdo3_table();
+    ImGui::NewLine();
+    draw_tpdo4_table();
+    ImGui::End();
+}
+
+void DataPanel::draw_tpdo1_table() {
+    if (server_->tpdo_service.good(ucanopen::CobTpdo::tpdo1)) {
+        ui::util::BlinkingText(ICON_MDI_NETWORK,
+                               std::chrono::milliseconds{750},
+                               ui::colors::icon_green,
+                               ui::colors::icon_inactive);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::SameLine();
+    ImGui::SeparatorText("TPDO1");
+
+    static ImGuiTableFlags flags =
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+    if (ImGui::BeginTable("tpdo1_table", 2, flags)) {
+        ImGui::TableSetupColumn("Параметр");
+        ImGui::TableSetupColumn("Значение");
+        ImGui::TableHeadersRow();
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Сообщение [hex]");
+        ImGui::TableSetColumnIndex(1);
+        auto payload = server_->tpdo_service.data(ucanopen::CobTpdo::tpdo1);
+        ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X",
+                    payload[0],
+                    payload[1],
+                    payload[2],
+                    payload[3],
+                    payload[4],
+                    payload[5],
+                    payload[6],
+                    payload[7]);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Состояние");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::TextUnformatted(server_->converter_state_str().data());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("ШИМ 1");
+        ImGui::TableSetColumnIndex(1);
+        if (server_->is_pwm1_on()) {
+            ImGui::TextUnformatted("вкл");
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_green);
+        } else {
+            ImGui::TextUnformatted("выкл");
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("ШИМ 2");
+        ImGui::TableSetColumnIndex(1);
+        if (server_->is_pwm2_on()) {
+            ImGui::TextUnformatted("вкл");
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_green);
+        } else {
+            ImGui::TextUnformatted("выкл");
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Перекрытие 1 [%]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%.2f", 100.0f * server_->overlap1());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Перекрытие 2 [%]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%.2f", 100.0f * server_->overlap2());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Предупреждения");
+        ImGui::TableSetColumnIndex(1);
+        if (server_->has_any_warning()) {
+            ImGui::TextUnformatted("да");
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_yellow);
+        } else {
+            ImGui::TextUnformatted("нет");
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Ошибки");
+        ImGui::TableSetColumnIndex(1);
+        if (server_->has_error()) {
+            ImGui::TextUnformatted("да");
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_red);
+        } else {
+            ImGui::TextUnformatted("нет");
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Крит. Ошибки");
+        ImGui::TableSetColumnIndex(1);
+        if (server_->has_critical()) {
+            ImGui::TextUnformatted("да");
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_red);
+        } else {
+            ImGui::TextUnformatted("нет");
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Аварии");
+        ImGui::TableSetColumnIndex(1);
+        if (server_->has_emergency()) {
+            ImGui::TextUnformatted("да");
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   ui::colors::table_bg_red);
+        } else {
+            ImGui::TextUnformatted("нет");
+        }
+
+        ImGui::EndTable();
+    }
+}
+
+void DataPanel::draw_tpdo2_table() {
+    if (server_->tpdo_service.good(ucanopen::CobTpdo::tpdo2)) {
+        ui::util::BlinkingText(ICON_MDI_NETWORK,
+                               std::chrono::milliseconds{750},
+                               ui::colors::icon_green,
+                               ui::colors::icon_inactive);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::SameLine();
+    ImGui::SeparatorText("TPDO2");
+
+    static ImGuiTableFlags flags =
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+    if (ImGui::BeginTable("tpdo2_table", 2, flags)) {
+        ImGui::TableSetupColumn("Параметр");
+        ImGui::TableSetupColumn("Значение");
+        ImGui::TableHeadersRow();
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Сообщение [hex]");
+        ImGui::TableSetColumnIndex(1);
+        auto payload = server_->tpdo_service.data(ucanopen::CobTpdo::tpdo2);
+        ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X",
+                    payload[0],
+                    payload[1],
+                    payload[2],
+                    payload[3],
+                    payload[4],
+                    payload[5],
+                    payload[6],
+                    payload[7]);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Напряжение ВВ [В]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%.1f", server_->hv_voltage());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Напряжение НВ [В]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%.1f", server_->lv_voltage());
+
+        ImGui::EndTable();
+    }
+}
+
+void DataPanel::draw_tpdo3_table() {
+    if (server_->tpdo_service.good(ucanopen::CobTpdo::tpdo3)) {
+        ui::util::BlinkingText(ICON_MDI_NETWORK,
+                               std::chrono::milliseconds{750},
+                               ui::colors::icon_green,
+                               ui::colors::icon_inactive);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::SameLine();
+    ImGui::SeparatorText("TPDO3");
+
+    static ImGuiTableFlags flags =
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+    if (ImGui::BeginTable("tpdo3_table", 2, flags)) {
+        ImGui::TableSetupColumn("Параметр");
+        ImGui::TableSetupColumn("Значения");
+        ImGui::TableHeadersRow();
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Сообщение [hex]");
+        ImGui::TableSetColumnIndex(1);
+        auto payload = server_->tpdo_service.data(ucanopen::CobTpdo::tpdo3);
+        ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X",
+                    payload[0],
+                    payload[1],
+                    payload[2],
+                    payload[3],
+                    payload[4],
+                    payload[5],
+                    payload[6],
+                    payload[7]);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Ток 1 [А]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%.1f", server_->current1());
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Ток 2 [А]");
+        ImGui::TableSetColumnIndex(1);
+        ImGui::Text("%.1f", server_->current2());
+
+        ImGui::EndTable();
+    }
+}
+
+void DataPanel::draw_tpdo4_table() {
+    if (server_->tpdo_service.good(ucanopen::CobTpdo::tpdo4)) {
+        ui::util::BlinkingText(ICON_MDI_NETWORK,
+                               std::chrono::milliseconds{750},
+                               ui::colors::icon_green,
+                               ui::colors::icon_inactive);
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextUnformatted(ICON_MDI_CLOSE_NETWORK);
+        ImGui::PopStyleColor();
+    }
+
+    ImGui::SameLine();
+    ImGui::SeparatorText("TPDO4");
+
+    static ImGuiTableFlags flags =
+            ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+    if (ImGui::BeginTable("tpdo4_table", 2, flags)) {
+        ImGui::TableSetupColumn("Параметр");
+        ImGui::TableSetupColumn("Значение");
+        ImGui::TableHeadersRow();
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted("Сообщение [hex]");
+        ImGui::TableSetColumnIndex(1);
+        auto payload = server_->tpdo_service.data(ucanopen::CobTpdo::tpdo4);
+        ImGui::Text("%02X %02X %02X %02X %02X %02X %02X %02X",
+                    payload[0],
+                    payload[1],
+                    payload[2],
+                    payload[3],
+                    payload[4],
+                    payload[5],
+                    payload[6],
+                    payload[7]);
+
+        ImGui::EndTable();
+    }
+}
+
+} // namespace psfb
+} // namespace ui
