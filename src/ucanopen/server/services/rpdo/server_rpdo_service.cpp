@@ -10,11 +10,13 @@ ServerRpdoService::ServerRpdoService(impl::Server& server)
 
 void ServerRpdoService::register_rpdo(CobRpdo rpdo, std::chrono::milliseconds period, std::function<can_payload(void)> creator) {
     canid_t id = calculate_cob_id(to_cob(rpdo), _server.node_id());
+    std::lock_guard<std::mutex> lock(_mtx);
     _rpdo_msgs.insert({rpdo, {id, period, std::chrono::steady_clock::now(), creator}});
 }
 
 
 void ServerRpdoService::update_node_id() {
+    std::lock_guard<std::mutex> lock(_mtx);
     for (auto& [rpdo, message] : _rpdo_msgs) {
         message.id = calculate_cob_id(to_cob(rpdo), _server.node_id());
     }
