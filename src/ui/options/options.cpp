@@ -162,61 +162,71 @@ void Options::_draw_ucanopen_tab() {
     }
 }
 
-void Options::_draw_server_settings(const std::string& server) {
+void Options::_draw_server_settings(const std::string& name) {
+    auto server = _client->server(name);
+    if (!server) {
+        return;
+    }
+
     ImGui::NewLine();
-    std::string separator_text = "Сервер: " + server;
+    std::string separator_text = "Сервер: " + name;
     ImGui::SeparatorText(separator_text.c_str());
 
-    static int server_id = _client->server(server)->node_id().get();
+    // Each server draws the same widgets: its own ID scope keeps them apart,
+    // and each shows that server's setting, read from the server itself.
+    ImGui::PushID(name.c_str());
+
+    int server_id = server->node_id().get();
     if (ImGui::InputInt("ID Сервера",
                         &server_id,
                         1,
                         100,
                         ImGuiInputTextFlags_EnterReturnsTrue)) {
         server_id = std::clamp(server_id, 1, 127);
-        if (_client->set_server_node_id(server, ucanopen::NodeId(server_id)) !=
-            ucanopen::SetupStatus::success) {
-            server_id = _client->server(server)->node_id().get();
-        }
+        _client->set_server_node_id(name, ucanopen::NodeId(server_id));
     }
 
-    static bool server_rpdo_enabled = true;
-    if (ImGui::Checkbox("RPDO-сообщения", &server_rpdo_enabled)) {
-        if (server_rpdo_enabled) {
-            _client->enable_rpdo_on_server(server);
+    bool rpdo_enabled = server->rpdo_service.enabled();
+    if (ImGui::Checkbox("RPDO-сообщения", &rpdo_enabled)) {
+        if (rpdo_enabled) {
+            _client->enable_rpdo_on_server(name);
         } else {
-            _client->disable_rpdo_on_server(server);
+            _client->disable_rpdo_on_server(name);
         }
     }
 
-    static bool server_watch_enabled = true;
-    if (ImGui::Checkbox("Watch-сообщения", &server_watch_enabled)) {
-        if (server_watch_enabled) {
-            _client->enable_watch_on_server(server);
+    bool watch_enabled = server->watch_service.enabled();
+    if (ImGui::Checkbox("Watch-сообщения", &watch_enabled)) {
+        if (watch_enabled) {
+            _client->enable_watch_on_server(name);
         } else {
-            _client->disable_watch_on_server(server);
+            _client->disable_watch_on_server(name);
         }
     }
 
+    int watch_period = static_cast<int>(server->watch_service.period().count());
     if (ImGui::InputInt("Период Watch-сообщений",
-                        &_server_watch_period,
+                        &watch_period,
                         1,
                         100,
                         ImGuiInputTextFlags_EnterReturnsTrue)) {
-        _server_watch_period = std::clamp(_server_watch_period, 1, 10000);
+        watch_period = std::clamp(watch_period, 1, 10000);
         _client->set_watch_period_on_server(
-                server,
-                std::chrono::milliseconds(_server_watch_period));
+                name,
+                std::chrono::milliseconds(watch_period));
     }
 
+    int log_capacity = static_cast<int>(server->log_service.log_capacity());
     if (ImGui::InputInt("Размер Лога",
-                        &_server_log_capacity,
+                        &log_capacity,
                         1,
                         100,
                         ImGuiInputTextFlags_EnterReturnsTrue)) {
-        _server_log_capacity = std::clamp(_server_log_capacity, 10, 1000000);
-        _client->set_log_capacity_on_server(server, _server_log_capacity);
+        log_capacity = std::clamp(log_capacity, 10, 1000000);
+        _client->set_log_capacity_on_server(name, log_capacity);
     }
+
+    ImGui::PopID();
 }
 
 void Options::_draw_appearance_tab() {

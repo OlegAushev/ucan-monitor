@@ -30,6 +30,8 @@ public:
                        std::function<can_payload(void)> creator);
     void update_node_id();
 
+    bool enabled() const { return _is_enabled; }
+
     void enable() { _is_enabled = true; }
 
     void disable() { _is_enabled = false; }

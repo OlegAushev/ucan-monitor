@@ -50,8 +50,10 @@ public:
                                            SdoType sdo_type,
                                            ExpeditedSdoData sdo_data) override;
 
+    bool enabled() const { return _enabled; }
     void enable() { _enabled = true; }
     void disable() { _enabled = false; }
+    std::chrono::milliseconds period() const { return _period; }
     void set_period(std::chrono::milliseconds period) { _period = period; }
 
     std::vector<const ODObject*> objects() const {
