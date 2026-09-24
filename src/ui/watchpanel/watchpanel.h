@@ -13,6 +13,7 @@ class WatchPanel : public View {
 private:
     std::shared_ptr<ucanopen::Server> _server;
     std::vector<const ucanopen::ODObject*> _watch_objects;
+    int _all_acq_enabled{1}; // tristate of the "select all" box, per panel
 public:
     WatchPanel(std::shared_ptr<ucanopen::Server> server,
                const std::string& menu_title,

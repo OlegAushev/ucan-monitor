@@ -21,6 +21,7 @@ private:
     bool _enabled{true};
     std::chrono::milliseconds _period{1000};
     std::chrono::time_point<std::chrono::steady_clock> _daq_timepoint;
+    size_t _daq_idx{0}; // the object polled next, one cursor per server
 
     // sdo watch objects
     std::vector<const ODObject*> _objects;

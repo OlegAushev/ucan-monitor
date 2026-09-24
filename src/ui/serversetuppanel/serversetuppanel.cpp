@@ -105,12 +105,14 @@ void ServerSetupPanel::_draw_setup() {
         return;
     }
 
-    static auto selected_category_iter = objects.begin();
-    static size_t selected_object_idx = 0;
-    static bool should_read = true;
+    auto selected_category_iter = objects.find(_category);
+    if (selected_category_iter == objects.end()) {
+        selected_category_iter = objects.begin();
+        _category = selected_category_iter->first;
+    }
 
     if (ImGui::Button(ICON_MDI_REFRESH " Обновить##setup")) {
-        should_read = true;
+        _should_read = true;
     }
 
     if (ImGui::BeginCombo("Категория", selected_category_iter->first.data())) {
@@ -118,41 +120,41 @@ void ServerSetupPanel::_draw_setup() {
             auto is_selected = (iter == selected_category_iter);
             if (ImGui::Selectable(iter->first.data(), is_selected)) {
                 selected_category_iter = iter;
-                selected_object_idx = 0;
-                should_read = true;
+                _category = iter->first;
+                _selected_object_idx = 0;
+                _should_read = true;
             }
         }
         ImGui::EndCombo();
     }
 
     const std::string object_preview =
-            selected_category_iter->second[selected_object_idx]->name + "[" +
-            selected_category_iter->second[selected_object_idx]->unit + "]";
+            selected_category_iter->second[_selected_object_idx]->name + "[" +
+            selected_category_iter->second[_selected_object_idx]->unit + "]";
 
     if (ImGui::BeginCombo("Объект", object_preview.c_str())) {
         for (size_t i = 0; i < selected_category_iter->second.size(); ++i) {
-            auto is_selected = (i == selected_object_idx);
+            auto is_selected = (i == _selected_object_idx);
             const auto& obj = selected_category_iter->second[i];
             const std::string obj_ = obj->name + "[" + obj->unit + "]";
             if (ImGui::Selectable(obj_.c_str(), is_selected)) {
-                selected_object_idx = i;
-                should_read = true;
+                _selected_object_idx = i;
+                _should_read = true;
             }
         }
         ImGui::EndCombo();
     }
 
-    static std::optional<ucanopen::ExpeditedSdoData> parameter_value;
-    if (should_read) {
-        parameter_value = _server->read_expdata(
+    if (_should_read) {
+        _parameter_value = _server->read_expdata(
                 _server->dictionary().config.config_category,
                 selected_category_iter->first,
-                selected_category_iter->second[selected_object_idx]->name,
+                selected_category_iter->second[_selected_object_idx]->name,
                 std::chrono::milliseconds(500));
-        should_read = false;
+        _should_read = false;
     }
 
-    if (!parameter_value.has_value()) {
+    if (!_parameter_value.has_value()) {
         std::string str = "н/д";
         ImGui::InputText("Значение",
                          str.data(),
@@ -160,11 +162,11 @@ void ServerSetupPanel::_draw_setup() {
                          ImGuiInputTextFlags_ReadOnly);
     } else {
 
-        switch (selected_category_iter->second[selected_object_idx]
+        switch (selected_category_iter->second[_selected_object_idx]
                         ->data_type) {
         case ucanopen::OD_BOOL:
         case ucanopen::OD_UINT8: {
-            uint8_t value_u8 = parameter_value.value().u8();
+            uint8_t value_u8 = _parameter_value.value().u8();
             if (ImGui::InputScalar("Значение",
                                    ImGuiDataType_U8,
                                    &value_u8,
@@ -175,16 +177,16 @@ void ServerSetupPanel::_draw_setup() {
                 _server->write(
                         _server->dictionary().config.config_category,
                         selected_category_iter->first,
-                        selected_category_iter->second[selected_object_idx]
+                        selected_category_iter->second[_selected_object_idx]
                                 ->name,
                         ucanopen::ExpeditedSdoData(uint8_t(value_u8)));
-                should_read = true;
+                _should_read = true;
             }
             break;
         }
 
         case ucanopen::OD_UINT16: {
-            uint16_t value_u16 = parameter_value.value().u16();
+            uint16_t value_u16 = _parameter_value.value().u16();
             if (ImGui::InputScalar("Значение",
                                    ImGuiDataType_U16,
                                    &value_u16,
@@ -195,19 +197,19 @@ void ServerSetupPanel::_draw_setup() {
                 _server->write(
                         _server->dictionary().config.config_category,
                         selected_category_iter->first,
-                        selected_category_iter->second[selected_object_idx]
+                        selected_category_iter->second[_selected_object_idx]
                                 ->name,
                         ucanopen::ExpeditedSdoData(uint16_t(value_u16)));
-                should_read = true;
+                _should_read = true;
             }
             break;
         }
 
         case ucanopen::OD_UINT32: {
-            uint32_t value_u32 = parameter_value.value().u32();
+            uint32_t value_u32 = _parameter_value.value().u32();
             char const* format{NULL};
             ImGuiInputTextFlags flags{ImGuiInputTextFlags_EnterReturnsTrue};
-            if (selected_category_iter->second[selected_object_idx]->unit ==
+            if (selected_category_iter->second[_selected_object_idx]->unit ==
                 "hex") {
                 format = "%08X";
                 flags |= ImGuiInputTextFlags_CharsHexadecimal;
@@ -222,16 +224,16 @@ void ServerSetupPanel::_draw_setup() {
                 _server->write(
                         _server->dictionary().config.config_category,
                         selected_category_iter->first,
-                        selected_category_iter->second[selected_object_idx]
+                        selected_category_iter->second[_selected_object_idx]
                                 ->name,
                         ucanopen::ExpeditedSdoData(uint32_t(value_u32)));
-                should_read = true;
+                _should_read = true;
             }
             break;
         }
 
         case ucanopen::OD_INT8: {
-            int16_t value_i8 = parameter_value.value().i8();
+            int16_t value_i8 = _parameter_value.value().i8();
             if (ImGui::InputScalar("Значение",
                                    ImGuiDataType_S8,
                                    &value_i8,
@@ -242,16 +244,16 @@ void ServerSetupPanel::_draw_setup() {
                 _server->write(
                         _server->dictionary().config.config_category,
                         selected_category_iter->first,
-                        selected_category_iter->second[selected_object_idx]
+                        selected_category_iter->second[_selected_object_idx]
                                 ->name,
                         ucanopen::ExpeditedSdoData(int8_t(value_i8)));
-                should_read = true;
+                _should_read = true;
             }
             break;
         }
 
         case ucanopen::OD_INT16: {
-            int16_t value_i16 = parameter_value.value().i16();
+            int16_t value_i16 = _parameter_value.value().i16();
             if (ImGui::InputScalar("Значение",
                                    ImGuiDataType_S16,
                                    &value_i16,
@@ -262,16 +264,16 @@ void ServerSetupPanel::_draw_setup() {
                 _server->write(
                         _server->dictionary().config.config_category,
                         selected_category_iter->first,
-                        selected_category_iter->second[selected_object_idx]
+                        selected_category_iter->second[_selected_object_idx]
                                 ->name,
                         ucanopen::ExpeditedSdoData(int16_t(value_i16)));
-                should_read = true;
+                _should_read = true;
             }
             break;
         }
 
         case ucanopen::OD_INT32: {
-            int32_t value_i32 = parameter_value.value().i32();
+            int32_t value_i32 = _parameter_value.value().i32();
             if (ImGui::InputScalar("Значение",
                                    ImGuiDataType_S32,
                                    &value_i32,
@@ -282,16 +284,16 @@ void ServerSetupPanel::_draw_setup() {
                 _server->write(
                         _server->dictionary().config.config_category,
                         selected_category_iter->first,
-                        selected_category_iter->second[selected_object_idx]
+                        selected_category_iter->second[_selected_object_idx]
                                 ->name,
                         ucanopen::ExpeditedSdoData(int32_t(value_i32)));
-                should_read = true;
+                _should_read = true;
             }
             break;
         }
 
         case ucanopen::OD_FLOAT32: {
-            float value_f32 = parameter_value.value().f32();
+            float value_f32 = _parameter_value.value().f32();
             if (ImGui::InputScalar("Значение",
                                    ImGuiDataType_Float,
                                    &value_f32,
@@ -302,10 +304,10 @@ void ServerSetupPanel::_draw_setup() {
                 _server->write(
                         _server->dictionary().config.config_category,
                         selected_category_iter->first,
-                        selected_category_iter->second[selected_object_idx]
+                        selected_category_iter->second[_selected_object_idx]
                                 ->name,
                         ucanopen::ExpeditedSdoData(float(value_f32)));
-                should_read = true;
+                _should_read = true;
             }
             break;
         }
@@ -321,8 +323,8 @@ void ServerSetupPanel::_draw_setup() {
         _server->sdo_service.restore_default_parameter(
                 _server->dictionary().config.config_category,
                 selected_category_iter->first,
-                selected_category_iter->second[selected_object_idx]->name);
-        should_read = true;
+                selected_category_iter->second[_selected_object_idx]->name);
+        _should_read = true;
     }
 
     if (ImGui::Button("Восстановить Всё", ImVec2(-1.0f, 0))) {

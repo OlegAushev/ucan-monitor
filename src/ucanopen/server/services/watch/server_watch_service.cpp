@@ -30,14 +30,14 @@ void ServerWatchService::send() {
     if (_enabled && !_objects.empty()) {
         auto now = std::chrono::steady_clock::now();
         if (now - _daq_timepoint >= _period) {
-            static size_t i = 0;
+            auto const i = _daq_idx;
             if (_object_daq_enabled[i]) {
                 _sdo_service.read(_server.dictionary().config.watch_category,
                                   _objects[i]->subcategory,
                                   _objects[i]->name);
                 _daq_timepoint = now;
             }
-            i = (i + 1) % _objects.size();
+            _daq_idx = (i + 1) % _objects.size();
         }
     }
 }

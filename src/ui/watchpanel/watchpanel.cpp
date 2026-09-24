@@ -26,17 +26,15 @@ void WatchPanel::draw() {
         ImGui::TableSetupColumn("Value");
         //ImGui::TableHeadersRow();
 
-        static int all_acq_enabled = 1;
-
         ImGui::TableNextRow(ImGuiTableRowFlags_Headers);
         for (int col = 0; col < 3; ++col)
         {
             ImGui::TableSetColumnIndex(col);
             if (col == 0) {
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-                if (ui::CheckBoxTristate("##select_all", all_acq_enabled)) {
+                if (ui::CheckBoxTristate("##select_all", _all_acq_enabled)) {
                     for (size_t i = 0; i < _watch_objects.size(); ++i) {
-                        _server->watch_service.toggle_daq(i, all_acq_enabled);
+                        _server->watch_service.toggle_daq(i, _all_acq_enabled);
                     }
                 }
                 ImGui::PopStyleVar();
@@ -54,7 +52,7 @@ void WatchPanel::draw() {
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
             if (ImGui::Checkbox("##", &acq_enabled)) {
                 _server->watch_service.toggle_daq(row, acq_enabled);
-                all_acq_enabled = -1;
+                _all_acq_enabled = -1;
             }
             ImGui::PopStyleVar();
             ImGui::PopID();
