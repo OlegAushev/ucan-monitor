@@ -4,6 +4,7 @@
 #include <map>
 #include <mutex>
 #include <ucanopen/server/impl/impl_server.h>
+#include <utility>
 
 namespace ucanopen {
 
@@ -18,6 +19,7 @@ private:
         std::chrono::time_point<std::chrono::steady_clock> timepoint;
         std::function<can_payload(void)> creator;
         bool is_enabled{true};
+        std::function<bool(void)> interlock{};
     };
     std::map<CobRpdo, Message> _rpdo_msgs;
     mutable std::mutex _mtx;
@@ -46,12 +48,34 @@ public:
         return iter != _rpdo_msgs.end() && iter->second.is_enabled;
     }
 
+    // An RPDO that another master on the bus sends as well. While interlock()
+    // holds, the RPDO is switched off and cannot be switched on; it stays off
+    // once the master is gone, so a node the master has left does not pick up
+    // whatever this client asked of it last.
+    void set_interlock(CobRpdo rpdo, std::function<bool(void)> interlock) {
+        std::lock_guard<std::mutex> lock(_mtx);
+        auto iter = _rpdo_msgs.find(rpdo);
+        if (iter != _rpdo_msgs.end()) {
+            iter->second.interlock = std::move(interlock);
+        }
+    }
+
+    bool interlocked(CobRpdo rpdo) const {
+        std::lock_guard<std::mutex> lock(_mtx);
+        auto iter = _rpdo_msgs.find(rpdo);
+        return iter != _rpdo_msgs.end() && _engaged(iter->second);
+    }
+
     void send() {
         if (_is_enabled) {
             std::lock_guard<std::mutex> lock(_mtx);
             auto now = std::chrono::steady_clock::now();
             for (auto& [rpdo, message] : _rpdo_msgs) {
                 if (!message.is_enabled) {
+                    continue;
+                }
+                if (_engaged(message)) {
+                    message.is_enabled = false;
                     continue;
                 }
                 if (message.period == std::chrono::milliseconds(0)) {
@@ -67,12 +91,20 @@ public:
         }
     }
 private:
+    static bool _engaged(const Message& message) {
+        return message.interlock && message.interlock();
+    }
+
     void _set_enabled(CobRpdo rpdo, bool enabled) {
         std::lock_guard<std::mutex> lock(_mtx);
         auto iter = _rpdo_msgs.find(rpdo);
-        if (iter != _rpdo_msgs.end()) {
-            iter->second.is_enabled = enabled;
+        if (iter == _rpdo_msgs.end()) {
+            return;
         }
+        if (enabled && _engaged(iter->second)) {
+            return;
+        }
+        iter->second.is_enabled = enabled;
     }
 };
 

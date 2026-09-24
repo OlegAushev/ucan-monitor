@@ -7,9 +7,11 @@
 #include <bitset>
 #include <bsclog/bsclog.h>
 #include <cmath>
+#include <functional>
 #include <initializer_list>
 #include <optional>
 #include <ucanopen/server/server.h>
+#include <utility>
 
 namespace pdu {
 
@@ -77,7 +79,7 @@ public:
 
   // Команды RPDO1: монитор замещает КВУ. Если на шине сам КВУ, команды нужно
   // выключить: второй источник RPDO1 сбивает счётчик кадров, и PDU отбрасывает
-  // команды обоих.
+  // команды обоих. Поэтому они выключены, пока их не включат.
   bool commanding() const {
     return rpdo_service.enabled(ucanopen::CobRpdo::rpdo1);
   }
@@ -88,6 +90,17 @@ public:
     } else {
       rpdo_service.disable(ucanopen::CobRpdo::rpdo1);
     }
+  }
+
+  // Пока master_heard() — КВУ на шине, — команды выключены и не включаются, а
+  // когда он пропадёт, сами не вернутся.
+  void interlock_commands(std::function<bool()> master_heard) {
+    rpdo_service.set_interlock(ucanopen::CobRpdo::rpdo1,
+                               std::move(master_heard));
+  }
+
+  bool master_heard() const {
+    return rpdo_service.interlocked(ucanopen::CobRpdo::rpdo1);
   }
 
   // Поток подстановок RPDO2 и RPDO3. КВУ этих кадров не передаёт, так что

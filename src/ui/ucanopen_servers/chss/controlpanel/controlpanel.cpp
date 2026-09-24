@@ -172,15 +172,24 @@ void ControlPanel::_draw_controls() {
     ImGui::SeparatorText("Режим СХКВ");
 
     // Командует СХКВ кто-то один — монитор или КВУ: второй источник RPDO1
-    // сбивает счётчик кадров, и СХКВ отбрасывает команды обоих.
+    // сбивает счётчик кадров, и СХКВ отбрасывает команды обоих. Пока КВУ
+    // слышно на шине, включить команды нельзя.
+    bool const master_heard = _server->master_heard();
     bool commanding = _server->commanding();
-    if (ImGui::Checkbox("Командовать СХКВ", &commanding)) {
-        _server->set_commanding(commanding);
-    }
-    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+    util::Switchable command_switch(!master_heard, [&]() {
+        if (ImGui::Checkbox("Командовать СХКВ", &commanding)) {
+            _server->set_commanding(commanding);
+        }
+    });
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone |
+                             ImGuiHoveredFlags_AllowWhenDisabled)) {
         ImGui::SetTooltip("Монитор передаёт команды RPDO1 вместо КВУ.\n"
                           "Снимите, если на шине КВУ: он командует СХКВ сам.\n"
                           "Без команд вовсе СХКВ объявит потерю связи с КВУ.");
+    }
+    if (master_heard) {
+        ImGui::SameLine();
+        ImGui::TextDisabled("КВУ на шине: командует он");
     }
 
     util::Switchable modes(commanding, [this]() {

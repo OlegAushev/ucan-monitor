@@ -28,6 +28,8 @@ Server::Server(std::shared_ptr<can::Socket> socket,
   rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1,
                              std::chrono::milliseconds(100),
                              [this]() { return this->_create_rpdo1(); });
+  // Монитор, запущенный на шине с КВУ, не должен перебить его ни одним кадром.
+  rpdo_service.disable(ucanopen::CobRpdo::rpdo1);
 
   // Период потока задан прошивкой (contract::substitute_period). Получив первый
   // кадр, СХКВ следит за потоком: прервётся — поднимет потерю потока
