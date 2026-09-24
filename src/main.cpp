@@ -50,6 +50,10 @@
 #include <ui/ucanopen_servers/chss/datapanel/datapanel.hpp>
 #include <ui/ucanopen_servers/chss/statuspanel/statuspanel.hpp>
 
+#include <ui/ucanopen_servers/cshpp/controlpanel/controlpanel.hpp>
+#include <ui/ucanopen_servers/cshpp/datapanel/datapanel.hpp>
+#include <ui/ucanopen_servers/cshpp/statuspanel/statuspanel.hpp>
+
 #include <ui/ucanopen_servers/moyka/panel/panel.h>
 
 #include <ui/ucanopen_servers/srmdrive/controlpanel/controlpanel.h>
@@ -87,7 +91,8 @@ const std::vector<std::string> server_names = {"shm-drive-80",
                                                "adpt-etk-psfb-converter",
                                                "adpt-bike-inverter",
                                                "h2-hess-pdu",
-                                               "h2-hess-chss"};
+                                               "h2-hess-chss",
+                                               "h2-hess"};
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -922,6 +927,113 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                 chss_server, "Панель диаграмм 3", "Панель диаграмм 3", false));
         watchplots.push_back(std::make_shared<ui::WatchPlot>(
                 chss_server, "Панель диаграмм 4", "Панель диаграмм 4", false));
+    } else if (server_name == "h2-hess") {
+        // Монитор замещает станцию оператора и испытательный стенд: командует
+        // он только БКСГЭУ, а СХКВ и PDU командует она сама. Окна подписаны
+        // узлом, потому что ImGui различает окна по заголовку.
+        auto cshpp_server = std::make_shared<cshpp::Server>(
+                can_socket, ucanopen::NodeId(0x01), "h2-hess-cshpp");
+        auto chss_server = std::make_shared<chss::Server>(
+                can_socket, ucanopen::NodeId(0x02), "h2-hess-chss");
+        auto pdu_server = std::make_shared<pdu::Server>(
+                can_socket, ucanopen::NodeId(0x03), "h2-hess-pdu");
+
+        // Пока БКСГЭУ слышно на шине, монитор не командует ни СХКВ, ни PDU, а
+        // когда она пропадёт, сам командовать не начнёт.
+        auto cshpp_heard = [cshpp_server]() {
+            return cshpp_server->heartbeat_service.good();
+        };
+        chss_server->interlock_commands(cshpp_heard);
+        pdu_server->interlock_commands(cshpp_heard);
+
+        ucanopen_client->register_server(cshpp_server);
+        ucanopen_client->register_server(chss_server);
+        ucanopen_client->register_server(pdu_server);
+
+        views.push_back(std::make_shared<ui::cshpp::ControlPanel>(
+                cshpp_server,
+                ICON_MDI_GAMEPAD_OUTLINE " БКСГЭУ: Управление",
+                "БКСГЭУ: Управление",
+                true));
+        views.push_back(std::make_shared<ui::cshpp::StatusPanel>(
+                cshpp_server,
+                ICON_MDI_INFORMATION_OUTLINE " БКСГЭУ: Статус",
+                "БКСГЭУ: Статус",
+                true));
+        views.push_back(std::make_shared<ui::cshpp::DataPanel>(
+                cshpp_server,
+                ICON_MDI_TABLE " БКСГЭУ: Данные TPDO",
+                "БКСГЭУ: Данные TPDO",
+                false));
+        views.push_back(std::make_shared<ui::WatchPanel>(
+                cshpp_server,
+                ICON_MDI_TABLE_EYE " БКСГЭУ: Набл. Переменные",
+                "БКСГЭУ: Набл. Переменные",
+                false));
+        views.push_back(std::make_shared<ui::ServerSetupPanel>(
+                cshpp_server,
+                ICON_MDI_TOOLS " БКСГЭУ: Настройка",
+                "БКСГЭУ: Настройка",
+                false));
+
+        views.push_back(std::make_shared<ui::chss::ControlPanel>(
+                chss_server,
+                ICON_MDI_GAMEPAD_OUTLINE " СХКВ: Управление",
+                "СХКВ: Управление",
+                true));
+        views.push_back(std::make_shared<ui::chss::StatusPanel>(
+                chss_server,
+                ICON_MDI_INFORMATION_OUTLINE " СХКВ: Статус",
+                "СХКВ: Статус",
+                true));
+        views.push_back(std::make_shared<ui::chss::DataPanel>(
+                chss_server,
+                ICON_MDI_TABLE " СХКВ: Данные TPDO",
+                "СХКВ: Данные TPDO",
+                false));
+        views.push_back(std::make_shared<ui::WatchPanel>(
+                chss_server,
+                ICON_MDI_TABLE_EYE " СХКВ: Набл. Переменные",
+                "СХКВ: Набл. Переменные",
+                false));
+        views.push_back(std::make_shared<ui::ServerSetupPanel>(
+                chss_server,
+                ICON_MDI_TOOLS " СХКВ: Настройка",
+                "СХКВ: Настройка",
+                false));
+
+        views.push_back(std::make_shared<ui::pdu::ControlPanel>(
+                pdu_server,
+                ICON_MDI_GAMEPAD_OUTLINE " PDU: Управление",
+                "PDU: Управление",
+                true));
+        views.push_back(std::make_shared<ui::pdu::StatusPanel>(
+                pdu_server,
+                ICON_MDI_INFORMATION_OUTLINE " PDU: Статус",
+                "PDU: Статус",
+                true));
+        views.push_back(std::make_shared<ui::pdu::DataPanel>(
+                pdu_server,
+                ICON_MDI_TABLE " PDU: Данные TPDO",
+                "PDU: Данные TPDO",
+                false));
+        views.push_back(std::make_shared<ui::WatchPanel>(
+                pdu_server,
+                ICON_MDI_TABLE_EYE " PDU: Набл. Переменные",
+                "PDU: Набл. Переменные",
+                false));
+        views.push_back(std::make_shared<ui::ServerSetupPanel>(
+                pdu_server,
+                ICON_MDI_TOOLS " PDU: Настройка",
+                "PDU: Настройка",
+                false));
+
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                cshpp_server, "БКСГЭУ: Диаграммы", "БКСГЭУ: Диаграммы", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                chss_server, "СХКВ: Диаграммы", "СХКВ: Диаграммы", false));
+        watchplots.push_back(std::make_shared<ui::WatchPlot>(
+                pdu_server, "PDU: Диаграммы", "PDU: Диаграммы", false));
     } else {
         // TODO Error
     }
