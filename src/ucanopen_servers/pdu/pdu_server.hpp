@@ -2,9 +2,13 @@
 
 #include "pdu_def.hpp"
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <bitset>
 #include <bsclog/bsclog.h>
+#include <cmath>
+#include <initializer_list>
+#include <optional>
 #include <ucanopen/server/server.h>
 
 namespace pdu {
@@ -38,6 +42,12 @@ private:
     std::atomic<ContactorPosition> inverter_precharge{ContactorPosition::open};
   } _rpdo1;
 
+  // Подстановки для RPDO2 и RPDO3. PDU стартует с нулевых напряжений и с
+  // контактами, следующими команде, — с того же начинается и поток.
+  std::array<std::atomic<float>, voltage_count> _voltage_substitutes{};
+  std::array<std::atomic<std::optional<ContactorPosition>>, contactor_count>
+      _contactor_substitutes{};
+
   Branch _fuelcell; // TPDO2
   Branch _inverter; // TPDO3
 
@@ -63,6 +73,58 @@ public:
 
   void set_inverter_precharge(ContactorPosition v) {
     _rpdo1.inverter_precharge.store(v);
+  }
+
+  // Команды RPDO1: монитор замещает КВУ. Если на шине сам КВУ, команды нужно
+  // выключить: второй источник RPDO1 сбивает счётчик кадров, и PDU отбрасывает
+  // команды обоих.
+  bool commanding() const {
+    return rpdo_service.enabled(ucanopen::CobRpdo::rpdo1);
+  }
+
+  void set_commanding(bool v) {
+    if (v) {
+      rpdo_service.enable(ucanopen::CobRpdo::rpdo1);
+    } else {
+      rpdo_service.disable(ucanopen::CobRpdo::rpdo1);
+    }
+  }
+
+  // Поток подстановок RPDO2 и RPDO3. КВУ этих кадров не передаёт, так что
+  // поток идёт и при нём.
+  bool streaming_substitutes() const {
+    return rpdo_service.enabled(ucanopen::CobRpdo::rpdo2);
+  }
+
+  void set_streaming_substitutes(bool v) {
+    for (auto rpdo : {ucanopen::CobRpdo::rpdo2, ucanopen::CobRpdo::rpdo3}) {
+      if (v) {
+        rpdo_service.enable(rpdo);
+      } else {
+        rpdo_service.disable(rpdo);
+      }
+    }
+  }
+
+  float voltage_substitute(Voltage v) const {
+    return _voltage_substitutes[std::to_underlying(v)].load();
+  }
+
+  // Нечисловое значение в кадр не закодировать — остаётся прежнее.
+  void set_voltage_substitute(Voltage v, float value) {
+    if (std::isfinite(value)) {
+      _voltage_substitutes[std::to_underlying(v)].store(value);
+    }
+  }
+
+  // Пустое значение — контакт следует команде.
+  std::optional<ContactorPosition> contactor_substitute(Contactor c) const {
+    return _contactor_substitutes[std::to_underlying(c)].load();
+  }
+
+  void set_contactor_substitute(Contactor c,
+                                std::optional<ContactorPosition> p) {
+    _contactor_substitutes[std::to_underlying(c)].store(p);
   }
 
   Mode mode() const { return _rpdo1.mode.load(); }
@@ -200,6 +262,8 @@ private:
                            BranchReport report);
 
   ucanopen::can_payload _create_rpdo1();
+  ucanopen::can_payload _create_rpdo2();
+  ucanopen::can_payload _create_rpdo3();
 };
 
 } // namespace pdu

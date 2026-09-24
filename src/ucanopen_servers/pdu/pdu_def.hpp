@@ -1,6 +1,11 @@
 #pragma once
 
+#include <algorithm>
+#include <cmath>
+#include <cstddef>
 #include <cstdint>
+#include <limits>
+#include <optional>
 #include <string_view>
 #include <unordered_map>
 #include <unordered_set>
@@ -55,6 +60,19 @@ struct BranchRequest {
 };
 
 static_assert(sizeof(BranchRequest) == 1);
+
+// Байт положения, которое стенд навязывает вспомогательному контакту
+// контактора, объявленного неподключённым. Без навязывания контакт следует
+// команде, как и без потока; с навязыванием читается заданное положение, как бы
+// ни была запитана катушка, — так на стенде играют залипание или контакт,
+// который не замыкается. Положение без навязывания PDU отвергает.
+struct ContactorSubstitute {
+  bool forced : 1;
+  bool closed : 1; // положение при навязывании
+  uint8_t _reserved_ : 6;
+};
+
+static_assert(sizeof(ContactorSubstitute) == 1);
 
 struct CobTpdo1 {
   uint64_t flags : status::status_count;
@@ -167,6 +185,77 @@ struct CobRpdo1 {
 
 static_assert(sizeof(CobRpdo1) == 8);
 
+// Напряжения, которые стенд передаёт вместо датчиков, объявленных
+// неустановленными: PDU берёт из кадра только их и слушает кадр, лишь пока
+// такой датчик объявлен. Все три идут одним кадром, потому что предзаряд
+// сравнивает ветвь с батареей. Кодируются так же, как в телеметрии.
+struct CobRpdo2 {
+  int16_t battery_voltage;  // 0.1 V/LSB
+
+  int16_t fuelcell_voltage; // 0.1 V/LSB
+
+  int16_t inverter_voltage; // 0.1 V/LSB
+
+  uint8_t _reserved1_;
+
+  uint8_t counter : 2;
+  uint8_t _reserved2_ : 6;
+};
+
+// Вспомогательные контакты, которые стенд играет вместо объявленных
+// неподключёнными: PDU берёт из кадра только их и слушает кадр, лишь пока
+// такой контакт объявлен.
+struct CobRpdo3 {
+  ContactorSubstitute fuelcell_main;      // KM1
+
+  ContactorSubstitute fuelcell_precharge; // KM2
+
+  ContactorSubstitute inverter_main;      // KM3
+
+  ContactorSubstitute inverter_precharge; // KM4
+
+  uint8_t _reserved1_;
+
+  uint8_t _reserved2_;
+
+  uint8_t _reserved3_;
+
+  uint8_t counter : 2;
+  uint8_t _reserved4_ : 6;
+};
+
+static_assert(sizeof(CobRpdo2) == 8);
+static_assert(sizeof(CobRpdo3) == 8);
+
+// Подставляемые напряжения в порядке RPDO2.
+enum class Voltage : uint8_t {
+  battery,
+  fuelcell,
+  inverter,
+};
+
+inline constexpr size_t voltage_count = 3;
+
+// Контакторы в порядке RPDO3.
+enum class Contactor : uint8_t {
+  fuelcell_main,      // KM1
+  fuelcell_precharge, // KM2
+  inverter_main,      // KM3
+  inverter_precharge, // KM4
+};
+
+inline constexpr size_t contactor_count = 4;
+
+// Код с шагом 0.1, как у emb::scaled в прошивке: округление к ближайшему и
+// насыщение на краях int16.
+inline int16_t encode_deci(float v) {
+  float const code =
+      std::clamp(v * 10.f,
+                 static_cast<float>(std::numeric_limits<int16_t>::min()),
+                 static_cast<float>(std::numeric_limits<int16_t>::max()));
+  return static_cast<int16_t>(std::lround(code));
+}
+
 // Mirrors contract::cshpp::mode (common/contract/cshpp/mode.hpp).
 enum class Mode : uint8_t {
   idle,
@@ -250,6 +339,14 @@ inline constexpr ContactorRequest pack_contactor_request(ContactorPosition p) {
 
 inline constexpr BranchRequest pack_branch_request(bool b) {
   return {.connect = b, ._reserved_ = 0};
+}
+
+// Пустое значение — контакт следует команде.
+inline constexpr ContactorSubstitute
+pack_contactor_substitute(std::optional<ContactorPosition> p) {
+  return {.forced = p.has_value(),
+          .closed = p.has_value() && pack_contactor_bit(*p),
+          ._reserved_ = 0};
 }
 
 } // namespace pdu

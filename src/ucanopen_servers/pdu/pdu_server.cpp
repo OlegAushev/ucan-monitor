@@ -28,6 +28,16 @@ Server::Server(std::shared_ptr<can::Socket> socket,
   rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1,
                              std::chrono::milliseconds(100),
                              [this]() { return this->_create_rpdo1(); });
+
+  // Период потока задан прошивкой (contract::substitute_period). Получив первый
+  // кадр, PDU следит за потоком: прервётся — поднимет потерю потока
+  // подстановок, и та дорастёт до отключения обеих ветвей.
+  rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2,
+                             std::chrono::milliseconds(100),
+                             [this]() { return this->_create_rpdo2(); });
+  rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3,
+                             std::chrono::milliseconds(100),
+                             [this]() { return this->_create_rpdo3(); });
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -123,6 +133,42 @@ ucanopen::can_payload Server::_create_rpdo1() {
   rpdo.counter = counter++;
 
   return ucanopen::to_payload<CobRpdo1>(rpdo);
+}
+
+// Счётчик у каждого кадра подстановок свой: PDU проверяет их порознь.
+ucanopen::can_payload Server::_create_rpdo2() {
+  static_assert(sizeof(CobRpdo2) == 8);
+  static unsigned int counter = 0;
+
+  CobRpdo2 rpdo{};
+
+  rpdo.battery_voltage = encode_deci(voltage_substitute(Voltage::battery));
+  rpdo.fuelcell_voltage = encode_deci(voltage_substitute(Voltage::fuelcell));
+  rpdo.inverter_voltage = encode_deci(voltage_substitute(Voltage::inverter));
+
+  rpdo.counter = counter++;
+
+  return ucanopen::to_payload<CobRpdo2>(rpdo);
+}
+
+ucanopen::can_payload Server::_create_rpdo3() {
+  static_assert(sizeof(CobRpdo3) == 8);
+  static unsigned int counter = 0;
+
+  CobRpdo3 rpdo{};
+
+  rpdo.fuelcell_main = pack_contactor_substitute(
+      contactor_substitute(Contactor::fuelcell_main));
+  rpdo.fuelcell_precharge = pack_contactor_substitute(
+      contactor_substitute(Contactor::fuelcell_precharge));
+  rpdo.inverter_main = pack_contactor_substitute(
+      contactor_substitute(Contactor::inverter_main));
+  rpdo.inverter_precharge = pack_contactor_substitute(
+      contactor_substitute(Contactor::inverter_precharge));
+
+  rpdo.counter = counter++;
+
+  return ucanopen::to_payload<CobRpdo3>(rpdo);
 }
 
 } // namespace pdu

@@ -177,7 +177,10 @@ void ControlPanel::_read_keyboard() {
         _server->exec("ctl", "sys", "emergency");
     }
 
-    if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F3))) {
+    // Без команд запрос не уходит, а тихо переключённый, он ушёл бы, как
+    // только команды включат.
+    if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_F3)) &&
+        _server->commanding()) {
         _inverter_request = !_inverter_request;
     }
 }
@@ -185,48 +188,65 @@ void ControlPanel::_read_keyboard() {
 void ControlPanel::_draw_controls() {
     ImGui::SeparatorText("Режим установки");
 
-    ImGui::RadioButton("Ожидание",
-                       &_mode_v,
-                       std::to_underlying(::pdu::Mode::idle));
-    ImGui::RadioButton("Заправка",
-                       &_mode_v,
-                       std::to_underlying(::pdu::Mode::filling));
-    ImGui::RadioButton("Генерация",
-                       &_mode_v,
-                       std::to_underlying(::pdu::Mode::generation));
-    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-        ImGui::SetTooltip("Ветвь ЭХГ подключается в генерации");
+    // Командует PDU кто-то один — монитор или КВУ: второй источник RPDO1
+    // сбивает счётчик кадров, и PDU отбрасывает команды обоих.
+    bool commanding = _server->commanding();
+    if (ImGui::Checkbox("Командовать PDU", &commanding)) {
+        _server->set_commanding(commanding);
     }
-    ImGui::RadioButton("Продувка",
-                       &_mode_v,
-                       std::to_underlying(::pdu::Mode::purge));
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-        ImGui::SetTooltip("Контакторы отдаются ручным уровням");
+        ImGui::SetTooltip("Монитор передаёт команды RPDO1 вместо КВУ.\n"
+                          "Снимите, если на шине КВУ: он командует PDU сам.\n"
+                          "Без команд вовсе PDU объявит потерю связи с КВУ.");
     }
 
-    // Вместо выведенного из работы датчика PDU читает замещающее напряжение,
-    // записанное по SDO, а без обратной связи контакторов считает их положение
-    // равным команде. Предзаряд и переключение идут как обычно, а на панели
-    // видно именно то, на чём работает PDU.
+    util::Switchable modes(commanding, [this]() {
+        ImGui::RadioButton("Ожидание",
+                           &_mode_v,
+                           std::to_underlying(::pdu::Mode::idle));
+        ImGui::RadioButton("Заправка",
+                           &_mode_v,
+                           std::to_underlying(::pdu::Mode::filling));
+        ImGui::RadioButton("Генерация",
+                           &_mode_v,
+                           std::to_underlying(::pdu::Mode::generation));
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Ветвь ЭХГ подключается в генерации");
+        }
+        ImGui::RadioButton("Продувка",
+                           &_mode_v,
+                           std::to_underlying(::pdu::Mode::purge));
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Контакторы отдаются ручным уровням");
+        }
+    });
+
+    // Вместо выведенного из работы датчика PDU берёт напряжение из потока
+    // подстановок, а без обратной связи контактора считает его положение равным
+    // команде или навязанному в потоке. Предзаряд и переключение идут как
+    // обычно, а на панели видно именно то, на чём работает PDU.
     if (_server->active(::pdu::status::sensor_bypassed{})) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
         ImGui::TextUnformatted(ICON_MDI_ALERT_OUTLINE
                                " Датчики выведены из работы");
         ImGui::PopStyleColor();
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-            ImGui::SetTooltip("Напряжения выведенных датчиков заданы вручную;\n"
-                              "без обратной связи контакторов их положение "
-                              "следует команде.\nЧто выведено — в настройке, "
-                              "категория sensor;\nзамещающие напряжения — в "
-                              "разделе «Замещающие Показания».");
+            ImGui::SetTooltip("Напряжения выведенных датчиков идут потоком "
+                              "подстановок;\nбез обратной связи контактора его "
+                              "положение следует команде\nили навязанному в "
+                              "потоке. Что выведено — в настройке,\nкатегория "
+                              "sensor; подстановки — в разделе «Замещающие "
+                              "Показания».");
         }
     }
 
     ImGui::SeparatorText("Управление");
 
-    ToggleButton(ICON_MDI_TRANSMISSION_TOWER " ЗАПРОС ИНВЕРТОРА",
-                 _inverter_request,
-                 ImVec2{260, 0});
+    util::Switchable inverter(commanding, [this]() {
+        ToggleButton(ICON_MDI_TRANSMISSION_TOWER " ЗАПРОС ИНВЕРТОРА",
+                     _inverter_request,
+                     ImVec2{260, 0});
+    });
     ImGui::SameLine();
     ImGui::TextDisabled("(F3)");
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
@@ -236,13 +256,15 @@ void ControlPanel::_draw_controls() {
     if (ImGui::CollapsingHeader(ICON_MDI_ELECTRIC_SWITCH
                                 " Ручное Управление Контакторами",
                                 ImGuiTreeNodeFlags_Framed)) {
-        if (_mode != ::pdu::Mode::purge) {
+        if (!commanding) {
+            ImGui::TextDisabled("Команды выключены");
+        } else if (_mode != ::pdu::Mode::purge) {
             ImGui::TextDisabled(
                     "Доступно только в режиме продувки");
         }
 
         util::Switchable manual_contactors(
-                _mode == ::pdu::Mode::purge, [this]() {
+                commanding && _mode == ::pdu::Mode::purge, [this]() {
                     ToggleButton("KM1 " ICON_MDI_GAS_CYLINDER
                                  " Главный ЭХГ",
                                  _fuelcell_main,
@@ -269,51 +291,125 @@ void ControlPanel::_draw_substitutes() {
         return;
     }
 
-    // Напряжения выведенных из работы датчиков PDU берёт из этих значений, у
-    // установленных датчиков они ни на что не влияют. Живут значения в RAM
-    // PDU: после его перезапуска там снова нули, поэтому рядом с каждым полем
-    // видно, что супервизор получает сейчас.
-    bool const bypassed = _server->active(::pdu::status::sensor_bypassed{});
-    if (!bypassed) {
-        ImGui::TextDisabled("Доступно, когда датчики выведены из работы");
+    // Подстановки идут потоком, пока он включён. PDU берёт из него только то,
+    // для чего датчик выведен из работы, остальное ни на что не влияет, поэтому
+    // значения можно выставить заранее — до перезапуска с новой конфигурацией.
+    // Рядом с каждым полем видно, что супервизор получает сейчас.
+    bool streaming = _server->streaming_substitutes();
+    if (ImGui::Checkbox("Передавать подстановки", &streaming)) {
+        _server->set_streaming_substitutes(streaming);
+    }
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+        ImGui::SetTooltip("Кадры RPDO2 и RPDO3 каждые 100 мс.\n"
+                          "Получив первый кадр, PDU следит за потоком:\n"
+                          "прерванный, он дорастает до отключения обеих "
+                          "ветвей.");
     }
 
-    struct Field {
+    if (!_server->active(::pdu::status::sensor_bypassed{})) {
+        ImGui::TextDisabled("Датчики в работе: PDU подстановки не берёт");
+    }
+
+    struct VoltageField {
         char const* label;
-        char const* name;
+        ::pdu::Voltage voltage;
         float reading;
     };
 
-    // Единицы — те же, что у объектов debug/substitute в прошивке. PDU примет
-    // любое конечное значение.
-    std::array const fields{
-            Field{"Батарея [В]", "battery_voltage", _server->battery_voltage()},
-            Field{"Ветвь ЭХГ [В]", "fuelcell_voltage",
-                  _server->fuelcell_voltage()},
-            Field{"Ветвь инвертора [В]", "inverter_voltage",
-                  _server->inverter_voltage()},
+    std::array const voltages{
+            VoltageField{"Батарея [В]", ::pdu::Voltage::battery,
+                         _server->battery_voltage()},
+            VoltageField{"Ветвь ЭХГ [В]", ::pdu::Voltage::fuelcell,
+                         _server->fuelcell_voltage()},
+            VoltageField{"Ветвь инвертора [В]", ::pdu::Voltage::inverter,
+                         _server->inverter_voltage()},
     };
 
-    util::Switchable substitutes(bypassed, [&]() {
-        ImGui::PushItemWidth(160);
-        for (auto i = 0uz; i < fields.size(); ++i) {
-            auto const& field = fields[i];
-            if (ImGui::InputFloat(field.label,
-                                  &_substitutes[i],
-                                  1.0f,
-                                  10.0f,
-                                  "%.1f",
-                                  ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _server->write("debug",
-                               "substitute",
-                               field.name,
-                               ucanopen::ExpeditedSdoData{_substitutes[i]});
-            }
-            ImGui::SameLine();
-            ImGui::TextDisabled("сейчас %.1f", field.reading);
+    ImGui::PushItemWidth(160);
+    for (auto const& field : voltages) {
+        float value = _server->voltage_substitute(field.voltage);
+        if (ImGui::InputFloat(field.label,
+                              &value,
+                              1.0f,
+                              10.0f,
+                              "%.1f",
+                              ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _server->set_voltage_substitute(field.voltage, value);
         }
-        ImGui::PopItemWidth();
-    });
+        ImGui::SameLine();
+        ImGui::TextDisabled("сейчас %.1f", field.reading);
+    }
+    ImGui::PopItemWidth();
+
+    // Контакт, объявленный неподключённым, следует команде, пока ему не
+    // навязали положение, — так на стенде играют залипание или контакт, который
+    // не замыкается.
+    struct ContactorField {
+        char const* label;
+        ::pdu::Contactor contactor;
+        ::pdu::ContactorPosition feedback;
+    };
+
+    std::array const contactors{
+            ContactorField{"KM1 Главный ЭХГ", ::pdu::Contactor::fuelcell_main,
+                           _server->fuelcell_main_feedback()},
+            ContactorField{"KM2 Предзаряд ЭХГ",
+                           ::pdu::Contactor::fuelcell_precharge,
+                           _server->fuelcell_precharge_feedback()},
+            ContactorField{"KM3 Главный инвертора",
+                           ::pdu::Contactor::inverter_main,
+                           _server->inverter_main_feedback()},
+            ContactorField{"KM4 Предзаряд инвертора",
+                           ::pdu::Contactor::inverter_precharge,
+                           _server->inverter_precharge_feedback()},
+    };
+
+    enum { follows_command, forced_closed, forced_open };
+
+    if (ImGui::BeginTable("contactor_substitutes",
+                          3,
+                          ImGuiTableFlags_SizingFixedFit)) {
+        for (auto const& field : contactors) {
+            auto const forced = _server->contactor_substitute(field.contactor);
+            int choice = follows_command;
+            if (forced == ::pdu::ContactorPosition::closed) {
+                choice = forced_closed;
+            } else if (forced == ::pdu::ContactorPosition::open) {
+                choice = forced_open;
+            }
+
+            ImGui::PushID(field.label);
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
+            ImGui::TextUnformatted(field.label);
+
+            ImGui::TableNextColumn();
+            bool changed = ImGui::RadioButton("по команде",
+                                              &choice,
+                                              follows_command);
+            ImGui::SameLine();
+            changed |= ImGui::RadioButton("замкнут", &choice, forced_closed);
+            ImGui::SameLine();
+            changed |= ImGui::RadioButton("разомкнут", &choice, forced_open);
+            if (changed) {
+                std::optional<::pdu::ContactorPosition> position;
+                if (choice == forced_closed) {
+                    position = ::pdu::ContactorPosition::closed;
+                } else if (choice == forced_open) {
+                    position = ::pdu::ContactorPosition::open;
+                }
+                _server->set_contactor_substitute(field.contactor, position);
+            }
+
+            ImGui::TableNextColumn();
+            ImGui::TextDisabled(
+                    "сейчас %s",
+                    ::pdu::Server::contactor_position_str(field.feedback)
+                            .data());
+            ImGui::PopID();
+        }
+        ImGui::EndTable();
+    }
 }
 
 void ControlPanel::_draw_actions() {

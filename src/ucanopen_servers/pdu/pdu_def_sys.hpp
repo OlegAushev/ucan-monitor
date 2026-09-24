@@ -186,7 +186,27 @@ struct sensor_bypassed {
   };
 };
 
-inline constexpr size_t status_count = 17;
+struct can_substitute_connection_lost {
+  static constexpr id_type id = 17;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::critical;
+  static constexpr i18n description = {
+      "substitute stream lost",
+      "потеря потока подстановок"
+  };
+};
+
+struct can_substitute_invalid_frame {
+  static constexpr id_type id = 18;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {
+      "substitute invalid frame",
+      "некорректный кадр подстановок"
+  };
+};
+
+inline constexpr size_t status_count = 19;
 
 inline constexpr std::array<std::string_view, status_count> names_ru = {
     emergency::description.ru,
@@ -205,7 +225,9 @@ inline constexpr std::array<std::string_view, status_count> names_ru = {
     sensor_failure_current::description.ru,
     sensor_failure_voltage::description.ru,
     precharge_timeout::description.ru,
-    sensor_bypassed::description.ru
+    sensor_bypassed::description.ru,
+    can_substitute_connection_lost::description.ru,
+    can_substitute_invalid_frame::description.ru
 };
 
 } // namespace status

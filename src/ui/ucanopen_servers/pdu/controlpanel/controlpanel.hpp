@@ -26,11 +26,6 @@ private:
     bool _fuelcell_precharge{false};
     bool _inverter_main{false};
     bool _inverter_precharge{false};
-
-    // Замещающие напряжения батареи, ветви ЭХГ и ветви инвертора в том виде, в
-    // каком их последний раз отправили: PDU держит их в RAM и берёт только для
-    // выведенных из работы датчиков.
-    std::array<float, 3> _substitutes{};
 public:
     ControlPanel(std::shared_ptr<::pdu::Server> server,
                  const std::string& menu_title,
