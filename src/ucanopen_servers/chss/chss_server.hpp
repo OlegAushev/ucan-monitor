@@ -2,9 +2,12 @@
 
 #include "chss_def.hpp"
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <bitset>
 #include <bsclog/bsclog.h>
+#include <cmath>
+#include <initializer_list>
 #include <ucanopen/server/server.h>
 
 namespace chss {
@@ -22,6 +25,10 @@ private:
     std::atomic<ValvePosition> inlet{ValvePosition::closed};
     std::atomic<ValvePosition> outlet{ValvePosition::closed};
   } _rpdo1;
+
+  // Подстановки для RPDO2 и RPDO3 в единицах телеметрии. СХКВ стартует с
+  // нулевыми подстановками, поэтому с нулей начинается и поток.
+  std::array<std::atomic<float>, substitute_count> _substitutes{};
 
   struct {
     std::atomic<float> receiver_pressure{0};
@@ -54,6 +61,48 @@ public:
   void set_outlet(ValvePosition v) { _rpdo1.outlet.store(v); }
 
   Mode requested_mode() const { return _rpdo1.mode.load(); }
+
+  // Команды RPDO1: монитор замещает КВУ. Если на шине сам КВУ, команды нужно
+  // выключить: второй источник RPDO1 сбивает счётчик кадров, и СХКВ
+  // отбрасывает команды обоих.
+  bool commanding() const {
+    return rpdo_service.enabled(ucanopen::CobRpdo::rpdo1);
+  }
+
+  void set_commanding(bool v) {
+    if (v) {
+      rpdo_service.enable(ucanopen::CobRpdo::rpdo1);
+    } else {
+      rpdo_service.disable(ucanopen::CobRpdo::rpdo1);
+    }
+  }
+
+  // Поток подстановок RPDO2 и RPDO3. КВУ этих кадров не передаёт, так что
+  // поток идёт и при нём.
+  bool streaming_substitutes() const {
+    return rpdo_service.enabled(ucanopen::CobRpdo::rpdo2);
+  }
+
+  void set_streaming_substitutes(bool v) {
+    for (auto rpdo : {ucanopen::CobRpdo::rpdo2, ucanopen::CobRpdo::rpdo3}) {
+      if (v) {
+        rpdo_service.enable(rpdo);
+      } else {
+        rpdo_service.disable(rpdo);
+      }
+    }
+  }
+
+  float substitute(Substitute q) const {
+    return _substitutes[std::to_underlying(q)].load();
+  }
+
+  // Нечисловое значение в кадр не закодировать — остаётся прежнее.
+  void set_substitute(Substitute q, float v) {
+    if (std::isfinite(v)) {
+      _substitutes[std::to_underlying(q)].store(v);
+    }
+  }
 
   // TPDO
   static std::string_view mode_str(Mode v) {
@@ -149,6 +198,8 @@ private:
   void _handle_tpdo4(ucanopen::can_payload const& payload);
 
   ucanopen::can_payload _create_rpdo1();
+  ucanopen::can_payload _create_rpdo2();
+  ucanopen::can_payload _create_rpdo3();
 };
 
 } // namespace chss

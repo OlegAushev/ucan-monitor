@@ -253,7 +253,27 @@ struct sensor_bypassed {
   };
 };
 
-inline constexpr size_t status_count = 24;
+struct can_substitute_connection_lost {
+  static constexpr id_type id = 24;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::critical;
+  static constexpr i18n description = {
+      "substitute stream lost",
+      "потеря потока подстановок"
+  };
+};
+
+struct can_substitute_invalid_frame {
+  static constexpr id_type id = 25;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {
+      "substitute invalid frame",
+      "некорректный кадр подстановок"
+  };
+};
+
+inline constexpr size_t status_count = 26;
 
 inline constexpr std::array<std::string_view, status_count> names_ru = {
     emergency::description.ru,
@@ -279,7 +299,9 @@ inline constexpr std::array<std::string_view, status_count> names_ru = {
     fill_start_pressure_high::description.ru,
     pressure_before_reducer_low::description.ru,
     pressure_after_reducer_low::description.ru,
-    sensor_bypassed::description.ru
+    sensor_bypassed::description.ru,
+    can_substitute_connection_lost::description.ru,
+    can_substitute_invalid_frame::description.ru
 };
 
 } // namespace status

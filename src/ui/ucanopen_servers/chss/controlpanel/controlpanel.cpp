@@ -171,52 +171,66 @@ void ControlPanel::_read_keyboard() {
 void ControlPanel::_draw_controls() {
     ImGui::SeparatorText("Режим СХКВ");
 
-    ImGui::RadioButton("Хранение",
-                       &_mode_v,
-                       std::to_underlying(::chss::Mode::storage));
-    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-        ImGui::SetTooltip("К7 и К9 закрыты, ресивер под контролем утечки");
+    // Командует СХКВ кто-то один — монитор или КВУ: второй источник RPDO1
+    // сбивает счётчик кадров, и СХКВ отбрасывает команды обоих.
+    bool commanding = _server->commanding();
+    if (ImGui::Checkbox("Командовать СХКВ", &commanding)) {
+        _server->set_commanding(commanding);
     }
-    ImGui::RadioButton("Заправка",
-                       &_mode_v,
-                       std::to_underlying(::chss::Mode::filling));
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-        if (_server->receiver_full()) {
-            ImGui::SetTooltip("Ресивер полон: СХКВ откажет в заправке");
-        } else {
-            ImGui::SetTooltip("К7 открыт до заполнения ресивера");
-        }
-    }
-    ImGui::RadioButton("Подача",
-                       &_mode_v,
-                       std::to_underlying(::chss::Mode::supply));
-    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-        ImGui::SetTooltip("К9 открыт, водород идёт на редуктор");
-    }
-    ImGui::RadioButton("Продувка",
-                       &_mode_v,
-                       std::to_underlying(::chss::Mode::purge));
-    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-        ImGui::SetTooltip("Клапаны отдаются ручным уровням");
+        ImGui::SetTooltip("Монитор передаёт команды RPDO1 вместо КВУ.\n"
+                          "Снимите, если на шине КВУ: он командует СХКВ сам.\n"
+                          "Без команд вовсе СХКВ объявит потерю связи с КВУ.");
     }
 
-    // Вместо выведенного из работы датчика СХКВ читает замещающее значение,
-    // записанное по SDO, и работает на нём как на показании: все режимы и
-    // проверки остаются в силе, а на панели видно именно оно.
+    util::Switchable modes(commanding, [this]() {
+        ImGui::RadioButton("Хранение",
+                           &_mode_v,
+                           std::to_underlying(::chss::Mode::storage));
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("К7 и К9 закрыты, ресивер под контролем утечки");
+        }
+        ImGui::RadioButton("Заправка",
+                           &_mode_v,
+                           std::to_underlying(::chss::Mode::filling));
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            if (_server->receiver_full()) {
+                ImGui::SetTooltip("Ресивер полон: СХКВ откажет в заправке");
+            } else {
+                ImGui::SetTooltip("К7 открыт до заполнения ресивера");
+            }
+        }
+        ImGui::RadioButton("Подача",
+                           &_mode_v,
+                           std::to_underlying(::chss::Mode::supply));
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("К9 открыт, водород идёт на редуктор");
+        }
+        ImGui::RadioButton("Продувка",
+                           &_mode_v,
+                           std::to_underlying(::chss::Mode::purge));
+        if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+            ImGui::SetTooltip("Клапаны отдаются ручным уровням");
+        }
+    });
+
+    // Вместо выведенного из работы датчика СХКВ берёт значение из потока
+    // подстановок и работает на нём как на показании: все режимы и проверки
+    // остаются в силе, а на панели видно именно оно.
     if (_server->active(::chss::status::sensor_bypassed{})) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
         ImGui::TextUnformatted(ICON_MDI_ALERT_OUTLINE
                                " Датчики выведены из работы");
         ImGui::PopStyleColor();
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
-            ImGui::SetTooltip("Показания выведенных датчиков заданы вручную.\n"
-                              "Какие датчики выведены — в настройке, категория "
-                              "sensor;\nзамещающие значения — в разделе "
-                              "«Замещающие Показания».");
+            ImGui::SetTooltip("Показания выведенных датчиков идут потоком "
+                              "подстановок.\nКакие датчики выведены — в "
+                              "настройке, категория sensor;\nзамещающие "
+                              "значения — в разделе «Замещающие Показания».");
         }
     }
 
-    if (_server->mode() != _mode) {
+    if (commanding && _server->mode() != _mode) {
         ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
         ImGui::Text(ICON_MDI_ALERT_OUTLINE " Запрошен режим «%s», СХКВ в «%s»",
                     ::chss::Server::mode_str(_mode).data(),
@@ -227,12 +241,14 @@ void ControlPanel::_draw_controls() {
     if (ImGui::CollapsingHeader(ICON_MDI_PIPE_VALVE
                                 " Ручное Управление Клапанами",
                                 ImGuiTreeNodeFlags_Framed)) {
-        if (_mode != ::chss::Mode::purge) {
+        if (!commanding) {
+            ImGui::TextDisabled("Команды выключены");
+        } else if (_mode != ::chss::Mode::purge) {
             ImGui::TextDisabled("Доступно только в режиме продувки");
         }
 
         util::Switchable manual_valves(
-                _mode == ::chss::Mode::purge, [this]() {
+                commanding && _mode == ::chss::Mode::purge, [this]() {
                     ToggleButton("К7 " ICON_MDI_GAS_CYLINDER
                                  " Заправка ресивера",
                                  _inlet_open,
@@ -251,57 +267,60 @@ void ControlPanel::_draw_substitutes() {
         return;
     }
 
-    // Показания выведенных из работы датчиков СХКВ берёт из этих значений, у
-    // установленных датчиков они ни на что не влияют. Живут значения в RAM
-    // СХКВ: после её перезапуска там снова нули, поэтому рядом с каждым полем
-    // видно, что машина получает сейчас.
-    bool const bypassed = _server->active(::chss::status::sensor_bypassed{});
-    if (!bypassed) {
-        ImGui::TextDisabled("Доступно, когда датчики выведены из работы");
+    // Подстановки идут потоком, пока он включён. СХКВ берёт из него показания
+    // только выведенных из работы датчиков, у установленных значения ни на что
+    // не влияют, поэтому их можно выставить заранее — до перезапуска с новой
+    // конфигурацией. Рядом с каждым полем видно, что машина получает сейчас.
+    bool streaming = _server->streaming_substitutes();
+    if (ImGui::Checkbox("Передавать подстановки", &streaming)) {
+        _server->set_streaming_substitutes(streaming);
+    }
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNone)) {
+        ImGui::SetTooltip("Кадры RPDO2 и RPDO3 каждые 100 мс.\n"
+                          "Получив первый кадр, СХКВ следит за потоком:\n"
+                          "прерванный, он дорастает до блокировки.");
+    }
+
+    if (!_server->active(::chss::status::sensor_bypassed{})) {
+        ImGui::TextDisabled("Датчики в работе: СХКВ подстановки не берёт");
     }
 
     struct Field {
         char const* label;
-        char const* name;
+        ::chss::Substitute quantity;
         float reading;
     };
 
-    // Единицы — те же, что у объектов debug/substitute в прошивке: давления в
-    // атм, расход в м³/ч (телеметрия несёт его в л/мин). СХКВ примет любое
-    // конечное значение; за окном достоверности оно изображает обрыв петли.
+    // Единицы — как в телеметрии: давления в атм, расход в л/мин. Значение за
+    // окном достоверности СХКВ примет как обрыв петли.
     std::array const fields{
-            Field{"Р1-1 [атм]", "receiver_pressure",
+            Field{"Р1-1 [атм]", ::chss::Substitute::receiver_pressure,
                   _server->receiver_pressure()},
-            Field{"Р1 [атм]", "fill_line_pressure",
-                  _server->fill_line_pressure()},
-            Field{"Р2 [атм]", "pressure_before_reducer",
+            Field{"Р2 [атм]", ::chss::Substitute::pressure_before_reducer,
                   _server->pressure_before_reducer()},
-            Field{"Р3 [атм]", "pressure_after_reducer",
+            Field{"Р3 [атм]", ::chss::Substitute::pressure_after_reducer,
                   _server->pressure_after_reducer()},
-            Field{"ИР1 [м³/ч]", "inflow_rate",
-                  _server->inflow_rate() * 0.06f},
+            Field{"Р1 [атм]", ::chss::Substitute::fill_line_pressure,
+                  _server->fill_line_pressure()},
+            Field{"ИР1 [л/мин]", ::chss::Substitute::inflow_rate,
+                  _server->inflow_rate()},
     };
 
-    util::Switchable substitutes(bypassed, [&]() {
-        ImGui::PushItemWidth(160);
-        for (auto i = 0uz; i < fields.size(); ++i) {
-            auto const& field = fields[i];
-            if (ImGui::InputFloat(field.label,
-                                  &_substitutes[i],
-                                  0.1f,
-                                  1.0f,
-                                  "%.1f",
-                                  ImGuiInputTextFlags_EnterReturnsTrue)) {
-                _server->write("debug",
-                               "substitute",
-                               field.name,
-                               ucanopen::ExpeditedSdoData{_substitutes[i]});
-            }
-            ImGui::SameLine();
-            ImGui::TextDisabled("сейчас %.1f", field.reading);
+    ImGui::PushItemWidth(160);
+    for (auto const& field : fields) {
+        float value = _server->substitute(field.quantity);
+        if (ImGui::InputFloat(field.label,
+                              &value,
+                              0.1f,
+                              1.0f,
+                              "%.1f",
+                              ImGuiInputTextFlags_EnterReturnsTrue)) {
+            _server->set_substitute(field.quantity, value);
         }
-        ImGui::PopItemWidth();
-    });
+        ImGui::SameLine();
+        ImGui::TextDisabled("сейчас %.1f", field.reading);
+    }
+    ImGui::PopItemWidth();
 }
 
 void ControlPanel::_draw_actions() {

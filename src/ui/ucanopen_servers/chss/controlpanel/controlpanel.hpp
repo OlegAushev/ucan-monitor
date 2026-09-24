@@ -22,11 +22,6 @@ private:
     // Ручные уровни клапанов: СХКВ слушает их только в продувке.
     bool _inlet_open{false};
     bool _outlet_open{false};
-
-    // Замещающие показания Р1-1, Р1, Р2, Р3 и ИР1 в том виде, в каком их
-    // последний раз отправили: СХКВ держит их в RAM и берёт только для
-    // выведенных из работы датчиков.
-    std::array<float, 5> _substitutes{};
 public:
     ControlPanel(std::shared_ptr<::chss::Server> server,
                  const std::string& menu_title,

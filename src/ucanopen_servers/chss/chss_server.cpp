@@ -28,6 +28,16 @@ Server::Server(std::shared_ptr<can::Socket> socket,
   rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo1,
                              std::chrono::milliseconds(100),
                              [this]() { return this->_create_rpdo1(); });
+
+  // Период потока задан прошивкой (contract::substitute_period). Получив первый
+  // кадр, СХКВ следит за потоком: прервётся — поднимет потерю потока
+  // подстановок, и та дорастёт до блокировки.
+  rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo2,
+                             std::chrono::milliseconds(100),
+                             [this]() { return this->_create_rpdo2(); });
+  rpdo_service.register_rpdo(ucanopen::CobRpdo::rpdo3,
+                             std::chrono::milliseconds(100),
+                             [this]() { return this->_create_rpdo3(); });
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -94,6 +104,40 @@ ucanopen::can_payload Server::_create_rpdo1() {
   rpdo.counter = counter++;
 
   return ucanopen::to_payload<CobRpdo1>(rpdo);
+}
+
+// Счётчик у каждого кадра подстановок свой: СХКВ проверяет их порознь.
+ucanopen::can_payload Server::_create_rpdo2() {
+  static_assert(sizeof(CobRpdo2) == 8);
+  static unsigned int counter = 0;
+
+  CobRpdo2 rpdo{};
+
+  rpdo.receiver_pressure =
+      encode_deci(substitute(Substitute::receiver_pressure));
+  rpdo.pressure_before_reducer =
+      encode_deci(substitute(Substitute::pressure_before_reducer));
+  rpdo.pressure_after_reducer =
+      encode_deci(substitute(Substitute::pressure_after_reducer));
+
+  rpdo.counter = counter++;
+
+  return ucanopen::to_payload<CobRpdo2>(rpdo);
+}
+
+ucanopen::can_payload Server::_create_rpdo3() {
+  static_assert(sizeof(CobRpdo3) == 8);
+  static unsigned int counter = 0;
+
+  CobRpdo3 rpdo{};
+
+  rpdo.fill_line_pressure =
+      encode_deci(substitute(Substitute::fill_line_pressure));
+  rpdo.inflow_rate = encode_deci(substitute(Substitute::inflow_rate));
+
+  rpdo.counter = counter++;
+
+  return ucanopen::to_payload<CobRpdo3>(rpdo);
 }
 
 } // namespace chss
