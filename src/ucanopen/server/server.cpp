@@ -10,7 +10,7 @@ Server::Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::s
         , rpdo_service(*this)
         , sdo_service(*this)
         , watch_service(*this, sdo_service)
-        , config_service(*this)
+        , config_service(*this, sdo_service)
         , log_service(*this, sdo_service, tpdo_service) {
     _rx_services.push_back(&sdo_service);
     _rx_services.push_back(&tpdo_service);
@@ -33,6 +33,7 @@ void Server::_set_node_id(NodeId node_id) {
 void Server::_send() {	
     rpdo_service.send();
     watch_service.send();
+    config_service.send();
 }
 
 

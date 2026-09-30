@@ -40,6 +40,7 @@ FrameHandlingStatus ServerSdoService::_handle_read_expedited(const can_frame& fr
     }
 
     const auto& [key, object] = *entry;
+    bool const quiet = _take_quiet_request(key);
 
     SdoType sdo_type;
     if (object.data_type == ODObjectDataType::OD_EXEC) {
@@ -47,7 +48,7 @@ FrameHandlingStatus ServerSdoService::_handle_read_expedited(const can_frame& fr
         bsclog::success("Executed {}::{}::{}::{}.", _server.name(), object.category, object.subcategory, object.name);
     } else {
         sdo_type = SdoType::response_to_read;
-        if (object.category != _server.dictionary().config.watch_category) {
+        if (!quiet && object.category != _server.dictionary().config.watch_category) {
             bsclog::success("{}::{}::{}::{} = {}.",
                             _server.name(), object.category, object.subcategory, object.name, sdo.data.to_string(object.data_type));
         }
@@ -69,6 +70,7 @@ FrameHandlingStatus ServerSdoService::_handle_write_expedited(const can_frame& f
     }
 
     const auto& [key, object] = *entry;
+    bool const quiet = _take_quiet_request(key);
 
     SdoType sdo_type;
     if (object.data_type == ODObjectDataType::OD_EXEC) {
@@ -76,7 +78,9 @@ FrameHandlingStatus ServerSdoService::_handle_write_expedited(const can_frame& f
         bsclog::success("Executed {}::{}::{}::{}.", _server.name(), object.category, object.subcategory, object.name);
     } else {
         sdo_type = SdoType::response_to_write;
-        bsclog::success("Updated {}::{}::{}::{}.", _server.name(), object.category, object.subcategory, object.name);
+        if (!quiet) {
+            bsclog::success("Updated {}::{}::{}::{}.", _server.name(), object.category, object.subcategory, object.name);
+        }
     }
 
     for (auto& subscriber : _subscriber_list) {
@@ -96,6 +100,7 @@ FrameHandlingStatus ServerSdoService::_handle_abort(const can_frame& frame) {
     }
 
     const auto& [key, object] = *entry;
+    _take_quiet_request(key); // a refusal is worth a line even so
 
     std::string error_msg;
     if (sdo_abort_messages.contains(static_cast<SdoAbortCode>(abort_sdo.error_code))) {
@@ -132,7 +137,8 @@ void ServerSdoService::restore_default_parameter(std::string_view category, std:
 }
 
 
-ODAccessStatus ServerSdoService::read(std::string_view category, std::string_view subcategory, std::string_view name) {
+ODAccessStatus ServerSdoService::read(std::string_view category, std::string_view subcategory, std::string_view name,
+                                      bool quiet) {
     ODEntryIter entry;
     auto status = _server.find_od_entry_to_read(category, subcategory, name, entry);
     if (status != ODAccessStatus::success) {
@@ -146,16 +152,17 @@ ODAccessStatus ServerSdoService::read(std::string_view category, std::string_vie
     message.index = key.index;
     message.subindex = key.subindex;
 
-    if (object.category != _server._dictionary.config.watch_category) {
+    if (!quiet && object.category != _server._dictionary.config.watch_category) {
         bsclog::info("Sending request to read {}::{}::{}::{}...", _server.name(), object.category, object.subcategory, object.name);
     }
-    _server._socket->send(create_frame(Cob::rsdo, _server.node_id(), message.to_payload()));   
+    _mark_request(key, quiet);
+    _server._socket->send(create_frame(Cob::rsdo, _server.node_id(), message.to_payload()));
     return ODAccessStatus::success;
 }
 
 
 ODAccessStatus ServerSdoService::write(std::string_view category, std::string_view subcategory, std::string_view name,
-                                   ExpeditedSdoData sdo_data) {
+                                   ExpeditedSdoData sdo_data, bool quiet) {
     ODEntryIter entry;
     auto status = _server.find_od_entry_to_write(category, subcategory, name, entry);
     if (status != ODAccessStatus::success) {
@@ -173,8 +180,11 @@ ODAccessStatus ServerSdoService::write(std::string_view category, std::string_vi
     message.subindex = key.subindex;
     message.data = sdo_data;
 
-    bsclog::info("Sending request to write {}::{}::{}::{} = {}...",
-                    _server.name(), object.category, object.subcategory, object.name, sdo_data.to_string(object.data_type));
+    if (!quiet) {
+        bsclog::info("Sending request to write {}::{}::{}::{} = {}...",
+                        _server.name(), object.category, object.subcategory, object.name, sdo_data.to_string(object.data_type));
+    }
+    _mark_request(key, quiet);
     _server._socket->send(create_frame(Cob::rsdo, _server.node_id(), message.to_payload()));
     return ODAccessStatus::success;
 }
@@ -236,6 +246,7 @@ ODAccessStatus ServerSdoService::write(std::string_view category, std::string_vi
 
     bsclog::info("Sending request to write {}::{}::{}::{} = {}...",
                     _server.name(), object.category, object.subcategory, object.name, value);
+    _mark_request(key, false);
     _server._socket->send(create_frame(Cob::rsdo, _server.node_id(), message.to_payload()));
     return ODAccessStatus::success;
 }
@@ -262,6 +273,22 @@ ODAccessStatus ServerSdoService::exec(std::string_view category, std::string_vie
                     _server.name(), object.category, object.subcategory, object.name);
     _server._socket->send(create_frame(Cob::rsdo, _server.node_id(), message.to_payload()));
     return ODAccessStatus::success;
+}
+
+
+void ServerSdoService::_mark_request(const ODObjectKey& key, bool quiet) {
+    std::lock_guard<std::mutex> lock(_quiet_mtx);
+    if (quiet) {
+        _quiet_requests.insert(key);
+    } else {
+        _quiet_requests.erase(key);
+    }
+}
+
+
+bool ServerSdoService::_take_quiet_request(const ODObjectKey& key) {
+    std::lock_guard<std::mutex> lock(_quiet_mtx);
+    return _quiet_requests.erase(key) > 0;
 }
 
 
