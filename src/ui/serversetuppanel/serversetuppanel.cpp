@@ -8,6 +8,10 @@
 #include <algorithm>
 #include <array>
 #include <ctime>
+#include <filesystem>
+#include <map>
+#include <set>
+#include <string_view>
 #include <utility>
 
 namespace ui {
@@ -45,6 +49,18 @@ std::string failure(const ucanopen::ConfigStep& step) {
     }
 }
 
+std::string_view type_name(ucanopen::ODObjectDataType type) {
+    constexpr std::array<std::string_view, 10> names = {
+            "bool", "int8", "int16", "int32", "uint8",
+            "uint16", "uint32", "float32", "exec", "string"};
+    return names[type];
+}
+
+// The node's own ID and the COB-IDs it takes its RPDOs from: loaded from
+// another device's file, they would move this device elsewhere on the bus, so
+// they are loaded only when picked by hand.
+constexpr std::string_view manual_subcategory = "ucanopen";
+
 } // namespace
 
 ServerSetupPanel::ServerSetupPanel(std::shared_ptr<ucanopen::Server> server,
@@ -53,7 +69,16 @@ ServerSetupPanel::ServerSetupPanel(std::shared_ptr<ucanopen::Server> server,
                                    bool open)
         : View(menu_title, window_title, open),
           _server(server),
-          _save_dialog_key("config_save_" + server->name()) {}
+          _save_dialog_key("config_save_" + server->name()),
+          _load_dialog_key("config_load_" + server->name()) {}
+
+bool ServerSetupPanel::Row::differs() const {
+    if (!file_value.has_value()) {
+        return false;
+    }
+    return !server_value.has_value() ||
+           !config_file::same_value(entry->second, *server_value, *file_value);
+}
 
 void ServerSetupPanel::draw() {
     ImGui::Begin(_window_title.c_str(), &_opened);
@@ -405,14 +430,34 @@ void ServerSetupPanel::_draw_all_parameters() {
             _read_all();
         }
 
-        bool const nothing_read =
+        // Only a table of all the values makes a whole file.
+        bool const nothing_to_save =
+                (_table != Table::values) ||
                 std::none_of(_rows.begin(), _rows.end(), [](const auto& row) {
                     return row.server_value.has_value();
                 });
-        util::DisableGuard nothing_to_save(nothing_read);
-        if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE " Сохранить в файл...",
+        {
+            util::DisableGuard save_disabled(nothing_to_save);
+            if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE
+                              " Сохранить в файл...",
+                              ImVec2(-1.0f, 0))) {
+                _open_save_dialog();
+            }
+        }
+
+        if (ImGui::Button(ICON_MDI_FOLDER_OPEN_OUTLINE " Загрузить из файла...",
                           ImVec2(-1.0f, 0))) {
-            _open_save_dialog();
+            _open_load_dialog();
+        }
+    }
+
+    if (_table == Table::file) {
+        auto const selected = _selected_count();
+        util::DisableGuard disabled(_busy() || selected == 0);
+        auto label = std::string(ICON_MDI_UPLOAD " Записать выбранные (") +
+                     std::to_string(selected) + ")###write_file";
+        if (ImGui::Button(label.c_str(), ImVec2(-1.0f, 0))) {
+            ImGui::OpenPopup("Внимание!##write_file");
         }
     }
 
@@ -432,26 +477,34 @@ void ServerSetupPanel::_draw_all_parameters() {
         }
     }
 
-    _draw_table();
+    if (!_notes.empty()) {
+        auto label = "Замечания к файлу " + _file_name + " (" +
+                     std::to_string(_notes.size()) + ")###notes";
+        ImGui::SetNextItemOpen(true, ImGuiCond_Appearing);
+        if (ImGui::TreeNode(label.c_str())) {
+            for (const auto& note : _notes) {
+                ImGui::Bullet();
+                ImGui::TextWrapped("%s", note.c_str());
+            }
+            ImGui::TreePop();
+        }
+    }
+
+    if (!_hint.empty()) {
+        ImGui::TextWrapped("%s", _hint.c_str());
+    }
+
+    if (_table == Table::values) {
+        _draw_values_table();
+    } else {
+        _draw_file_table();
+    }
 }
 
-void ServerSetupPanel::_draw_table() {
+void ServerSetupPanel::_draw_values_table() {
     if (_rows.empty()) {
         return;
     }
-
-    auto tone_color = [](Tone tone) -> ImU32 {
-        switch (tone) {
-        case Tone::good:
-            return colors::table_bg_green;
-        case Tone::warning:
-            return colors::table_bg_yellow;
-        case Tone::bad:
-            return colors::table_bg_red;
-        default:
-            return 0;
-        }
-    };
 
     constexpr ImGuiTableFlags flags =
             ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg |
@@ -493,8 +546,7 @@ void ServerSetupPanel::_draw_table() {
             auto value = config_file::format_value(object, *row.server_value);
             ImGui::TextUnformatted(value.c_str());
         } else if (!row.status.empty()) {
-            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
-                                   tone_color(row.tone));
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, row.status_color);
             ImGui::TextUnformatted(row.status.c_str());
         }
         ImGui::TableNextColumn();
@@ -506,6 +558,76 @@ void ServerSetupPanel::_draw_table() {
                 ImGui::SetTooltip("Только для чтения");
             }
         }
+    }
+
+    ImGui::EndTable();
+}
+
+void ServerSetupPanel::_draw_file_table() {
+    if (_rows.empty()) {
+        return;
+    }
+
+    constexpr ImGuiTableFlags flags =
+            ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg |
+            ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
+            ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit;
+    float const min_height = 10 * ImGui::GetFrameHeightWithSpacing();
+    ImVec2 const size(0.0f,
+                      std::max(ImGui::GetContentRegionAvail().y, min_height));
+    if (!ImGui::BeginTable("##file", 7, flags, size)) {
+        return;
+    }
+
+    ImGui::TableSetupScrollFreeze(0, 1);
+    ImGui::TableSetupColumn("##selected");
+    ImGui::TableSetupColumn("Подкатегория");
+    ImGui::TableSetupColumn("Параметр");
+    ImGui::TableSetupColumn("В устройстве");
+    ImGui::TableSetupColumn("В файле");
+    ImGui::TableSetupColumn("Ед.");
+    ImGui::TableSetupColumn("Статус", ImGuiTableColumnFlags_WidthStretch);
+    ImGui::TableHeadersRow();
+
+    bool const busy = _busy();
+    for (size_t i = 0; i < _rows.size(); ++i) {
+        auto& row = _rows[i];
+        const auto& object = row.entry->second;
+        bool const differs = row.differs();
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        if (differs) {
+            util::DisableGuard disabled(busy);
+            ImGui::PushID(static_cast<int>(i));
+            ImGui::Checkbox("##selected", &row.selected);
+            ImGui::PopID();
+        }
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(object.subcategory.c_str());
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(object.name.c_str());
+        ImGui::TableNextColumn();
+        if (row.server_value.has_value()) {
+            auto value = config_file::format_value(object, *row.server_value);
+            ImGui::TextUnformatted(value.c_str());
+        } else {
+            ImGui::TextDisabled("н/д");
+        }
+        ImGui::TableNextColumn();
+        if (differs && row.server_value.has_value()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   colors::table_bg_yellow);
+        }
+        auto value = config_file::format_value(object, *row.file_value);
+        ImGui::TextUnformatted(value.c_str());
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(object.unit.c_str());
+        ImGui::TableNextColumn();
+        if (row.status_color != 0) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, row.status_color);
+        }
+        ImGui::TextUnformatted(row.status.c_str());
     }
 
     ImGui::EndTable();
@@ -551,6 +673,33 @@ void ServerSetupPanel::_draw_popups() {
         }
         ImGui::EndPopup();
     }
+
+    ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+    if (ImGui::BeginPopupModal("Внимание!##write_file",
+                               NULL,
+                               ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("Будет записано параметров из файла: %zu. Продолжить?",
+                    _selected_count());
+        if (!_file_server.empty() && _file_server != _server->name()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, colors::icon_yellow);
+            ImGui::Text("Файл сохранён для %s, а не для %s.",
+                        _file_server.c_str(),
+                        _server->name().c_str());
+            ImGui::PopStyleColor();
+        }
+        ImGui::Separator();
+
+        if (ImGui::Button(ICON_MDI_CANCEL " Нет", ImVec2(120, 0))) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
+            _write_selected();
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
 }
 
 void ServerSetupPanel::_draw_dialogs() {
@@ -563,10 +712,23 @@ void ServerSetupPanel::_draw_dialogs() {
         }
         dialog->Close();
     }
+
+    if (dialog->Display(_load_dialog_key, ImGuiWindowFlags_NoCollapse, min_size)) {
+        if (dialog->IsOk()) {
+            _load_file(dialog->GetFilePathName(IGFD_ResultMode_KeepInputFile));
+        }
+        dialog->Close();
+    }
 }
 
 bool ServerSetupPanel::_busy() const {
     return _transfer != Transfer::none || _server->config_service.busy();
+}
+
+size_t ServerSetupPanel::_selected_count() const {
+    return std::count_if(_rows.begin(), _rows.end(), [](const auto& row) {
+        return row.selected && row.differs();
+    });
 }
 
 void ServerSetupPanel::_read_all() {
@@ -583,8 +745,154 @@ void ServerSetupPanel::_read_all() {
         return;
     }
     _rows = std::move(rows);
+    _table = Table::values;
+    _notes.clear();
+    _hint.clear();
+    _file_name.clear();
+    _file_server.clear();
     _transfer = Transfer::read_all;
     bsclog::info("Чтение всех параметров {}...", _server->name());
+}
+
+void ServerSetupPanel::_load_file(const std::string& path) {
+    auto contents = config_file::read(path);
+    if (!contents.has_value()) {
+        bsclog::error("Не удалось загрузить настройки из {}: {}.",
+                      path,
+                      contents.error());
+        return;
+    }
+
+    std::string file_server;
+    std::string file_firmware;
+    for (const auto& [key, value] : contents->header) {
+        if (key == "server") {
+            file_server = value;
+        } else if (key == "firmware_version") {
+            file_firmware = value;
+        }
+    }
+
+    std::vector<std::string> notes;
+    if (!file_server.empty() && file_server != _server->name()) {
+        notes.push_back("файл сохранён для " + file_server +
+                        ", а загружается в " + _server->name());
+    }
+    auto known = [](const std::string& text) {
+        return !text.empty() && text != "n/a";
+    };
+    if (known(file_firmware) && known(_software_version) &&
+        file_firmware != _software_version) {
+        notes.push_back("файл сохранён с ПО " + file_firmware +
+                        ", в устройстве " + _software_version);
+    }
+    for (auto& warning : contents->warnings) {
+        notes.push_back(std::move(warning));
+    }
+
+    std::map<std::pair<std::string_view, std::string_view>,
+             const config_file::Parameter*>
+            in_file;
+    for (const auto& parameter : contents->parameters) {
+        in_file[{parameter.subcategory, parameter.name}] = &parameter;
+    }
+    auto where = [](const config_file::Parameter& parameter) {
+        return "строка " + std::to_string(parameter.line) + ": [" +
+               parameter.subcategory + "] " + parameter.name;
+    };
+
+    // The rows follow the dictionary, as the file does when it was saved here.
+    std::vector<Row> rows;
+    std::vector<ucanopen::ConfigStep> steps;
+    std::set<const config_file::Parameter*> matched;
+    for (auto entry : _server->config_service.entries()) {
+        const auto& object = entry->second;
+        auto found = in_file.find({object.subcategory, object.name});
+        if (found == in_file.end()) {
+            continue;
+        }
+        const auto& parameter = *found->second;
+        matched.insert(&parameter);
+
+        if (!object.has_write_permission() || !object.has_read_permission()) {
+            notes.push_back(where(parameter) + " не записывается, пропущен");
+            continue;
+        }
+        auto value = config_file::parse_value(object, parameter.value);
+        if (!value.has_value()) {
+            notes.push_back(where(parameter) + ": «" + parameter.value +
+                            "» не " + std::string(type_name(object.data_type)) +
+                            ", пропущен");
+            continue;
+        }
+        rows.push_back({.entry = entry, .file_value = value});
+        steps.push_back(read_step(entry));
+    }
+    for (const auto& parameter : contents->parameters) {
+        if (!matched.contains(&parameter)) {
+            notes.push_back(where(parameter) + " нет в словаре, пропущен");
+        }
+    }
+
+    if (!steps.empty() && !_server->config_service.start(std::move(steps))) {
+        return;
+    }
+    _rows = std::move(rows);
+    _table = Table::file;
+    _notes = std::move(notes);
+    _hint.clear();
+    _file_name = std::filesystem::path(path).filename().string();
+    _file_server = file_server;
+
+    for (const auto& note : _notes) {
+        bsclog::warning("{}: {}.", _file_name, note);
+    }
+    if (_rows.empty()) {
+        bsclog::warning("В файле {} нет параметров, которые можно записать в {}.",
+                        _file_name,
+                        _server->name());
+        return;
+    }
+    _transfer = Transfer::compare;
+    bsclog::info("Сравнение {} с файлом {}...", _server->name(), _file_name);
+}
+
+void ServerSetupPanel::_write_selected() {
+    std::vector<ucanopen::ConfigStep> steps;
+    std::vector<size_t> written_rows;
+    for (size_t i = 0; i < _rows.size(); ++i) {
+        const auto& row = _rows[i];
+        if (!row.selected || !row.differs()) {
+            continue;
+        }
+        steps.push_back({.entry = row.entry, .write_value = row.file_value});
+        steps.push_back(read_step(row.entry)); // what the server made of it
+        written_rows.push_back(i);
+    }
+    if (written_rows.empty()) {
+        return;
+    }
+
+    // Whether what was taken needs a restart, where the server can tell.
+    auto restart = _server->find_od_entry(
+            _server->dictionary().config.config_category,
+            "nvm",
+            "restart_required");
+    if (restart != _server->dictionary().entries.end() &&
+        restart->second.has_read_permission()) {
+        steps.push_back(read_step(restart));
+    }
+
+    if (!_server->config_service.start(std::move(steps))) {
+        return;
+    }
+    _written_rows = std::move(written_rows);
+    _hint.clear();
+    _transfer = Transfer::write;
+    bsclog::info("Запись параметров из файла {} в {}: {}...",
+                 _file_name,
+                 _server->name(),
+                 _written_rows.size());
 }
 
 void ServerSetupPanel::_take_transfer() {
@@ -597,6 +905,12 @@ void ServerSetupPanel::_take_transfer() {
     switch (std::exchange(_transfer, Transfer::none)) {
     case Transfer::read_all:
         _take_read_all(steps, outcome);
+        break;
+    case Transfer::compare:
+        _take_compare(steps, outcome);
+        break;
+    case Transfer::write:
+        _take_write(steps, outcome);
         break;
     case Transfer::none:
         break;
@@ -614,7 +928,7 @@ void ServerSetupPanel::_take_read_all(
             ++read;
         } else {
             row.status = failure(steps[i]);
-            row.tone = Tone::bad;
+            row.status_color = colors::table_bg_red;
         }
     }
 
@@ -635,6 +949,132 @@ void ServerSetupPanel::_take_read_all(
     }
 }
 
+void ServerSetupPanel::_take_compare(
+        const std::vector<ucanopen::ConfigStep>& steps,
+        ucanopen::ServerConfigService::Outcome outcome) {
+    size_t differ = 0;
+    size_t unknown = 0;
+    bool manual = false;
+    for (size_t i = 0; i < _rows.size() && i < steps.size(); ++i) {
+        auto& row = _rows[i];
+        if (steps[i].status != ucanopen::ConfigStep::Status::done) {
+            // Not picked: what kept the value from being read would likely
+            // keep it from being written.
+            row.status = "не прочитано (" + failure(steps[i]) + ")";
+            row.status_color = colors::table_bg_red;
+            ++unknown;
+            continue;
+        }
+
+        row.server_value = steps[i].value;
+        if (!row.differs()) {
+            row.status = "совпадает";
+            continue;
+        }
+        ++differ;
+        if (row.entry->second.subcategory == manual_subcategory) {
+            manual = true;
+        } else {
+            row.selected = true;
+        }
+    }
+
+    if (manual) {
+        _notes.push_back("параметры [" + std::string(manual_subcategory) +
+                         "] отличаются, но не выбраны: это адрес узла и "
+                         "RPDO, отметьте их вручную, если они нужны");
+    }
+    if (differ == 0 && unknown == 0) {
+        _hint = "Настройки в устройстве совпадают с файлом.";
+    }
+
+    using Outcome = ucanopen::ServerConfigService::Outcome;
+    auto const name = _server->name();
+    if (outcome == Outcome::no_response) {
+        bsclog::error("{} не отвечает, сравнение с файлом {} прервано.",
+                      name, _file_name);
+    } else if (outcome == Outcome::cancelled) {
+        bsclog::warning("Сравнение {} с файлом {} отменено.", name, _file_name);
+    }
+    bsclog::info("{} и файл {}: отличаются {} из {}, не прочитано {}.",
+                 name, _file_name, differ, _rows.size(), unknown);
+}
+
+void ServerSetupPanel::_take_write(
+        const std::vector<ucanopen::ConfigStep>& steps,
+        ucanopen::ServerConfigService::Outcome outcome) {
+    using Status = ucanopen::ConfigStep::Status;
+    size_t written = 0;
+    size_t failed = 0;
+    for (size_t k = 0; k < _written_rows.size() && 2 * k + 1 < steps.size(); ++k) {
+        auto& row = _rows[_written_rows[k]];
+        const auto& object = row.entry->second;
+        const auto& write = steps[2 * k];
+        const auto& check = steps[2 * k + 1];
+
+        if (write.status != Status::done) {
+            // Left picked, to be tried again.
+            row.status = failure(write);
+            if (write.status != Status::cancelled) {
+                row.status_color = colors::table_bg_red;
+                ++failed;
+            }
+            continue;
+        }
+
+        ++written;
+        row.selected = false;
+        if (check.status != Status::done) {
+            row.status = "записано, не проверено";
+            row.status_color = colors::table_bg_yellow;
+            continue;
+        }
+        row.server_value = check.value;
+        if (row.differs()) {
+            // clamped, or kept in other units
+            row.status = "записано, сервер вернул " +
+                         config_file::format_value(object, check.value);
+            row.status_color = colors::table_bg_yellow;
+        } else {
+            row.status = "записано";
+            row.status_color = colors::table_bg_green;
+        }
+    }
+
+    bool restart_required = false;
+    if (steps.size() == 2 * _written_rows.size() + 1) {
+        const auto& restart = steps.back();
+        restart_required = (restart.status == Status::done) &&
+                           (restart.value.u8() != 0);
+    }
+    auto const total = _written_rows.size();
+    _written_rows.clear();
+
+    if (written > 0) {
+        _hint = "Записанное хранится в рабочей памяти устройства: чтобы "
+                "сохранить его, нажмите «Применить».";
+        if (restart_required) {
+            _hint += " В силу изменения вступят после перезапуска устройства.";
+        }
+    }
+
+    using Outcome = ucanopen::ServerConfigService::Outcome;
+    auto const name = _server->name();
+    if (outcome == Outcome::no_response) {
+        bsclog::error("{} не отвечает, запись прервана: записано {} из {}.",
+                      name, written, total);
+    } else if (outcome == Outcome::cancelled) {
+        bsclog::warning("Запись в {} отменена: записано {} из {}.",
+                        name, written, total);
+    } else if (failed > 0) {
+        bsclog::warning("В {} записано параметров из файла {}: {} из {}.",
+                        name, _file_name, written, total);
+    } else {
+        bsclog::success("В {} записаны параметры из файла {}: {} из {}.",
+                        name, _file_name, written, total);
+    }
+}
+
 void ServerSetupPanel::_open_save_dialog() {
     auto file_name = _server->name();
     if (!_device_sn.empty() && _device_sn != "n/a") {
@@ -648,6 +1088,14 @@ void ServerSetupPanel::_open_save_dialog() {
     config.flags = ImGuiFileDialogFlags_Default;
     ImGuiFileDialog::Instance()->OpenDialog(
             _save_dialog_key, "Сохранить настройки", ".ini", config);
+}
+
+void ServerSetupPanel::_open_load_dialog() {
+    IGFD::FileDialogConfig config;
+    config.path = ".";
+    config.flags = ImGuiFileDialogFlags_Modal | ImGuiFileDialogFlags_HideColumnType;
+    ImGuiFileDialog::Instance()->OpenDialog(
+            _load_dialog_key, "Загрузить настройки", ".ini,.*", config);
 }
 
 void ServerSetupPanel::_save_file(const std::string& path) {
