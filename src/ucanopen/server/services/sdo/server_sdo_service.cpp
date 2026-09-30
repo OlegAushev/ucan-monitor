@@ -196,7 +196,7 @@ ODAccessStatus ServerSdoService::write(std::string_view category, std::string_vi
         if (value == "TRUE" || value == "true" || value == "ON" || value == "on" || value == "1")
             sdo_data = ExpeditedSdoData(true);
         else if (value == "FALSE" || value == "false" || value == "OFF" || value == "off" || value == "0")
-            sdo_data = ExpeditedSdoData(true);
+            sdo_data = ExpeditedSdoData(false);
         else
             return ODAccessStatus::invalid_value;
         break;
