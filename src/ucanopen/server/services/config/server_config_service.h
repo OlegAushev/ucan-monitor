@@ -25,8 +25,8 @@ struct ConfigStep {
         cancelled   // the transfer stopped before it got here
     };
 
-    ODEntryIter entry;
-    std::optional<ExpeditedSdoData> write_value;
+    ODEntryIter entry{};
+    std::optional<ExpeditedSdoData> write_value{};
     Status status{Status::pending};
     ExpeditedSdoData value{};  // what a read got back
     SdoAbortCode abort_code{SdoAbortCode::no_error};

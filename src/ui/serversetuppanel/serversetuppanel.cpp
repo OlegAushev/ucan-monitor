@@ -1,19 +1,69 @@
 #include "serversetuppanel.h"
+#include <config_file/config_file.h>
+#include <ui/util/style.h>
+#include <ui/util/util.h>
+
+#include <imguifiledialog/ImGuiFileDialog.h>
+
+#include <algorithm>
+#include <array>
+#include <ctime>
+#include <utility>
 
 namespace ui {
+
+namespace {
+
+std::string local_time(const char* format) {
+    auto now = std::time(nullptr);
+    std::tm tm{};
+    localtime_r(&now, &tm);
+    std::array<char, 64> buf;
+    auto size = std::strftime(buf.data(), buf.size(), format, &tm);
+    return std::string(buf.data(), size);
+}
+
+ucanopen::ConfigStep read_step(ucanopen::ODEntryIter entry) {
+    return {.entry = entry};
+}
+
+std::string failure(const ucanopen::ConfigStep& step) {
+    switch (step.status) {
+    case ucanopen::ConfigStep::Status::refused: {
+        auto message = ucanopen::sdo_abort_messages.find(step.abort_code);
+        if (message == ucanopen::sdo_abort_messages.end()) {
+            return "отказ";
+        }
+        return "отказ: " + message->second;
+    }
+    case ucanopen::ConfigStep::Status::timed_out:
+        return "нет ответа";
+    case ucanopen::ConfigStep::Status::cancelled:
+        return "отменено";
+    default:
+        return {};
+    }
+}
+
+} // namespace
 
 ServerSetupPanel::ServerSetupPanel(std::shared_ptr<ucanopen::Server> server,
                                    const std::string& menu_title,
                                    const std::string& window_title,
                                    bool open)
-        : View(menu_title, window_title, open), _server(server) {}
+        : View(menu_title, window_title, open),
+          _server(server),
+          _save_dialog_key("config_save_" + server->name()) {}
 
 void ServerSetupPanel::draw() {
     ImGui::Begin(_window_title.c_str(), &_opened);
 
+    _take_transfer();
     _draw_about();
     _draw_setup();
+    _draw_all_parameters();
     _draw_popups();
+    _draw_dialogs();
 
     ImGui::End();
 }
@@ -104,6 +154,10 @@ void ServerSetupPanel::_draw_setup() {
     if (objects.empty()) {
         return;
     }
+
+    // A transfer would overwrite a parameter set by hand meanwhile, and
+    // «Применить» would store it half done.
+    util::DisableGuard disabled(_busy());
 
     auto selected_category_iter = objects.find(_category);
     if (selected_category_iter == objects.end()) {
@@ -336,6 +390,127 @@ void ServerSetupPanel::_draw_setup() {
     }
 }
 
+void ServerSetupPanel::_draw_all_parameters() {
+    auto& config = _server->config_service;
+    if (config.entries().empty()) {
+        return;
+    }
+
+    ImGui::SeparatorText("Все параметры");
+
+    {
+        util::DisableGuard disabled(_busy());
+        if (ImGui::Button(ICON_MDI_TABLE_REFRESH " Прочитать всё",
+                          ImVec2(-1.0f, 0))) {
+            _read_all();
+        }
+
+        bool const nothing_read =
+                std::none_of(_rows.begin(), _rows.end(), [](const auto& row) {
+                    return row.server_value.has_value();
+                });
+        util::DisableGuard nothing_to_save(nothing_read);
+        if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE " Сохранить в файл...",
+                          ImVec2(-1.0f, 0))) {
+            _open_save_dialog();
+        }
+    }
+
+    if (config.busy()) {
+        auto [done, total] = config.progress();
+        auto overlay = std::to_string(done) + " / " + std::to_string(total);
+        const char* cancel_label = ICON_MDI_CLOSE " Отмена##transfer";
+        float cancel_width = ImGui::CalcTextSize(cancel_label, nullptr, true).x +
+                             2 * ImGui::GetStyle().FramePadding.x;
+        ImGui::ProgressBar(
+                total ? float(done) / float(total) : 0.0f,
+                ImVec2(-(cancel_width + ImGui::GetStyle().ItemSpacing.x), 0),
+                overlay.c_str());
+        ImGui::SameLine();
+        if (ImGui::Button(cancel_label)) {
+            config.cancel();
+        }
+    }
+
+    _draw_table();
+}
+
+void ServerSetupPanel::_draw_table() {
+    if (_rows.empty()) {
+        return;
+    }
+
+    auto tone_color = [](Tone tone) -> ImU32 {
+        switch (tone) {
+        case Tone::good:
+            return colors::table_bg_green;
+        case Tone::warning:
+            return colors::table_bg_yellow;
+        case Tone::bad:
+            return colors::table_bg_red;
+        default:
+            return 0;
+        }
+    };
+
+    constexpr ImGuiTableFlags flags =
+            ImGuiTableFlags_ScrollY | ImGuiTableFlags_RowBg |
+            ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersV |
+            ImGuiTableFlags_Resizable | ImGuiTableFlags_SizingFixedFit;
+    float const min_height = 10 * ImGui::GetFrameHeightWithSpacing();
+    ImVec2 const size(0.0f,
+                      std::max(ImGui::GetContentRegionAvail().y, min_height));
+    if (!ImGui::BeginTable("##parameters", 4, flags, size)) {
+        return;
+    }
+
+    ImGui::TableSetupScrollFreeze(0, 1);
+    ImGui::TableSetupColumn("Подкатегория");
+    ImGui::TableSetupColumn("Параметр");
+    ImGui::TableSetupColumn("Значение");
+    ImGui::TableSetupColumn("Ед.", ImGuiTableColumnFlags_WidthStretch);
+    ImGui::TableHeadersRow();
+
+    for (const auto& row : _rows) {
+        const auto& object = row.entry->second;
+
+        // Dimmed as they are commented out in the file: there to be seen,
+        // not loaded.
+        bool const read_only = !object.has_write_permission();
+        if (read_only) {
+            ImGui::PushStyleColor(ImGuiCol_Text,
+                                  ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+        }
+
+        ImGui::TableNextRow();
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(object.subcategory.c_str());
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(object.name.c_str());
+        bool const name_hovered = ImGui::IsItemHovered();
+        ImGui::TableNextColumn();
+        if (row.server_value.has_value()) {
+            auto value = config_file::format_value(object, *row.server_value);
+            ImGui::TextUnformatted(value.c_str());
+        } else if (!row.status.empty()) {
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   tone_color(row.tone));
+            ImGui::TextUnformatted(row.status.c_str());
+        }
+        ImGui::TableNextColumn();
+        ImGui::TextUnformatted(object.unit.c_str());
+
+        if (read_only) {
+            ImGui::PopStyleColor();
+            if (name_hovered) {
+                ImGui::SetTooltip("Только для чтения");
+            }
+        }
+    }
+
+    ImGui::EndTable();
+}
+
 void ServerSetupPanel::_draw_popups() {
     // Always center this window when appearing
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
@@ -376,6 +551,129 @@ void ServerSetupPanel::_draw_popups() {
         }
         ImGui::EndPopup();
     }
+}
+
+void ServerSetupPanel::_draw_dialogs() {
+    auto* dialog = ImGuiFileDialog::Instance();
+    ImVec2 const min_size(640.0f, 400.0f);
+
+    if (dialog->Display(_save_dialog_key, ImGuiWindowFlags_NoCollapse, min_size)) {
+        if (dialog->IsOk()) {
+            _save_file(dialog->GetFilePathName());
+        }
+        dialog->Close();
+    }
+}
+
+bool ServerSetupPanel::_busy() const {
+    return _transfer != Transfer::none || _server->config_service.busy();
+}
+
+void ServerSetupPanel::_read_all() {
+    std::vector<Row> rows;
+    std::vector<ucanopen::ConfigStep> steps;
+    for (auto entry : _server->config_service.entries()) {
+        if (entry->second.has_read_permission()) {
+            rows.push_back({.entry = entry});
+            steps.push_back(read_step(entry));
+        }
+    }
+
+    if (!_server->config_service.start(std::move(steps))) {
+        return;
+    }
+    _rows = std::move(rows);
+    _transfer = Transfer::read_all;
+    bsclog::info("Чтение всех параметров {}...", _server->name());
+}
+
+void ServerSetupPanel::_take_transfer() {
+    if (_transfer == Transfer::none || _server->config_service.busy()) {
+        return;
+    }
+
+    auto steps = _server->config_service.steps();
+    auto outcome = _server->config_service.outcome();
+    switch (std::exchange(_transfer, Transfer::none)) {
+    case Transfer::read_all:
+        _take_read_all(steps, outcome);
+        break;
+    case Transfer::none:
+        break;
+    }
+}
+
+void ServerSetupPanel::_take_read_all(
+        const std::vector<ucanopen::ConfigStep>& steps,
+        ucanopen::ServerConfigService::Outcome outcome) {
+    size_t read = 0;
+    for (size_t i = 0; i < _rows.size() && i < steps.size(); ++i) {
+        auto& row = _rows[i];
+        if (steps[i].status == ucanopen::ConfigStep::Status::done) {
+            row.server_value = steps[i].value;
+            ++read;
+        } else {
+            row.status = failure(steps[i]);
+            row.tone = Tone::bad;
+        }
+    }
+
+    using Outcome = ucanopen::ServerConfigService::Outcome;
+    auto const name = _server->name();
+    if (outcome == Outcome::no_response) {
+        bsclog::error("{} не отвечает, чтение прервано: прочитано {} из {}.",
+                      name, read, steps.size());
+    } else if (outcome == Outcome::cancelled) {
+        bsclog::warning("Чтение параметров {} отменено: прочитано {} из {}.",
+                        name, read, steps.size());
+    } else if (read < steps.size()) {
+        bsclog::warning("Параметры {} прочитаны не все: {} из {}.",
+                        name, read, steps.size());
+    } else {
+        bsclog::success("Параметры {} прочитаны: {} из {}.",
+                        name, read, steps.size());
+    }
+}
+
+void ServerSetupPanel::_open_save_dialog() {
+    auto file_name = _server->name();
+    if (!_device_sn.empty() && _device_sn != "n/a") {
+        file_name += "_sn" + _device_sn;
+    }
+    file_name += "_" + local_time("%Y-%m-%d") + ".ini";
+
+    IGFD::FileDialogConfig config;
+    config.path = ".";
+    config.fileName = file_name;
+    config.flags = ImGuiFileDialogFlags_Default;
+    ImGuiFileDialog::Instance()->OpenDialog(
+            _save_dialog_key, "Сохранить настройки", ".ini", config);
+}
+
+void ServerSetupPanel::_save_file(const std::string& path) {
+    config_file::Header header = {
+            {"server", _server->name()},
+            {"device_name", _device_name},
+            {"hardware_version", _hardware_version},
+            {"firmware_version", _software_version},
+            {"firmware_commitdate", _software_commitdate},
+            {"firmware_branch", _software_branch},
+            {"serial_number", _device_sn},
+            {"saved", local_time("%Y-%m-%d %H:%M:%S")}};
+
+    std::vector<config_file::Value> values;
+    for (const auto& row : _rows) {
+        values.push_back({&row.entry->second, row.server_value});
+    }
+
+    if (auto result = config_file::write(path, header, values); !result) {
+        bsclog::error("Не удалось сохранить настройки {} в {}: {}.",
+                      _server->name(),
+                      path,
+                      result.error());
+        return;
+    }
+    bsclog::success("Настройки {} сохранены в {}.", _server->name(), path);
 }
 
 } // namespace ui
