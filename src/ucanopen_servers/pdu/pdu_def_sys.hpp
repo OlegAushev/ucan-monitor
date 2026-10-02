@@ -7,8 +7,7 @@
 
 // Mirrors src/common/trouble/common_status.hpp (общая база) and
 // src/common/contract/pdu/faults.hpp (специфичные для PDU) of the h2-hess
-// firmware. Bit position == index in status_list, so a new status is appended,
-// never inserted. Keep both in sync.
+// firmware. Bit position == id == index in status_list. Keep both in sync.
 
 namespace pdu {
 
@@ -33,22 +32,79 @@ struct i18n {
 // Общая база: неизменный префикс status_list любого устройства h2-hess.
 // ---------------------------------------------------------------------------
 
-struct emergency {
+struct restart_required {
   static constexpr id_type id = 0;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {
+      "restart required",
+      "требуется перезапуск"
+  };
+};
+
+struct unsaved_changes {
+  static constexpr id_type id = 1;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {
+      "unsaved changes",
+      "есть несохранённые изменения"
+  };
+};
+
+struct unapplied_changes {
+  static constexpr id_type id = 2;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {
+      "unapplied changes",
+      "есть неприменённые изменения"
+  };
+};
+
+struct params_defaulted {
+  static constexpr id_type id = 3;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {
+      "parameters loaded with defaults",
+      "параметры поднялись со значениями по умолчанию"
+  };
+};
+
+struct nvm_write_error {
+  static constexpr id_type id = 4;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {"NVM write error", "ошибка записи NVM"};
+};
+
+struct unexpected_reset {
+  static constexpr id_type id = 5;
+  static constexpr trouble::level level_min = trouble::level::warning;
+  static constexpr trouble::level level_max = trouble::level::warning;
+  static constexpr i18n description = {
+      "unexpected MCU reset",
+      "неожиданный сброс МК"
+  };
+};
+
+struct emergency {
+  static constexpr id_type id = 6;
   static constexpr trouble::level level_min = trouble::level::emergency;
   static constexpr trouble::level level_max = trouble::level::emergency;
   static constexpr i18n description = {"emergency", "авария"};
 };
 
 struct watchdog_timeout {
-  static constexpr id_type id = 1;
+  static constexpr id_type id = 7;
   static constexpr trouble::level level_min = trouble::level::critical;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {"watchdog timeout", "таймаут watchdog"};
 };
 
 struct invalid_config {
-  static constexpr id_type id = 2;
+  static constexpr id_type id = 8;
   static constexpr trouble::level level_min = trouble::level::critical;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {
@@ -58,7 +114,7 @@ struct invalid_config {
 };
 
 struct no_nvm {
-  static constexpr id_type id = 3;
+  static constexpr id_type id = 9;
   static constexpr trouble::level level_min = trouble::level::critical;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {
@@ -68,35 +124,28 @@ struct no_nvm {
 };
 
 struct nvm_read_error {
-  static constexpr id_type id = 4;
+  static constexpr id_type id = 10;
   static constexpr trouble::level level_min = trouble::level::critical;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {"NVM read error", "ошибка чтения NVM"};
 };
 
-struct nvm_write_error {
-  static constexpr id_type id = 5;
-  static constexpr trouble::level level_min = trouble::level::critical;
-  static constexpr trouble::level level_max = trouble::level::critical;
-  static constexpr i18n description = {"NVM write error", "ошибка записи NVM"};
-};
-
 struct can_bus_error {
-  static constexpr id_type id = 6;
+  static constexpr id_type id = 11;
   static constexpr trouble::level level_min = trouble::level::warning;
   static constexpr trouble::level level_max = trouble::level::error;
   static constexpr i18n description = {"CAN bus error", "ошибка шины CAN"};
 };
 
 struct can_overrun {
-  static constexpr id_type id = 7;
+  static constexpr id_type id = 12;
   static constexpr trouble::level level_min = trouble::level::warning;
   static constexpr trouble::level level_max = trouble::level::warning;
   static constexpr i18n description = {"CAN overrun", "переполнение CAN"};
 };
 
 struct can_master_connection_lost {
-  static constexpr id_type id = 8;
+  static constexpr id_type id = 13;
   static constexpr trouble::level level_min = trouble::level::warning;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {
@@ -106,7 +155,7 @@ struct can_master_connection_lost {
 };
 
 struct can_master_invalid_frame {
-  static constexpr id_type id = 9;
+  static constexpr id_type id = 14;
   static constexpr trouble::level level_min = trouble::level::warning;
   static constexpr trouble::level level_max = trouble::level::warning;
   static constexpr i18n description = {
@@ -116,7 +165,7 @@ struct can_master_invalid_frame {
 };
 
 struct ot_mcu {
-  static constexpr id_type id = 10;
+  static constexpr id_type id = 15;
   static constexpr trouble::level level_min = trouble::level::warning;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {"MCU overtemperature", "перегрев МК"};
@@ -127,7 +176,7 @@ struct ot_mcu {
 // ---------------------------------------------------------------------------
 
 struct contactor_weld {
-  static constexpr id_type id = 11;
+  static constexpr id_type id = 16;
   static constexpr trouble::level level_min = trouble::level::critical;
   static constexpr trouble::level level_max = trouble::level::emergency;
   static constexpr i18n description = {
@@ -137,7 +186,7 @@ struct contactor_weld {
 };
 
 struct contactor_no_feedback {
-  static constexpr id_type id = 12;
+  static constexpr id_type id = 17;
   static constexpr trouble::level level_min = trouble::level::error;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {
@@ -147,7 +196,7 @@ struct contactor_no_feedback {
 };
 
 struct sensor_failure_current {
-  static constexpr id_type id = 13;
+  static constexpr id_type id = 18;
   static constexpr trouble::level level_min = trouble::level::error;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {
@@ -157,7 +206,7 @@ struct sensor_failure_current {
 };
 
 struct sensor_failure_voltage {
-  static constexpr id_type id = 14;
+  static constexpr id_type id = 19;
   static constexpr trouble::level level_min = trouble::level::error;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {
@@ -167,7 +216,7 @@ struct sensor_failure_voltage {
 };
 
 struct precharge_timeout {
-  static constexpr id_type id = 15;
+  static constexpr id_type id = 20;
   static constexpr trouble::level level_min = trouble::level::error;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {
@@ -177,7 +226,7 @@ struct precharge_timeout {
 };
 
 struct sensor_bypassed {
-  static constexpr id_type id = 16;
+  static constexpr id_type id = 21;
   static constexpr trouble::level level_min = trouble::level::warning;
   static constexpr trouble::level level_max = trouble::level::warning;
   static constexpr i18n description = {
@@ -187,7 +236,7 @@ struct sensor_bypassed {
 };
 
 struct can_substitute_connection_lost {
-  static constexpr id_type id = 17;
+  static constexpr id_type id = 22;
   static constexpr trouble::level level_min = trouble::level::warning;
   static constexpr trouble::level level_max = trouble::level::critical;
   static constexpr i18n description = {
@@ -197,7 +246,7 @@ struct can_substitute_connection_lost {
 };
 
 struct can_substitute_invalid_frame {
-  static constexpr id_type id = 18;
+  static constexpr id_type id = 23;
   static constexpr trouble::level level_min = trouble::level::warning;
   static constexpr trouble::level level_max = trouble::level::warning;
   static constexpr i18n description = {
@@ -206,15 +255,20 @@ struct can_substitute_invalid_frame {
   };
 };
 
-inline constexpr size_t status_count = 19;
+inline constexpr size_t status_count = 24;
 
 inline constexpr std::array<std::string_view, status_count> names_ru = {
+    restart_required::description.ru,
+    unsaved_changes::description.ru,
+    unapplied_changes::description.ru,
+    params_defaulted::description.ru,
+    nvm_write_error::description.ru,
+    unexpected_reset::description.ru,
     emergency::description.ru,
     watchdog_timeout::description.ru,
     invalid_config::description.ru,
     no_nvm::description.ru,
     nvm_read_error::description.ru,
-    nvm_write_error::description.ru,
     can_bus_error::description.ru,
     can_overrun::description.ru,
     can_master_connection_lost::description.ru,
