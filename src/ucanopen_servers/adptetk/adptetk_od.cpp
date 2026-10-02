@@ -180,12 +180,14 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3008, 0x05}, {"config", "phase_current_sensor", "zero_drift_b",         "A",   OD_ACCESS_RO,    OD_FLOAT32}},
 {{0x3008, 0x06}, {"config", "phase_current_sensor", "zero_drift_c",         "A",   OD_ACCESS_RO,    OD_FLOAT32}},
 {{0x3008, 0x07}, {"config", "phase_current_sensor", "zero_drift_threshold", "A",   OD_ACCESS_RW,    OD_FLOAT32}},
+{{0x3008, 0x08}, {"config", "phase_current_sensor", "scale_a",              "A/A", OD_ACCESS_RW,    OD_FLOAT32}},
+{{0x3008, 0x09}, {"config", "phase_current_sensor", "scale_b",              "A/A", OD_ACCESS_RW,    OD_FLOAT32}},
+{{0x3008, 0x0A}, {"config", "phase_current_sensor", "scale_c",              "A/A", OD_ACCESS_RW,    OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x3009, 0x01}, {"config", "dc_voltage_sensor", "gain",   "V/V", OD_ACCESS_CONST, OD_FLOAT32}},
 {{0x3009, 0x02}, {"config", "dc_voltage_sensor", "offset", "V",   OD_ACCESS_CONST, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x300A, 0x01}, {"config", "hall_anglesensor", "enabled",            "",  OD_ACCESS_RW, OD_BOOL}},
-{{0x300A, 0x02}, {"config", "hall_anglesensor", "poll_num",           "",  OD_ACCESS_RW, OD_INT32}},
 {{0x300A, 0x03}, {"config", "hall_anglesensor", "speed_timeconstant", "s", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300A, 0x04}, {"config", "hall_anglesensor", "fwd_a",              "°", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300A, 0x05}, {"config", "hall_anglesensor", "fwd_ab",             "°", OD_ACCESS_RW, OD_FLOAT32}},
