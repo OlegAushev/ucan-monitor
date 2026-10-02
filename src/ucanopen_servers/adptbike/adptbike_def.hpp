@@ -128,7 +128,7 @@ struct CobRpdo2 {
 static_assert(sizeof(CobRpdo1) == 8);
 static_assert(sizeof(CobRpdo2) == 8);
 
-// Mirrors md::state::id (motor_drive/fsm/fsm.hpp).
+// Mirrors md::state::id (md/fsm/fsm.hpp).
 enum class DriveState {
   init,
   standby,
@@ -179,7 +179,7 @@ inline std::unordered_map<DriveState, std::string_view> const
         {DriveState::calibrating, "КАЛИБРОВКА"},
 };
 
-// Mirrors md::control_mode (motor_drive/motor_drive_types.hpp).
+// Mirrors md::control_mode (md/control_mode.hpp).
 enum class ControlMode {
   torque,
   speed,
@@ -196,7 +196,7 @@ inline std::unordered_map<ControlMode, std::string_view> const ctlmode_names = {
     {ControlMode::speed, "скорость"},
     {ControlMode::angle, "угол"}};
 
-// Mirrors pmsm::model_mode (pmsm/model_types.hpp).
+// Mirrors pmsm::model_mode (pmsm/model_io.hpp).
 enum class ModelMode {
   idle,
   closed,
