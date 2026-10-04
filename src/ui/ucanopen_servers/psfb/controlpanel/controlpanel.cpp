@@ -190,19 +190,6 @@ void ControlPanel::_draw_actions() {
     ImGui::PopStyleColor(3);
 
     ImGui::PopStyleVar();
-
-    if (ImGui::CollapsingHeader(ICON_MDI_CAR_WRENCH " Доп. Действия",
-                                ImGuiTreeNodeFlags_Framed)) {
-        ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2{0.f, 0.5f});
-
-        if (ImGui::Button(ICON_MDI_EMOTICON_DEAD
-                          " Очистить Память",
-                          ImVec2{-1.f, 0.f})) {
-            ImGui::OpenPopup("Внимание!##erase_all_parameters");
-        }
-
-        ImGui::PopStyleVar();
-    }
 }
 
 void ControlPanel::_draw_popups() {
@@ -223,24 +210,6 @@ void ControlPanel::_draw_popups() {
         ImGui::SameLine();
         if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
             _server->exec("ctl", "sys", "reset_device");
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::EndPopup();
-    }
-
-    if (ImGui::BeginPopupModal("Внимание!##erase_all_parameters",
-                               NULL,
-                               ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Энергонезависимая память будет очищена. Продолжить?");
-        ImGui::Separator();
-
-        if (ImGui::Button(ICON_MDI_CANCEL " Нет", ImVec2(120, 0))) {
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::SetItemDefaultFocus();
-        ImGui::SameLine();
-        if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
-            _server->exec("ctl", "sys", "erase_all_parameters");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();

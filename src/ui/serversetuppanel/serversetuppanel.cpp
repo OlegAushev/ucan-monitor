@@ -413,6 +413,14 @@ void ServerSetupPanel::_draw_setup() {
     if (ImGui::Button("Применить", ImVec2(-1.0f, 0))) {
         ImGui::OpenPopup("Внимание!##apply");
     }
+
+    if (ImGui::Button("Применить и Перезапустить", ImVec2(-1.0f, 0))) {
+        ImGui::OpenPopup("Внимание!##apply_and_reset");
+    }
+
+    if (ImGui::Button("Очистить Память", ImVec2(-1.0f, 0))) {
+        ImGui::OpenPopup("Внимание!##erase");
+    }
 }
 
 void ServerSetupPanel::_draw_all_parameters() {
@@ -669,6 +677,43 @@ void ServerSetupPanel::_draw_popups() {
         ImGui::SameLine();
         if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
             _server->exec("ctl", "sys", "save_all_parameters");
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::BeginPopupModal("Внимание!##apply_and_reset",
+                               NULL,
+                               ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("Настройки будут записаны, устройство перезапустится. "
+                    "Продолжить?");
+        ImGui::Separator();
+
+        if (ImGui::Button(ICON_MDI_CANCEL " Нет", ImVec2(120, 0))) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
+            _server->exec("ctl", "sys", "save_all_parameters_and_reset");
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::BeginPopupModal("Внимание!##erase",
+                               NULL,
+                               ImGuiWindowFlags_AlwaysAutoResize)) {
+        ImGui::Text("Энергонезависимая память будет очищена. Продолжить?");
+        ImGui::Separator();
+
+        if (ImGui::Button(ICON_MDI_CANCEL " Нет", ImVec2(120, 0))) {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
+            _server->exec("ctl", "sys", "erase_all_parameters");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
