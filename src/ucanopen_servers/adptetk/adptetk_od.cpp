@@ -21,6 +21,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x100A, 0x02}, {"info", "sys", "firmware_branch",     "", OD_ACCESS_CONST, OD_STRING}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x1010, 0x01}, {"ctl", "sys", "save_all_parameters",            "", OD_ACCESS_WO, OD_EXEC}},
+{{0x1010, 0x03}, {"ctl", "sys", "save_all_parameters_and_reset",  "", OD_ACCESS_WO, OD_EXEC}},
 {{0x1011, 0x01}, {"ctl", "sys", "restore_all_default_parameters", "", OD_ACCESS_WO, OD_EXEC}},
 {{0x1011, 0x03}, {"ctl", "sys", "erase_all_parameters",           "", OD_ACCESS_WO, OD_EXEC}},
 {{0x1011, 0x04}, {"ctl", "sys", "restore_default_parameter",      "", OD_ACCESS_WO, OD_EXEC}},
@@ -31,14 +32,13 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x2000, 0x02}, {"ctl", "sys", "clear_errors", "", OD_ACCESS_WO, OD_EXEC}},
 {{0x2000, 0x03}, {"ctl", "sys", "emergency",    "", OD_ACCESS_WO, OD_EXEC}},
 //##########################################################################################################################################################################################################################################################################################################
-{{0x2001, 0x01}, {"ctl", "drive", "calibrate_angle_sensor",   "",   OD_ACCESS_WO, OD_EXEC}},
-{{0x2001, 0x02}, {"ctl", "drive", "save_angle_sensor_config", "",   OD_ACCESS_WO, OD_EXEC}},
-{{0x2001, 0x03}, {"ctl", "drive", "set_angle_correction",     "°",  OD_ACCESS_WO, OD_FLOAT32}},
-{{0x2001, 0x04}, {"ctl", "drive", "Vd_limit_factor",          "",   OD_ACCESS_WO, OD_FLOAT32}},
-{{0x2001, 0x05}, {"ctl", "drive", "pwm_freq",                 "Hz", OD_ACCESS_WO, OD_FLOAT32}},
-{{0x2001, 0x06}, {"ctl", "drive", "dc_a",                     "",   OD_ACCESS_WO, OD_FLOAT32}},
-{{0x2001, 0x07}, {"ctl", "drive", "dc_b",                     "",   OD_ACCESS_WO, OD_FLOAT32}},
-{{0x2001, 0x08}, {"ctl", "drive", "dc_c",                     "",   OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x01}, {"ctl", "drive", "calibrate_angle_sensor", "",   OD_ACCESS_WO, OD_EXEC}},
+{{0x2001, 0x03}, {"ctl", "drive", "set_angle_correction",   "°",  OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x04}, {"ctl", "drive", "Vd_limit_factor",        "",   OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x05}, {"ctl", "drive", "pwm_freq",               "Hz", OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x06}, {"ctl", "drive", "dc_a",                   "",   OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x07}, {"ctl", "drive", "dc_b",                   "",   OD_ACCESS_WO, OD_FLOAT32}},
+{{0x2001, 0x08}, {"ctl", "drive", "dc_c",                   "",   OD_ACCESS_WO, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x5000, 0x01}, {"watch", "sys", "uptime", "s", OD_ACCESS_RO, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################

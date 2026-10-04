@@ -449,12 +449,6 @@ void ControlPanel::_draw_actions() {
             ImGui::OpenPopup("Внимание!##calibrate_angle_sensor");
         }
 
-        if (ImGui::Button(ICON_MDI_CONTENT_SAVE_OUTLINE
-                          " Сохранить Результаты Калибровки",
-                          ImVec2{-1.f, 0.f})) {
-            ImGui::OpenPopup("Внимание!##save_angle_sensor_config");
-        }
-
         if (ImGui::Button(ICON_MDI_EMOTICON_DEAD
                           " Очистить Память",
                           ImVec2{-1.f, 0.f})) {
@@ -501,24 +495,6 @@ void ControlPanel::_draw_popups() {
         ImGui::SameLine();
         if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
             _server->exec("ctl", "drive", "calibrate_angle_sensor");
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::EndPopup();
-    }
-
-    if (ImGui::BeginPopupModal("Внимание!##save_angle_sensor_config",
-                               NULL,
-                               ImGuiWindowFlags_AlwaysAutoResize)) {
-        ImGui::Text("Результаты калибровки будут перезаписаны. Продолжить?");
-        ImGui::Separator();
-
-        if (ImGui::Button(ICON_MDI_CANCEL " Нет", ImVec2(120, 0))) {
-            ImGui::CloseCurrentPopup();
-        }
-        ImGui::SetItemDefaultFocus();
-        ImGui::SameLine();
-        if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
-            _server->exec("ctl", "drive", "save_angle_sensor_config");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
