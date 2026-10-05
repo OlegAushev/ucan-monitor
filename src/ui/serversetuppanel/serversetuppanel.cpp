@@ -181,7 +181,7 @@ void ServerSetupPanel::_draw_setup() {
     }
 
     // A transfer would overwrite a parameter set by hand meanwhile, and
-    // «Применить» would store it half done.
+    // «Сохранить» would store it half done.
     util::DisableGuard disabled(_busy());
 
     auto selected_category_iter = objects.find(_category);
@@ -410,12 +410,12 @@ void ServerSetupPanel::_draw_setup() {
         ImGui::OpenPopup("Внимание!##restore");
     }
 
-    if (ImGui::Button("Применить", ImVec2(-1.0f, 0))) {
-        ImGui::OpenPopup("Внимание!##apply");
+    if (ImGui::Button("Сохранить", ImVec2(-1.0f, 0))) {
+        ImGui::OpenPopup("Внимание!##save");
     }
 
-    if (ImGui::Button("Применить и Перезапустить", ImVec2(-1.0f, 0))) {
-        ImGui::OpenPopup("Внимание!##apply_and_reset");
+    if (ImGui::Button("Сохранить и Перезапустить", ImVec2(-1.0f, 0))) {
+        ImGui::OpenPopup("Внимание!##save_and_reset");
     }
 
     if (ImGui::Button("Очистить Память", ImVec2(-1.0f, 0))) {
@@ -664,7 +664,7 @@ void ServerSetupPanel::_draw_popups() {
         ImGui::EndPopup();
     }
 
-    if (ImGui::BeginPopupModal("Внимание!##apply",
+    if (ImGui::BeginPopupModal("Внимание!##save",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::Text("Настройки будут записаны. Продолжить?");
@@ -682,7 +682,7 @@ void ServerSetupPanel::_draw_popups() {
         ImGui::EndPopup();
     }
 
-    if (ImGui::BeginPopupModal("Внимание!##apply_and_reset",
+    if (ImGui::BeginPopupModal("Внимание!##save_and_reset",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::Text("Настройки будут записаны, устройство перезапустится. "
@@ -1097,7 +1097,7 @@ void ServerSetupPanel::_take_write(
 
     if (written > 0) {
         _hint = "Записанное хранится в рабочей памяти устройства: чтобы "
-                "сохранить его, нажмите «Применить».";
+                "сохранить его, нажмите «Сохранить».";
         if (restart_required) {
             _hint += " В силу изменения вступят после перезапуска устройства.";
         }
