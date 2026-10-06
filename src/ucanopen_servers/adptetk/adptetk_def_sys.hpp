@@ -155,58 +155,18 @@ struct can_vcu_connection_lost {
   };
 };
 
-struct can_vcu_checksum_mismatch {
+struct can_vcu_invalid_frame {
   static constexpr id_type id = 15;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::error;
+  static constexpr sys::diag::level level_max = sys::diag::level::warning;
   static constexpr i18n description = {
-      "VCU checksum mismatch",
-      "Несовпадение контрольной суммы VCU"
-  };
-};
-
-struct can_vcu_counter_freeze_rpdo1 {
-  static constexpr id_type id = 16;
-  static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::error;
-  static constexpr i18n description = {
-      "VCU RPDO1 counter freeze",
-      "Зависание счётчика RPDO1 VCU"
-  };
-};
-
-struct can_vcu_invalid_rpdo1 {
-  static constexpr id_type id = 17;
-  static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::error;
-  static constexpr i18n description = {
-      "VCU invalid RPDO1",
-      "Некорректный RPDO1 VCU"
-  };
-};
-
-struct can_vcu_counter_freeze_rpdo2 {
-  static constexpr id_type id = 18;
-  static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::error;
-  static constexpr i18n description = {
-      "VCU RPDO2 counter freeze",
-      "Зависание счётчика RPDO2 VCU"
-  };
-};
-
-struct can_vcu_invalid_rpdo2 {
-  static constexpr id_type id = 19;
-  static constexpr sys::diag::level level_min = sys::diag::level::warning;
-  static constexpr sys::diag::level level_max = sys::diag::level::error;
-  static constexpr i18n description = {
-      "VCU invalid RPDO2",
-      "Некорректный RPDO2 VCU"
+      "VCU invalid frame",
+      "Некорректный кадр VCU"
   };
 };
 
 struct vdc_sensor_failure {
-  static constexpr id_type id = 20;
+  static constexpr id_type id = 16;
   static constexpr sys::diag::level level_min = sys::diag::level::critical;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -216,7 +176,7 @@ struct vdc_sensor_failure {
 };
 
 struct iph_sensor_failure {
-  static constexpr id_type id = 21;
+  static constexpr id_type id = 17;
   static constexpr sys::diag::level level_min = sys::diag::level::critical;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -226,7 +186,7 @@ struct iph_sensor_failure {
 };
 
 struct ot_motor {
-  static constexpr id_type id = 22;
+  static constexpr id_type id = 18;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -236,7 +196,7 @@ struct ot_motor {
 };
 
 struct ot_pwr {
-  static constexpr id_type id = 23;
+  static constexpr id_type id = 19;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -246,14 +206,14 @@ struct ot_pwr {
 };
 
 struct ot_mcu {
-  static constexpr id_type id = 24;
+  static constexpr id_type id = 20;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {"MCU overtemperature", "Перегрев MCU"};
 };
 
 struct uv_dc {
-  static constexpr id_type id = 25;
+  static constexpr id_type id = 21;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -263,7 +223,7 @@ struct uv_dc {
 };
 
 struct ov_dc {
-  static constexpr id_type id = 26;
+  static constexpr id_type id = 22;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -273,14 +233,14 @@ struct ov_dc {
 };
 
 struct oc_dc {
-  static constexpr id_type id = 27;
+  static constexpr id_type id = 23;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {"DC overcurrent", "Превышение тока DC"};
 };
 
 struct oc_phase {
-  static constexpr id_type id = 28;
+  static constexpr id_type id = 24;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -290,7 +250,7 @@ struct oc_phase {
 };
 
 struct oc_phase_a {
-  static constexpr id_type id = 29;
+  static constexpr id_type id = 25;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -300,7 +260,7 @@ struct oc_phase_a {
 };
 
 struct oc_phase_b {
-  static constexpr id_type id = 30;
+  static constexpr id_type id = 26;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -310,7 +270,7 @@ struct oc_phase_b {
 };
 
 struct oc_phase_c {
-  static constexpr id_type id = 31;
+  static constexpr id_type id = 27;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -320,7 +280,7 @@ struct oc_phase_c {
 };
 
 struct flt_pwr {
-  static constexpr id_type id = 32;
+  static constexpr id_type id = 28;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -330,7 +290,7 @@ struct flt_pwr {
 };
 
 struct flt_pwr_ah {
-  static constexpr id_type id = 33;
+  static constexpr id_type id = 29;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -340,7 +300,7 @@ struct flt_pwr_ah {
 };
 
 struct flt_pwr_al {
-  static constexpr id_type id = 34;
+  static constexpr id_type id = 30;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -350,7 +310,7 @@ struct flt_pwr_al {
 };
 
 struct flt_pwr_bh {
-  static constexpr id_type id = 35;
+  static constexpr id_type id = 31;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -360,7 +320,7 @@ struct flt_pwr_bh {
 };
 
 struct flt_pwr_bl {
-  static constexpr id_type id = 36;
+  static constexpr id_type id = 32;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -370,7 +330,7 @@ struct flt_pwr_bl {
 };
 
 struct flt_pwr_ch {
-  static constexpr id_type id = 37;
+  static constexpr id_type id = 33;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -380,7 +340,7 @@ struct flt_pwr_ch {
 };
 
 struct flt_pwr_cl {
-  static constexpr id_type id = 38;
+  static constexpr id_type id = 34;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {
@@ -390,7 +350,7 @@ struct flt_pwr_cl {
 };
 
 struct hall_invalid_input {
-  static constexpr id_type id = 39;
+  static constexpr id_type id = 35;
   static constexpr sys::diag::level level_min = sys::diag::level::warning;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -400,7 +360,7 @@ struct hall_invalid_input {
 };
 
 struct hall_invalid_calibration {
-  static constexpr id_type id = 40;
+  static constexpr id_type id = 36;
   static constexpr sys::diag::level level_min = sys::diag::level::critical;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -410,7 +370,7 @@ struct hall_invalid_calibration {
 };
 
 struct hall_calibration_terminated {
-  static constexpr id_type id = 41;
+  static constexpr id_type id = 37;
   static constexpr sys::diag::level level_min = sys::diag::level::critical;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -420,13 +380,13 @@ struct hall_calibration_terminated {
 };
 
 struct motor_stall {
-  static constexpr id_type id = 42;
+  static constexpr id_type id = 38;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {"Motor stall", "Заклинивание двигателя"};
 };
 
-inline constexpr size_t status_count = 43;
+inline constexpr size_t status_count = 39;
 
 inline constexpr std::array<std::string_view, status_count> names_ru = {
     restart_required::description.ru,
@@ -444,11 +404,7 @@ inline constexpr std::array<std::string_view, status_count> names_ru = {
     can_bus_error::description.ru,
     can_overrun::description.ru,
     can_vcu_connection_lost::description.ru,
-    can_vcu_checksum_mismatch::description.ru,
-    can_vcu_counter_freeze_rpdo1::description.ru,
-    can_vcu_invalid_rpdo1::description.ru,
-    can_vcu_counter_freeze_rpdo2::description.ru,
-    can_vcu_invalid_rpdo2::description.ru,
+    can_vcu_invalid_frame::description.ru,
     vdc_sensor_failure::description.ru,
     iph_sensor_failure::description.ru,
     ot_motor::description.ru,
