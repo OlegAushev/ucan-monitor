@@ -139,6 +139,7 @@ enum class DriveState {
   stopping,
   testing,
   calibrating,
+  fault,
 };
 
 inline std::unordered_set<int> const drive_state_values = {
@@ -151,6 +152,7 @@ inline std::unordered_set<int> const drive_state_values = {
     std::to_underlying(DriveState::stopping),
     std::to_underlying(DriveState::testing),
     std::to_underlying(DriveState::calibrating),
+    std::to_underlying(DriveState::fault),
 };
 
 inline std::unordered_map<DriveState, std::string_view> const
@@ -164,6 +166,7 @@ inline std::unordered_map<DriveState, std::string_view> const
         {DriveState::stopping, "останов"},
         {DriveState::testing, "тестирование"},
         {DriveState::calibrating, "калибровка"},
+        {DriveState::fault, "авария"},
 };
 
 inline std::unordered_map<DriveState, std::string_view> const
@@ -177,6 +180,7 @@ inline std::unordered_map<DriveState, std::string_view> const
         {DriveState::stopping, "ОСТАНОВ"},
         {DriveState::testing, "ТЕСТИРОВАНИЕ"},
         {DriveState::calibrating, "КАЛИБРОВКА"},
+        {DriveState::fault, "АВАРИЯ"},
 };
 
 // Mirrors md::control_mode (md/control_mode.hpp).
