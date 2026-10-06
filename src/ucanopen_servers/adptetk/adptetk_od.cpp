@@ -127,7 +127,7 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3000, 0x0F}, {"config", "nvm", "rejected",         "",  OD_ACCESS_RO, OD_UINT32}},
 {{0x3000, 0x10}, {"config", "nvm", "missing",          "",  OD_ACCESS_RO, OD_UINT32}},
 {{0x3000, 0x11}, {"config", "nvm", "restart_required", "",  OD_ACCESS_RO, OD_BOOL}},
-{{0x3000, 0x12}, {"config", "nvm", "changes_pending",  "",  OD_ACCESS_RO, OD_BOOL}},
+{{0x3000, 0x12}, {"config", "nvm", "unapplied",        "",  OD_ACCESS_RO, OD_BOOL}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x3002, 0x01}, {"config", "drive", "phase_swap",       "",      OD_ACCESS_RW, OD_BOOL}},
 {{0x3002, 0x02}, {"config", "drive", "torque_slope",     "pu/s",  OD_ACCESS_RW, OD_FLOAT32}},
