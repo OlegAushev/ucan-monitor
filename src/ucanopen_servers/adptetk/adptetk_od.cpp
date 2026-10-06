@@ -148,7 +148,6 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x3003, 0x08}, {"config", "protection", "ot_reset_margin",  "°C", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3003, 0x09}, {"config", "protection", "stall_current_th", "pu", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x3003, 0x0A}, {"config", "protection", "stall_timeout",    "ms", OD_ACCESS_RW, OD_UINT32}},
-{{0x3003, 0x0B}, {"config", "protection", "watchdog_timeout", "ms", OD_ACCESS_RW, OD_UINT32}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x3004, 0x01}, {"config", "motor", "pole_pairs", "",    OD_ACCESS_RW, OD_INT32}},
 {{0x3004, 0x02}, {"config", "motor", "R",          "Ohm", OD_ACCESS_RW, OD_FLOAT32}},
