@@ -107,6 +107,8 @@ inline constexpr float overlap_scale = 10000.f;
 enum class ConverterState {
   init,
   standby,
+  powering_up,
+  powering_down,
   ready,
   running,
   fault,
@@ -115,6 +117,8 @@ enum class ConverterState {
 inline std::unordered_set<int> const converter_state_values = {
     std::to_underlying(ConverterState::init),
     std::to_underlying(ConverterState::standby),
+    std::to_underlying(ConverterState::powering_up),
+    std::to_underlying(ConverterState::powering_down),
     std::to_underlying(ConverterState::ready),
     std::to_underlying(ConverterState::running),
     std::to_underlying(ConverterState::fault),
@@ -124,6 +128,8 @@ inline std::unordered_map<ConverterState, std::string_view> const
     converter_state_names = {
         {ConverterState::init, "инициализация"},
         {ConverterState::standby, "ожидание"},
+        {ConverterState::powering_up, "включение"},
+        {ConverterState::powering_down, "выключение"},
         {ConverterState::ready, "готов"},
         {ConverterState::running, "работа"},
         {ConverterState::fault, "неисправность"},
@@ -133,6 +139,8 @@ inline std::unordered_map<ConverterState, std::string_view> const
     converter_state_names_upper = {
         {ConverterState::init, "ИНИЦИАЛИЗАЦИЯ"},
         {ConverterState::standby, "ОЖИДАНИЕ"},
+        {ConverterState::powering_up, "ВКЛЮЧЕНИЕ"},
+        {ConverterState::powering_down, "ВЫКЛЮЧЕНИЕ"},
         {ConverterState::ready, "ГОТОВ"},
         {ConverterState::running, "РАБОТА"},
         {ConverterState::fault, "НЕИСПРАВНОСТЬ"},
