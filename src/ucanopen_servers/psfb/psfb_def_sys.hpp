@@ -145,22 +145,42 @@ struct can_overrun {
   static constexpr i18n description = {"CAN overrun", "Переполнение CAN"};
 };
 
-struct bridge_break_ch1 {
+struct can_host_connection_lost {
   static constexpr id_type id = 14;
+  static constexpr sys::diag::level level_min = sys::diag::level::warning;
+  static constexpr sys::diag::level level_max = sys::diag::level::critical;
+  static constexpr i18n description = {
+      "Host connection lost",
+      "Потеря связи с хостом"
+  };
+};
+
+struct can_host_invalid_frame {
+  static constexpr id_type id = 15;
+  static constexpr sys::diag::level level_min = sys::diag::level::warning;
+  static constexpr sys::diag::level level_max = sys::diag::level::warning;
+  static constexpr i18n description = {
+      "Host invalid frame",
+      "Некорректный кадр хоста"
+  };
+};
+
+struct bridge_break_ch1 {
+  static constexpr id_type id = 16;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {"Bridge 1 break", "Срыв моста 1"};
 };
 
 struct bridge_break_ch2 {
-  static constexpr id_type id = 15;
+  static constexpr id_type id = 17;
   static constexpr sys::diag::level level_min = sys::diag::level::emergency;
   static constexpr sys::diag::level level_max = sys::diag::level::emergency;
   static constexpr i18n description = {"Bridge 2 break", "Срыв моста 2"};
 };
 
 struct gate_driver_fault_ch1 {
-  static constexpr id_type id = 16;
+  static constexpr id_type id = 18;
   static constexpr sys::diag::level level_min = sys::diag::level::critical;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -170,7 +190,7 @@ struct gate_driver_fault_ch1 {
 };
 
 struct gate_driver_fault_ch2 {
-  static constexpr id_type id = 17;
+  static constexpr id_type id = 19;
   static constexpr sys::diag::level level_min = sys::diag::level::critical;
   static constexpr sys::diag::level level_max = sys::diag::level::critical;
   static constexpr i18n description = {
@@ -181,7 +201,7 @@ struct gate_driver_fault_ch2 {
 
 // The firmware carries trouble::id_space bits in TPDO4 — one past the largest
 // id. While the ids stay contiguous it equals the number of statuses below.
-inline constexpr size_t status_count = 18;
+inline constexpr size_t status_count = 20;
 
 inline constexpr std::array<std::string_view, status_count> names_ru = {
     restart_required::description.ru,
@@ -198,6 +218,8 @@ inline constexpr std::array<std::string_view, status_count> names_ru = {
     nvm_read_error::description.ru,
     can_bus_error::description.ru,
     can_overrun::description.ru,
+    can_host_connection_lost::description.ru,
+    can_host_invalid_frame::description.ru,
     bridge_break_ch1::description.ru,
     bridge_break_ch2::description.ru,
     gate_driver_fault_ch1::description.ru,
