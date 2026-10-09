@@ -199,6 +199,10 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300B, 0x03}, {"config", "hall_calibrator", "speed",               "rpm", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300B, 0x04}, {"config", "hall_calibrator", "elrevolution_num",    "",    OD_ACCESS_RW, OD_INT32}},
 //##########################################################################################################################################################################################################################################################################################################
+{{0x300C, 0x01}, {"config", "temperature_sensors", "motor_timeconstant", "s", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300C, 0x02}, {"config", "temperature_sensors", "power_timeconstant", "s", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300C, 0x03}, {"config", "temperature_sensors", "mcu_timeconstant",   "s", OD_ACCESS_RW, OD_FLOAT32}},
+//##########################################################################################################################################################################################################################################################################################################
 }
 };
 // clang-format on
