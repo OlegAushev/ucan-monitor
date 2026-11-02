@@ -65,6 +65,7 @@ void ControlPanel::draw() {
     _read_keyboard();
 
     _draw_dash();
+    _draw_calibration();
     _draw_controls();
 
     _draw_actions();
@@ -143,6 +144,35 @@ void ControlPanel::_draw_dash() {
                  ImVec2{200, 0});
     ImGui::SameLine();
     ImGui::TextDisabled("(F4)");
+}
+
+void ControlPanel::_draw_calibration() {
+    auto const state = _server->drive_state();
+    if (_last_state == DriveState::calibrating && state != DriveState::calibrating) {
+        _calibration_done = true;
+    }
+    _last_state = state;
+    if (!_calibration_done) {
+        return;
+    }
+
+    ImGui::SeparatorText("Калибровка датчика Холла");
+    if (_server->status_service.active("hall_calibration_terminated")) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_red);
+        ImGui::TextWrapped("Калибровка прервана, углы датчика остались прежними.");
+        ImGui::PopStyleColor();
+    } else {
+        ImGui::TextWrapped("Калибровка закончена: двенадцать углов датчика "
+                           "запрошены. Примените их, пока привод стоит с "
+                           "выключенным мостом, затем сохраните в «Настройке».");
+        if (ImGui::Button(ICON_MDI_CHECK_ALL " Применить всё")) {
+            _server->command("settings.apply_all");
+        }
+        ImGui::SameLine();
+    }
+    if (ImGui::Button(ICON_MDI_CLOSE " Скрыть##calibration")) {
+        _calibration_done = false;
+    }
 }
 
 void ControlPanel::_read_keyboard() {

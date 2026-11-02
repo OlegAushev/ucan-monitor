@@ -33,6 +33,11 @@ private:
     int _control_mode_v{std::to_underlying(::adptetk::ControlMode::torque)};
 
     ::adptetk::ModelMode _model_mode{::adptetk::ModelMode::closed_loop};
+
+    // A calibration of the Hall sensor only requests its twelve angles: the
+    // panel offers to apply them once the drive leaves calibrating.
+    std::optional<::adptetk::DriveState> _last_state;
+    bool _calibration_done{false};
     int _model_mode_v{std::to_underlying(::adptetk::ModelMode::closed_loop)};
 public:
     ControlPanel(std::shared_ptr<::adptetk::Server> server,
@@ -42,6 +47,7 @@ public:
     virtual void draw() override;
 private:
     void _draw_dash();
+    void _draw_calibration();
     void _draw_controls();
     void _draw_actions();
 

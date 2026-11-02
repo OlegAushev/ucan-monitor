@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <mutex>
 #include <optional>
+#include <string_view>
 #include <vector>
 
 
@@ -47,6 +48,10 @@ public:
     // Whether a frame of the MPDO came within the timeout.
     bool good() const;
     std::vector<Status> statuses() const;
+
+    // Whether the status of the name stands at a level, as the frames that
+    // still come say.
+    bool active(std::string_view name) const;
 
     // A frame of the MPDO, which the CAN thread hands over.
     void handle_frame(const can_payload& payload);

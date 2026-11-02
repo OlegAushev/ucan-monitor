@@ -54,6 +54,18 @@ std::vector<ServerStatusService::Status> ServerStatusService::statuses() const {
 }
 
 
+bool ServerStatusService::active(std::string_view name) const {
+    if (!good()) {
+        return false;
+    }
+    std::lock_guard<std::mutex> lock(_mtx);
+    auto status = std::find_if(_statuses.begin(), _statuses.end(), [name](const Status& s) {
+        return s.field->name == name;
+    });
+    return status != _statuses.end() && status->severity.has_value() && *status->severity != 0;
+}
+
+
 void ServerStatusService::handle_frame(const can_payload& payload) {
     auto value = od::decode_sam(payload, _server.node_id().get());
     if (!value.has_value()) {
