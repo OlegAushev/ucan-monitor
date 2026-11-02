@@ -1,4 +1,4 @@
-{"type":"header","format":"emb-canopen-od","version":1,"device":"ADPT-ETK Inverter","fingerprint":"0xF5A9C636"}
+{"type":"header","format":"emb-canopen-od","version":1,"device":"ADPT-ETK Inverter","fingerprint":"0x7973B582"}
 {"type":"group","name":"dictionary","label_en":"Object dictionary","label_ru":"Словарь объектов"}
 {"type":"group","name":"device","label_en":"Device","label_ru":"Устройство"}
 {"type":"group","name":"settings","label_en":"Settings","label_ru":"Настройки"}
@@ -133,7 +133,7 @@
 {"type":"field","layout":2,"sub":"0x27","name":"motor_stall","label_en":"Motor stall","label_ru":"Заклинивание двигателя","datatype":"uint8","access":"ro","value_table":1}
 {"type":"object","index":"0x2000","sub":"0x00","group":"dictionary","name":"fingerprint","label_en":"Dictionary fingerprint","label_ru":"Отпечаток словаря","class":"about","datatype":"uint32","access":"const"}
 {"type":"array","index":"0x2001","group":"device","name":"name","label_en":"Device name","label_ru":"Наименование устройства","class":"about","datatype":"uint8","access":"const","text":true}
-{"type":"object","index":"0x2002","sub":"0x00","group":"device","name":"serial_number","label_en":"Serial number","label_ru":"Серийный номер","class":"about","datatype":"uint32","access":"const"}
+{"type":"array","index":"0x2002","group":"device","name":"mcu_uid","label_en":"MCU unique ID","label_ru":"Уникальный идентификатор MCU","class":"about","datatype":"uint8","access":"const","text":true}
 {"type":"array","index":"0x2003","group":"device","name":"hardware_version","label_en":"Hardware version","label_ru":"Версия аппаратуры","class":"about","datatype":"uint8","access":"const","text":true}
 {"type":"array","index":"0x2004","group":"device","name":"firmware_version","label_en":"Firmware version","label_ru":"Версия прошивки","class":"about","datatype":"uint8","access":"const","text":true}
 {"type":"array","index":"0x2005","group":"device","name":"firmware_commit_date","label_en":"Firmware commit date","label_ru":"Дата коммита прошивки","class":"about","datatype":"uint8","access":"const","text":true}

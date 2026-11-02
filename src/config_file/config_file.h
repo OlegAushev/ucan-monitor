@@ -18,7 +18,7 @@
 // a blank:
 //
 //   server = adpt-etk-inverter
-//   serial_number = 1234
+//   device.mcu_uid = 0123456789ABCDEF01234567
 //
 //   [model]
 //   torque_slope = 1.5   # о. е./с

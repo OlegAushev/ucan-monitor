@@ -19,8 +19,8 @@ namespace ucanopen {
 
 
 // What a device says of itself: the objects and the texts of the class about
-// in its description, its fingerprint, name, serial number, versions and
-// build among them. The CAN thread reads them once a connection, a text a
+// in its description, its fingerprint, name, unique ID, versions and build
+// among them. The CAN thread reads them once a connection, a text a
 // character at a time, so that no panel waits for the bus, and checks the
 // fingerprint against the description's.
 class ServerInfoService {

@@ -1308,8 +1308,8 @@ void ServerSetupPanel::_take_write(const std::vector<SdoStep>& steps, ucanopen::
 void ServerSetupPanel::_open_save_dialog() {
     auto file_name = _server->name();
     for (const auto& entry : _server->info_service.info().entries) {
-        if (entry.item.path == "device.serial_number" && entry.value.has_value()) {
-            file_name += "_sn" + *entry.value;
+        if (entry.item.path == "device.mcu_uid" && entry.value.has_value()) {
+            file_name += "_uid" + *entry.value;
         }
     }
     file_name += "_" + local_time("%Y-%m-%d") + ".ini";
