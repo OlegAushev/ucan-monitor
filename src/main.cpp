@@ -84,10 +84,29 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     // Fonts
     float base_fontsize = 20.0f;
     float icon_fontsize = base_fontsize;
-    io.Fonts->AddFontFromFileTTF("../assets/fonts/SourceCodePro-Regular.otf",
+
+    // ImGui puts in its atlas only the glyphs of these ranges and draws «?»
+    // for any other: Latin and Cyrillic, and what the texts of the program
+    // and of the descriptions take besides, dashes and the ellipsis, Greek,
+    // №, arrows and the signs of comparison. The atlas keeps a pointer to
+    // the ranges.
+    static const ImWchar text_extra_ranges[] = {
+            0x0370, 0x03FF, // Greek
+            0x2000, 0x206F, // General Punctuation
+            0x2100, 0x214F, // Letterlike Symbols
+            0x2190, 0x21FF, // Arrows
+            0x2200, 0x22FF, // Mathematical Operators
+            0,
+    };
+    static ImVector<ImWchar> text_ranges;
+    ImFontGlyphRangesBuilder text_ranges_builder;
+    text_ranges_builder.AddRanges(io.Fonts->GetGlyphRangesCyrillic());
+    text_ranges_builder.AddRanges(text_extra_ranges);
+    text_ranges_builder.BuildRanges(&text_ranges);
+    io.Fonts->AddFontFromFileTTF("../assets/fonts/IBMPlexMono-Regular.ttf",
                                  base_fontsize,
                                  NULL,
-                                 io.Fonts->GetGlyphRangesCyrillic());
+                                 text_ranges.Data);
 
     // merge in icons from Font Awesome
     static const ImWchar icons_ranges[] = {ICON_MIN_MDI, ICON_MAX_MDI, 0};
