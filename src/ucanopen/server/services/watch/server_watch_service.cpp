@@ -3,6 +3,8 @@
 #include "csv_logger/csv_logger.hpp"
 #include <ucanopen/od/value.h>
 
+#include <algorithm>
+
 namespace ucanopen {
 
 ServerWatchService::ServerWatchService(impl::Server& server,
@@ -32,46 +34,73 @@ ServerWatchService::ServerWatchService(impl::Server& server,
         _object_daq_enabled.push_back(true);
         _data.insert({key, {ExpeditedSdoData{}, "н/д"}});
     }
+    for (const auto& [index, array] : description->arrays()) {
+        if (array.cls == od::Class::watch && !array.text) {
+            _arrays.push_back({index, 0x00});
+        }
+    }
+    _pending_counts = _arrays;
 }
 
 ServerWatchService::~ServerWatchService() = default;
 
 void ServerWatchService::send() {
-    // what the last connection lacked, the next one may have
     if (auto const epoch = _heartbeat.epoch(); epoch != _epoch) {
         _epoch = epoch;
-        std::lock_guard<std::mutex> lock(_data_mtx);
-        for (auto& [key, data] : _data) {
-            if (data.state == State::absent) {
-                data = {ExpeditedSdoData{}, "н/д"};
-            }
-        }
+        _new_connection();
+    }
+
+    if (!_enabled) {
+        return;
+    }
+    auto now = std::chrono::steady_clock::now();
+    if (now - _daq_timepoint < _period) {
+        return;
+    }
+
+    // the counts first: they say which elements there are to poll
+    if (!_pending_counts.empty()) {
+        _count_idx %= _pending_counts.size();
+        _sdo_service.read(_pending_counts[_count_idx++], true);
+        _daq_timepoint = now;
+        return;
     }
 
     std::shared_lock lock(_objects_mtx);
-    if (_enabled && !_objects.empty()) {
-        auto now = std::chrono::steady_clock::now();
-        if (now - _daq_timepoint >= _period) {
-            auto const i = _daq_idx;
-            auto const key = _objects[i].key;
-            bool absent = false;
-            {
-                std::lock_guard<std::mutex> data_lock(_data_mtx);
-                auto data = _data.find(key);
-                absent = (data != _data.end()) && (data->second.state == State::absent);
-            }
-            if (_object_daq_enabled[i] && !absent) {
-                _sdo_service.read(key);
-                _daq_timepoint = now;
-            }
-            _daq_idx = (i + 1) % _objects.size();
-        }
+    if (_objects.empty()) {
+        return;
     }
+    _daq_idx %= _objects.size();
+    auto const i = _daq_idx;
+    auto const key = _objects[i].key;
+    bool absent = false;
+    {
+        std::lock_guard<std::mutex> data_lock(_data_mtx);
+        auto data = _data.find(key);
+        absent = (data != _data.end()) && (data->second.state == State::absent);
+    }
+    if (_object_daq_enabled[i] && !absent) {
+        _sdo_service.read(key);
+        _daq_timepoint = now;
+    }
+    _daq_idx = (i + 1) % _objects.size();
 }
 
 FrameHandlingStatus ServerWatchService::handle_sdo(const SdoAnswer& answer) {
     if (!answer.item.has_value() || answer.item->cls != od::Class::watch) {
         return FrameHandlingStatus::irrelevant_frame;
+    }
+
+    if (answer.item->kind == od::Item::Kind::count) {
+        auto pending = std::find(_pending_counts.begin(), _pending_counts.end(), answer.key);
+        if (pending == _pending_counts.end()) {
+            return FrameHandlingStatus::irrelevant_frame;
+        }
+        _pending_counts.erase(pending);
+        if (answer.type == SdoType::response_to_read) {
+            _list_elements(*answer.item, answer.data.u8());
+        }
+        return FrameHandlingStatus::success;
     }
 
     std::lock_guard<std::mutex> lock(_data_mtx);
@@ -106,6 +135,54 @@ FrameHandlingStatus ServerWatchService::handle_sdo(const SdoAnswer& answer) {
         return FrameHandlingStatus::success;
     }
     return FrameHandlingStatus::irrelevant_frame;
+}
+
+// What the last connection lacked, the next one may have, and its arrays may
+// be of other lengths: another board answers at the same node-ID.
+void ServerWatchService::_new_connection() {
+    std::unique_lock lock(_objects_mtx);
+    std::lock_guard<std::mutex> data_lock(_data_mtx);
+
+    std::vector<od::Item> objects;
+    std::vector<bool> enabled;
+    for (size_t i = 0; i < _objects.size(); ++i) {
+        if (_objects[i].kind == od::Item::Kind::element) {
+            _data.erase(_objects[i].key);
+            continue;
+        }
+        objects.push_back(std::move(_objects[i]));
+        enabled.push_back(_object_daq_enabled[i]);
+    }
+    _objects = std::move(objects);
+    _object_daq_enabled = std::move(enabled);
+    for (auto& [key, data] : _data) {
+        if (data.state == State::absent) {
+            data = {ExpeditedSdoData{}, "н/д"};
+        }
+    }
+    _pending_counts = _arrays;
+    ++_version;
+}
+
+void ServerWatchService::_list_elements(const od::Item& count, unsigned elements) {
+    const auto& description = _server.description();
+    std::unique_lock lock(_objects_mtx);
+    std::lock_guard<std::mutex> data_lock(_data_mtx);
+    for (unsigned i = 1; i <= elements; ++i) {
+        auto item = description->resolve({count.key.index, static_cast<uint8_t>(i)});
+        if (!item.has_value() || !item->available) {
+            continue;
+        }
+        // in the order of keys, as the description lists the objects
+        auto const at = std::find_if(_objects.begin(), _objects.end(), [&item](const od::Item& object) {
+            return item->key < object.key;
+        });
+        auto const offset = at - _objects.begin();
+        _object_daq_enabled.insert(_object_daq_enabled.begin() + offset, true);
+        _data.insert({item->key, {ExpeditedSdoData{}, "н/д"}});
+        _objects.insert(at, std::move(*item));
+    }
+    ++_version;
 }
 
 } // namespace ucanopen

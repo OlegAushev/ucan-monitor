@@ -4,6 +4,7 @@
 #include <ucanopen/od/description.h>
 #include <ucanopen/server/impl/impl_server.h>
 #include <ucanopen/server/services/sdo/server_sdo_service.h>
+#include <atomic>
 #include <functional>
 #include <map>
 #include <mutex>
@@ -18,7 +19,8 @@ namespace ucanopen {
 
 
 // The history of the watched objects for the plots, each by its path: the
-// values that the watch reads, as numbers whatever their type.
+// values that the watch reads, as numbers whatever their type. An element of
+// an array gets its history with its first value, once the watch knows it.
 class ServerLogService : public SdoSubscriber {
 public:
     using LogKey = std::string;
@@ -26,6 +28,7 @@ public:
 private:
     impl::Server& _server;
     std::vector<od::Item> _objects;
+    std::atomic<unsigned> _version{0}; // of the list of objects
 
     std::chrono::time_point<std::chrono::steady_clock> _start;
     std::map<LogKey, LogBuf, std::less<>> _log;
@@ -33,7 +36,11 @@ private:
     static inline size_t _log_capacity = 1000000;
 public:
     ServerLogService(impl::Server& server, SdoPublisher& sdo_publisher);
-    std::vector<od::Item> objects() const { return _objects; }
+    std::vector<od::Item> objects() const {
+        std::lock_guard<std::mutex> lock(_log_mtx);
+        return _objects;
+    }
+    unsigned version() const { return _version; }
     virtual FrameHandlingStatus handle_sdo(const SdoAnswer& answer) override;
 
     const LogBuf* get_log(std::string_view path) const {

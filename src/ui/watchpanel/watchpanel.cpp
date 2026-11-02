@@ -12,12 +12,19 @@ WatchPanel::WatchPanel(std::shared_ptr<ucanopen::Server> server,
         : View(menu_title, window_title, open)
         , _server(server)
 {
+    _watch_version = _server->watch_service.version();
     _watch_objects = _server->watch_service.objects();
 }
 
 
 void WatchPanel::draw() {
     ImGui::Begin(_window_title.c_str(), &_opened);
+
+    // the elements of the arrays come and go with the connections
+    if (auto version = _server->watch_service.version(); version != _watch_version) {
+        _watch_version = version;
+        _watch_objects = _server->watch_service.objects();
+    }
 
     static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
     if (ImGui::BeginTable("watch_table", 3, flags)) {
@@ -59,7 +66,10 @@ void WatchPanel::draw() {
 
             const auto& object = _watch_objects[row];
             ImGui::TableSetColumnIndex(1);
-            const auto& label = object.label.ru.empty() ? object.path : object.label.ru;
+            auto label = object.label.ru.empty() ? object.path : object.label.ru;
+            if (object.kind == ucanopen::od::Item::Kind::element) {
+                label += " " + std::to_string(object.element);
+            }
             const auto& unit = object.unit.ru.empty() ? object.unit.en : object.unit.ru;
             if (unit.empty()) {
                 ImGui::TextUnformatted(label.c_str());

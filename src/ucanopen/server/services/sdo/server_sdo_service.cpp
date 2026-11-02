@@ -88,14 +88,18 @@ FrameHandlingStatus ServerSdoService::_handle(const can_frame& frame, SdoType ty
         }
         break;
     case SdoType::abort: {
-        // a refusal is worth a line even when asked quietly
+        // A refusal is worth a line even when asked quietly. The watch, which
+        // asks for its objects again and again, reports theirs itself, once a
+        // change.
         AbortSdo abort(frame.data);
-        auto const message = sdo_abort_messages.find(static_cast<SdoAbortCode>(abort.error_code));
-        bsclog::error("{}: отказ SDO {}: {} (0x{:08X}).",
-                      _server.name(),
-                      name,
-                      (message == sdo_abort_messages.end()) ? std::string("reason unknown") : message->second,
-                      abort.error_code);
+        if (!answer.item.has_value() || answer.item->cls != od::Class::watch) {
+            auto const message = sdo_abort_messages.find(static_cast<SdoAbortCode>(abort.error_code));
+            bsclog::error("{}: отказ SDO {}: {} (0x{:08X}).",
+                          _server.name(),
+                          name,
+                          (message == sdo_abort_messages.end()) ? std::string("reason unknown") : message->second,
+                          abort.error_code);
+        }
         answer.data = ExpeditedSdoData(abort.error_code);
         break;
     }

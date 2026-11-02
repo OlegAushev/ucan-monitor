@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <map>
 #include <mutex>
 #include <shared_mutex>
@@ -15,10 +16,13 @@ class CsvLogger;
 
 namespace ucanopen {
 
-// The objects of the class watch, polled one a period in turn. An object that
-// answers that it has no data, 08000024h, shows «н/д» and keeps being polled;
-// one the device does not have, 06020000h or 06090011h, is no longer asked
-// for until the next connection.
+// The objects of the class watch and the elements of its arrays, polled one a
+// period in turn. How many elements an array has only the device knows, and
+// boards differ: at each connection the watch reads the count at 00h of each
+// array first and lists its elements then. An object that answers that it has
+// no data, 08000024h, shows «н/д» and keeps being polled; one the device does
+// not have, 06020000h or 06090011h, is no longer asked for until the next
+// connection.
 class ServerWatchService : public SdoSubscriber {
 private:
     impl::Server& _server;
@@ -30,8 +34,13 @@ private:
     size_t _daq_idx{0}; // the object polled next, one cursor per server
     unsigned _epoch{0};
 
-    std::vector<od::Item> _objects;
+    std::vector<od::Key> _arrays;         // the counts of the arrays of the class watch
+    std::vector<od::Key> _pending_counts; // those this connection has not read yet
+    size_t _count_idx{0};
+
+    std::vector<od::Item> _objects; // by key: objects, then the elements of arrays as they become known
     std::vector<bool> _object_daq_enabled;
+    std::atomic<unsigned> _version{0}; // of the list of objects
     mutable std::shared_mutex _objects_mtx;
 
     enum class State { unread, value, no_data, absent };
@@ -59,6 +68,10 @@ public:
     void disable() { _enabled = false; }
     std::chrono::milliseconds period() const { return _period; }
     void set_period(std::chrono::milliseconds period) { _period = period; }
+
+    // The list of objects changes as the counts of the arrays are read: a
+    // panel takes it again when its version changes.
+    unsigned version() const { return _version; }
 
     std::vector<od::Item> objects() const {
         std::shared_lock lock(_objects_mtx);
@@ -104,6 +117,9 @@ public:
         }
         return data->second.raw;
     }
+private:
+    void _new_connection();
+    void _list_elements(const od::Item& count, unsigned elements);
 };
 
 } // namespace ucanopen

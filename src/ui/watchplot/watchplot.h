@@ -5,6 +5,8 @@
 #include <implot.h>
 #include <ui/view/view.h>
 #include <ucanopen/server/server.h>
+#include <algorithm>
+#include <deque>
 #include <memory>
 
 
@@ -53,7 +55,10 @@ private:
         ImAxis y_axis;
         int idx;
     };
-    std::vector<Chart> _charts;
+    // A deque: a chart added keeps the others where they are, and
+    // _p_xchart and _p_ychart point into it.
+    std::deque<Chart> _charts;
+    unsigned _charts_version{0}; // of the list of objects taken
 
     int _chart_idx = 0; // for dnd purpose
 
@@ -61,12 +66,24 @@ private:
     Chart* _p_xchart{nullptr};
     Chart* _p_ychart{nullptr};
 
+    // Adds a chart for each object the history has and the charts lack: the
+    // elements of arrays come as the watch learns of them.
     void _init_charts() {
+        _charts_version = _server->log_service.version();
         auto objects = _server->log_service.objects();
         for (const auto& obj : objects) {
+            bool const charted = std::any_of(_charts.begin(), _charts.end(), [&obj](const Chart& c) {
+                return c.path == obj.path;
+            });
+            if (charted) {
+                continue;
+            }
             Chart chart;
             chart.path = obj.path;
             chart.label = obj.label.ru.empty() ? obj.path : obj.label.ru;
+            if (obj.kind == ucanopen::od::Item::Kind::element) {
+                chart.label += " " + std::to_string(obj.element);
+            }
             const auto& unit = obj.unit.ru.empty() ? obj.unit.en : obj.unit.ru;
             if (!unit.empty()) {
                 chart.label += " [" + unit + "]";

@@ -41,7 +41,12 @@ FrameHandlingStatus ServerLogService::handle_sdo(const SdoAnswer& answer) {
 
     auto log = _log.find(answer.item->path);
     if (log == _log.end()) {
-        return FrameHandlingStatus::irrelevant_frame;
+        if (answer.item->kind != od::Item::Kind::element) {
+            return FrameHandlingStatus::irrelevant_frame;
+        }
+        log = _log.emplace(answer.item->path, LogBuf(_log_capacity)).first;
+        _objects.push_back(*answer.item);
+        ++_version;
     }
 
     float time = std::chrono::duration_cast<std::chrono::microseconds>(now - _start).count()/1000000.0f;

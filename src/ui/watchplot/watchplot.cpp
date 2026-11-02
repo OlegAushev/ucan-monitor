@@ -19,6 +19,10 @@ WatchPlot::WatchPlot(std::shared_ptr<::ucanopen::Server> server,
 void WatchPlot::draw() {
     ImGui::Begin(_window_title.c_str(), &_opened, ImGuiWindowFlags_MenuBar);
 
+    if (_server->log_service.version() != _charts_version) {
+        _init_charts();
+    }
+
     _draw_menubar();
     //_draw_panel();
     ImGui::SameLine();
