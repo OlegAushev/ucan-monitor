@@ -1,6 +1,13 @@
 # ImGUI version of uCAN Monitor
 
+On the branch develop the program serves the adpt-etk-inverter alone, on
+its firmware after the CANopen rework (`docs/canopen-rework-plan.ru.md`);
+the other devices stay on master.
+
 ## Prerequisites to build
+
+The description of a dictionary is read with Boost.JSON, header-only, so
+Boost must be 1.75 or newer: the 1.74 of Ubuntu 22.04 is older.
 
 * **Fedora:**
 
