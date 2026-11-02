@@ -28,14 +28,21 @@ flatpak-builder build-dir org.flatpak.ucan-monitor.yml
 
 ## Object dictionaries
 
-A server's `src/ucanopen_servers/<client>/<client>_od.cpp` can be generated
-from the object dictionary table of its firmware (the `od_row` rows in the
-firmware's `od.cpp`, emblib's compile-time dictionary). Regenerate it after
-the firmware's table changes instead of editing it:
+A server reads the description of its device's object dictionary at
+startup, `assets/od/<device>.od.jsonl`: the file that the firmware's build
+extracts from its ELF (emblib, `docs/canopen-od-algorithm.ru.md`, section
+3.9). The objects, the PDOs and the statuses all come from it. Take a new
+one in when the firmware's dictionary changes:
 
 ```bash
-scripts/generate_od.sh adptetk ~/dev/adpt-etk-inverter/src/app/inverter/comm/can/canopen/od.cpp
+scripts/update_od.sh ~/dev/adpt-etk-inverter rev-a-release
 ```
+
+The script checks the description with `od_decode.py --check` of the
+firmware's own emblib first, and `ctest --test-dir build` then checks that
+the program reads it and decodes the firmware's example of frames as
+`od_decode.py` does. At each connection the program compares the device's
+fingerprint, 2000h:00, with the description's and warns when they differ.
 
 
 ## Prerequisites to run

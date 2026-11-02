@@ -16,8 +16,6 @@
 
 namespace adptetk {
 
-extern ucanopen::ObjectDictionary const object_dictionary;
-
 // The ADPT-ETK inverter. Its PDOs are those its description states: the
 // state of the drive, its electrical quantities and its motion come in
 // drive_status, electrical_status and motion_status, the statuses in the

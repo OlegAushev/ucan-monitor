@@ -1,32 +1,22 @@
-#include "server_config_service.h"
+#include "sdo_sequence.h"
 
 
 namespace ucanopen {
 
 
-ServerConfigService::ServerConfigService(impl::Server& server, ServerSdoService& sdo_service)
+SdoSequence::SdoSequence(ServerSdoService& sdo_service)
         : SdoSubscriber(sdo_service)
-        , _server(server)
-        , _sdo_service(sdo_service) {
-    const auto& entries = server.dictionary().entries;
-    for (auto entry = entries.begin(); entry != entries.end(); ++entry) {
-        // create conf entries list
-        const auto& object = entry->second;
-        if (object.category == server.dictionary().config.config_category) {
-            _objects[object.subcategory].push_back(&object);
-            _entries.push_back(entry);
-        }
-    }
-}
+        , _sdo_service(sdo_service) {}
 
 
-bool ServerConfigService::start(std::vector<ConfigStep> steps) {
+bool SdoSequence::start(std::vector<SdoStep> steps, Next next) {
     std::lock_guard<std::mutex> lock(_mtx);
     if (_step_idx < _steps.size()) {
         return false;
     }
 
     _steps = std::move(steps);
+    _next = std::move(next);
     _step_idx = 0;
     _awaiting = false;
     _attempts = 0;
@@ -36,7 +26,7 @@ bool ServerConfigService::start(std::vector<ConfigStep> steps) {
 }
 
 
-void ServerConfigService::cancel() {
+void SdoSequence::cancel() {
     std::lock_guard<std::mutex> lock(_mtx);
     if (_step_idx < _steps.size()) {
         _finish(Outcome::cancelled);
@@ -44,31 +34,31 @@ void ServerConfigService::cancel() {
 }
 
 
-bool ServerConfigService::busy() const {
+bool SdoSequence::busy() const {
     std::lock_guard<std::mutex> lock(_mtx);
     return _step_idx < _steps.size();
 }
 
 
-std::pair<size_t, size_t> ServerConfigService::progress() const {
+std::pair<size_t, size_t> SdoSequence::progress() const {
     std::lock_guard<std::mutex> lock(_mtx);
     return {_step_idx, _steps.size()};
 }
 
 
-ServerConfigService::Outcome ServerConfigService::outcome() const {
+SdoSequence::Outcome SdoSequence::outcome() const {
     std::lock_guard<std::mutex> lock(_mtx);
     return _outcome;
 }
 
 
-std::vector<ConfigStep> ServerConfigService::steps() const {
+std::vector<SdoStep> SdoSequence::steps() const {
     std::lock_guard<std::mutex> lock(_mtx);
     return _steps;
 }
 
 
-void ServerConfigService::send() {
+void SdoSequence::send() {
     std::lock_guard<std::mutex> lock(_mtx);
     if (_step_idx >= _steps.size()) {
         return;
@@ -89,7 +79,7 @@ void ServerConfigService::send() {
         return;
     }
 
-    _steps[_step_idx].status = ConfigStep::Status::timed_out;
+    _steps[_step_idx].status = SdoStep::Status::timed_out;
     if (++_unanswered == _max_unanswered) {
         // The server is gone: the rest would only time out one by one.
         _finish(Outcome::no_response);
@@ -99,21 +89,21 @@ void ServerConfigService::send() {
 }
 
 
-FrameHandlingStatus ServerConfigService::handle_sdo(ODEntryIter entry, SdoType sdo_type, ExpeditedSdoData sdo_data) {
+FrameHandlingStatus SdoSequence::handle_sdo(const SdoAnswer& answer) {
     std::lock_guard<std::mutex> lock(_mtx);
-    if (!_awaiting || entry != _steps[_step_idx].entry) {
+    if (!_awaiting || answer.key != _steps[_step_idx].key) {
         return FrameHandlingStatus::irrelevant_frame;
     }
 
     auto& step = _steps[_step_idx];
-    auto answer = step.write_value.has_value() ? SdoType::response_to_write : SdoType::response_to_read;
-    if (sdo_type == SdoType::abort) {
-        step.status = ConfigStep::Status::refused;
-        step.abort_code = static_cast<SdoAbortCode>(sdo_data.u32());
-    } else if (sdo_type == answer) {
-        step.status = ConfigStep::Status::done;
-        if (!step.write_value.has_value()) {
-            step.value = sdo_data;
+    auto const expected = (step.kind == SdoStep::Kind::read) ? SdoType::response_to_read : SdoType::response_to_write;
+    if (answer.type == SdoType::abort) {
+        step.status = SdoStep::Status::refused;
+        step.abort_code = static_cast<SdoAbortCode>(answer.data.u32());
+    } else if (answer.type == expected) {
+        step.status = SdoStep::Status::done;
+        if (step.kind == SdoStep::Kind::read) {
+            step.value = answer.data;
         }
     } else {
         // An answer to someone else's request for the same object, e.g. the
@@ -127,27 +117,32 @@ FrameHandlingStatus ServerConfigService::handle_sdo(ODEntryIter entry, SdoType s
 }
 
 
-void ServerConfigService::_request(std::chrono::time_point<std::chrono::steady_clock> now) {
+void SdoSequence::_request(std::chrono::time_point<std::chrono::steady_clock> now) {
     auto& step = _steps[_step_idx];
-    const auto& object = step.entry->second;
     constexpr bool quiet = true;
 
-    ODAccessStatus status;
-    if (step.write_value.has_value()) {
-        status = _sdo_service.write(object.category, object.subcategory, object.name, *step.write_value, quiet);
-    } else {
-        status = _sdo_service.read(object.category, object.subcategory, object.name, quiet);
+    ODAccessStatus status = ODAccessStatus::not_found;
+    switch (step.kind) {
+    case SdoStep::Kind::read:
+        status = _sdo_service.read(step.key, quiet);
+        break;
+    case SdoStep::Kind::write:
+        status = _sdo_service.write(step.key, step.write_value.value_or(ExpeditedSdoData{}), quiet);
+        break;
+    case SdoStep::Kind::command:
+        status = _sdo_service.command(step.key, quiet);
+        break;
     }
 
     if (status != ODAccessStatus::success) {
-        // The dictionary does not allow it, so nothing went out.
-        step.status = ConfigStep::Status::refused;
+        // The description does not allow it, so nothing went out.
+        step.status = SdoStep::Status::refused;
         if (status == ODAccessStatus::not_found) {
             step.abort_code = SdoAbortCode::object_not_found;
-        } else if (step.write_value.has_value()) {
-            step.abort_code = SdoAbortCode::write_access_ro;
-        } else {
+        } else if (step.kind == SdoStep::Kind::read) {
             step.abort_code = SdoAbortCode::read_access_wo;
+        } else {
+            step.abort_code = SdoAbortCode::write_access_ro;
         }
         _advance();
         return;
@@ -159,19 +154,25 @@ void ServerConfigService::_request(std::chrono::time_point<std::chrono::steady_c
 }
 
 
-void ServerConfigService::_advance() {
+void SdoSequence::_advance() {
     _awaiting = false;
     _attempts = 0;
+    if (_next) {
+        // a copy: the steps may grow, and move, under the reference
+        auto const finished = _steps[_step_idx];
+        auto more = _next(finished);
+        _steps.insert(_steps.end(), more.begin(), more.end());
+    }
     if (++_step_idx == _steps.size()) {
         _outcome = Outcome::completed;
     }
 }
 
 
-void ServerConfigService::_finish(Outcome outcome) {
+void SdoSequence::_finish(Outcome outcome) {
     for (auto& step : _steps) {
-        if (step.status == ConfigStep::Status::pending) {
-            step.status = ConfigStep::Status::cancelled;
+        if (step.status == SdoStep::Status::pending) {
+            step.status = SdoStep::Status::cancelled;
         }
     }
     _step_idx = _steps.size();

@@ -21,7 +21,7 @@ private:
     static constexpr float _max_time_depth{10000.0f};
 
     bool _running{true};
-    std::map<ucanopen::ServerLogService::LogKey, ucanopen::ServerLogService::LogBuf> _log_snapshot;
+    std::map<ucanopen::ServerLogService::LogKey, ucanopen::ServerLogService::LogBuf, std::less<>> _log_snapshot;
 
     enum class Mode {
         y_t,
@@ -47,8 +47,7 @@ private:
     void _reset();
 private:
     struct Chart {
-        std::string_view subcategory;
-        std::string_view name;
+        std::string path; // of the object, the key of its history
         std::string label;
         bool on_plot;
         ImAxis y_axis;
@@ -66,9 +65,12 @@ private:
         auto objects = _server->log_service.objects();
         for (const auto& obj : objects) {
             Chart chart;
-            chart.subcategory = obj->subcategory;
-            chart.name = obj->name;
-            chart.label = std::string(obj->subcategory) + "::" + std::string(obj->name);    
+            chart.path = obj.path;
+            chart.label = obj.label.ru.empty() ? obj.path : obj.label.ru;
+            const auto& unit = obj.unit.ru.empty() ? obj.unit.en : obj.unit.ru;
+            if (!unit.empty()) {
+                chart.label += " [" + unit + "]";
+            }
             chart.on_plot = false;            
             chart.y_axis = ImAxis_Y1;
             chart.idx = _chart_idx++;

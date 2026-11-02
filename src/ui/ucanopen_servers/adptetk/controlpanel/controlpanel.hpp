@@ -16,6 +16,7 @@ private:
     std::shared_ptr<::adptetk::Server> _server;
 
     bool _emergency{false};
+    bool _emergency_sent{false}; // system.emergency, once a press
     bool _power{false};
     bool _start{false};
 

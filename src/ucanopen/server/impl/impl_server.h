@@ -54,46 +54,19 @@ protected:
     NodeId _node_id;
     std::shared_ptr<can::Socket> _socket;
 
-    const ObjectDictionary& _dictionary;
-    ObjectDictionaryAux _dictionary_aux;
-
-    // The description of the device's dictionary, which states its PDOs and
-    // statuses; null for a server that has none.
+    // The description of the device's dictionary: its objects, its PDOs and
+    // its statuses.
     std::shared_ptr<const od::Description> _description;
 
     NmtState _nmt_state{NmtState::stopped};
 public:
-    Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary,
+    Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name,
            std::shared_ptr<const od::Description> description);
     
     std::string name() const { return _name; }
     NodeId node_id() const { return _node_id; }
     NmtState nmt_state() const { return _nmt_state; }
-    const ObjectDictionary& dictionary() const { return _dictionary; }
     const std::shared_ptr<const od::Description>& description() const { return _description; }
-public:
-    ODEntryIter find_od_entry(std::string_view category,
-                              std::string_view subcategory,
-                              std::string_view name) const {
-        auto iter = _dictionary_aux.find({category, subcategory, name});
-        if (iter == _dictionary_aux.end()) {
-            return _dictionary.entries.end();
-        }
-        return iter->second;
-    }
-
-    ODAccessStatus find_od_entry_to_read(std::string_view category,
-                                         std::string_view subcategory,
-                                         std::string_view name,
-                                         ODEntryIter& ret_entry) const;
-    ODAccessStatus find_od_entry_to_write(std::string_view category,
-                                          std::string_view subcategory,
-                                          std::string_view name,
-                                          ODEntryIter& ret_entry) const;
-    ODAccessStatus find_od_entry_to_exec(std::string_view category,
-                                         std::string_view subcategory,
-                                         std::string_view name,
-                                         ODEntryIter& ret_entry) const;
 };
 
 

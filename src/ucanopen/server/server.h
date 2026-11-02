@@ -3,20 +3,21 @@
 #include <atomic>
 #include <chrono>
 #include <functional>
-#include <future>
+#include <ucanopen/od/description.h>
 #include <ucanopen/server/impl/impl_server.h>
-#include <ucanopen/server/services/config/server_config_service.h>
 #include <ucanopen/server/services/heartbeat/server_heartbeat_service.h>
+#include <ucanopen/server/services/info/server_info_service.h>
 #include <ucanopen/server/services/log/server_log_service.h>
 #include <ucanopen/server/services/rpdo/server_rpdo_service.h>
 #include <ucanopen/server/services/sdo/server_sdo_service.h>
 #include <ucanopen/server/services/status/server_status_service.h>
 #include <ucanopen/server/services/tpdo/server_tpdo_service.h>
 #include <ucanopen/server/services/watch/server_watch_service.h>
-#include <ucanopen/server/utils/server_od_utils.h>
+#include <ucanopen/server/utils/sdo_sequence.h>
 
 namespace ucanopen {
 
+// A device on the bus, read and driven by the description of its dictionary.
 class Server : public impl::Server {
     friend class Client;
 public:
@@ -25,14 +26,14 @@ public:
     ServerRpdoService rpdo_service;
     ServerSdoService sdo_service;
     ServerWatchService watch_service;
-    ServerConfigService config_service;
+    SdoSequence config_service; // the bulk transfers of the settings
+    ServerInfoService info_service;
     ServerLogService log_service;
     ServerStatusService status_service;
 public:
     Server(std::shared_ptr<can::Socket> socket,
            NodeId node_id,
            const std::string& name,
-           const ObjectDictionary& dictionary,
            std::shared_ptr<const od::Description> description);
     virtual ~Server() = default;
 private:
@@ -43,66 +44,16 @@ private:
     std::vector<impl::FrameReceiver*> _rx_services;
 
 public:
-    std::optional<std::string>
-    read_string(std::string_view category,
-                std::string_view subcategory,
-                std::string_view name,
-                std::chrono::milliseconds timeout =
-                        std::chrono::milliseconds(1000));
-
-    std::optional<std::string>
-    read_scalar(std::string_view category,
-                std::string_view subcategory,
-                std::string_view name,
-                std::chrono::milliseconds timeout =
-                        std::chrono::milliseconds(1000));
-
-    std::optional<ExpeditedSdoData>
-    read_expdata(std::string_view category,
-                 std::string_view subcategory,
-                 std::string_view name,
-                 std::chrono::milliseconds timeout =
-                         std::chrono::milliseconds(1000));
-
-    std::optional<ExpeditedSdoData>
-    exec_expdata(std::string_view category,
-                 std::string_view subcategory,
-                 std::string_view name,
-                 std::chrono::milliseconds timeout =
-                         std::chrono::milliseconds(1000));
-
-    std::optional<ExpeditedSdoData>
-    write_expdata(std::string_view category,
-                  std::string_view subcategory,
-                  std::string_view name,
-                  ExpeditedSdoData sdo_data,
-                  std::chrono::milliseconds timeout =
-                          std::chrono::milliseconds(1000));
-
-    ODAccessStatus read(std::string_view category,
-                        std::string_view subcategory,
-                        std::string_view name) {
-        return sdo_service.read(category, subcategory, name);
+    ODAccessStatus read(std::string_view path) {
+        return sdo_service.read(path);
     }
 
-    ODAccessStatus write(std::string_view category,
-                         std::string_view subcategory,
-                         std::string_view name,
-                         ExpeditedSdoData sdo_data) {
-        return sdo_service.write(category, subcategory, name, sdo_data);
+    ODAccessStatus write(std::string_view path, ExpeditedSdoData data) {
+        return sdo_service.write(path, data);
     }
 
-    ODAccessStatus write(std::string_view category,
-                         std::string_view subcategory,
-                         std::string_view name,
-                         const std::string& value) {
-        return sdo_service.write(category, subcategory, name, value);
-    }
-
-    ODAccessStatus exec(std::string_view category,
-                        std::string_view subcategory,
-                        std::string_view name) {
-        return sdo_service.exec(category, subcategory, name);
+    ODAccessStatus command(std::string_view path) {
+        return sdo_service.command(path);
     }
 public:
     void send(can_frame const& frame) { _socket->send(frame); }

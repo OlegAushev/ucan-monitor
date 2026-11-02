@@ -57,13 +57,20 @@ void WatchPanel::draw() {
             ImGui::PopStyleVar();
             ImGui::PopID();
 
+            const auto& object = _watch_objects[row];
             ImGui::TableSetColumnIndex(1);
-            ImGui::Text("%s::%s[%s]",
-                        _watch_objects[row]->subcategory.c_str(),
-                        _watch_objects[row]->name.c_str(),
-                        _watch_objects[row]->unit.c_str());
+            const auto& label = object.label.ru.empty() ? object.path : object.label.ru;
+            const auto& unit = object.unit.ru.empty() ? object.unit.en : object.unit.ru;
+            if (unit.empty()) {
+                ImGui::TextUnformatted(label.c_str());
+            } else {
+                ImGui::Text("%s [%s]", label.c_str(), unit.c_str());
+            }
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
+                ImGui::SetTooltip("%s", object.path.c_str());
+            }
             ImGui::TableSetColumnIndex(2);
-            ImGui::TextUnformatted(_server->watch_service.string_value(_watch_objects[row]->subcategory, _watch_objects[row]->name).c_str());
+            ImGui::TextUnformatted(_server->watch_service.string_value(object.key).c_str());
         }
         ImGui::EndTable();
     }

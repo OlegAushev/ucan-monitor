@@ -108,11 +108,7 @@ Server::Server(std::shared_ptr<can::Socket> socket,
                ucanopen::NodeId node_id,
                std::string const& name,
                std::shared_ptr<ucanopen::od::Description const> description)
-    : ucanopen::Server(socket,
-                       node_id,
-                       name,
-                       object_dictionary,
-                       std::move(description)) {
+    : ucanopen::Server(socket, node_id, name, std::move(description)) {
   auto const& od = *this->description();
 
   _drive_status_pdo = find_pdo(od, "drive_status", Direction::tx, name);

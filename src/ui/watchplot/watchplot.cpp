@@ -219,11 +219,10 @@ void WatchPlot::_draw_plot_yt() {
             // get pointer to log circular buffer
             const ucanopen::ServerLogService::LogBuf* log_buf = nullptr;
             if (_running) {
-                log_buf = _server->log_service.get_log(chart.subcategory,
-                                                       chart.name);
+                log_buf = _server->log_service.get_log(chart.path);
             } else {
                 auto log_iter =
-                        _log_snapshot.find({chart.subcategory, chart.name});
+                        _log_snapshot.find(chart.path);
                 if (log_iter == _log_snapshot.end()) {
                     log_buf = nullptr;
                 } else {
@@ -324,15 +323,11 @@ void WatchPlot::_draw_plot_yx() {
             const ucanopen::ServerLogService::LogBuf* ybuf;
 
             if (_running) {
-                xbuf = _server->log_service.get_log(_p_xchart->subcategory,
-                                                    _p_xchart->name);
-                ybuf = _server->log_service.get_log(_p_ychart->subcategory,
-                                                    _p_ychart->name);
+                xbuf = _server->log_service.get_log(_p_xchart->path);
+                ybuf = _server->log_service.get_log(_p_ychart->path);
             } else {
-                auto xbuf_iter = _log_snapshot.find(
-                        {_p_xchart->subcategory, _p_xchart->name});
-                auto ybuf_iter = _log_snapshot.find(
-                        {_p_ychart->subcategory, _p_ychart->name});
+                auto xbuf_iter = _log_snapshot.find(_p_xchart->path);
+                auto ybuf_iter = _log_snapshot.find(_p_ychart->path);
 
                 if (xbuf_iter == _log_snapshot.end()) {
                     xbuf = nullptr;
@@ -440,9 +435,7 @@ void WatchPlot::_export_to_csv() {
     CsvWriter csv(filename);
 
     for (const auto& buf : snapshot) {
-        csv << "time"
-            << std::string(buf.first.first) +
-                        "::" + std::string(buf.first.second);
+        csv << "time" << buf.first;
     }
     csv.next_row();
 

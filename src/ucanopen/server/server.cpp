@@ -5,16 +5,17 @@
 
 namespace ucanopen {
 
-Server::Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary,
+Server::Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name,
                std::shared_ptr<const od::Description> description)
-        : impl::Server(socket, node_id, name, dictionary, std::move(description))
+        : impl::Server(socket, node_id, name, std::move(description))
         , heartbeat_service(*this, std::chrono::milliseconds(2000))
         , tpdo_service(*this)
         , rpdo_service(*this)
         , sdo_service(*this)
-        , watch_service(*this, sdo_service)
-        , config_service(*this, sdo_service)
-        , log_service(*this, sdo_service, tpdo_service)
+        , watch_service(*this, sdo_service, heartbeat_service)
+        , config_service(sdo_service)
+        , info_service(*this, sdo_service, heartbeat_service)
+        , log_service(*this, sdo_service)
         , status_service(*this) {
     _rx_services.push_back(&sdo_service);
     _rx_services.push_back(&tpdo_service);
@@ -48,10 +49,11 @@ void Server::_set_node_id(NodeId node_id) {
 }
 
 
-void Server::_send() {	
+void Server::_send() {
     rpdo_service.send();
     watch_service.send();
     config_service.send();
+    info_service.send();
 }
 
 
@@ -61,85 +63,8 @@ void Server::_handle_frame(const can_frame& frame) {
         if (status == FrameHandlingStatus::success) {
             break;
         }
-    }	
-}
-
-
-std::optional<std::string> Server::read_string(std::string_view category,
-                                               std::string_view subcategory,
-                                               std::string_view name,
-                                               std::chrono::milliseconds timeout) {
-    std::promise<void> signal_terminate;
-    utils::StringReader reader(sdo_service, category, subcategory, name);
-    std::future<std::optional<std::string>> future_result
-                    = std::async(&utils::StringReader::get, &reader, signal_terminate.get_future());
-    if (future_result.wait_for(timeout) != std::future_status::ready) {
-        signal_terminate.set_value();
     }
-    return future_result.get();
-}
-
-
-std::optional<std::string> Server::read_scalar(std::string_view category,
-                                               std::string_view subcategory,
-                                               std::string_view name,
-                                               std::chrono::milliseconds timeout) {
-    std::promise<void> signal_terminate;
-    utils::ScalarReader reader(sdo_service, category, subcategory, name);
-    std::future<std::optional<std::string>> future_result
-                    = std::async(&utils::ScalarReader::get, &reader, signal_terminate.get_future());
-    if (future_result.wait_for(timeout) != std::future_status::ready) {
-        signal_terminate.set_value();
-    }
-    return future_result.get();
-}
-
-
-std::optional<ExpeditedSdoData> Server::read_expdata(std::string_view category,
-                                                     std::string_view subcategory,
-                                                     std::string_view name,
-                                                     std::chrono::milliseconds timeout) {
-    std::promise<void> signal_terminate;
-    utils::ExpeditedSdoDataReader reader(sdo_service, category, subcategory, name);
-    std::future<std::optional<ExpeditedSdoData>> future_result
-                    = std::async(&utils::ExpeditedSdoDataReader::get, &reader, signal_terminate.get_future());
-    if (future_result.wait_for(timeout) != std::future_status::ready) {
-        signal_terminate.set_value();
-    }
-    return future_result.get();
-}
-
-
-std::optional<ExpeditedSdoData> Server::exec_expdata(std::string_view category,
-                                                     std::string_view subcategory,
-                                                     std::string_view name,
-                                                     std::chrono::milliseconds timeout) {
-    std::promise<void> signal_terminate;
-    utils::Executor executor(sdo_service, category, subcategory, name);
-    std::future<std::optional<ExpeditedSdoData>> future_result
-                    = std::async(&utils::Executor::get, &executor, signal_terminate.get_future());
-    if (future_result.wait_for(timeout) != std::future_status::ready) {
-        signal_terminate.set_value();
-    }
-    return future_result.get();
-}
-
-
-std::optional<ExpeditedSdoData> Server::write_expdata(std::string_view category,
-                                                      std::string_view subcategory,
-                                                      std::string_view name,
-                                                      ExpeditedSdoData sdo_data,
-                                                      std::chrono::milliseconds timeout) {
-    std::promise<void> signal_terminate;
-    utils::ExpeditedSdoDataWriter writer(sdo_service, category, subcategory, name, sdo_data);
-    std::future<std::optional<ExpeditedSdoData>> future_result
-                    = std::async(&utils::ExpeditedSdoDataWriter::get, &writer, signal_terminate.get_future());
-    if (future_result.wait_for(timeout) != std::future_status::ready) {
-        signal_terminate.set_value();
-    }
-    return future_result.get();   
 }
 
 
 } // namespace ucanopen
-

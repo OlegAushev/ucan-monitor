@@ -169,25 +169,6 @@ inline CobTpdo opposite_pdo(CobRpdo rpdo) {
 }
 
 
-enum ODObjectDataType {
-    OD_BOOL,
-    OD_INT8,
-    OD_INT16,
-    OD_INT32,
-    OD_UINT8,
-    OD_UINT16,
-    OD_UINT32,
-    OD_FLOAT32,
-    OD_EXEC,
-    OD_STRING
-};
-
-
-constexpr size_t od_object_data_type_sizes[10] = {sizeof(bool), sizeof(int8_t), sizeof(int16_t), sizeof(int32_t),
-                                                  sizeof(uint8_t), sizeof(uint16_t), sizeof(uint32_t), sizeof(float),
-                                                  4, 4};
-
-
 namespace sdo_cs_codes {
 const uint32_t client_init_write = 1;
 const uint32_t server_init_write = 3;
@@ -263,42 +244,6 @@ public:
         return val;
     }
 
-    std::string to_string(ODObjectDataType type, int precision = 6) const {
-        switch (type) {
-        case ucanopen::OD_BOOL:
-            return bool32() ? "true" : "false";
-        case ucanopen::OD_INT8:
-            return std::to_string(i8());
-        case ucanopen::OD_INT16:
-            return std::to_string(i16());
-        case ucanopen::OD_INT32:
-            return std::to_string(i32());
-        case ucanopen::OD_UINT8:
-            return std::to_string(u8());
-        case ucanopen::OD_UINT16:
-            return std::to_string(u16());
-        case ucanopen::OD_UINT32:
-            return std::to_string(u32());
-        case ucanopen::OD_FLOAT32: {
-            std::chars_format format = (fabsf(f32()) >= 0.01) ? std::chars_format::fixed : std::chars_format::general;
-            std::array<char, 16> buf;
-            if (auto [ptr, ec] = std::to_chars(buf.begin(), buf.end(), f32(), format, precision);
-                    ec == std::errc()) {
-                return std::string(buf.begin(), ptr);
-            } else {
-                return std::make_error_code(ec).message();
-            }
-        }
-        case ucanopen::OD_EXEC:
-            return std::string();
-        case ucanopen::OD_STRING: {
-            char ret[5] = {0};
-            memcpy(ret, &_data, sizeof(_data));
-            return std::string(ret);
-        }
-        }
-        return std::string();
-    }
 };
 
 
@@ -365,14 +310,18 @@ enum class SdoAbortCode : uint32_t {
     read_access_wo          = 0x06010001,
     write_access_ro         = 0x06010002,
     object_not_found        = 0x06020000,
+    parameter_incompatibility = 0x06040043,
     hardware_error          = 0x06060000,
+    data_type_mismatch      = 0x06070010,
+    subindex_not_found      = 0x06090011,
     value_range_exceeded    = 0x06090030,
     value_too_high          = 0x06090031,
     value_too_low           = 0x06090032,
     general_error           = 0x08000000,
     data_store_error        = 0x08000020,
     local_control_error     = 0x08000021,
-    state_error             = 0x08000022
+    state_error             = 0x08000022,
+    no_data_available       = 0x08000024
 };
 
 
@@ -383,85 +332,25 @@ const std::map<SdoAbortCode, std::string> sdo_abort_messages = {
     {SdoAbortCode::read_access_wo, "attempt to read a write-only object"},
     {SdoAbortCode::write_access_ro, "attempt to write a read-only object"},
     {SdoAbortCode::object_not_found, "object does not exist in the object dictionary"},
+    {SdoAbortCode::parameter_incompatibility, "general parameter incompatibility reason"},
     {SdoAbortCode::hardware_error, "access failed due to a hardware error"},
+    {SdoAbortCode::data_type_mismatch, "data type does not match, length of service parameter does not match"},
+    {SdoAbortCode::subindex_not_found, "sub-index does not exist"},
     {SdoAbortCode::value_range_exceeded, "Value range of parameter exceeded"},
     {SdoAbortCode::value_too_high, "Value of parameter written is too high"},
     {SdoAbortCode::value_too_low, "Value of parameter written is too low"},
     {SdoAbortCode::general_error, "general error"},
     {SdoAbortCode::data_store_error, "data cannot be transferred or stored to the application"},
     {SdoAbortCode::local_control_error, "data cannot be transferred or stored to the application because of local control"},
-    {SdoAbortCode::state_error, "data cannot be transferred or stored to the application because of the present device state"}
+    {SdoAbortCode::state_error, "data cannot be transferred or stored to the application because of the present device state"},
+    {SdoAbortCode::no_data_available, "no data available"}
 };
 
 
 enum class SdoType {
     response_to_read,
     response_to_write,
-    response_to_exec,
     abort
-};
-
-
-enum ODObjectAccessPermission {
-    OD_ACCESS_RW,
-    OD_ACCESS_RO,
-    OD_ACCESS_WO,
-    OD_ACCESS_CONST
-};
-
-
-struct ODObjectKey {
-    uint16_t index;
-    uint8_t subindex;
-};
-
-
-inline bool operator<(const ODObjectKey& lhs, const ODObjectKey& rhs) {
-    return (lhs.index < rhs.index) || ((lhs.index == rhs.index) && (lhs.subindex < rhs.subindex));
-}
-
-
-struct ODObject {
-    std::string category;
-    std::string subcategory;
-    std::string name;
-    std::string unit;
-    ODObjectAccessPermission access_permission;
-    ODObjectDataType data_type;
-
-    bool has_read_permission() const { return access_permission != OD_ACCESS_WO; }
-    bool has_write_permission() const { return (access_permission == OD_ACCESS_RW) || (access_permission == OD_ACCESS_WO); }
-};
-
-
-struct ODObjectAux {
-    std::string_view category;
-    std::string_view subcategory;
-    std::string_view name;
-};
-
-
-inline bool operator<(const ODObjectAux& lhs, const ODObjectAux& rhs) {
-    return (lhs.category < rhs.category) 
-            || ((lhs.category == rhs.category) && (lhs.subcategory < rhs.subcategory))
-            || ((lhs.category == rhs.category) && (lhs.subcategory == rhs.subcategory) && (lhs.name < rhs.name));
-}
-
-
-struct ObjectDictionaryConfig {
-    std::string watch_category;
-    std::string config_category;
-};
-
-
-using ObjectDictionaryEntries = std::map<ODObjectKey, ODObject>;
-using ODEntryIter = ObjectDictionaryEntries::const_iterator;
-using ObjectDictionaryAux = std::map<ODObjectAux, ODEntryIter>;
-
-
-struct ObjectDictionary {
-    ObjectDictionaryConfig config;
-    ObjectDictionaryEntries entries;
 };
 
 

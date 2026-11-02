@@ -37,9 +37,11 @@ void ControlPanel::_update_refs() {
     }
 
     _server->toggle_emergency(_emergency);
-    if (_emergency) {
-        _server->exec("ctl", "sys", "emergency");
+    // once a press: the emergency bit of RPDO1 holds it after
+    if (_emergency && !_emergency_sent) {
+        _server->command("system.emergency");
     }
+    _emergency_sent = _emergency;
 
     _server->toggle_power(_power);
     _server->toggle_start(_start);
@@ -74,11 +76,21 @@ void ControlPanel::draw() {
 }
 
 void ControlPanel::_draw_dash() {
+    // The frames read by another firmware's description would mislead.
+    if (_server->info_service.fingerprint_matches() == false) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ui::colors::icon_yellow);
+        ImGui::TextWrapped("Описание словаря не от этой прошивки: в устройстве "
+                           "0x%08X, в файле 0x%08X.",
+                           _server->info_service.info().fingerprint.value_or(0),
+                           _server->description()->fingerprint());
+        ImGui::PopStyleColor();
+    }
+
     // Uptime
     ImGui::TextUnformatted(ICON_MDI_TIMER_OUTLINE);
     ImGui::SameLine();
     ImGui::PushItemWidth(140);
-    auto uptime = _server->watch_service.string_value("sys", "uptime");
+    auto uptime = _server->watch_service.string_value("system.uptime");
     ImGui::InputText("##uptime",
                      uptime.data(),
                      uptime.size(),
@@ -290,12 +302,8 @@ void ControlPanel::_draw_controls() {
                                   "%.3f",
                                   ImGuiInputTextFlags_EnterReturnsTrue)) {
                 _ref_dc_a = std::clamp(_ref_dc_a, 0.0f, 1.0f);
-                _server->write(
-                    "ctl",
-                    "drive",
-                    "dc_a",
-                    ucanopen::ExpeditedSdoData{_ref_dc_a}
-                );
+                _server->write("drive.test_duty_cycle_a",
+                               ucanopen::ExpeditedSdoData{_ref_dc_a});
             }
             if (ImGui::InputFloat("Фаза B",
                                   &_ref_dc_b,
@@ -304,12 +312,8 @@ void ControlPanel::_draw_controls() {
                                   "%.3f",
                                   ImGuiInputTextFlags_EnterReturnsTrue)) {
                 _ref_dc_b = std::clamp(_ref_dc_b, 0.0f, 1.0f);
-                _server->write(
-                    "ctl",
-                    "drive",
-                    "dc_b",
-                    ucanopen::ExpeditedSdoData{_ref_dc_b}
-                );
+                _server->write("drive.test_duty_cycle_b",
+                               ucanopen::ExpeditedSdoData{_ref_dc_b});
             }
             if (ImGui::InputFloat("Фаза C",
                                   &_ref_dc_c,
@@ -318,12 +322,8 @@ void ControlPanel::_draw_controls() {
                                   "%.3f",
                                   ImGuiInputTextFlags_EnterReturnsTrue)) {
                 _ref_dc_c = std::clamp(_ref_dc_c, 0.0f, 1.0f);
-                _server->write(
-                    "ctl",
-                    "drive",
-                    "dc_c",
-                    ucanopen::ExpeditedSdoData{_ref_dc_c}
-                );
+                _server->write("drive.test_duty_cycle_c",
+                               ucanopen::ExpeditedSdoData{_ref_dc_c});
             }
             break;
         }
@@ -344,7 +344,7 @@ void ControlPanel::_draw_actions() {
                           ui::colors::yellow_button_active);
 
     if (ImGui::Button(ICON_MDI_BROOM " Сбросить Ошибки", ImVec2{-1.f, 0.f})) {
-        _server->exec("ctl", "sys", "clear_errors");
+        _server->command("system.clear_errors");
     }
 
     ImGui::PopStyleColor(3);
@@ -393,7 +393,7 @@ void ControlPanel::_draw_popups() {
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
         if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
-            _server->exec("ctl", "sys", "reset_device");
+            _server->command("system.reset_device");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();
@@ -411,7 +411,7 @@ void ControlPanel::_draw_popups() {
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
         if (ImGui::Button(ICON_MDI_CHECK " Да", ImVec2(120, 0))) {
-            _server->exec("ctl", "drive", "calibrate_angle_sensor");
+            _server->command("drive.calibrate_angle_sensor");
             ImGui::CloseCurrentPopup();
         }
         ImGui::EndPopup();

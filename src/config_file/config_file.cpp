@@ -1,5 +1,7 @@
 #include "config_file.h"
 
+#include <ucanopen/od/value.h>
+
 #include <algorithm>
 #include <array>
 #include <cctype>
@@ -63,70 +65,6 @@ std::string padded(std::string_view text, size_t width) {
 }
 
 
-// from_chars takes no plus sign, people write one now and then.
-std::string_view strip_plus(std::string_view text) {
-    if (text.size() > 1 && text[0] == '+' && text[1] != '-' && text[1] != '+') {
-        text.remove_prefix(1);
-    }
-    return text;
-}
-
-
-template<typename T>
-std::optional<T> parse_number(std::string_view text, int base = 10) {
-    T value{};
-    auto const end = text.data() + text.size();
-    std::from_chars_result result;
-    if constexpr (std::is_floating_point_v<T>) {
-        result = std::from_chars(text.data(), end, value);
-    } else {
-        result = std::from_chars(text.data(), end, value, base);
-    }
-    if (text.empty() || result.ec != std::errc() || result.ptr != end) {
-        return std::nullopt;
-    }
-    return value;
-}
-
-
-template<typename T>
-std::optional<ucanopen::ExpeditedSdoData> parse_signed(std::string_view text) {
-    auto value = parse_number<T>(strip_plus(text));
-    if (!value.has_value()) {
-        return std::nullopt;
-    }
-    return ucanopen::ExpeditedSdoData(*value);
-}
-
-
-template<typename T>
-std::optional<ucanopen::ExpeditedSdoData> parse_unsigned(std::string_view text) {
-    std::optional<T> value;
-    if (text.starts_with("0x") || text.starts_with("0X")) {
-        value = parse_number<T>(text.substr(2), 16);
-    } else {
-        value = parse_number<T>(strip_plus(text));
-    }
-    if (!value.has_value()) {
-        return std::nullopt;
-    }
-    return ucanopen::ExpeditedSdoData(*value);
-}
-
-
-std::optional<ucanopen::ExpeditedSdoData> parse_bool(std::string_view text) {
-    std::string lower(text);
-    std::transform(lower.begin(), lower.end(), lower.begin(), [](unsigned char c) { return std::tolower(c); });
-    if (lower == "true" || lower == "on" || lower == "1") {
-        return ucanopen::ExpeditedSdoData(true);
-    }
-    if (lower == "false" || lower == "off" || lower == "0") {
-        return ucanopen::ExpeditedSdoData(false);
-    }
-    return std::nullopt;
-}
-
-
 template<typename T>
 std::string format_number(T value, int base = 10) {
     std::array<char, 32> buf;
@@ -138,17 +76,6 @@ std::string format_number(T value, int base = 10) {
         result = std::to_chars(buf.data(), buf.data() + buf.size(), value, base);
     }
     return std::string(buf.data(), result.ptr);
-}
-
-
-template<typename T>
-std::string format_unsigned(T value, bool hex) {
-    if (!hex) {
-        return format_number(value);
-    }
-    auto digits = format_number(value, 16);
-    std::transform(digits.begin(), digits.end(), digits.begin(), [](unsigned char c) { return std::toupper(c); });
-    return "0x" + std::string(2 * sizeof(T) - digits.size(), '0') + digits;
 }
 
 
@@ -229,14 +156,14 @@ std::expected<Contents, std::string> read(const std::filesystem::path& path) {
 std::expected<void, std::string> write(const std::filesystem::path& path,
                                        const Header& header,
                                        const std::vector<Value>& values) {
-    // Subcategories in the order they first come, so that the file follows
-    // the dictionary rather than the alphabet.
-    std::vector<std::string_view> subcategories;
+    // Groups in the order they first come, so that the file follows the
+    // dictionary rather than the alphabet.
+    std::vector<std::string_view> groups;
     std::map<std::string_view, std::vector<const Value*>> sections;
     for (const auto& value : values) {
-        auto& section = sections[value.object->subcategory];
+        auto& section = sections[value.group];
         if (section.empty()) {
-            subcategories.push_back(value.object->subcategory);
+            groups.push_back(value.group);
         }
         section.push_back(&value);
     }
@@ -260,16 +187,16 @@ std::expected<void, std::string> write(const std::filesystem::path& path,
         std::string comment;
     };
 
-    for (auto subcategory : subcategories) {
+    for (auto group : groups) {
         std::vector<Line> lines;
         size_t name_width = 0;
         size_t value_width = 0;
-        for (const auto* value : sections[subcategory]) {
-            const auto& object = *value->object;
-            Line line{value->data.has_value() && object.has_write_permission(),
-                      object.name,
-                      value->data.has_value() ? format_value(object, *value->data) : std::string{},
-                      (object.unit == "hex") ? std::string{} : object.unit}; // 0x says it already
+        for (const auto* value : sections[group]) {
+            const auto& unit = value->item.unit.ru.empty() ? value->item.unit.en : value->item.unit.ru;
+            Line line{value->data.has_value() && value->writable,
+                      value->name,
+                      value->data.has_value() ? config_file::format_value(value->item, *value->data) : std::string{},
+                      unit};
             if (!value->data.has_value()) {
                 line.comment += line.comment.empty() ? "не прочитано" : ", не прочитано";
             }
@@ -280,7 +207,7 @@ std::expected<void, std::string> write(const std::filesystem::path& path,
             lines.push_back(std::move(line));
         }
 
-        file << "\n[" << subcategory << "]\n";
+        file << "\n[" << group << "]\n";
         for (const auto& line : lines) {
             file << (line.active ? "" : "# ") << padded(line.name, name_width) << " = ";
             if (line.comment.empty()) {
@@ -299,24 +226,30 @@ std::expected<void, std::string> write(const std::filesystem::path& path,
 }
 
 
-std::string format_value(const ucanopen::ODObject& object, ucanopen::ExpeditedSdoData data) {
-    bool const hex = (object.unit == "hex");
-    switch (object.data_type) {
-    case ucanopen::OD_BOOL:
+std::string format_value(const ucanopen::od::Item& item, ucanopen::ExpeditedSdoData data) {
+    using ucanopen::od::DataType;
+    if (item.values != nullptr && item.datatype != DataType::float32) {
+        // a value of a table by its name, which reads back whatever the labels
+        auto const raw = static_cast<int64_t>(ucanopen::od::to_double(item, data));
+        const auto* value = item.values->find(raw);
+        return (value != nullptr) ? value->name : std::to_string(raw);
+    }
+    switch (item.datatype) {
+    case DataType::boolean:
         return data.u8() ? "true" : "false";
-    case ucanopen::OD_INT8:
+    case DataType::int8:
         return format_number(data.i8());
-    case ucanopen::OD_INT16:
+    case DataType::int16:
         return format_number(data.i16());
-    case ucanopen::OD_INT32:
+    case DataType::int32:
         return format_number(data.i32());
-    case ucanopen::OD_UINT8:
-        return format_unsigned(data.u8(), hex);
-    case ucanopen::OD_UINT16:
-        return format_unsigned(data.u16(), hex);
-    case ucanopen::OD_UINT32:
-        return format_unsigned(data.u32(), hex);
-    case ucanopen::OD_FLOAT32:
+    case DataType::uint8:
+        return format_number(data.u8());
+    case DataType::uint16:
+        return format_number(data.u16());
+    case DataType::uint32:
+        return format_number(data.u32());
+    case DataType::float32:
         return format_number(data.f32());
     default:
         return {};
@@ -324,43 +257,25 @@ std::string format_value(const ucanopen::ODObject& object, ucanopen::ExpeditedSd
 }
 
 
-std::optional<ucanopen::ExpeditedSdoData> parse_value(const ucanopen::ODObject& object, std::string_view text) {
-    switch (object.data_type) {
-    case ucanopen::OD_BOOL:
-        return parse_bool(text);
-    case ucanopen::OD_INT8:
-        return parse_signed<int8_t>(text);
-    case ucanopen::OD_INT16:
-        return parse_signed<int16_t>(text);
-    case ucanopen::OD_INT32:
-        return parse_signed<int32_t>(text);
-    case ucanopen::OD_UINT8:
-        return parse_unsigned<uint8_t>(text);
-    case ucanopen::OD_UINT16:
-        return parse_unsigned<uint16_t>(text);
-    case ucanopen::OD_UINT32:
-        return parse_unsigned<uint32_t>(text);
-    case ucanopen::OD_FLOAT32:
-        return parse_signed<float>(text);
-    default:
-        return std::nullopt;
-    }
+std::optional<ucanopen::ExpeditedSdoData> parse_value(const ucanopen::od::Item& item, std::string_view text) {
+    return ucanopen::od::parse_value(item, text);
 }
 
 
-bool same_value(const ucanopen::ODObject& object, ucanopen::ExpeditedSdoData a, ucanopen::ExpeditedSdoData b) {
-    switch (object.data_type) {
-    case ucanopen::OD_BOOL:
+bool same_value(const ucanopen::od::Item& item, ucanopen::ExpeditedSdoData a, ucanopen::ExpeditedSdoData b) {
+    using ucanopen::od::DataType;
+    switch (item.datatype) {
+    case DataType::boolean:
         return (a.u8() != 0) == (b.u8() != 0);
-    case ucanopen::OD_INT8:
+    case DataType::int8:
         return a.i8() == b.i8();
-    case ucanopen::OD_INT16:
+    case DataType::int16:
         return a.i16() == b.i16();
-    case ucanopen::OD_UINT8:
+    case DataType::uint8:
         return a.u8() == b.u8();
-    case ucanopen::OD_UINT16:
+    case DataType::uint16:
         return a.u16() == b.u16();
-    case ucanopen::OD_FLOAT32: {
+    case DataType::float32: {
         float x = a.f32();
         float y = b.f32();
         if (x == y) {
