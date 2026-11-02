@@ -138,6 +138,42 @@ target_link_libraries(${executable} PRIVATE
 )
 
 ################################################################################
+# Tests: od-test checks the reading of the description of the dictionary
+# (docs/canopen-rework-plan.ru.md, section 5.1); ctest runs its cases.
+enable_testing()
+
+add_executable(od-test
+    ${PROJECT_SOURCE_DIR}/tests/od/od_test.cpp
+    ${PROJECT_SOURCE_DIR}/src/ucanopen/od/description.cpp
+    ${PROJECT_SOURCE_DIR}/src/ucanopen/od/value.cpp
+)
+
+target_include_directories(od-test PRIVATE
+    ${app_incdirs}
+)
+
+target_compile_options(od-test PRIVATE
+    $<$<CONFIG:Debug>:-Og -ggdb>
+    $<$<CONFIG:Release>:-O3 -g0>
+    -Wall
+    -Wextra
+    -Wpedantic
+    -fdiagnostics-color=auto
+)
+
+target_compile_features(od-test PRIVATE
+    cxx_std_23
+)
+
+foreach(od_case description resolve find refusals)
+    add_test(NAME od.${od_case}
+        COMMAND od-test ${od_case}
+                ${PROJECT_SOURCE_DIR}/assets/od/adpt-etk-inverter.od.jsonl
+                ${PROJECT_SOURCE_DIR}/tests/od
+    )
+endforeach()
+
+################################################################################
 # Misc Options
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

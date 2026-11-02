@@ -1,0 +1,57 @@
+# Frames of the PDOs of the inverter at node 1, in the form of candump -L,
+# which the build decodes by the description and compares with
+# pdo_example.expected.
+#
+# TPDO1, the statuses in an MPDO, a status a frame, as this firmware sends
+# them after it starts in the state of the bench below: the warning of
+# params_defaulted and the critical can_vcu_connection_lost, ot_motor and
+# ot_pwr, which TPDO4 of firmware 1a7c6f0 showed as flags. The first frame is
+# of the round, from 01h, the standing statuses follow as changes, and every
+# fourth frame is of the round again.
+can0 181#0100400100000000
+can0 181#0100400401000000
+can0 181#0100400F03000000
+can0 181#0100401303000000
+can0 181#0100400200000000
+can0 181#0100401403000000
+# The emergency, status 6, raised through 2202h, at severity 4, and cleared
+# through 2201h.
+can0 181#0100400704000000
+can0 181#0100400700000000
+# An object that the description does not name: 4000h:28, past the statuses.
+can0 181#0100402800000000
+# The TPDOs that the inverter, firmware 1a7c6f0, sent on can0 on 2026-10-07,
+# in standby, with no VCU on the bus, as the workbench keeps them
+# (inverter/test/test_pdo.cpp), on the COB-IDs of TPDO2 to TPDO4, on which
+# this firmware sends them since the statuses took TPDO1. That firmware sent
+# the angle in whole radians, 6 rad(el), and this one sends it in degrees, so
+# the frame carries 344 °el. Its TPDO4, the status flags of a level, is gone.
+can0 281#010A000000000003
+can0 381#5401000000000002
+can0 381#6001000000000001
+can0 481#0000580100000002
+# The RPDOs as the workbench encodes them: power on, started, a speed of
+# 1500 rpm; the emergency bit alone, with a torque of -12.5 %; the angle
+# control mode; the model at -90°, Id 25 % and Vd 50 % in the open voltage
+# loop; direct PWM.
+can0 201#0E000000DC050001
+can0 201#01001EFB00000000
+can0 201#1000000000000002
+can0 301#A6FFC40988130403
+can0 301#0000000000000500
+# RPDOs that the inverter refuses: a control mode it lacks and reserved bits
+# of RPDO1, model modes 6 and 7 and reserved bits of RPDO2.
+can0 201#1800000000000000
+can0 201#2000000000000000
+can0 201#0001000000000000
+can0 201#0000000000008000
+can0 201#0000000000000004
+can0 301#0000000000000600
+can0 301#0000000000000700
+can0 301#0000000000000800
+can0 301#0000000000000010
+# A TPDO2 of a newer firmware, whose state 12 and control mode 3 no label of
+# the description names.
+can0 281#0C00030000000000
+# An RPDO1 of 2 bytes, which the inverter refuses, answering with EMCY 8210h.
+can0 201#0100

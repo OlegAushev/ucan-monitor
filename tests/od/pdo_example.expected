@@ -1,0 +1,29 @@
+181 TPDO1 statuses: 4000h:01 trouble.statuses.restart_required=none
+181 TPDO1 statuses: 4000h:04 trouble.statuses.params_defaulted=warning
+181 TPDO1 statuses: 4000h:0F trouble.statuses.can_vcu_connection_lost=critical
+181 TPDO1 statuses: 4000h:13 trouble.statuses.ot_motor=critical
+181 TPDO1 statuses: 4000h:02 trouble.statuses.unsaved_changes=none
+181 TPDO1 statuses: 4000h:14 trouble.statuses.ot_pwr=critical
+181 TPDO1 statuses: 4000h:07 trouble.statuses.emergency=emergency
+181 TPDO1 statuses: 4000h:07 trouble.statuses.emergency=none
+181 TPDO1 statuses: 4000h:28 unknown
+281 TPDO2 drive_status: drive_status.state=standby, drive_status.pwm_on=0, drive_status.warning=1, drive_status.error=0, drive_status.critical=1, drive_status.emergency=0, drive_status.control_mode=torque, drive_status.model_mode=idle, counter=3
+381 TPDO3 electrical_status: electrical_status.dc_voltage=34 V, electrical_status.phase_current=0 A, counter=2
+381 TPDO3 electrical_status: electrical_status.dc_voltage=35.2 V, electrical_status.phase_current=0 A, counter=1
+481 TPDO4 motion_status: motion_status.speed=0 rpm, motion_status.angle=344 °el, counter=2
+201 RPDO1 drive_command: drive_command.emergency=0, drive_command.power=1, drive_command.start=1, drive_command.control_mode=speed, drive_command.torque_ref=0 pu, drive_command.speed_ref=1500 rpm, counter=1
+201 RPDO1 drive_command: drive_command.emergency=1, drive_command.power=0, drive_command.start=0, drive_command.control_mode=torque, drive_command.torque_ref=-0.125 pu, drive_command.speed_ref=0 rpm, counter=0
+201 RPDO1 drive_command: drive_command.emergency=0, drive_command.power=0, drive_command.start=0, drive_command.control_mode=angle, drive_command.torque_ref=0 pu, drive_command.speed_ref=0 rpm, counter=2
+301 RPDO2 model_command: model_command.angle_ref=-90 °el, model_command.current_ref=0.25 pu, model_command.voltage_ref=0.5 pu, model_command.model_mode=open_voltage_loop, counter=3
+301 RPDO2 model_command: model_command.angle_ref=0 °el, model_command.current_ref=0 pu, model_command.voltage_ref=0 pu, model_command.model_mode=direct_pwm, counter=0
+201 RPDO1 drive_command: drive_command.emergency=0, drive_command.power=0, drive_command.start=0, drive_command.control_mode=3?, drive_command.torque_ref=0 pu, drive_command.speed_ref=0 rpm, counter=0; refused: drive_command.control_mode holds 3, which no label names
+201 RPDO1 drive_command: drive_command.emergency=0, drive_command.power=0, drive_command.start=0, drive_command.control_mode=torque, drive_command.torque_ref=0 pu, drive_command.speed_ref=0 rpm, counter=0; refused: reserved bit 5
+201 RPDO1 drive_command: drive_command.emergency=0, drive_command.power=0, drive_command.start=0, drive_command.control_mode=torque, drive_command.torque_ref=0 pu, drive_command.speed_ref=0 rpm, counter=0; refused: reserved bit 8
+201 RPDO1 drive_command: drive_command.emergency=0, drive_command.power=0, drive_command.start=0, drive_command.control_mode=torque, drive_command.torque_ref=0 pu, drive_command.speed_ref=0 rpm, counter=0; refused: reserved bit 55
+201 RPDO1 drive_command: drive_command.emergency=0, drive_command.power=0, drive_command.start=0, drive_command.control_mode=torque, drive_command.torque_ref=0 pu, drive_command.speed_ref=0 rpm, counter=0; refused: reserved bit 58
+301 RPDO2 model_command: model_command.angle_ref=0 °el, model_command.current_ref=0 pu, model_command.voltage_ref=0 pu, model_command.model_mode=6?, counter=0; refused: model_command.model_mode holds 6, which no label names
+301 RPDO2 model_command: model_command.angle_ref=0 °el, model_command.current_ref=0 pu, model_command.voltage_ref=0 pu, model_command.model_mode=7?, counter=0; refused: model_command.model_mode holds 7, which no label names
+301 RPDO2 model_command: model_command.angle_ref=0 °el, model_command.current_ref=0 pu, model_command.voltage_ref=0 pu, model_command.model_mode=idle, counter=0; refused: reserved bit 51
+301 RPDO2 model_command: model_command.angle_ref=0 °el, model_command.current_ref=0 pu, model_command.voltage_ref=0 pu, model_command.model_mode=idle, counter=0; refused: reserved bit 60
+281 TPDO2 drive_status: drive_status.state=12?, drive_status.pwm_on=0, drive_status.warning=0, drive_status.error=0, drive_status.critical=0, drive_status.emergency=0, drive_status.control_mode=3?, drive_status.model_mode=idle, counter=0
+201 RPDO1 drive_command: refused, 2 bytes: a PDO takes 8

@@ -1,0 +1,324 @@
+{"type":"header","format":"emb-canopen-od","version":1,"device":"ADPT-ETK Inverter","fingerprint":"0xF5A9C636"}
+{"type":"group","name":"dictionary","label_en":"Object dictionary","label_ru":"Словарь объектов"}
+{"type":"group","name":"device","label_en":"Device","label_ru":"Устройство"}
+{"type":"group","name":"settings","label_en":"Settings","label_ru":"Настройки"}
+{"type":"group","name":"system","label_en":"System","label_ru":"Система"}
+{"type":"group","name":"drive","label_en":"Drive","label_ru":"Привод"}
+{"type":"group","name":"nvm","label_en":"Non-volatile memory","label_ru":"Энергонезависимая память"}
+{"type":"group","name":"current_sensor","label_en":"Phase current sensors","label_ru":"Датчики фазного тока"}
+{"type":"group","name":"voltage_sensor","label_en":"DC voltage sensor","label_ru":"Датчик напряжения DC"}
+{"type":"group","name":"canopen","label_en":"CANopen","label_ru":"CANopen"}
+{"type":"group","name":"model","label_en":"Model","label_ru":"Модель"}
+{"type":"group","name":"protection","label_en":"Protection","label_ru":"Защиты"}
+{"type":"group","name":"motor","label_en":"Motor","label_ru":"Двигатель"}
+{"type":"group","name":"controllers","label_en":"Controllers","label_ru":"Регуляторы"}
+{"type":"group","name":"mras","label_en":"MRAS observer","label_ru":"Наблюдатель MRAS"}
+{"type":"group","name":"hall","label_en":"Hall sensors","label_ru":"Датчики Холла"}
+{"type":"group","name":"hall_calibration","label_en":"Hall sensor calibration","label_ru":"Калибровка датчиков Холла"}
+{"type":"group","name":"temperature_sensor","label_en":"Temperature sensors","label_ru":"Датчики температуры"}
+{"type":"group","name":"trouble","label_en":"Trouble","label_ru":"Неисправности"}
+{"type":"group","name":"electrical","label_en":"Electrical quantities","label_ru":"Электрические величины"}
+{"type":"group","name":"temperature","label_en":"Temperatures","label_ru":"Температуры"}
+{"type":"group","name":"torque","label_en":"Torque","label_ru":"Момент"}
+{"type":"group","name":"speed","label_en":"Speed","label_ru":"Скорость"}
+{"type":"group","name":"angle","label_en":"Angle","label_ru":"Угол"}
+{"type":"group","name":"ext_input","label_en":"External inputs","label_ru":"Внешние входы"}
+{"type":"group","name":"probe","label_en":"Debug probe","label_ru":"Отладочный пробник"}
+{"type":"value","value_table":0,"value":0,"name":"on_command","label_en":"On command","label_ru":"По команде"}
+{"type":"value","value_table":0,"value":1,"name":"on_restart","label_en":"On restart","label_ru":"После перезапуска"}
+{"type":"value","value_table":1,"value":0,"name":"none","label_en":"None","label_ru":"Нет"}
+{"type":"value","value_table":1,"value":1,"name":"warning","label_en":"Warning","label_ru":"Предупреждение"}
+{"type":"value","value_table":1,"value":2,"name":"error","label_en":"Error","label_ru":"Ошибка"}
+{"type":"value","value_table":1,"value":3,"name":"critical","label_en":"Critical","label_ru":"Критическая ошибка"}
+{"type":"value","value_table":1,"value":4,"name":"emergency","label_en":"Emergency","label_ru":"Авария"}
+{"type":"value","value_table":2,"value":100728832,"name":"unsupported_access","label_en":"Applies only after a restart","label_ru":"Применяется только после перезапуска"}
+{"type":"value","value_table":2,"value":100794368,"name":"object_not_found","label_en":"Unknown parameter","label_ru":"Неизвестный параметр"}
+{"type":"value","value_table":2,"value":100925507,"name":"parameter_incompatibility","label_en":"Check failed","label_ru":"Проверка не пройдена"}
+{"type":"value","value_table":2,"value":134217760,"name":"data_store_error","label_en":"Medium failed","label_ru":"Отказ носителя"}
+{"type":"value","value_table":2,"value":134217762,"name":"state_error","label_en":"Not admitted in this state, or values wait to be applied","label_ru":"Не допускается в этом состоянии, или значения ждут применения"}
+{"type":"value","value_table":3,"value":0,"name":"svpwm","label_en":"SVPWM","label_ru":"SVPWM"}
+{"type":"value","value_table":3,"value":1,"name":"dpwmmin","label_en":"DPWMMIN","label_ru":"DPWMMIN"}
+{"type":"value","value_table":3,"value":2,"name":"dpwmmax","label_en":"DPWMMAX","label_ru":"DPWMMAX"}
+{"type":"value","value_table":3,"value":3,"name":"dpwm0","label_en":"DPWM0","label_ru":"DPWM0"}
+{"type":"value","value_table":3,"value":4,"name":"dpwm1","label_en":"DPWM1","label_ru":"DPWM1"}
+{"type":"value","value_table":3,"value":5,"name":"dpwm2","label_en":"DPWM2","label_ru":"DPWM2"}
+{"type":"value","value_table":3,"value":6,"name":"dpwm3","label_en":"DPWM3","label_ru":"DPWM3"}
+{"type":"value","value_table":3,"value":7,"name":"adaptive_dpwm","label_en":"ADPWM","label_ru":"ADPWM"}
+{"type":"value","value_table":3,"value":8,"name":"gdpwm","label_en":"GDPWM","label_ru":"GDPWM"}
+{"type":"value","value_table":4,"value":0,"name":"a","label_en":"A (001)","label_ru":"A (001)"}
+{"type":"value","value_table":4,"value":1,"name":"ab","label_en":"AB (011)","label_ru":"AB (011)"}
+{"type":"value","value_table":4,"value":2,"name":"b","label_en":"B (010)","label_ru":"B (010)"}
+{"type":"value","value_table":4,"value":3,"name":"bc","label_en":"BC (110)","label_ru":"BC (110)"}
+{"type":"value","value_table":4,"value":4,"name":"c","label_en":"C (100)","label_ru":"C (100)"}
+{"type":"value","value_table":4,"value":5,"name":"ca","label_en":"CA (101)","label_ru":"CA (101)"}
+{"type":"value","value_table":5,"value":0,"name":"init","label_en":"Init","label_ru":"Инициализация"}
+{"type":"value","value_table":5,"value":1,"name":"standby","label_en":"Standby","label_ru":"Ожидание"}
+{"type":"value","value_table":5,"value":2,"name":"powering_up","label_en":"Powering up","label_ru":"Включение"}
+{"type":"value","value_table":5,"value":3,"name":"powering_down","label_en":"Powering down","label_ru":"Выключение"}
+{"type":"value","value_table":5,"value":4,"name":"ready","label_en":"Ready","label_ru":"Готов"}
+{"type":"value","value_table":5,"value":5,"name":"running","label_en":"Running","label_ru":"Работа"}
+{"type":"value","value_table":5,"value":6,"name":"stopping","label_en":"Stopping","label_ru":"Останов"}
+{"type":"value","value_table":5,"value":7,"name":"testing","label_en":"Testing","label_ru":"Тестирование"}
+{"type":"value","value_table":5,"value":8,"name":"calibrating","label_en":"Calibrating","label_ru":"Калибровка"}
+{"type":"value","value_table":5,"value":9,"name":"fault","label_en":"Fault","label_ru":"Авария"}
+{"type":"value","value_table":6,"value":0,"name":"torque","label_en":"Torque","label_ru":"Момент"}
+{"type":"value","value_table":6,"value":1,"name":"speed","label_en":"Speed","label_ru":"Скорость"}
+{"type":"value","value_table":6,"value":2,"name":"angle","label_en":"Angle","label_ru":"Угол"}
+{"type":"value","value_table":7,"value":0,"name":"idle","label_en":"Idle","label_ru":"Ожидание"}
+{"type":"value","value_table":7,"value":1,"name":"closed_loop","label_en":"Closed loop","label_ru":"Замкнутый"}
+{"type":"value","value_table":7,"value":2,"name":"semiclosed_loop","label_en":"Semiclosed loop","label_ru":"Полузамкнутый"}
+{"type":"value","value_table":7,"value":3,"name":"open_current_loop","label_en":"Open current loop","label_ru":"Разомкнутый I"}
+{"type":"value","value_table":7,"value":4,"name":"open_voltage_loop","label_en":"Open voltage loop","label_ru":"Разомкнутый V"}
+{"type":"value","value_table":7,"value":5,"name":"direct_pwm","label_en":"Direct PWM","label_ru":"Тест ШИМ"}
+{"type":"field","layout":0,"sub":"0x00","name":"highest_subindex","label_en":"Highest subindex","label_ru":"Наибольший подындекс","datatype":"uint8","access":"const"}
+{"type":"field","layout":0,"sub":"0x01","name":"requested","label_en":"Requested value","label_ru":"Запрошенное значение","access":"rw","inherits":true}
+{"type":"field","layout":0,"sub":"0x02","name":"applied","label_en":"Applied value","label_ru":"Применённое значение","access":"ro","inherits":true}
+{"type":"field","layout":0,"sub":"0x03","name":"stored","label_en":"Stored value","label_ru":"Сохранённое значение","access":"ro","inherits":true}
+{"type":"field","layout":0,"sub":"0x04","name":"default","label_en":"Default value","label_ru":"Значение по умолчанию","access":"const","inherits":true}
+{"type":"field","layout":0,"sub":"0x05","name":"min","label_en":"Lower bound","label_ru":"Нижняя граница","access":"const","inherits":true}
+{"type":"field","layout":0,"sub":"0x06","name":"max","label_en":"Upper bound","label_ru":"Верхняя граница","access":"const","inherits":true}
+{"type":"field","layout":0,"sub":"0x07","name":"policy","label_en":"Apply policy","label_ru":"Политика применения","datatype":"uint8","access":"const","value_table":0}
+{"type":"field","layout":0,"sub":"0x08","name":"apply","label_en":"Apply","label_ru":"Применить","datatype":"uint32","access":"wo","command":true}
+{"type":"field","layout":0,"sub":"0x09","name":"discard","label_en":"Discard","label_ru":"Отбросить","datatype":"uint32","access":"wo","command":true}
+{"type":"field","layout":1,"sub":"0x00","name":"highest_subindex","label_en":"Highest subindex","label_ru":"Наибольший подындекс","datatype":"uint8","access":"const"}
+{"type":"field","layout":1,"sub":"0x01","name":"requested","label_en":"Requested value","label_ru":"Запрошенное значение","access":"rw","inherits":true}
+{"type":"field","layout":1,"sub":"0x02","name":"applied","label_en":"Applied value","label_ru":"Применённое значение","access":"ro","inherits":true}
+{"type":"field","layout":1,"sub":"0x03","name":"stored","label_en":"Stored value","label_ru":"Сохранённое значение","access":"ro","inherits":true}
+{"type":"field","layout":1,"sub":"0x04","name":"default","label_en":"Default value","label_ru":"Значение по умолчанию","access":"const","inherits":true}
+{"type":"field","layout":1,"sub":"0x05","name":"min","label_en":"Lower bound","label_ru":"Нижняя граница","access":"const","inherits":true}
+{"type":"field","layout":1,"sub":"0x06","name":"max","label_en":"Upper bound","label_ru":"Верхняя граница","access":"const","inherits":true}
+{"type":"field","layout":1,"sub":"0x07","name":"policy","label_en":"Apply policy","label_ru":"Политика применения","datatype":"uint8","access":"const","value_table":0}
+{"type":"field","layout":1,"sub":"0x08","name":"apply","label_en":"Apply","label_ru":"Применить","datatype":"uint32","access":"wo","command":true}
+{"type":"field","layout":1,"sub":"0x09","name":"discard","label_en":"Discard","label_ru":"Отбросить","datatype":"uint32","access":"wo","command":true}
+{"type":"field","layout":1,"sub":"0x0A","name":"actual","label_en":"Actual value","label_ru":"Фактическое значение","access":"ro","inherits":true}
+{"type":"field","layout":2,"sub":"0x00","name":"highest_subindex","label_en":"Highest subindex","label_ru":"Наибольший подындекс","datatype":"uint8","access":"const"}
+{"type":"field","layout":2,"sub":"0x01","name":"restart_required","label_en":"Restart required","label_ru":"Требуется перезапуск","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x02","name":"unsaved_changes","label_en":"Unsaved changes","label_ru":"Есть несохранённые изменения","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x03","name":"unapplied_changes","label_en":"Unapplied changes","label_ru":"Есть неприменённые изменения","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x04","name":"params_defaulted","label_en":"Parameters loaded with defaults","label_ru":"Параметры поднялись со значениями по умолчанию","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x05","name":"nvm_write_error","label_en":"NVM write error","label_ru":"Ошибка записи NVM","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x06","name":"unexpected_reset","label_en":"Unexpected MCU reset","label_ru":"Неожиданный сброс MCU","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x07","name":"emergency","label_en":"Emergency","label_ru":"Авария","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x08","name":"watchdog_timeout","label_en":"Watchdog timeout","label_ru":"Таймаут watchdog","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x09","name":"invalid_config","label_en":"Invalid configuration","label_ru":"Некорректная конфигурация","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x0A","name":"abnormal_shutdown","label_en":"Abnormal shutdown","label_ru":"Аварийное выключение","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x0B","name":"no_nvm","label_en":"No non-volatile memory","label_ru":"Нет энергонезависимой памяти","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x0C","name":"nvm_read_error","label_en":"NVM read error","label_ru":"Ошибка чтения NVM","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x0D","name":"can_bus_error","label_en":"CAN bus error","label_ru":"Ошибка шины CAN","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x0E","name":"can_overrun","label_en":"CAN overrun","label_ru":"Переполнение CAN","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x0F","name":"can_vcu_connection_lost","label_en":"VCU connection lost","label_ru":"Потеря связи с VCU","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x10","name":"can_vcu_invalid_frame","label_en":"VCU invalid frame","label_ru":"Некорректный кадр VCU","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x11","name":"vdc_sensor_failure","label_en":"DC voltage sensor failure","label_ru":"Отказ датчика напряжения DC","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x12","name":"iph_sensor_failure","label_en":"Phase current sensor failure","label_ru":"Отказ датчика фазного тока","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x13","name":"ot_motor","label_en":"Motor overtemperature","label_ru":"Перегрев двигателя","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x14","name":"ot_pwr","label_en":"Power stage overtemperature","label_ru":"Перегрев силовой части","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x15","name":"ot_mcu","label_en":"MCU overtemperature","label_ru":"Перегрев MCU","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x16","name":"uv_dc","label_en":"DC undervoltage","label_ru":"Пониженное напряжение DC","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x17","name":"ov_dc","label_en":"DC overvoltage","label_ru":"Повышенное напряжение DC","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x18","name":"oc_dc","label_en":"DC overcurrent","label_ru":"Превышение тока DC","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x19","name":"oc_phase","label_en":"Phase overcurrent","label_ru":"Превышение фазного тока","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1A","name":"oc_phase_a","label_en":"Phase A overcurrent","label_ru":"Превышение тока фазы A","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1B","name":"oc_phase_b","label_en":"Phase B overcurrent","label_ru":"Превышение тока фазы B","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1C","name":"oc_phase_c","label_en":"Phase C overcurrent","label_ru":"Превышение тока фазы C","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1D","name":"flt_pwr","label_en":"Power module fault","label_ru":"Неисправность силового модуля","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1E","name":"flt_pwr_ah","label_en":"Power module fault: A high","label_ru":"Неисправность силового модуля: A high","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1F","name":"flt_pwr_al","label_en":"Power module fault: A low","label_ru":"Неисправность силового модуля: A low","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x20","name":"flt_pwr_bh","label_en":"Power module fault: B high","label_ru":"Неисправность силового модуля: B high","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x21","name":"flt_pwr_bl","label_en":"Power module fault: B low","label_ru":"Неисправность силового модуля: B low","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x22","name":"flt_pwr_ch","label_en":"Power module fault: C high","label_ru":"Неисправность силового модуля: C high","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x23","name":"flt_pwr_cl","label_en":"Power module fault: C low","label_ru":"Неисправность силового модуля: C low","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x24","name":"hall_invalid_input","label_en":"Hall invalid input state","label_ru":"Некорректное состояние датчиков Холла","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x25","name":"hall_invalid_calibration","label_en":"Hall invalid calibration","label_ru":"Некорректная калибровка датчиков Холла","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x26","name":"hall_calibration_terminated","label_en":"Hall calibration terminated","label_ru":"Калибровка датчиков Холла прервана","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x27","name":"motor_stall","label_en":"Motor stall","label_ru":"Заклинивание двигателя","datatype":"uint8","access":"ro","value_table":1}
+{"type":"object","index":"0x2000","sub":"0x00","group":"dictionary","name":"fingerprint","label_en":"Dictionary fingerprint","label_ru":"Отпечаток словаря","class":"about","datatype":"uint32","access":"const"}
+{"type":"array","index":"0x2001","group":"device","name":"name","label_en":"Device name","label_ru":"Наименование устройства","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"object","index":"0x2002","sub":"0x00","group":"device","name":"serial_number","label_en":"Serial number","label_ru":"Серийный номер","class":"about","datatype":"uint32","access":"const"}
+{"type":"array","index":"0x2003","group":"device","name":"hardware_version","label_en":"Hardware version","label_ru":"Версия аппаратуры","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2004","group":"device","name":"firmware_version","label_en":"Firmware version","label_ru":"Версия прошивки","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2005","group":"device","name":"firmware_commit_date","label_en":"Firmware commit date","label_ru":"Дата коммита прошивки","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2006","group":"device","name":"firmware_branch","label_en":"Firmware branch","label_ru":"Ветка прошивки","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2007","group":"device","name":"build_type","label_en":"Build type","label_ru":"Тип сборки","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2008","group":"device","name":"settings_storage","label_en":"Settings storage","label_ru":"Носитель настроек","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"object","index":"0x2100","sub":"0x01","group":"settings","name":"apply_all","label_en":"Apply all","label_ru":"Применить все","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2100","sub":"0x02","group":"settings","name":"discard_all","label_en":"Discard all","label_ru":"Отбросить все","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2100","sub":"0x03","group":"settings","name":"last_refusal","label_en":"Last refusal","label_ru":"Последний отказ","class":"control","datatype":"uint32","access":"ro","value_table":2}
+{"type":"object","index":"0x2101","sub":"0x01","group":"settings","name":"save_all_parameters","label_en":"Save all parameters","label_ru":"Сохранить все параметры","class":"control","datatype":"uint32","access":"wo","command":true,"signature":"0x65766173"}
+{"type":"object","index":"0x2101","sub":"0x02","group":"settings","name":"save_all_parameters_and_reset","label_en":"Save all parameters and reset","label_ru":"Сохранить все параметры и перезапустить","class":"control","datatype":"uint32","access":"wo","command":true,"signature":"0x65766173"}
+{"type":"object","index":"0x2102","sub":"0x01","group":"settings","name":"restore_all_default_parameters","label_en":"Restore all default parameters","label_ru":"Восстановить умолчания всех параметров","class":"control","datatype":"uint32","access":"wo","command":true,"signature":"0x64616F6C"}
+{"type":"object","index":"0x2102","sub":"0x02","group":"settings","name":"erase_all_parameters","label_en":"Erase all parameters","label_ru":"Стереть все параметры","class":"control","datatype":"uint32","access":"wo","command":true,"signature":"0x64616F6C"}
+{"type":"object","index":"0x2200","sub":"0x00","group":"system","name":"reset_device","label_en":"Reset device","label_ru":"Перезапустить устройство","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2201","sub":"0x00","group":"system","name":"clear_errors","label_en":"Clear errors","label_ru":"Сбросить ошибки","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2202","sub":"0x00","group":"system","name":"emergency","label_en":"Emergency stop","label_ru":"Аварийный останов","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2203","sub":"0x00","group":"drive","name":"calibrate_angle_sensor","label_en":"Calibrate angle sensor","label_ru":"Калибровать датчик угла","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2204","sub":"0x00","group":"drive","name":"test_duty_cycle_a","label_en":"Test duty cycle, phase A","label_ru":"Тестовый коэффициент заполнения фазы A","class":"control","datatype":"float32","access":"wo"}
+{"type":"object","index":"0x2205","sub":"0x00","group":"drive","name":"test_duty_cycle_b","label_en":"Test duty cycle, phase B","label_ru":"Тестовый коэффициент заполнения фазы B","class":"control","datatype":"float32","access":"wo"}
+{"type":"object","index":"0x2206","sub":"0x00","group":"drive","name":"test_duty_cycle_c","label_en":"Test duty cycle, phase C","label_ru":"Тестовый коэффициент заполнения фазы C","class":"control","datatype":"float32","access":"wo"}
+{"type":"object","index":"0x3000","sub":"0x01","group":"nvm","name":"magic","label_en":"Magic number","label_ru":"Сигнатура","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x02","group":"nvm","name":"slot_count","label_en":"Slot count","label_ru":"Число слотов","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x03","group":"nvm","name":"slot_capacity","label_en":"Slot capacity","label_ru":"Ёмкость слота","class":"parameters","datatype":"uint32","access":"ro","unit_en":"B","unit_ru":"Б"}
+{"type":"object","index":"0x3000","sub":"0x04","group":"nvm","name":"slots_per_block","label_en":"Slots per block","label_ru":"Слотов в блоке","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x05","group":"nvm","name":"sequence","label_en":"Sequence number","label_ru":"Порядковый номер","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x06","group":"nvm","name":"erase_cycles","label_en":"Erase cycles","label_ru":"Циклы стирания","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x07","group":"nvm","name":"loaded_slot","label_en":"Loaded slot","label_ru":"Загруженный слот","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x08","group":"nvm","name":"loaded_sequence","label_en":"Loaded sequence number","label_ru":"Порядковый номер загруженной записи","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x09","group":"nvm","name":"valid","label_en":"Record valid","label_ru":"Запись действительна","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0A","group":"nvm","name":"schema_matched","label_en":"Schema matched","label_ru":"Схема совпала","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0B","group":"nvm","name":"read_failed","label_en":"Read failed","label_ru":"Ошибка чтения","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0C","group":"nvm","name":"stored","label_en":"Values stored","label_ru":"Значений в записи","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0D","group":"nvm","name":"loaded","label_en":"Values loaded","label_ru":"Значений загружено","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0E","group":"nvm","name":"unknown","label_en":"Unknown values","label_ru":"Неизвестных значений","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0F","group":"nvm","name":"rejected","label_en":"Values rejected","label_ru":"Значений отвергнуто","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x10","group":"nvm","name":"missing","label_en":"Parameters missing","label_ru":"Параметров без значения","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x11","group":"nvm","name":"restart_required","label_en":"Restart required","label_ru":"Требуется перезапуск","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x12","group":"nvm","name":"unapplied","label_en":"Unapplied changes","label_ru":"Неприменённые изменения","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x13","group":"nvm","name":"unsaved","label_en":"Unsaved changes","label_ru":"Несохранённые изменения","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3008","sub":"0x01","group":"current_sensor","name":"gain_a","label_en":"Phase A gain","label_ru":"Коэффициент передачи фазы A","class":"parameters","datatype":"float32","access":"const","unit_en":"A/V","unit_ru":"А/В"}
+{"type":"object","index":"0x3008","sub":"0x02","group":"current_sensor","name":"gain_b","label_en":"Phase B gain","label_ru":"Коэффициент передачи фазы B","class":"parameters","datatype":"float32","access":"const","unit_en":"A/V","unit_ru":"А/В"}
+{"type":"object","index":"0x3008","sub":"0x03","group":"current_sensor","name":"gain_c","label_en":"Phase C gain","label_ru":"Коэффициент передачи фазы C","class":"parameters","datatype":"float32","access":"const","unit_en":"A/V","unit_ru":"А/В"}
+{"type":"object","index":"0x3008","sub":"0x04","group":"current_sensor","name":"zero_drift_a","label_en":"Phase A zero drift","label_ru":"Дрейф нуля фазы A","class":"parameters","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x3008","sub":"0x05","group":"current_sensor","name":"zero_drift_b","label_en":"Phase B zero drift","label_ru":"Дрейф нуля фазы B","class":"parameters","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x3008","sub":"0x06","group":"current_sensor","name":"zero_drift_c","label_en":"Phase C zero drift","label_ru":"Дрейф нуля фазы C","class":"parameters","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x3009","sub":"0x01","group":"voltage_sensor","name":"gain","label_en":"Gain","label_ru":"Коэффициент передачи","class":"parameters","datatype":"float32","access":"const","unit_en":"V/V","unit_ru":"В/В"}
+{"type":"object","index":"0x3009","sub":"0x02","group":"voltage_sensor","name":"offset","label_en":"Offset","label_ru":"Смещение","class":"parameters","datatype":"float32","access":"const","unit_en":"V","unit_ru":"В"}
+{"type":"record","index":"0x3100","group":"canopen","name":"node_id","label_en":"Node ID","label_ru":"Номер узла","class":"parameters","datatype":"uint32","layout":0}
+{"type":"record","index":"0x3120","group":"drive","name":"phase_swap","label_en":"Phase swap","label_ru":"Перестановка фаз","class":"parameters","datatype":"boolean","layout":0}
+{"type":"record","index":"0x3121","group":"model","name":"torque_slope","label_en":"Torque slope","label_ru":"Темп изменения момента","class":"parameters","datatype":"float32","unit_en":"pu/s","unit_ru":"о. е./с","layout":0}
+{"type":"record","index":"0x3122","group":"model","name":"speed_slope","label_en":"Speed slope","label_ru":"Темп изменения скорости","class":"parameters","datatype":"float32","unit_en":"rpm/s","unit_ru":"об/(мин·с)","layout":0}
+{"type":"record","index":"0x3123","group":"drive","name":"runout_speed","label_en":"Standstill speed threshold","label_ru":"Порог скорости останова","class":"parameters","datatype":"float32","unit_en":"rpm","unit_ru":"об/мин","layout":0}
+{"type":"record","index":"0x3124","group":"drive","name":"stopping_torque","label_en":"Stopping torque","label_ru":"Тормозной момент","class":"parameters","datatype":"float32","unit_en":"pu","unit_ru":"о. е.","layout":0}
+{"type":"record","index":"0x3125","group":"drive","name":"stopping_timeout","label_en":"Stopping timeout","label_ru":"Таймаут останова","class":"parameters","datatype":"uint32","unit_en":"ms","unit_ru":"мс","layout":0}
+{"type":"record","index":"0x3126","group":"drive","name":"active_discharge","label_en":"Active discharge","label_ru":"Активный разряд","class":"parameters","datatype":"boolean","layout":0}
+{"type":"record","index":"0x3127","group":"drive","name":"pwm_frequency","label_en":"PWM frequency","label_ru":"Частота ШИМ","class":"parameters","datatype":"float32","unit_en":"Hz","unit_ru":"Гц","layout":1}
+{"type":"record","index":"0x3140","group":"protection","name":"uvp_dc","label_en":"DC undervoltage threshold","label_ru":"Порог пониженного напряжения DC","class":"parameters","datatype":"float32","unit_en":"V","unit_ru":"В","layout":0}
+{"type":"record","index":"0x3141","group":"protection","name":"ovp_dc","label_en":"DC overvoltage threshold","label_ru":"Порог повышенного напряжения DC","class":"parameters","datatype":"float32","unit_en":"V","unit_ru":"В","layout":0}
+{"type":"record","index":"0x3142","group":"protection","name":"ocp_phase","label_en":"Phase overcurrent threshold","label_ru":"Порог превышения фазного тока","class":"parameters","datatype":"float32","unit_en":"A","unit_ru":"А","layout":0}
+{"type":"record","index":"0x3143","group":"protection","name":"otp_motor","label_en":"Motor overtemperature threshold","label_ru":"Порог перегрева двигателя","class":"parameters","datatype":"float32","unit_en":"°C","unit_ru":"°C","layout":0}
+{"type":"record","index":"0x3144","group":"protection","name":"otp_power","label_en":"Power stage overtemperature threshold","label_ru":"Порог перегрева силовой части","class":"parameters","datatype":"float32","unit_en":"°C","unit_ru":"°C","layout":0}
+{"type":"record","index":"0x3145","group":"protection","name":"otp_mcu","label_en":"MCU overtemperature threshold","label_ru":"Порог перегрева MCU","class":"parameters","datatype":"float32","unit_en":"°C","unit_ru":"°C","layout":0}
+{"type":"record","index":"0x3146","group":"protection","name":"ot_warning_margin","label_en":"Overtemperature warning margin","label_ru":"Запас предупреждения о перегреве","class":"parameters","datatype":"float32","unit_en":"°C","unit_ru":"°C","layout":0}
+{"type":"record","index":"0x3147","group":"protection","name":"ot_reset_margin","label_en":"Overtemperature reset margin","label_ru":"Запас сброса перегрева","class":"parameters","datatype":"float32","unit_en":"°C","unit_ru":"°C","layout":0}
+{"type":"record","index":"0x3148","group":"protection","name":"stall_current_threshold","label_en":"Stall current threshold","label_ru":"Порог тока заклинивания","class":"parameters","datatype":"float32","unit_en":"pu","unit_ru":"о. е.","layout":0}
+{"type":"record","index":"0x3149","group":"protection","name":"stall_timeout","label_en":"Stall timeout","label_ru":"Таймаут заклинивания","class":"parameters","datatype":"uint32","unit_en":"ms","unit_ru":"мс","layout":0}
+{"type":"record","index":"0x3160","group":"motor","name":"pole_pairs","label_en":"Pole pairs","label_ru":"Число пар полюсов","class":"parameters","datatype":"int32","layout":0}
+{"type":"record","index":"0x3161","group":"motor","name":"R","label_en":"Stator resistance","label_ru":"Сопротивление статора","class":"parameters","datatype":"float32","unit_en":"Ω","unit_ru":"Ом","layout":0}
+{"type":"record","index":"0x3162","group":"motor","name":"Ld","label_en":"d-axis inductance","label_ru":"Индуктивность по оси d","class":"parameters","datatype":"float32","unit_en":"H","unit_ru":"Гн","layout":0}
+{"type":"record","index":"0x3163","group":"motor","name":"Lq","label_en":"q-axis inductance","label_ru":"Индуктивность по оси q","class":"parameters","datatype":"float32","unit_en":"H","unit_ru":"Гн","layout":0}
+{"type":"record","index":"0x3164","group":"motor","name":"Psi","label_en":"Flux linkage","label_ru":"Потокосцепление","class":"parameters","datatype":"float32","unit_en":"Wb","unit_ru":"Вб","layout":0}
+{"type":"record","index":"0x3180","group":"model","name":"motoring_current_limit","label_en":"Motoring current limit","label_ru":"Ограничение тока в двигательном режиме","class":"parameters","datatype":"float32","unit_en":"A","unit_ru":"А","layout":0}
+{"type":"record","index":"0x3181","group":"model","name":"generating_current_limit","label_en":"Generating current limit","label_ru":"Ограничение тока в генераторном режиме","class":"parameters","datatype":"float32","unit_en":"A","unit_ru":"А","layout":0}
+{"type":"record","index":"0x3182","group":"model","name":"speed_limit","label_en":"Speed limit","label_ru":"Ограничение скорости","class":"parameters","datatype":"float32","unit_en":"rpm","unit_ru":"об/мин","layout":0}
+{"type":"record","index":"0x3183","group":"model","name":"angle_correction","label_en":"Angle correction","label_ru":"Коррекция угла","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x3184","group":"model","name":"Vd_limit_factor","label_en":"d-axis voltage limit factor","label_ru":"Коэффициент ограничения напряжения по оси d","class":"parameters","datatype":"float32","unit_en":"pu","unit_ru":"о. е.","layout":0}
+{"type":"record","index":"0x3185","group":"model","name":"pwm_mode","label_en":"PWM mode","label_ru":"Режим ШИМ","class":"parameters","datatype":"uint32","value_table":3,"layout":0}
+{"type":"record","index":"0x3186","group":"model","name":"deadtime_compensation","label_en":"Dead-time compensation","label_ru":"Компенсация мёртвого времени","class":"parameters","datatype":"boolean","layout":0}
+{"type":"record","index":"0x3187","group":"model","name":"deadtime_compensation_threshold","label_en":"Dead-time compensation threshold","label_ru":"Порог компенсации мёртвого времени","class":"parameters","datatype":"float32","unit_en":"A","unit_ru":"А","layout":0}
+{"type":"record","index":"0x31A0","group":"controllers","name":"speed_Kp","label_en":"Speed controller Kp","label_ru":"Kp регулятора скорости","class":"parameters","datatype":"float32","layout":0}
+{"type":"record","index":"0x31A1","group":"controllers","name":"speed_Ki","label_en":"Speed controller Ki","label_ru":"Ki регулятора скорости","class":"parameters","datatype":"float32","layout":0}
+{"type":"record","index":"0x31A2","group":"controllers","name":"Id_Kp","label_en":"d-axis current controller Kp","label_ru":"Kp регулятора тока по оси d","class":"parameters","datatype":"float32","layout":1}
+{"type":"record","index":"0x31A3","group":"controllers","name":"Id_Ki","label_en":"d-axis current controller Ki","label_ru":"Ki регулятора тока по оси d","class":"parameters","datatype":"float32","layout":1}
+{"type":"record","index":"0x31A4","group":"controllers","name":"Iq_Kp","label_en":"q-axis current controller Kp","label_ru":"Kp регулятора тока по оси q","class":"parameters","datatype":"float32","layout":1}
+{"type":"record","index":"0x31A5","group":"controllers","name":"Iq_Ki","label_en":"q-axis current controller Ki","label_ru":"Ki регулятора тока по оси q","class":"parameters","datatype":"float32","layout":1}
+{"type":"record","index":"0x31A6","group":"controllers","name":"current_autotune","label_en":"Current controller autotuning","label_ru":"Автонастройка регуляторов тока","class":"parameters","datatype":"boolean","layout":0}
+{"type":"record","index":"0x31A7","group":"controllers","name":"current_filter_time_constant","label_en":"Current filter time constant","label_ru":"Постоянная времени фильтра тока","class":"parameters","datatype":"float32","unit_en":"s","unit_ru":"с","layout":0}
+{"type":"record","index":"0x31C0","group":"mras","name":"Kp","label_en":"MRAS observer Kp","label_ru":"Kp наблюдателя MRAS","class":"parameters","datatype":"float32","layout":0}
+{"type":"record","index":"0x31C1","group":"mras","name":"Ki","label_en":"MRAS observer Ki","label_ru":"Ki наблюдателя MRAS","class":"parameters","datatype":"float32","layout":0}
+{"type":"record","index":"0x31C2","group":"mras","name":"speed_limit","label_en":"MRAS observer speed limit","label_ru":"Ограничение скорости наблюдателя MRAS","class":"parameters","datatype":"float32","unit_en":"rpm","unit_ru":"об/мин","layout":0}
+{"type":"record","index":"0x31E0","group":"current_sensor","name":"zero_drift_threshold","label_en":"Zero drift threshold","label_ru":"Порог дрейфа нуля","class":"parameters","datatype":"float32","unit_en":"A","unit_ru":"А","layout":0}
+{"type":"record","index":"0x31E1","group":"current_sensor","name":"scale_a","label_en":"Phase A scale factor","label_ru":"Коэффициент масштабирования фазы A","class":"parameters","datatype":"float32","unit_en":"A/A","unit_ru":"А/А","layout":0}
+{"type":"record","index":"0x31E2","group":"current_sensor","name":"scale_b","label_en":"Phase B scale factor","label_ru":"Коэффициент масштабирования фазы B","class":"parameters","datatype":"float32","unit_en":"A/A","unit_ru":"А/А","layout":0}
+{"type":"record","index":"0x31E3","group":"current_sensor","name":"scale_c","label_en":"Phase C scale factor","label_ru":"Коэффициент масштабирования фазы C","class":"parameters","datatype":"float32","unit_en":"A/A","unit_ru":"А/А","layout":0}
+{"type":"record","index":"0x3200","group":"hall","name":"enabled","label_en":"Hall sensors enabled","label_ru":"Датчики Холла включены","class":"parameters","datatype":"boolean","layout":0}
+{"type":"record","index":"0x3201","group":"hall","name":"speed_time_constant","label_en":"Speed filter time constant","label_ru":"Постоянная времени фильтра скорости","class":"parameters","datatype":"float32","unit_en":"s","unit_ru":"с","layout":0}
+{"type":"record","index":"0x3202","group":"hall","name":"fwd_a","label_en":"State A angle, forward","label_ru":"Угол состояния A, вперёд","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x3203","group":"hall","name":"fwd_ab","label_en":"State AB angle, forward","label_ru":"Угол состояния AB, вперёд","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x3204","group":"hall","name":"fwd_b","label_en":"State B angle, forward","label_ru":"Угол состояния B, вперёд","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x3205","group":"hall","name":"fwd_bc","label_en":"State BC angle, forward","label_ru":"Угол состояния BC, вперёд","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x3206","group":"hall","name":"fwd_c","label_en":"State C angle, forward","label_ru":"Угол состояния C, вперёд","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x3207","group":"hall","name":"fwd_ca","label_en":"State CA angle, forward","label_ru":"Угол состояния CA, вперёд","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x3208","group":"hall","name":"rev_a","label_en":"State A angle, reverse","label_ru":"Угол состояния A, назад","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x3209","group":"hall","name":"rev_ab","label_en":"State AB angle, reverse","label_ru":"Угол состояния AB, назад","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x320A","group":"hall","name":"rev_b","label_en":"State B angle, reverse","label_ru":"Угол состояния B, назад","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x320B","group":"hall","name":"rev_bc","label_en":"State BC angle, reverse","label_ru":"Угол состояния BC, назад","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x320C","group":"hall","name":"rev_c","label_en":"State C angle, reverse","label_ru":"Угол состояния C, назад","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x320D","group":"hall","name":"rev_ca","label_en":"State CA angle, reverse","label_ru":"Угол состояния CA, назад","class":"parameters","datatype":"float32","unit_en":"°el","unit_ru":"°эл","layout":0}
+{"type":"record","index":"0x3220","group":"hall_calibration","name":"phase_current","label_en":"Calibration phase current","label_ru":"Фазный ток калибровки","class":"parameters","datatype":"float32","unit_en":"pu","unit_ru":"о. е.","layout":0}
+{"type":"record","index":"0x3221","group":"hall_calibration","name":"phase_current_slope","label_en":"Calibration current slope","label_ru":"Темп нарастания тока калибровки","class":"parameters","datatype":"float32","unit_en":"pu/s","unit_ru":"о. е./с","layout":0}
+{"type":"record","index":"0x3222","group":"hall_calibration","name":"speed","label_en":"Calibration speed","label_ru":"Скорость калибровки","class":"parameters","datatype":"float32","unit_en":"rpm","unit_ru":"об/мин","layout":0}
+{"type":"record","index":"0x3223","group":"hall_calibration","name":"electrical_revolutions","label_en":"Calibration electrical revolutions","label_ru":"Число электрических оборотов калибровки","class":"parameters","datatype":"int32","layout":0}
+{"type":"record","index":"0x3240","group":"temperature_sensor","name":"motor_time_constant","label_en":"Motor temperature filter time constant","label_ru":"Постоянная времени фильтра температуры двигателя","class":"parameters","datatype":"float32","unit_en":"s","unit_ru":"с","layout":0}
+{"type":"record","index":"0x3241","group":"temperature_sensor","name":"power_time_constant","label_en":"Power stage temperature filter time constant","label_ru":"Постоянная времени фильтра температуры силовой части","class":"parameters","datatype":"float32","unit_en":"s","unit_ru":"с","layout":0}
+{"type":"record","index":"0x3242","group":"temperature_sensor","name":"mcu_time_constant","label_en":"MCU temperature filter time constant","label_ru":"Постоянная времени фильтра температуры MCU","class":"parameters","datatype":"float32","unit_en":"s","unit_ru":"с","layout":0}
+{"type":"record","index":"0x4000","group":"trouble","name":"statuses","label_en":"Trouble statuses","label_ru":"Статусы неисправностей","class":"status","layout":2}
+{"type":"object","index":"0x5000","sub":"0x01","group":"system","name":"uptime","label_en":"Uptime","label_ru":"Время работы","class":"watch","datatype":"float32","access":"ro","unit_en":"s","unit_ru":"с"}
+{"type":"object","index":"0x5010","sub":"0x01","group":"electrical","name":"Vdc","label_en":"DC voltage","label_ru":"Напряжение DC","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x5010","sub":"0x02","group":"electrical","name":"Idc","label_en":"DC current","label_ru":"Ток DC","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x03","group":"electrical","name":"Ia","label_en":"Phase A current","label_ru":"Ток фазы A","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x04","group":"electrical","name":"Ib","label_en":"Phase B current","label_ru":"Ток фазы B","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x05","group":"electrical","name":"Ic","label_en":"Phase C current","label_ru":"Ток фазы C","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x06","group":"electrical","name":"Is","label_en":"Stator current","label_ru":"Ток статора","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x07","group":"electrical","name":"Id","label_en":"d-axis current","label_ru":"Ток по оси d","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x08","group":"electrical","name":"Id_ref","label_en":"d-axis current reference","label_ru":"Задание тока по оси d","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x09","group":"electrical","name":"Iq","label_en":"q-axis current","label_ru":"Ток по оси q","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x0A","group":"electrical","name":"Iq_ref","label_en":"q-axis current reference","label_ru":"Задание тока по оси q","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x0B","group":"electrical","name":"Vd","label_en":"d-axis voltage","label_ru":"Напряжение по оси d","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x5010","sub":"0x0C","group":"electrical","name":"Vq","label_en":"q-axis voltage","label_ru":"Напряжение по оси q","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x5010","sub":"0x0D","group":"electrical","name":"Vd_comp","label_en":"d-axis compensation voltage","label_ru":"Напряжение компенсации по оси d","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x5010","sub":"0x0E","group":"electrical","name":"Vq_comp","label_en":"q-axis compensation voltage","label_ru":"Напряжение компенсации по оси q","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x5020","sub":"0x01","group":"temperature","name":"Tmcu","label_en":"MCU temperature","label_ru":"Температура MCU","class":"watch","datatype":"float32","access":"ro","unit_en":"°C","unit_ru":"°C"}
+{"type":"object","index":"0x5020","sub":"0x02","group":"temperature","name":"Tpwr","label_en":"Highest power stage temperature","label_ru":"Наибольшая температура силовой части","class":"watch","datatype":"float32","access":"ro","unit_en":"°C","unit_ru":"°C"}
+{"type":"object","index":"0x5020","sub":"0x03","group":"temperature","name":"Tmot","label_en":"Highest motor temperature","label_ru":"Наибольшая температура двигателя","class":"watch","datatype":"float32","access":"ro","unit_en":"°C","unit_ru":"°C"}
+{"type":"array","index":"0x5021","group":"temperature","name":"Tpwr_sensors","label_en":"Power stage temperatures","label_ru":"Температуры силовой части","class":"watch","datatype":"float32","access":"ro","unit_en":"°C","unit_ru":"°C"}
+{"type":"array","index":"0x5022","group":"temperature","name":"Tmot_sensors","label_en":"Motor temperatures","label_ru":"Температуры двигателя","class":"watch","datatype":"float32","access":"ro","unit_en":"°C","unit_ru":"°C"}
+{"type":"object","index":"0x5030","sub":"0x01","group":"torque","name":"ref","label_en":"Torque reference","label_ru":"Задание момента","class":"watch","datatype":"float32","access":"ro","unit_en":"%","unit_ru":"%"}
+{"type":"object","index":"0x5030","sub":"0x02","group":"torque","name":"ref_mod","label_en":"Model torque reference","label_ru":"Задание момента в модели","class":"watch","datatype":"float32","access":"ro","unit_en":"%","unit_ru":"%"}
+{"type":"object","index":"0x5030","sub":"0x03","group":"torque","name":"actual","label_en":"Actual torque","label_ru":"Фактический момент","class":"watch","datatype":"float32","access":"ro","unit_en":"%","unit_ru":"%"}
+{"type":"object","index":"0x5040","sub":"0x01","group":"speed","name":"ref","label_en":"Speed reference","label_ru":"Задание скорости","class":"watch","datatype":"float32","access":"ro","unit_en":"rpm","unit_ru":"об/мин"}
+{"type":"object","index":"0x5040","sub":"0x02","group":"speed","name":"ref_mod","label_en":"Model speed reference","label_ru":"Задание скорости в модели","class":"watch","datatype":"float32","access":"ro","unit_en":"rpm","unit_ru":"об/мин"}
+{"type":"object","index":"0x5040","sub":"0x03","group":"speed","name":"actual","label_en":"Actual speed","label_ru":"Фактическая скорость","class":"watch","datatype":"float32","access":"ro","unit_en":"rpm","unit_ru":"об/мин"}
+{"type":"object","index":"0x5050","sub":"0x01","group":"angle","name":"ref","label_en":"Angle reference","label_ru":"Задание угла","class":"watch","datatype":"float32","access":"ro","unit_en":"°el","unit_ru":"°эл"}
+{"type":"object","index":"0x5050","sub":"0x02","group":"angle","name":"actual","label_en":"Actual angle","label_ru":"Фактический угол","class":"watch","datatype":"float32","access":"ro","unit_en":"°el","unit_ru":"°эл"}
+{"type":"object","index":"0x5070","sub":"0x01","group":"hall","name":"speed","label_en":"Hall sensor speed","label_ru":"Скорость по датчикам Холла","class":"watch","datatype":"float32","access":"ro","unit_en":"rpm","unit_ru":"об/мин"}
+{"type":"object","index":"0x5070","sub":"0x02","group":"hall","name":"angle","label_en":"Hall sensor angle","label_ru":"Угол по датчикам Холла","class":"watch","datatype":"float32","access":"ro","unit_en":"°el","unit_ru":"°эл"}
+{"type":"object","index":"0x5070","sub":"0x03","group":"hall","name":"sector","label_en":"Hall sector","label_ru":"Сектор Холла","class":"watch","datatype":"uint32","access":"ro","value_table":4}
+{"type":"object","index":"0x5070","sub":"0x04","group":"hall","name":"input_a","label_en":"Hall input A","label_ru":"Вход Холла A","class":"watch","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x5070","sub":"0x05","group":"hall","name":"input_b","label_en":"Hall input B","label_ru":"Вход Холла B","class":"watch","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x5070","sub":"0x06","group":"hall","name":"input_c","label_en":"Hall input C","label_ru":"Вход Холла C","class":"watch","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x5070","sub":"0x07","group":"hall","name":"emu_angle","label_en":"Emulated angle","label_ru":"Эмулированный угол","class":"watch","datatype":"float32","access":"ro","unit_en":"°el","unit_ru":"°эл"}
+{"type":"object","index":"0x5070","sub":"0x08","group":"hall","name":"emu_dspeed","label_en":"Emulator speed difference","label_ru":"Разность скоростей эмулятора","class":"watch","datatype":"float32","access":"ro","unit_en":"rpm","unit_ru":"об/мин"}
+{"type":"object","index":"0x5070","sub":"0x09","group":"hall","name":"emu_dangle","label_en":"Emulator angle difference","label_ru":"Разность углов эмулятора","class":"watch","datatype":"float32","access":"ro","unit_en":"°el","unit_ru":"°эл"}
+{"type":"array","index":"0x5080","group":"ext_input","name":"V","label_en":"External input voltages","label_ru":"Напряжения внешних входов","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"array","index":"0x5090","group":"probe","name":"channels","label_en":"Probe channel levels","label_ru":"Уровни каналов пробника","class":"watch","datatype":"float32","access":"ro"}
+{"type":"pdo","name":"statuses","label_en":"Trouble statuses","label_ru":"Статусы неисправностей","direction":"tx","number":1,"mapping":"sam","cob_base":"0x180","period_ms":10}
+{"type":"pdo","name":"drive_status","label_en":"Drive status","label_ru":"Состояние привода","direction":"tx","number":2,"mapping":"signals","cob_base":"0x280","period_ms":10}
+{"type":"signal","pdo":"drive_status","start":0,"width":8,"role":"value","name":"state","label_en":"Drive state","label_ru":"Состояние автомата","encoding":"unsigned","value_table":5}
+{"type":"signal","pdo":"drive_status","start":8,"width":1,"role":"value","name":"pwm_on","label_en":"PWM on","label_ru":"ШИМ включён","encoding":"unsigned"}
+{"type":"signal","pdo":"drive_status","start":9,"width":1,"role":"value","name":"warning","label_en":"Warning","label_ru":"Предупреждение","encoding":"unsigned"}
+{"type":"signal","pdo":"drive_status","start":10,"width":1,"role":"value","name":"error","label_en":"Error","label_ru":"Ошибка","encoding":"unsigned"}
+{"type":"signal","pdo":"drive_status","start":11,"width":1,"role":"value","name":"critical","label_en":"Critical fault","label_ru":"Критическая неисправность","encoding":"unsigned"}
+{"type":"signal","pdo":"drive_status","start":12,"width":1,"role":"value","name":"emergency","label_en":"Emergency","label_ru":"Аварийный останов","encoding":"unsigned"}
+{"type":"signal","pdo":"drive_status","start":16,"width":2,"role":"value","name":"control_mode","label_en":"Control mode","label_ru":"Режим управления","encoding":"unsigned","value_table":6}
+{"type":"signal","pdo":"drive_status","start":18,"width":3,"role":"value","name":"model_mode","label_en":"Model mode","label_ru":"Режим модели","encoding":"unsigned","value_table":7}
+{"type":"signal","pdo":"drive_status","start":56,"width":2,"role":"counter","encoding":"unsigned"}
+{"type":"pdo","name":"electrical_status","label_en":"Electrical status","label_ru":"Электрические величины","direction":"tx","number":3,"mapping":"signals","cob_base":"0x380","period_ms":10}
+{"type":"signal","pdo":"electrical_status","start":0,"width":16,"role":"value","name":"dc_voltage","label_en":"DC voltage","label_ru":"Напряжение DC","encoding":"signed","scale":"1/10","unit_en":"V","unit_ru":"В"}
+{"type":"signal","pdo":"electrical_status","start":16,"width":16,"role":"value","name":"phase_current","label_en":"Stator current","label_ru":"Ток статора","encoding":"signed","scale":"1/10","unit_en":"A","unit_ru":"А"}
+{"type":"signal","pdo":"electrical_status","start":56,"width":2,"role":"counter","encoding":"unsigned"}
+{"type":"pdo","name":"motion_status","label_en":"Motion status","label_ru":"Скорость и угол","direction":"tx","number":4,"mapping":"signals","cob_base":"0x480","period_ms":100}
+{"type":"signal","pdo":"motion_status","start":0,"width":16,"role":"value","name":"speed","label_en":"Actual speed","label_ru":"Фактическая скорость","encoding":"signed","unit_en":"rpm","unit_ru":"об/мин"}
+{"type":"signal","pdo":"motion_status","start":16,"width":16,"role":"value","name":"angle","label_en":"Actual angle","label_ru":"Фактический угол","encoding":"signed","unit_en":"°el","unit_ru":"°эл"}
+{"type":"signal","pdo":"motion_status","start":56,"width":2,"role":"counter","encoding":"unsigned"}
+{"type":"pdo","name":"drive_command","label_en":"Drive command","label_ru":"Команда приводу","direction":"rx","number":1,"mapping":"signals","cob_base":"0x200","timeout_ms":350}
+{"type":"signal","pdo":"drive_command","start":0,"width":1,"role":"value","name":"emergency","label_en":"Emergency stop","label_ru":"Аварийный останов","encoding":"unsigned"}
+{"type":"signal","pdo":"drive_command","start":1,"width":1,"role":"value","name":"power","label_en":"Power","label_ru":"Питание","encoding":"unsigned"}
+{"type":"signal","pdo":"drive_command","start":2,"width":1,"role":"value","name":"start","label_en":"Start","label_ru":"Пуск","encoding":"unsigned"}
+{"type":"signal","pdo":"drive_command","start":3,"width":2,"role":"value","name":"control_mode","label_en":"Control mode","label_ru":"Режим управления","encoding":"unsigned","value_table":6}
+{"type":"signal","pdo":"drive_command","start":16,"width":16,"role":"value","name":"torque_ref","label_en":"Torque reference","label_ru":"Задание момента","encoding":"signed","scale":"1/10000","unit_en":"pu","unit_ru":"о. е."}
+{"type":"signal","pdo":"drive_command","start":32,"width":16,"role":"value","name":"speed_ref","label_en":"Speed reference","label_ru":"Задание скорости","encoding":"signed","unit_en":"rpm","unit_ru":"об/мин"}
+{"type":"signal","pdo":"drive_command","start":56,"width":2,"role":"counter","encoding":"unsigned"}
+{"type":"pdo","name":"model_command","label_en":"Model command","label_ru":"Команда модели","direction":"rx","number":2,"mapping":"signals","cob_base":"0x300","timeout_ms":350}
+{"type":"signal","pdo":"model_command","start":0,"width":16,"role":"value","name":"angle_ref","label_en":"Angle reference","label_ru":"Задание угла","encoding":"signed","unit_en":"°el","unit_ru":"°эл"}
+{"type":"signal","pdo":"model_command","start":16,"width":16,"role":"value","name":"current_ref","label_en":"d-axis current reference","label_ru":"Задание тока по оси d","encoding":"signed","scale":"1/10000","unit_en":"pu","unit_ru":"о. е."}
+{"type":"signal","pdo":"model_command","start":32,"width":16,"role":"value","name":"voltage_ref","label_en":"d-axis voltage reference","label_ru":"Задание напряжения по оси d","encoding":"unsigned","scale":"1/10000","unit_en":"pu","unit_ru":"о. е."}
+{"type":"signal","pdo":"model_command","start":48,"width":3,"role":"value","name":"model_mode","label_en":"Model mode","label_ru":"Режим модели","encoding":"unsigned","value_table":7}
+{"type":"signal","pdo":"model_command","start":56,"width":2,"role":"counter","encoding":"unsigned"}
