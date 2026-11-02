@@ -20,7 +20,7 @@ namespace ucanopen::od {
 // does not know.
 size_t size_of(DataType type);
 
-// The text of a value as the program shows it: a number, true or false, the
+// The text of a value as the program shows it: a number, «да» or «нет», the
 // label of a named value, or "N?" for a value that the item's table does not
 // name. A float shows `precision` digits after the point, or as many
 // significant ones when it is under 0.01 in magnitude.

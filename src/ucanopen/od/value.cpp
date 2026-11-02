@@ -178,7 +178,7 @@ std::string format_value(const Item& item, ExpeditedSdoData data, int precision)
 
     switch (item.datatype) {
     case DataType::boolean:
-        return (data.u8() != 0) ? "true" : "false";
+        return (data.u8() != 0) ? "да" : "нет";
     case DataType::int8:
         return std::to_string(data.i8());
     case DataType::int16:

@@ -37,6 +37,11 @@ std::string text_of(const ucanopen::od::SignalValue& value) {
         }
         return label_of(value.named->label, value.named->name);
     }
+    // a flag of one bit reads as a boolean object does
+    if (signal.width == 1 && signal.encoding == ucanopen::od::Encoding::unsigned_int && signal.unit.ru.empty() &&
+        signal.unit.en.empty()) {
+        return (value.raw != 0) ? "да" : "нет";
+    }
     auto text = ucanopen::od::physical_text(signal, value.raw);
     const auto& unit = signal.unit.ru.empty() ? signal.unit.en : signal.unit.ru;
     if (!unit.empty()) {

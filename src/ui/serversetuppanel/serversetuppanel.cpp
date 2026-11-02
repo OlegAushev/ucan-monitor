@@ -78,12 +78,20 @@ bool input_value(const char* label, const od::Item& item, ExpeditedSdoData& data
     constexpr ImGuiInputTextFlags flags = ImGuiInputTextFlags_EnterReturnsTrue;
     switch (item.datatype) {
     case od::DataType::boolean: {
-        bool value = data.u8() != 0;
-        if (ImGui::Checkbox(label, &value)) {
-            data = ExpeditedSdoData(value);
-            return true;
+        // a choice, as of a named value, rather than a box that a click
+        // alone writes
+        bool const value = data.u8() != 0;
+        bool chosen = false;
+        if (ImGui::BeginCombo(label, value ? "да" : "нет")) {
+            for (bool option : {false, true}) {
+                if (ImGui::Selectable(option ? "да" : "нет", option == value)) {
+                    data = ExpeditedSdoData(option);
+                    chosen = true;
+                }
+            }
+            ImGui::EndCombo();
         }
-        return false;
+        return chosen;
     }
     case od::DataType::int8: {
         int8_t value = data.i8();
