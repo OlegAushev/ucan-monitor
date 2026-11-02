@@ -13,7 +13,9 @@ namespace ui {
 
 
 // The PDOs of a server as its description states them: what each TPDO
-// brought last and what each RPDO sent last, signal by signal.
+// brought last and what each RPDO sent last, signal by signal. An MPDO of
+// the statuses shows what its frames brought, in sum: each frame brings
+// another status, many a second.
 class PdoPanel : public View {
 private:
     std::shared_ptr<ucanopen::Server> _server;
@@ -25,6 +27,7 @@ public:
     virtual void draw() override;
 private:
     void _draw_pdo(const ucanopen::od::Description& description, const ucanopen::od::Pdo& pdo);
+    void _draw_statuses(const ucanopen::od::Description& description, const ucanopen::od::Pdo& pdo, bool alive);
 };
 
 

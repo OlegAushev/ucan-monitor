@@ -6,6 +6,7 @@
 
 #include <chrono>
 #include <format>
+#include <map>
 #include <optional>
 
 
@@ -129,6 +130,15 @@ void PdoPanel::_draw_pdo(const ucanopen::od::Description& description, const uca
     ImGui::TableSetupColumn("Значение");
     ImGui::TableHeadersRow();
 
+    // A frame of the MPDO brings one status, and they go round all of them
+    // every 10 ms: the frames would only flicker, while the statuses they
+    // bring stand still.
+    if (pdo.mapping == od::Mapping::sam) {
+        _draw_statuses(description, pdo, alive);
+        ImGui::EndTable();
+        return;
+    }
+
     if (!payload.has_value()) {
         row("Кадр [hex]", "н/д");
     } else {
@@ -138,20 +148,8 @@ void PdoPanel::_draw_pdo(const ucanopen::od::Description& description, const uca
                         data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]));
     }
 
-    if (pdo.mapping == od::Mapping::sam) {
-        // an object a frame: the last one, by its label
-        std::optional<od::SamValue> sam;
-        if (payload.has_value()) {
-            sam = od::decode_sam(*payload, _server->node_id().get());
-        }
-        auto item = sam.has_value() ? description.resolve(sam->key) : std::nullopt;
-        if (item.has_value()) {
-            row(label_of(item->label, item->path), od::format_value(*item, sam->data));
-        } else {
-            row("Объект", "н/д");
-        }
-    } else if (auto decoded = payload.has_value() ? od::decode_pdo(description, pdo, *payload) : std::nullopt;
-               decoded.has_value()) {
+    if (auto decoded = payload.has_value() ? od::decode_pdo(description, pdo, *payload) : std::nullopt;
+        decoded.has_value()) {
         for (const auto& value : decoded->signals) {
             auto const name = (value.signal->role == od::Role::counter) ? std::string("Счётчик")
                                                                          : label_of(value.signal->label,
@@ -167,6 +165,52 @@ void PdoPanel::_draw_pdo(const ucanopen::od::Description& description, const uca
     }
 
     ImGui::EndTable();
+}
+
+
+// How many statuses the frames brought and how many stand at each level; the
+// panel of statuses names them.
+void PdoPanel::_draw_statuses(const ucanopen::od::Description& description, const ucanopen::od::Pdo& pdo,
+                              bool alive) {
+    const auto& service = _server->status_service;
+    if (service.pdo() != &pdo || !alive) {
+        row("Статусов получено", "н/д");
+        return;
+    }
+
+    auto const statuses = service.statuses();
+    size_t received = 0;
+    std::map<uint8_t, size_t> at_level; // by severity
+    for (const auto& status : statuses) {
+        if (!status.severity.has_value()) {
+            continue;
+        }
+        ++received;
+        if (*status.severity != 0) {
+            ++at_level[*status.severity];
+        }
+    }
+    row("Статусов получено", std::format("{} из {}", received, statuses.size()));
+    if (at_level.empty()) {
+        row("На уровне", "нет");
+        return;
+    }
+
+    const auto* severities = description.value_table(statuses.front().field->value_table);
+    for (const auto& [severity, count] : at_level) {
+        const auto* value = (severities == nullptr) ? nullptr : severities->find(severity);
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0);
+        ImGui::TextUnformatted(value != nullptr ? label_of(value->label, value->name).c_str()
+                                                : std::format("{}?", severity).c_str());
+        ImGui::TableSetColumnIndex(1);
+        if (value != nullptr) {
+            bool const red = value->name == "error" || value->name == "critical" || value->name == "emergency";
+            ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg,
+                                   red ? ui::colors::table_bg_red : ui::colors::table_bg_yellow);
+        }
+        ImGui::Text("%zu", count);
+    }
 }
 
 
