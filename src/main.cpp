@@ -19,9 +19,11 @@
 #include <ui/watchpanel/watchpanel.h>
 #include <ui/watchplot/watchplot.h>
 
+#include <ui/pdopanel/pdopanel.h>
+#include <ui/statuspanel/statuspanel.h>
 #include <ui/ucanopen_servers/adptetk/controlpanel/controlpanel.hpp>
-#include <ui/ucanopen_servers/adptetk/datapanel/datapanel.hpp>
-#include <ui/ucanopen_servers/adptetk/statuspanel/statuspanel.hpp>
+
+#include <ucanopen/od/description.h>
 
 #include <fstream>
 #include <iostream>
@@ -158,68 +160,86 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
     std::string server_name = SINGLE_SERVER;
 #endif
     if (server_name == "adpt-etk-inverter") {
-        auto adptetk_server =
-                std::make_shared<adptetk::Server>(can_socket,
-                                                  ucanopen::NodeId(0x01),
-                                                  server_name);
-        ucanopen_client->register_server(adptetk_server);
+        // The server decodes the frames of the device by the description of
+        // its dictionary, which lies with the program, as the fonts do.
+        std::string const description_path =
+                "../assets/od/adpt-etk-inverter.od.jsonl";
+        auto description = ucanopen::od::load(description_path);
+        if (!description.has_value()) {
+            bsclog::error("Не удалось загрузить описание словаря {}: {}.",
+                          description_path,
+                          description.error());
+        } else {
+            bsclog::success("Загружено описание словаря {}: {}, отпечаток "
+                            "0x{:08X}.",
+                            description_path,
+                            (*description)->device(),
+                            (*description)->fingerprint());
 
-        auto controlpanel = std::make_shared<ui::adptetk::ControlPanel>(
-                adptetk_server,
-                ICON_MDI_GAMEPAD_OUTLINE " Управление",
-                "Управление",
-                true);
+            auto adptetk_server = std::make_shared<adptetk::Server>(
+                    can_socket,
+                    ucanopen::NodeId(0x01),
+                    server_name,
+                    *description);
+            ucanopen_client->register_server(adptetk_server);
 
-        auto statuspanel = std::make_shared<ui::adptetk::StatusPanel>(
-                adptetk_server,
-                ICON_MDI_INFORMATION_OUTLINE " Статус",
-                "Статус",
-                true);
+            auto controlpanel = std::make_shared<ui::adptetk::ControlPanel>(
+                    adptetk_server,
+                    ICON_MDI_GAMEPAD_OUTLINE " Управление",
+                    "Управление",
+                    true);
 
-        watchpanel = std::make_shared<ui::WatchPanel>(adptetk_server,
-                                                      ICON_MDI_TABLE_EYE
-                                                      " Набл. Переменные",
-                                                      "Набл. Переменные",
-                                                      true);
+            auto statuspanel = std::make_shared<ui::StatusPanel>(
+                    adptetk_server,
+                    ICON_MDI_INFORMATION_OUTLINE " Статус",
+                    "Статус",
+                    true);
 
-        auto datapanel = std::make_shared<ui::adptetk::DataPanel>(
-                adptetk_server,
-                ICON_MDI_TABLE " Данные TPDO",
-                "Данные TPDO",
-                true);
+            watchpanel = std::make_shared<ui::WatchPanel>(adptetk_server,
+                                                          ICON_MDI_TABLE_EYE
+                                                          " Набл. Переменные",
+                                                          "Набл. Переменные",
+                                                          true);
 
-        serversetuppanel = std::make_shared<ui::ServerSetupPanel>(
-                adptetk_server,
-                ICON_MDI_TOOLS " Настройка",
-                "Настройка",
-                false);
+            auto pdopanel = std::make_shared<ui::PdoPanel>(
+                    adptetk_server,
+                    ICON_MDI_TABLE " Данные PDO",
+                    "Данные PDO",
+                    true);
 
-        views.push_back(controlpanel);
-        views.push_back(statuspanel);
-        views.push_back(watchpanel);
-        views.push_back(datapanel);
-        views.push_back(serversetuppanel);
+            serversetuppanel = std::make_shared<ui::ServerSetupPanel>(
+                    adptetk_server,
+                    ICON_MDI_TOOLS " Настройка",
+                    "Настройка",
+                    false);
 
-        watchplots.push_back(
-                std::make_shared<ui::WatchPlot>(adptetk_server,
-                                                "Панель диаграмм 1",
-                                                "Панель Диаграмм 1",
-                                                true));
-        watchplots.push_back(
-                std::make_shared<ui::WatchPlot>(adptetk_server,
-                                                "Панель диаграмм 2",
-                                                "Панель диаграмм 2",
-                                                false));
-        watchplots.push_back(
-                std::make_shared<ui::WatchPlot>(adptetk_server,
-                                                "Панель диаграмм 3",
-                                                "Панель диаграмм 3",
-                                                false));
-        watchplots.push_back(
-                std::make_shared<ui::WatchPlot>(adptetk_server,
-                                                "Панель диаграмм 4",
-                                                "Панель диаграмм 4",
-                                                false));
+            views.push_back(controlpanel);
+            views.push_back(statuspanel);
+            views.push_back(watchpanel);
+            views.push_back(pdopanel);
+            views.push_back(serversetuppanel);
+
+            watchplots.push_back(
+                    std::make_shared<ui::WatchPlot>(adptetk_server,
+                                                    "Панель диаграмм 1",
+                                                    "Панель Диаграмм 1",
+                                                    true));
+            watchplots.push_back(
+                    std::make_shared<ui::WatchPlot>(adptetk_server,
+                                                    "Панель диаграмм 2",
+                                                    "Панель диаграмм 2",
+                                                    false));
+            watchplots.push_back(
+                    std::make_shared<ui::WatchPlot>(adptetk_server,
+                                                    "Панель диаграмм 3",
+                                                    "Панель диаграмм 3",
+                                                    false));
+            watchplots.push_back(
+                    std::make_shared<ui::WatchPlot>(adptetk_server,
+                                                    "Панель диаграмм 4",
+                                                    "Панель диаграмм 4",
+                                                    false));
+        }
     } else {
         // TODO Error
     }

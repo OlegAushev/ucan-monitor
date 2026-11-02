@@ -31,7 +31,7 @@ void ControlPanel::_reset_refs() {
 }
 
 void ControlPanel::_update_refs() {
-    if (!_server->tpdo_service.good(ucanopen::CobTpdo::tpdo1) ||
+    if (!_server->drive_status_good() ||
         _server->has_critical() || _server->has_emergency()) {
         _start = false;
     }
@@ -49,11 +49,12 @@ void ControlPanel::_update_refs() {
     _server->set_control_mode(_control_mode);
     _server->set_model_mode(_model_mode);
 
-    _server->set_torque_ref(static_cast<int16_t>(_ref_torque_pct * 100.0f));
-    _server->set_speed_ref(_ref_speed);
-    _server->set_angle_ref(static_cast<int16_t>(_ref_angle));
-    _server->set_current_ref(static_cast<int16_t>(_ref_current_pct * 100.0f));
-    _server->set_voltage_ref(static_cast<uint16_t>(_ref_voltage_pct * 100.0f));
+    // The references go in physical units: percents of the panel as pu.
+    _server->set_torque_ref(_ref_torque_pct / 100.0f);
+    _server->set_speed_ref(static_cast<float>(_ref_speed));
+    _server->set_angle_ref(static_cast<float>(_ref_angle));
+    _server->set_current_ref(_ref_current_pct / 100.0f);
+    _server->set_voltage_ref(_ref_voltage_pct / 100.0f);
 }
 
 void ControlPanel::draw() {
@@ -232,23 +233,23 @@ void ControlPanel::_draw_controls() {
     if (ImGui::CollapsingHeader(ICON_MDI_CAMERA_CONTROL " Режим Модели",
                                 ImGuiTreeNodeFlags_Framed)) {
         ImGui::RadioButton(
-                "Замкнутый",
+                _server->model_mode_label(ModelMode::closed_loop).c_str(),
                 &_model_mode_v,
-                std::to_underlying(ModelMode::closed));
+                std::to_underlying(ModelMode::closed_loop));
         ImGui::RadioButton(
-                "Полузамкнутый",
+                _server->model_mode_label(ModelMode::semiclosed_loop).c_str(),
                 &_model_mode_v,
-                std::to_underlying(ModelMode::semiclosed));
+                std::to_underlying(ModelMode::semiclosed_loop));
         ImGui::RadioButton(
-                "Разомкнутый I",
+                _server->model_mode_label(ModelMode::open_current_loop).c_str(),
                 &_model_mode_v,
-                std::to_underlying(ModelMode::open_current));
+                std::to_underlying(ModelMode::open_current_loop));
         ImGui::RadioButton(
-                "Разомкнутый V",
+                _server->model_mode_label(ModelMode::open_voltage_loop).c_str(),
                 &_model_mode_v,
-                std::to_underlying(ModelMode::open_voltage));
+                std::to_underlying(ModelMode::open_voltage_loop));
         ImGui::RadioButton(
-                "Тест ШИМ",
+                _server->model_mode_label(ModelMode::direct_pwm).c_str(),
                 &_model_mode_v,
                 std::to_underlying(ModelMode::direct_pwm));
 
@@ -256,10 +257,10 @@ void ControlPanel::_draw_controls() {
 
         switch (_model_mode) {
         case ModelMode::idle:
-        case ModelMode::closed:
+        case ModelMode::closed_loop:
             break;
-        case ModelMode::semiclosed:
-        case ModelMode::open_current:
+        case ModelMode::semiclosed_loop:
+        case ModelMode::open_current_loop:
             if (ImGui::InputFloat("Ток D [%]",
                                   &_ref_current_pct,
                                   0.1f,
@@ -270,7 +271,7 @@ void ControlPanel::_draw_controls() {
                         std::clamp(_ref_current_pct, -100.0f, 100.0f);
             }
             break;
-        case ModelMode::open_voltage:
+        case ModelMode::open_voltage_loop:
             if (ImGui::InputFloat("Напряжение D [%]",
                                   &_ref_voltage_pct,
                                   0.1f,

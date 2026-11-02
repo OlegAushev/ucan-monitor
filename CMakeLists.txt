@@ -145,6 +145,7 @@ enable_testing()
 add_executable(od-test
     ${PROJECT_SOURCE_DIR}/tests/od/od_test.cpp
     ${PROJECT_SOURCE_DIR}/src/ucanopen/od/description.cpp
+    ${PROJECT_SOURCE_DIR}/src/ucanopen/od/pdo_codec.cpp
     ${PROJECT_SOURCE_DIR}/src/ucanopen/od/value.cpp
 )
 
@@ -165,7 +166,7 @@ target_compile_features(od-test PRIVATE
     cxx_std_23
 )
 
-foreach(od_case description resolve find refusals)
+foreach(od_case description resolve find refusals frames rpdo)
     add_test(NAME od.${od_case}
         COMMAND od-test ${od_case}
                 ${PROJECT_SOURCE_DIR}/assets/od/adpt-etk-inverter.od.jsonl

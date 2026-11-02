@@ -3,6 +3,7 @@
 
 #include "../../ucanopen_def.h" 
 #include <cansocket/cansocket.h>
+#include <ucanopen/od/description.h>
 #include <bsclog/bsclog.h>
 #include <list>
 
@@ -56,14 +57,20 @@ protected:
     const ObjectDictionary& _dictionary;
     ObjectDictionaryAux _dictionary_aux;
 
+    // The description of the device's dictionary, which states its PDOs and
+    // statuses; null for a server that has none.
+    std::shared_ptr<const od::Description> _description;
+
     NmtState _nmt_state{NmtState::stopped};
 public:
-    Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary);
+    Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary,
+           std::shared_ptr<const od::Description> description);
     
     std::string name() const { return _name; }
     NodeId node_id() const { return _node_id; }
     NmtState nmt_state() const { return _nmt_state; }
     const ObjectDictionary& dictionary() const { return _dictionary; }
+    const std::shared_ptr<const od::Description>& description() const { return _description; }
 public:
     ODEntryIter find_od_entry(std::string_view category,
                               std::string_view subcategory,

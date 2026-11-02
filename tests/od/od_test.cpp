@@ -1,5 +1,5 @@
-// The checks of the reading of a description of the dictionary, which CTest
-// runs case by case:
+// The checks of the reading of a description of the dictionary and of the
+// frames of its PDOs, which CTest runs case by case:
 //
 //   od-test <case> <description> <directory of expectations>
 //
@@ -8,8 +8,11 @@
 // of docs/canopen-rework-plan.ru.md.
 
 #include <ucanopen/od/description.h>
+#include <ucanopen/od/pdo_codec.h>
 #include <ucanopen/od/value.h>
 
+#include <algorithm>
+#include <charconv>
 #include <cstdio>
 #include <filesystem>
 #include <format>
@@ -19,6 +22,7 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <vector>
 
 using namespace ucanopen;
 
@@ -106,6 +110,60 @@ std::string replaced(std::string text, std::string_view old, std::string_view re
         return text;
     }
     return text.replace(at, old.size(), replacement);
+}
+
+std::vector<std::string> read_lines(const std::filesystem::path& path) {
+    std::vector<std::string> lines;
+    std::ifstream file(path);
+    for (std::string line; std::getline(file, line);) {
+        lines.push_back(line);
+    }
+    return lines;
+}
+
+// A frame of a log of candump as candump -L writes it, "can0 181#0102".
+struct Frame {
+    uint32_t id;
+    std::vector<uint8_t> data;
+};
+
+std::vector<Frame> read_candump(const std::filesystem::path& path) {
+    std::vector<Frame> frames;
+    auto const lines = read_lines(path);
+    for (size_t i = 0; i < lines.size(); ++i) {
+        std::string_view line = lines[i];
+        while (!line.empty() && (line.back() == ' ' || line.back() == '\r')) {
+            line.remove_suffix(1);
+        }
+        if (line.empty() || line.front() == '#') {
+            continue;
+        }
+        auto const token = line.substr(line.find_last_of(' ') + 1);
+        auto const hash = token.find('#');
+        Frame frame{};
+        auto result = std::from_chars(token.data(), token.data() + hash, frame.id, 16);
+        bool parsed = hash != std::string_view::npos && result.ptr == token.data() + hash &&
+                      (token.size() - hash - 1) % 2 == 0;
+        for (size_t at = hash + 1; parsed && at < token.size(); at += 2) {
+            uint8_t byte = 0;
+            parsed = std::from_chars(token.data() + at, token.data() + at + 2, byte, 16).ptr == token.data() + at + 2;
+            frame.data.push_back(byte);
+        }
+        if (!parsed) {
+            fail(std::format("{}, line {}: not a frame of candump -L", path.string(), i + 1));
+            continue;
+        }
+        frames.push_back(std::move(frame));
+    }
+    return frames;
+}
+
+std::string hex_of(const std::vector<uint8_t>& data) {
+    std::string text;
+    for (auto byte : data) {
+        text += std::format("{:02X}", byte);
+    }
+    return text;
 }
 
 // The text with the fingerprint of its header made the hash of its body again.
@@ -298,6 +356,117 @@ void check_refusals(const std::filesystem::path& path, const std::filesystem::pa
     }
 }
 
+// 5. The firmware's example of frames decodes, for node 1, as od_decode.py
+// --candump decodes it.
+void check_frames(const std::filesystem::path& path, const std::filesystem::path& expectations) {
+    auto description = load(path);
+    if (!description) {
+        return;
+    }
+
+    auto const frames = read_candump(expectations / "pdo_example.candump");
+    auto const expected = read_lines(expectations / "pdo_example.expected");
+    check_equal(frames.size(), expected.size(), "the count of frames");
+    for (size_t i = 0; i < std::min(frames.size(), expected.size()); ++i) {
+        auto const line = od::candump_line(*description, 1, frames[i].id, frames[i].data);
+        if (line != expected[i]) {
+            fail(std::format("frame {}:\n  expected {}\n  got      {}", i + 1, expected[i], line));
+        }
+    }
+}
+
+// 6. The frames of RPDOs in the example that the device takes build back from
+// their values byte for byte; values that no table names do not build.
+void check_rpdo(const std::filesystem::path& path, const std::filesystem::path& expectations) {
+    auto description = load(path);
+    if (!description) {
+        return;
+    }
+
+    size_t taken = 0;
+    for (const auto& frame : read_candump(expectations / "pdo_example.candump")) {
+        const auto& pdos = description->pdos();
+        auto const pdo = std::find_if(pdos.begin(), pdos.end(), [&frame](const od::Pdo& p) {
+            return p.direction == od::Direction::rx && p.cob_base.has_value() && *p.cob_base + 1u == frame.id;
+        });
+        if (pdo == pdos.end() || frame.data.size() < 8) {
+            continue;
+        }
+
+        auto const decoded = od::decode_pdo(*description, *pdo, frame.data);
+        bool const refused = decoded->reserved != 0 ||
+                             std::any_of(decoded->signals.begin(), decoded->signals.end(), [](const auto& value) {
+                                 return value.signal->value_table.has_value() && value.named == nullptr;
+                             });
+        if (refused) {
+            continue;
+        }
+        ++taken;
+
+        std::map<std::string, double, std::less<>> values;
+        unsigned counter = 0;
+        for (const auto& value : decoded->signals) {
+            if (value.signal->role == od::Role::counter) {
+                counter = static_cast<unsigned>(value.raw);
+            } else if (value.signal->value_table.has_value()) {
+                values[value.signal->name] = static_cast<double>(value.raw);
+            } else {
+                values[value.signal->name] = od::physical(*value.signal, value.raw);
+            }
+        }
+        auto const encoded = od::encode_pdo(*description, *pdo, values, counter);
+        auto const what = std::format("{:03X}#{}", frame.id, hex_of(frame.data));
+        if (!encoded.has_value()) {
+            fail(std::format("{} does not build back: {}", what, encoded.error()));
+            continue;
+        }
+        auto const built = std::vector<uint8_t>(encoded->payload.begin(), encoded->payload.end());
+        check_equal(hex_of(built), hex_of(frame.data), std::format("{} built back", what));
+        check(encoded->saturated.empty(), std::format("{} builds without saturation", what));
+    }
+    check_equal(taken, 5u, "the frames of RPDOs that the device takes");
+
+    const auto* drive_command = description->pdo("drive_command");
+    const auto* model_command = description->pdo("model_command");
+    if (drive_command == nullptr || model_command == nullptr) {
+        fail("the description has no drive_command or model_command");
+        return;
+    }
+    std::map<std::string, double, std::less<>> drive = {
+            {"emergency", 0}, {"power", 1}, {"start", 0}, {"control_mode", 0}, {"torque_ref", 0}, {"speed_ref", 0}};
+    std::map<std::string, double, std::less<>> model = {
+            {"angle_ref", 0}, {"current_ref", 0}, {"voltage_ref", 0}, {"model_mode", 0}};
+
+    auto with = [](auto values, std::string_view name, double value) {
+        values[std::string(name)] = value;
+        return values;
+    };
+    check(!od::encode_pdo(*description, *drive_command, with(drive, "control_mode", 3), 0).has_value(),
+          "the control mode 3, which no label names, does not build");
+    check(!od::encode_pdo(*description, *model_command, with(model, "model_mode", 6), 0).has_value(),
+          "the model mode 6 does not build");
+    check(!od::encode_pdo(*description, *model_command, with(model, "model_mode", 7), 0).has_value(),
+          "the model mode 7 does not build");
+
+    auto saturated = od::encode_pdo(*description, *drive_command, with(drive, "torque_ref", 5.0), 0);
+    check(saturated.has_value() && saturated->saturated == std::vector<std::string>{"drive_command.torque_ref"},
+          "a torque of 5 pu saturates");
+    if (saturated.has_value()) {
+        check_equal(std::format("{:02X}{:02X}", saturated->payload[3], saturated->payload[2]), "7FFF",
+                    "the saturated torque");
+    }
+
+    auto unfilled = drive;
+    unfilled.erase("speed_ref");
+    check(!od::encode_pdo(*description, *drive_command, unfilled, 0).has_value(),
+          "a value signal left unfilled does not build");
+    check(!od::encode_pdo(*description, *drive_command, with(drive, "nothing", 1), 0).has_value(),
+          "a value of no signal does not build");
+    check(od::encoding_refusal(*drive_command, {"emergency", "power", "start", "control_mode", "torque_ref",
+                                                "speed_ref"}) == std::nullopt,
+          "drive_command builds from its six signals");
+}
+
 } // namespace
 
 int main(int argc, char** argv) {
@@ -311,7 +480,9 @@ int main(int argc, char** argv) {
             {"description", check_description},
             {"resolve", check_resolve},
             {"find", check_find},
-            {"refusals", check_refusals}};
+            {"refusals", check_refusals},
+            {"frames", check_frames},
+            {"rpdo", check_rpdo}};
 
     auto const name = std::string_view(argv[1]);
     auto const found = cases.find(name);

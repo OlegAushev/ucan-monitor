@@ -48,7 +48,7 @@ enum class Status {
 namespace detail {
 
 
-const std::vector<std::string> interface_list = {"can0", "can1"};
+const std::vector<std::string> interface_list = {"can0", "can1", "vcan0"};
 const std::vector<std::string> bitrate_list = {"125000", "250000", "500000", "1000000"};
 const std::set<std::filesystem::path> scripts_location_list = {"", "scripts", "..", "../scripts"};
 

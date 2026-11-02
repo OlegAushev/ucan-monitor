@@ -31,8 +31,8 @@ private:
     ::adptetk::ControlMode _control_mode{::adptetk::ControlMode::torque};
     int _control_mode_v{std::to_underlying(::adptetk::ControlMode::torque)};
 
-    ::adptetk::ModelMode _model_mode{::adptetk::ModelMode::closed};
-    int _model_mode_v{std::to_underlying(::adptetk::ModelMode::closed)};
+    ::adptetk::ModelMode _model_mode{::adptetk::ModelMode::closed_loop};
+    int _model_mode_v{std::to_underlying(::adptetk::ModelMode::closed_loop)};
 public:
     ControlPanel(std::shared_ptr<::adptetk::Server> server,
                  const std::string& menu_title,

@@ -95,6 +95,11 @@ Status Socket::connect(const std::string& interface, const std::string& bitrate)
     std::lock_guard<std::mutex> lock1(_send_mtx);
     std::lock_guard<std::mutex> lock2(_recv_mtx);
 
+    // A virtual interface has no bitrate to set, and its owner brings it up.
+    if (interface.starts_with("vcan")) {
+        return _create_socket(interface);
+    }
+
     /* FIND SCRIPT */
     bsclog::info("Searching for SocketCAN enabling script...");
 

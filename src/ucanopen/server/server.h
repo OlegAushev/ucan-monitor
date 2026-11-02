@@ -10,6 +10,7 @@
 #include <ucanopen/server/services/log/server_log_service.h>
 #include <ucanopen/server/services/rpdo/server_rpdo_service.h>
 #include <ucanopen/server/services/sdo/server_sdo_service.h>
+#include <ucanopen/server/services/status/server_status_service.h>
 #include <ucanopen/server/services/tpdo/server_tpdo_service.h>
 #include <ucanopen/server/services/watch/server_watch_service.h>
 #include <ucanopen/server/utils/server_od_utils.h>
@@ -26,11 +27,13 @@ public:
     ServerWatchService watch_service;
     ServerConfigService config_service;
     ServerLogService log_service;
+    ServerStatusService status_service;
 public:
     Server(std::shared_ptr<can::Socket> socket,
            NodeId node_id,
            const std::string& name,
-           const ObjectDictionary& dictionary);
+           const ObjectDictionary& dictionary,
+           std::shared_ptr<const od::Description> description);
     virtual ~Server() = default;
 private:
     void _send();

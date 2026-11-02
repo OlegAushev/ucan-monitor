@@ -4,11 +4,13 @@
 namespace ucanopen {
 
 
-impl::Server::Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary)
+impl::Server::Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary,
+                     std::shared_ptr<const od::Description> description)
         : _name(name)
         , _node_id(node_id)
         , _socket(socket)
-        , _dictionary(dictionary) {
+        , _dictionary(dictionary)
+        , _description(std::move(description)) {
     for (const auto& [key, object] : _dictionary.entries) {
         // create aux dictionary for faster search by {category, subcategory, name}
         _dictionary_aux.insert({

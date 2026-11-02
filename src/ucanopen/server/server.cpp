@@ -1,20 +1,38 @@
 #include "server.h"
 
+#include <ucanopen/od/pdo_codec.h>
+
 
 namespace ucanopen {
 
-Server::Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary)
-        : impl::Server(socket, node_id, name, dictionary)
+Server::Server(std::shared_ptr<can::Socket> socket, NodeId node_id, const std::string& name, const ObjectDictionary& dictionary,
+               std::shared_ptr<const od::Description> description)
+        : impl::Server(socket, node_id, name, dictionary, std::move(description))
         , heartbeat_service(*this, std::chrono::milliseconds(2000))
         , tpdo_service(*this)
         , rpdo_service(*this)
         , sdo_service(*this)
         , watch_service(*this, sdo_service)
         , config_service(*this, sdo_service)
-        , log_service(*this, sdo_service, tpdo_service) {
+        , log_service(*this, sdo_service, tpdo_service)
+        , status_service(*this) {
     _rx_services.push_back(&sdo_service);
     _rx_services.push_back(&tpdo_service);
     _rx_services.push_back(&heartbeat_service);
+
+    // A server whose description states its statuses takes their MPDO here,
+    // whatever the device.
+    if (status_service.available()) {
+        auto const tpdo = od::tpdo_of(*status_service.pdo());
+        if (tpdo.has_value()) {
+            tpdo_service.register_tpdo(*tpdo, status_service.timeout(), [this](const can_payload& payload) {
+                status_service.handle_frame(payload);
+            });
+        } else {
+            bsclog::error("{}: статусы идут в PDO «{}», а ucanopen принимает только TPDO1–TPDO4 предопределённого "
+                          "набора.", _name, status_service.pdo()->name);
+        }
+    }
 }
 
 
