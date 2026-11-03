@@ -21,6 +21,7 @@
 
 #include <ui/pdopanel/pdopanel.h>
 #include <ui/statuspanel/statuspanel.h>
+#include <ui/ucanopen_servers/adptbike/controlpanel/controlpanel.hpp>
 #include <ui/ucanopen_servers/adptetk/controlpanel/controlpanel.hpp>
 
 #include <ucanopen/od/description.h>
@@ -35,6 +36,26 @@ const std::vector<std::string> server_names = {"adpt-etk-inverter",
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+}
+
+// The description of the dictionary of the server's device, by which the
+// server decodes the frames of the device; it lies with the program, as the
+// fonts do. None if it does not load, and the log says why.
+static std::shared_ptr<ucanopen::od::Description const>
+load_description(std::string const& server_name) {
+    std::string const path = "../assets/od/" + server_name + ".od.jsonl";
+    auto description = ucanopen::od::load(path);
+    if (!description.has_value()) {
+        bsclog::error("Не удалось загрузить описание словаря {}: {}.",
+                      path,
+                      description.error());
+        return nullptr;
+    }
+    bsclog::success("Загружено описание словаря {}: {}, отпечаток 0x{:08X}.",
+                    path,
+                    (*description)->device(),
+                    (*description)->fingerprint());
+    return *description;
 }
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
@@ -179,32 +200,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 #else
     std::string server_name = SINGLE_SERVER;
 #endif
-    // The firmware of adpt-bike-inverter is a port of that of
-    // adpt-etk-inverter, with the same PDOs, commands and settings: the same
-    // server and panels serve both, each by its own description.
-    if (server_name == "adpt-etk-inverter" ||
-        server_name == "adpt-bike-inverter") {
-        // The server decodes the frames of the device by the description of
-        // its dictionary, which lies with the program, as the fonts do.
-        std::string const description_path =
-                "../assets/od/" + server_name + ".od.jsonl";
-        auto description = ucanopen::od::load(description_path);
-        if (!description.has_value()) {
-            bsclog::error("Не удалось загрузить описание словаря {}: {}.",
-                          description_path,
-                          description.error());
-        } else {
-            bsclog::success("Загружено описание словаря {}: {}, отпечаток "
-                            "0x{:08X}.",
-                            description_path,
-                            (*description)->device(),
-                            (*description)->fingerprint());
-
+    if (server_name == "adpt-etk-inverter") {
+        if (auto description = load_description(server_name)) {
             auto adptetk_server = std::make_shared<adptetk::Server>(
                     can_socket,
                     ucanopen::NodeId(0x01),
                     server_name,
-                    *description);
+                    description);
             ucanopen_client->register_server(adptetk_server);
 
             auto controlpanel = std::make_shared<ui::adptetk::ControlPanel>(
@@ -260,6 +262,72 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
                                                     false));
             watchplots.push_back(
                     std::make_shared<ui::WatchPlot>(adptetk_server,
+                                                    "Панель диаграмм 4",
+                                                    "Панель диаграмм 4",
+                                                    false));
+        }
+    } else if (server_name == "adpt-bike-inverter") {
+        if (auto description = load_description(server_name)) {
+            auto adptbike_server = std::make_shared<adptbike::Server>(
+                    can_socket,
+                    ucanopen::NodeId(0x01),
+                    server_name,
+                    description);
+            ucanopen_client->register_server(adptbike_server);
+
+            auto controlpanel = std::make_shared<ui::adptbike::ControlPanel>(
+                    adptbike_server,
+                    ICON_MDI_GAMEPAD_OUTLINE " Управление",
+                    "Управление",
+                    true);
+
+            auto statuspanel = std::make_shared<ui::StatusPanel>(
+                    adptbike_server,
+                    ICON_MDI_INFORMATION_OUTLINE " Статус",
+                    "Статус",
+                    true);
+
+            watchpanel = std::make_shared<ui::WatchPanel>(adptbike_server,
+                                                          ICON_MDI_TABLE_EYE
+                                                          " Набл. Переменные",
+                                                          "Набл. Переменные",
+                                                          true);
+
+            auto pdopanel = std::make_shared<ui::PdoPanel>(
+                    adptbike_server,
+                    ICON_MDI_TABLE " Данные PDO",
+                    "Данные PDO",
+                    true);
+
+            serversetuppanel = std::make_shared<ui::ServerSetupPanel>(
+                    adptbike_server,
+                    ICON_MDI_TOOLS " Настройка",
+                    "Настройка",
+                    false);
+
+            views.push_back(controlpanel);
+            views.push_back(statuspanel);
+            views.push_back(watchpanel);
+            views.push_back(pdopanel);
+            views.push_back(serversetuppanel);
+
+            watchplots.push_back(
+                    std::make_shared<ui::WatchPlot>(adptbike_server,
+                                                    "Панель диаграмм 1",
+                                                    "Панель Диаграмм 1",
+                                                    true));
+            watchplots.push_back(
+                    std::make_shared<ui::WatchPlot>(adptbike_server,
+                                                    "Панель диаграмм 2",
+                                                    "Панель диаграмм 2",
+                                                    false));
+            watchplots.push_back(
+                    std::make_shared<ui::WatchPlot>(adptbike_server,
+                                                    "Панель диаграмм 3",
+                                                    "Панель диаграмм 3",
+                                                    false));
+            watchplots.push_back(
+                    std::make_shared<ui::WatchPlot>(adptbike_server,
                                                     "Панель диаграмм 4",
                                                     "Панель диаграмм 4",
                                                     false));

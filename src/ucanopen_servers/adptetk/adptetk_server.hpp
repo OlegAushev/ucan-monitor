@@ -16,9 +16,8 @@
 
 namespace adptetk {
 
-// The ADPT-ETK inverter, and the ADPT-BIKE inverter, whose firmware is a port
-// of the ETK's with the same PDOs. The PDOs are those the description states:
-// the state of the drive, its electrical quantities and its motion come in
+// The ADPT-ETK inverter. Its PDOs are those its description states: the
+// state of the drive, its electrical quantities and its motion come in
 // drive_status, electrical_status and motion_status, the statuses in the
 // MPDO that ucanopen::Server takes, and the commands to the drive and to its
 // model go in drive_command and model_command, set in physical units.

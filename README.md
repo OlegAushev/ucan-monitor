@@ -38,10 +38,8 @@ flatpak-builder build-dir org.flatpak.ucan-monitor.yml
 A server reads the description of its device's object dictionary at
 startup, `assets/od/<device>.od.jsonl`: the file that the firmware's build
 extracts from its ELF (emblib, `docs/canopen-od-algorithm.ru.md`, section
-3.9). The objects, the PDOs and the statuses all come from it, so one
-server and its panels serve both inverters: the firmware of the
-adpt-bike-inverter is a port of the adpt-etk-inverter's, with the same
-PDOs. Take a new description in when the firmware's dictionary changes:
+3.9). The objects, the PDOs and the statuses all come from it. Take a new
+one in when the firmware's dictionary changes:
 
 ```bash
 scripts/update_od.sh ~/dev/adpt-etk-inverter rev-a-release
