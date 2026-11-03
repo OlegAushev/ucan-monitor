@@ -30,7 +30,8 @@
 
 #include <csv_writer/csv_writer.h>
 
-const std::vector<std::string> server_names = {"adpt-etk-inverter"};
+const std::vector<std::string> server_names = {"adpt-etk-inverter",
+                                               "adpt-bike-inverter"};
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -178,11 +179,15 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv) {
 #else
     std::string server_name = SINGLE_SERVER;
 #endif
-    if (server_name == "adpt-etk-inverter") {
+    // The firmware of adpt-bike-inverter is a port of that of
+    // adpt-etk-inverter, with the same PDOs, commands and settings: the same
+    // server and panels serve both, each by its own description.
+    if (server_name == "adpt-etk-inverter" ||
+        server_name == "adpt-bike-inverter") {
         // The server decodes the frames of the device by the description of
         // its dictionary, which lies with the program, as the fonts do.
         std::string const description_path =
-                "../assets/od/adpt-etk-inverter.od.jsonl";
+                "../assets/od/" + server_name + ".od.jsonl";
         auto description = ucanopen::od::load(description_path);
         if (!description.has_value()) {
             bsclog::error("Не удалось загрузить описание словаря {}: {}.",

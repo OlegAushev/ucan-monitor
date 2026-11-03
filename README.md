@@ -1,8 +1,8 @@
 # ImGUI version of uCAN Monitor
 
-On the branch develop the program serves the adpt-etk-inverter alone, on
-its firmware after the CANopen rework (`docs/canopen-rework-plan.ru.md`);
-the other devices stay on master.
+On the branch develop the program serves the adpt-etk-inverter and the
+adpt-bike-inverter, on their firmware after the CANopen rework
+(`docs/canopen-rework-plan.ru.md`); the other devices stay on master.
 
 ## Prerequisites to build
 
@@ -38,17 +38,21 @@ flatpak-builder build-dir org.flatpak.ucan-monitor.yml
 A server reads the description of its device's object dictionary at
 startup, `assets/od/<device>.od.jsonl`: the file that the firmware's build
 extracts from its ELF (emblib, `docs/canopen-od-algorithm.ru.md`, section
-3.9). The objects, the PDOs and the statuses all come from it. Take a new
-one in when the firmware's dictionary changes:
+3.9). The objects, the PDOs and the statuses all come from it, so one
+server and its panels serve both inverters: the firmware of the
+adpt-bike-inverter is a port of the adpt-etk-inverter's, with the same
+PDOs. Take a new description in when the firmware's dictionary changes:
 
 ```bash
 scripts/update_od.sh ~/dev/adpt-etk-inverter rev-a-release
+scripts/update_od.sh ~/dev/adpt-bike-inverter rev-a-release
 ```
 
 The script checks the description with `od_decode.py --check` of the
 firmware's own emblib first, and `ctest --test-dir build` then checks that
 the program reads it and decodes the firmware's example of frames as
-`od_decode.py` does. At each connection the program compares the device's
+`od_decode.py` does; the script takes that example into
+`tests/od/<device>/`. At each connection the program compares the device's
 fingerprint, 2000h:00, with the description's and warns when they differ.
 
 

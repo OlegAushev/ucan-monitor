@@ -12,7 +12,7 @@ project(ucan-monitor VERSION 1.0)
 ################################################################################
 # Options
 option(MULTI_SERVER "Multi-server build" ON)
-set(servers adpt-etk-inverter)
+set(servers adpt-etk-inverter adpt-bike-inverter)
 set(SERVER "" CACHE STRING "Selected single server")
 
 if (NOT MULTI_SERVER)
@@ -166,11 +166,24 @@ target_compile_features(od-test PRIVATE
     cxx_std_23
 )
 
-foreach(od_case description resolve find refusals frames rpdo)
+# The description of each server and the example of frames of its firmware are
+# checked against what update_od.sh took into tests/od/<server>; the reader
+# itself is checked at the keys of the description of adpt-etk-inverter.
+foreach(server ${servers})
+    foreach(od_case description frames rpdo)
+        add_test(NAME od.${server}.${od_case}
+            COMMAND od-test ${od_case}
+                    ${PROJECT_SOURCE_DIR}/assets/od/${server}.od.jsonl
+                    ${PROJECT_SOURCE_DIR}/tests/od/${server}
+        )
+    endforeach()
+endforeach()
+
+foreach(od_case resolve find refusals)
     add_test(NAME od.${od_case}
         COMMAND od-test ${od_case}
                 ${PROJECT_SOURCE_DIR}/assets/od/adpt-etk-inverter.od.jsonl
-                ${PROJECT_SOURCE_DIR}/tests/od
+                ${PROJECT_SOURCE_DIR}/tests/od/adpt-etk-inverter
     )
 endforeach()
 
