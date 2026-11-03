@@ -1,4 +1,4 @@
-{"type":"header","format":"emb-canopen-od","version":1,"device":"ADPT-ETK Inverter","fingerprint":"0x7973B582"}
+{"type":"header","format":"emb-canopen-od","version":1,"device":"ADPT-ETK Inverter","fingerprint":"0xAA3AAC58"}
 {"type":"group","name":"dictionary","label_en":"Object dictionary","label_ru":"Словарь объектов"}
 {"type":"group","name":"device","label_en":"Device","label_ru":"Устройство"}
 {"type":"group","name":"settings","label_en":"Settings","label_ru":"Настройки"}
@@ -116,21 +116,19 @@
 {"type":"field","layout":2,"sub":"0x16","name":"uv_dc","label_en":"DC undervoltage","label_ru":"Пониженное напряжение DC","datatype":"uint8","access":"ro","value_table":1}
 {"type":"field","layout":2,"sub":"0x17","name":"ov_dc","label_en":"DC overvoltage","label_ru":"Повышенное напряжение DC","datatype":"uint8","access":"ro","value_table":1}
 {"type":"field","layout":2,"sub":"0x18","name":"oc_dc","label_en":"DC overcurrent","label_ru":"Превышение тока DC","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x19","name":"oc_phase","label_en":"Phase overcurrent","label_ru":"Превышение фазного тока","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x1A","name":"oc_phase_a","label_en":"Phase A overcurrent","label_ru":"Превышение тока фазы A","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x1B","name":"oc_phase_b","label_en":"Phase B overcurrent","label_ru":"Превышение тока фазы B","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x1C","name":"oc_phase_c","label_en":"Phase C overcurrent","label_ru":"Превышение тока фазы C","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x1D","name":"flt_pwr","label_en":"Power module fault","label_ru":"Неисправность силового модуля","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x1E","name":"flt_pwr_ah","label_en":"Power module fault: A high","label_ru":"Неисправность силового модуля: A high","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x1F","name":"flt_pwr_al","label_en":"Power module fault: A low","label_ru":"Неисправность силового модуля: A low","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x20","name":"flt_pwr_bh","label_en":"Power module fault: B high","label_ru":"Неисправность силового модуля: B high","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x21","name":"flt_pwr_bl","label_en":"Power module fault: B low","label_ru":"Неисправность силового модуля: B low","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x22","name":"flt_pwr_ch","label_en":"Power module fault: C high","label_ru":"Неисправность силового модуля: C high","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x23","name":"flt_pwr_cl","label_en":"Power module fault: C low","label_ru":"Неисправность силового модуля: C low","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x24","name":"hall_invalid_input","label_en":"Hall invalid input state","label_ru":"Некорректное состояние датчиков Холла","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x25","name":"hall_invalid_calibration","label_en":"Hall invalid calibration","label_ru":"Некорректная калибровка датчиков Холла","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x26","name":"hall_calibration_terminated","label_en":"Hall calibration terminated","label_ru":"Калибровка датчиков Холла прервана","datatype":"uint8","access":"ro","value_table":1}
-{"type":"field","layout":2,"sub":"0x27","name":"motor_stall","label_en":"Motor stall","label_ru":"Заклинивание двигателя","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x19","name":"oc_phase_a","label_en":"Phase A overcurrent","label_ru":"Превышение тока фазы A","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1A","name":"oc_phase_b","label_en":"Phase B overcurrent","label_ru":"Превышение тока фазы B","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1B","name":"oc_phase_c","label_en":"Phase C overcurrent","label_ru":"Превышение тока фазы C","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1C","name":"flt_pwr_ah","label_en":"Power module fault: A high","label_ru":"Неисправность силового модуля: A high","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1D","name":"flt_pwr_al","label_en":"Power module fault: A low","label_ru":"Неисправность силового модуля: A low","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1E","name":"flt_pwr_bh","label_en":"Power module fault: B high","label_ru":"Неисправность силового модуля: B high","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x1F","name":"flt_pwr_bl","label_en":"Power module fault: B low","label_ru":"Неисправность силового модуля: B low","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x20","name":"flt_pwr_ch","label_en":"Power module fault: C high","label_ru":"Неисправность силового модуля: C high","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x21","name":"flt_pwr_cl","label_en":"Power module fault: C low","label_ru":"Неисправность силового модуля: C low","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x22","name":"hall_invalid_input","label_en":"Hall invalid input state","label_ru":"Некорректное состояние датчиков Холла","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x23","name":"hall_invalid_calibration","label_en":"Hall invalid calibration","label_ru":"Некорректная калибровка датчиков Холла","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x24","name":"hall_calibration_terminated","label_en":"Hall calibration terminated","label_ru":"Калибровка датчиков Холла прервана","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":2,"sub":"0x25","name":"motor_stall","label_en":"Motor stall","label_ru":"Заклинивание двигателя","datatype":"uint8","access":"ro","value_table":1}
 {"type":"object","index":"0x2000","sub":"0x00","group":"dictionary","name":"fingerprint","label_en":"Dictionary fingerprint","label_ru":"Отпечаток словаря","class":"about","datatype":"uint32","access":"const"}
 {"type":"array","index":"0x2001","group":"device","name":"name","label_en":"Device name","label_ru":"Наименование устройства","class":"about","datatype":"uint8","access":"const","text":true}
 {"type":"array","index":"0x2002","group":"device","name":"mcu_uid","label_en":"MCU unique ID","label_ru":"Уникальный идентификатор MCU","class":"about","datatype":"uint8","access":"const","text":true}
