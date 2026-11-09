@@ -376,7 +376,8 @@ void check_frames(const std::filesystem::path& path, const std::filesystem::path
 }
 
 // 6. The frames of RPDOs in the example that the device takes build back from
-// their values byte for byte; values that no table names do not build.
+// their values byte for byte, and they are the frames that od_decode.py
+// --candump does not call refused.
 void check_rpdo(const std::filesystem::path& path, const std::filesystem::path& expectations) {
     auto description = load(path);
     if (!description) {
@@ -424,7 +425,21 @@ void check_rpdo(const std::filesystem::path& path, const std::filesystem::path& 
         check_equal(hex_of(built), hex_of(frame.data), std::format("{} built back", what));
         check(encoded->saturated.empty(), std::format("{} builds without saturation", what));
     }
-    check_equal(taken, 5u, "the frames of RPDOs that the device takes");
+
+    auto const expected = read_lines(expectations / "pdo_example.expected");
+    size_t const not_refused = std::count_if(expected.begin(), expected.end(), [](const std::string& line) {
+        return line.contains(" RPDO") && !line.contains("refused");
+    });
+    check_equal(taken, not_refused, "the frames of RPDOs that the device takes");
+}
+
+// 7. The commands of an inverter: values that no table names do not build, a
+// value that does not fit saturates, and every value signal must be filled.
+void check_drive_command(const std::filesystem::path& path, const std::filesystem::path&) {
+    auto description = load(path);
+    if (!description) {
+        return;
+    }
 
     const auto* drive_command = description->pdo("drive_command");
     const auto* model_command = description->pdo("model_command");
@@ -467,6 +482,61 @@ void check_rpdo(const std::filesystem::path& path, const std::filesystem::path& 
           "drive_command builds from its six signals");
 }
 
+// 8. The command of the converter: it builds from what the server fills, an
+// overlap that does not fit saturates, and every value signal must be filled.
+void check_converter_command(const std::filesystem::path& path, const std::filesystem::path&) {
+    auto description = load(path);
+    if (!description) {
+        return;
+    }
+
+    const auto* command = description->pdo("converter_command");
+    if (command == nullptr) {
+        fail("the description has no converter_command");
+        return;
+    }
+    check(od::encoding_refusal(*command, {"emergency", "power", "start", "overlap1", "overlap2"}) == std::nullopt,
+          "converter_command builds from its five signals");
+
+    std::map<std::string, double, std::less<>> const values = {
+            {"emergency", 0}, {"power", 1}, {"start", 1}, {"overlap1", 0.4}, {"overlap2", 0.4}};
+    auto with = [&values](std::string_view name, double value) {
+        auto changed = values;
+        changed[std::string(name)] = value;
+        return changed;
+    };
+
+    auto const built = od::encode_pdo(*description, *command, values, 1);
+    check(built.has_value() && built->saturated.empty(), "power on, started, overlaps of 0.4 pu build");
+    if (built.has_value()) {
+        check_equal(hex_of(std::vector<uint8_t>(built->payload.begin(), built->payload.end())), "0600A00FA00F0001",
+                    "the frame of the command");
+    }
+
+    auto const too_much = od::encode_pdo(*description, *command, with("overlap1", 7.0), 0);
+    check(too_much.has_value() && too_much->saturated == std::vector<std::string>{"converter_command.overlap1"},
+          "an overlap of 7 pu saturates");
+    if (too_much.has_value()) {
+        check_equal(std::format("{:02X}{:02X}", too_much->payload[3], too_much->payload[2]), "FFFF",
+                    "the overlap saturated from above");
+    }
+
+    auto const negative = od::encode_pdo(*description, *command, with("overlap2", -0.1), 0);
+    check(negative.has_value() && negative->saturated == std::vector<std::string>{"converter_command.overlap2"},
+          "a negative overlap saturates");
+    if (negative.has_value()) {
+        check_equal(std::format("{:02X}{:02X}", negative->payload[5], negative->payload[4]), "0000",
+                    "the overlap saturated from below");
+    }
+
+    auto unfilled = values;
+    unfilled.erase("overlap2");
+    check(!od::encode_pdo(*description, *command, unfilled, 0).has_value(),
+          "a value signal left unfilled does not build");
+    check(!od::encode_pdo(*description, *command, with("nothing", 1), 0).has_value(),
+          "a value of no signal does not build");
+}
+
 } // namespace
 
 int main(int argc, char** argv) {
@@ -482,7 +552,9 @@ int main(int argc, char** argv) {
             {"find", check_find},
             {"refusals", check_refusals},
             {"frames", check_frames},
-            {"rpdo", check_rpdo}};
+            {"rpdo", check_rpdo},
+            {"drive_command", check_drive_command},
+            {"converter_command", check_converter_command}};
 
     auto const name = std::string_view(argv[1]);
     auto const found = cases.find(name);

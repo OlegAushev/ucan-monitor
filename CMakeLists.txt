@@ -12,7 +12,7 @@ project(ucan-monitor VERSION 1.0)
 ################################################################################
 # Options
 option(MULTI_SERVER "Multi-server build" ON)
-set(servers adpt-etk-inverter adpt-bike-inverter)
+set(servers adpt-etk-inverter adpt-etk-psfb-converter adpt-bike-inverter)
 set(SERVER "" CACHE STRING "Selected single server")
 
 if (NOT MULTI_SERVER)
@@ -167,8 +167,9 @@ target_compile_features(od-test PRIVATE
 )
 
 # The description of each server and the example of frames of its firmware are
-# checked against what update_od.sh took into tests/od/<server>; the reader
-# itself is checked at the keys of the description of adpt-etk-inverter.
+# checked against what update_od.sh took into tests/od/<server>; the commands
+# are checked by the signals of each kind of device, and the reader itself at
+# the keys of the description of adpt-etk-inverter.
 foreach(server ${servers})
     foreach(od_case description frames rpdo)
         add_test(NAME od.${server}.${od_case}
@@ -178,6 +179,20 @@ foreach(server ${servers})
         )
     endforeach()
 endforeach()
+
+foreach(server adpt-etk-inverter adpt-bike-inverter)
+    add_test(NAME od.${server}.drive_command
+        COMMAND od-test drive_command
+                ${PROJECT_SOURCE_DIR}/assets/od/${server}.od.jsonl
+                ${PROJECT_SOURCE_DIR}/tests/od/${server}
+    )
+endforeach()
+
+add_test(NAME od.adpt-etk-psfb-converter.converter_command
+    COMMAND od-test converter_command
+            ${PROJECT_SOURCE_DIR}/assets/od/adpt-etk-psfb-converter.od.jsonl
+            ${PROJECT_SOURCE_DIR}/tests/od/adpt-etk-psfb-converter
+)
 
 foreach(od_case resolve find refusals)
     add_test(NAME od.${od_case}

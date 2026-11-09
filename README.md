@@ -1,8 +1,9 @@
 # ImGUI version of uCAN Monitor
 
-On the branch develop the program serves the adpt-etk-inverter and the
-adpt-bike-inverter, on their firmware after the CANopen rework
-(`docs/canopen-rework-plan.ru.md`); the other devices stay on master.
+On the branch develop the program serves the adpt-etk-inverter, the
+adpt-bike-inverter and the adpt-etk-psfb-converter, on their firmware after
+the CANopen rework (`docs/canopen-rework-plan.ru.md`); the other devices stay
+on master.
 
 ## Prerequisites to build
 
@@ -44,6 +45,7 @@ one in when the firmware's dictionary changes:
 ```bash
 scripts/update_od.sh ~/dev/adpt-etk-inverter rev-a-release
 scripts/update_od.sh ~/dev/adpt-bike-inverter rev-a-release
+scripts/update_od.sh ~/dev/adpt-etk-psfb-converter rev-a-release
 ```
 
 The script checks the description with `od_decode.py --check` of the

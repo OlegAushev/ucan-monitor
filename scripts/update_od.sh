@@ -1,10 +1,11 @@
 #!/bin/bash
 #
-# Takes the description of the object dictionary of an inverter's firmware,
+# Takes the description of the object dictionary of a device's firmware,
 # which its build extracts from the ELF, into ucan-monitor:
 #
 #   scripts/update_od.sh ~/dev/adpt-etk-inverter [rev-a-release]
 #   scripts/update_od.sh ~/dev/adpt-bike-inverter [rev-a-release]
+#   scripts/update_od.sh ~/dev/adpt-etk-psfb-converter [rev-a-release]
 #
 # The build names the description after the firmware's project, which is the
 # name of its server in ucan-monitor: adpt-etk-inverter.od.jsonl. The
@@ -30,14 +31,17 @@ firmware=$(cd "$1" && pwd)
 preset=${2:-rev-a-release}
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
-build=$firmware/build/$preset/src/app/inverter
-descriptions=("$build"/*.od.jsonl)
+# The application of a firmware is its one directory in src/app: inverter or
+# converter.
+build=$firmware/build/$preset/src/app
+descriptions=("$build"/*/*.od.jsonl)
 ((${#descriptions[@]} == 1)) && [[ -f ${descriptions[0]} ]] ||
-  die "$build/*.od.jsonl: no such file, or more than one; build the preset $preset first"
+  die "$build/*/*.od.jsonl: no such file, or more than one; build the preset $preset first"
 description=${descriptions[0]}
 server=$(basename "$description" .od.jsonl)
+app=$(basename "$(dirname "$description")")
 tool=$firmware/external/emblib/tools/od_decode.py
-examples=$firmware/src/app/inverter/comm/can/canopen
+examples=$firmware/src/app/$app/comm/can/canopen
 [[ -f $tool ]] || die "$tool: no such file"
 for name in pdo_example.candump pdo_example.expected; do
   [[ -f $examples/$name ]] || die "$examples/$name: no such file"

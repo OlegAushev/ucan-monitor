@@ -1,0 +1,21 @@
+181 TPDO1 statuses: 4000h:01 trouble.statuses.restart_required=none
+181 TPDO1 statuses: 4000h:04 trouble.statuses.params_defaulted=warning
+181 TPDO1 statuses: 4000h:0F trouble.statuses.can_host_connection_lost=critical
+181 TPDO1 statuses: 4000h:13 trouble.statuses.gate_driver_fault_ch1=critical
+181 TPDO1 statuses: 4000h:02 trouble.statuses.unsaved_changes=none
+181 TPDO1 statuses: 4000h:14 trouble.statuses.gate_driver_fault_ch2=critical
+181 TPDO1 statuses: 4000h:07 trouble.statuses.emergency=emergency
+181 TPDO1 statuses: 4000h:07 trouble.statuses.emergency=none
+181 TPDO1 statuses: 4000h:16 unknown
+281 TPDO2 converter_status: converter_status.state=running, converter_status.pwm1_on=1, converter_status.pwm2_on=1, converter_status.warning=1, converter_status.error=0, converter_status.critical=0, converter_status.emergency=0, converter_status.overlap1=0.4 pu, converter_status.overlap2=0.4 pu, counter=1
+281 TPDO2 converter_status: converter_status.state=ready, converter_status.pwm1_on=0, converter_status.pwm2_on=0, converter_status.warning=1, converter_status.error=0, converter_status.critical=0, converter_status.emergency=0, converter_status.overlap1=0 pu, converter_status.overlap2=0 pu, counter=2
+381 TPDO3 dc_voltages: dc_voltages.hv_voltage=700 V, dc_voltages.lv_voltage=80.4 V, counter=1
+481 TPDO4 output_currents: output_currents.current1=120.5 A, output_currents.current2=-0.3 A, counter=3
+201 RPDO1 converter_command: converter_command.emergency=0, converter_command.power=1, converter_command.start=1, converter_command.overlap1=0.4 pu, converter_command.overlap2=0.4 pu, counter=1
+201 RPDO1 converter_command: converter_command.emergency=1, converter_command.power=0, converter_command.start=0, converter_command.overlap1=0 pu, converter_command.overlap2=0 pu, counter=2
+201 RPDO1 converter_command: converter_command.emergency=0, converter_command.power=0, converter_command.start=0, converter_command.overlap1=0 pu, converter_command.overlap2=0 pu, counter=0; refused: reserved bit 3
+201 RPDO1 converter_command: converter_command.emergency=0, converter_command.power=0, converter_command.start=0, converter_command.overlap1=0 pu, converter_command.overlap2=0 pu, counter=0; refused: reserved bit 8
+201 RPDO1 converter_command: converter_command.emergency=0, converter_command.power=0, converter_command.start=0, converter_command.overlap1=0 pu, converter_command.overlap2=0 pu, counter=0; refused: reserved bit 48
+201 RPDO1 converter_command: converter_command.emergency=0, converter_command.power=0, converter_command.start=0, converter_command.overlap1=0 pu, converter_command.overlap2=0 pu, counter=0; refused: reserved bit 58
+281 TPDO2 converter_status: converter_status.state=9?, converter_status.pwm1_on=0, converter_status.pwm2_on=0, converter_status.warning=0, converter_status.error=0, converter_status.critical=0, converter_status.emergency=0, converter_status.overlap1=0 pu, converter_status.overlap2=0 pu, counter=0
+201 RPDO1 converter_command: refused, 2 bytes: a PDO takes 8

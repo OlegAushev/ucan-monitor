@@ -1,0 +1,158 @@
+{"type":"header","format":"emb-canopen-od","version":1,"device":"ADPT-ETK PSFB Converter","fingerprint":"0xC0D2CCB5"}
+{"type":"group","name":"dictionary","label_en":"Object dictionary","label_ru":"Словарь объектов"}
+{"type":"group","name":"device","label_en":"Device","label_ru":"Устройство"}
+{"type":"group","name":"settings","label_en":"Settings","label_ru":"Настройки"}
+{"type":"group","name":"system","label_en":"System","label_ru":"Система"}
+{"type":"group","name":"nvm","label_en":"Non-volatile memory","label_ru":"Энергонезависимая память"}
+{"type":"group","name":"current_sensor","label_en":"Output current sensors","label_ru":"Датчики выходного тока"}
+{"type":"group","name":"hv_voltage_sensor","label_en":"HV voltage sensor","label_ru":"Датчик напряжения ВН"}
+{"type":"group","name":"lv_voltage_sensor","label_en":"LV voltage sensor","label_ru":"Датчик напряжения НН"}
+{"type":"group","name":"canopen","label_en":"CANopen","label_ru":"CANopen"}
+{"type":"group","name":"protection","label_en":"Protection","label_ru":"Защиты"}
+{"type":"group","name":"temperature_sensor","label_en":"Temperature sensor","label_ru":"Датчик температуры"}
+{"type":"group","name":"trouble","label_en":"Trouble","label_ru":"Неисправности"}
+{"type":"group","name":"electrical","label_en":"Electrical quantities","label_ru":"Электрические величины"}
+{"type":"group","name":"temperature","label_en":"Temperatures","label_ru":"Температуры"}
+{"type":"group","name":"converter","label_en":"Converter","label_ru":"Конвертер"}
+{"type":"group","name":"probe","label_en":"Debug probe","label_ru":"Отладочный пробник"}
+{"type":"value","value_table":0,"value":0,"name":"on_command","label_en":"On command","label_ru":"По команде"}
+{"type":"value","value_table":0,"value":1,"name":"on_restart","label_en":"On restart","label_ru":"После перезапуска"}
+{"type":"value","value_table":1,"value":0,"name":"none","label_en":"None","label_ru":"Нет"}
+{"type":"value","value_table":1,"value":1,"name":"warning","label_en":"Warning","label_ru":"Предупреждение"}
+{"type":"value","value_table":1,"value":2,"name":"error","label_en":"Error","label_ru":"Ошибка"}
+{"type":"value","value_table":1,"value":3,"name":"critical","label_en":"Critical","label_ru":"Критическая ошибка"}
+{"type":"value","value_table":1,"value":4,"name":"emergency","label_en":"Emergency","label_ru":"Авария"}
+{"type":"value","value_table":2,"value":100728832,"name":"unsupported_access","label_en":"Applies only after a restart","label_ru":"Применяется только после перезапуска"}
+{"type":"value","value_table":2,"value":100794368,"name":"object_not_found","label_en":"Unknown parameter","label_ru":"Неизвестный параметр"}
+{"type":"value","value_table":2,"value":100925507,"name":"parameter_incompatibility","label_en":"Check failed","label_ru":"Проверка не пройдена"}
+{"type":"value","value_table":2,"value":134217760,"name":"data_store_error","label_en":"Medium failed","label_ru":"Отказ носителя"}
+{"type":"value","value_table":2,"value":134217762,"name":"state_error","label_en":"Not admitted in this state, or values wait to be applied","label_ru":"Не допускается в этом состоянии, или значения ждут применения"}
+{"type":"value","value_table":3,"value":0,"name":"init","label_en":"Init","label_ru":"Инициализация"}
+{"type":"value","value_table":3,"value":1,"name":"standby","label_en":"Standby","label_ru":"Ожидание"}
+{"type":"value","value_table":3,"value":2,"name":"powering_up","label_en":"Powering up","label_ru":"Включение"}
+{"type":"value","value_table":3,"value":3,"name":"powering_down","label_en":"Powering down","label_ru":"Выключение"}
+{"type":"value","value_table":3,"value":4,"name":"ready","label_en":"Ready","label_ru":"Готов"}
+{"type":"value","value_table":3,"value":5,"name":"running","label_en":"Running","label_ru":"Работа"}
+{"type":"value","value_table":3,"value":6,"name":"fault","label_en":"Fault","label_ru":"Авария"}
+{"type":"field","layout":0,"sub":"0x00","name":"highest_subindex","label_en":"Highest subindex","label_ru":"Наибольший подындекс","datatype":"uint8","access":"const"}
+{"type":"field","layout":0,"sub":"0x01","name":"requested","label_en":"Requested value","label_ru":"Запрошенное значение","access":"rw","inherits":true}
+{"type":"field","layout":0,"sub":"0x02","name":"applied","label_en":"Applied value","label_ru":"Применённое значение","access":"ro","inherits":true}
+{"type":"field","layout":0,"sub":"0x03","name":"stored","label_en":"Stored value","label_ru":"Сохранённое значение","access":"ro","inherits":true}
+{"type":"field","layout":0,"sub":"0x04","name":"default","label_en":"Default value","label_ru":"Значение по умолчанию","access":"const","inherits":true}
+{"type":"field","layout":0,"sub":"0x05","name":"min","label_en":"Lower bound","label_ru":"Нижняя граница","access":"const","inherits":true}
+{"type":"field","layout":0,"sub":"0x06","name":"max","label_en":"Upper bound","label_ru":"Верхняя граница","access":"const","inherits":true}
+{"type":"field","layout":0,"sub":"0x07","name":"policy","label_en":"Apply policy","label_ru":"Политика применения","datatype":"uint8","access":"const","value_table":0}
+{"type":"field","layout":0,"sub":"0x08","name":"apply","label_en":"Apply","label_ru":"Применить","datatype":"uint32","access":"wo","command":true}
+{"type":"field","layout":0,"sub":"0x09","name":"discard","label_en":"Discard","label_ru":"Отбросить","datatype":"uint32","access":"wo","command":true}
+{"type":"field","layout":1,"sub":"0x00","name":"highest_subindex","label_en":"Highest subindex","label_ru":"Наибольший подындекс","datatype":"uint8","access":"const"}
+{"type":"field","layout":1,"sub":"0x01","name":"restart_required","label_en":"Restart required","label_ru":"Требуется перезапуск","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x02","name":"unsaved_changes","label_en":"Unsaved changes","label_ru":"Есть несохранённые изменения","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x03","name":"unapplied_changes","label_en":"Unapplied changes","label_ru":"Есть неприменённые изменения","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x04","name":"params_defaulted","label_en":"Parameters loaded with defaults","label_ru":"Параметры поднялись со значениями по умолчанию","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x05","name":"nvm_write_error","label_en":"NVM write error","label_ru":"Ошибка записи NVM","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x06","name":"unexpected_reset","label_en":"Unexpected MCU reset","label_ru":"Неожиданный сброс MCU","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x07","name":"emergency","label_en":"Emergency","label_ru":"Авария","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x08","name":"watchdog_timeout","label_en":"Watchdog timeout","label_ru":"Таймаут watchdog","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x09","name":"invalid_config","label_en":"Invalid configuration","label_ru":"Некорректная конфигурация","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x0A","name":"abnormal_shutdown","label_en":"Abnormal shutdown","label_ru":"Аварийное выключение","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x0B","name":"no_nvm","label_en":"No non-volatile memory","label_ru":"Нет энергонезависимой памяти","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x0C","name":"nvm_read_error","label_en":"NVM read error","label_ru":"Ошибка чтения NVM","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x0D","name":"can_bus_error","label_en":"CAN bus error","label_ru":"Ошибка шины CAN","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x0E","name":"can_overrun","label_en":"CAN overrun","label_ru":"Переполнение CAN","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x0F","name":"can_host_connection_lost","label_en":"Host connection lost","label_ru":"Потеря связи с хостом","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x10","name":"can_host_invalid_frame","label_en":"Host invalid frame","label_ru":"Некорректный кадр хоста","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x11","name":"bridge_break_ch1","label_en":"Bridge 1 break","label_ru":"Срыв моста 1","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x12","name":"bridge_break_ch2","label_en":"Bridge 2 break","label_ru":"Срыв моста 2","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x13","name":"gate_driver_fault_ch1","label_en":"Gate driver 1 fault","label_ru":"Неисправность драйвера 1","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x14","name":"gate_driver_fault_ch2","label_en":"Gate driver 2 fault","label_ru":"Неисправность драйвера 2","datatype":"uint8","access":"ro","value_table":1}
+{"type":"field","layout":1,"sub":"0x15","name":"ot_mcu","label_en":"MCU overtemperature","label_ru":"Перегрев MCU","datatype":"uint8","access":"ro","value_table":1}
+{"type":"object","index":"0x2000","sub":"0x00","group":"dictionary","name":"fingerprint","label_en":"Dictionary fingerprint","label_ru":"Отпечаток словаря","class":"about","datatype":"uint32","access":"const"}
+{"type":"array","index":"0x2001","group":"device","name":"name","label_en":"Device name","label_ru":"Наименование устройства","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2002","group":"device","name":"mcu_uid","label_en":"MCU unique ID","label_ru":"Уникальный идентификатор MCU","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2003","group":"device","name":"hardware_version","label_en":"Hardware version","label_ru":"Версия аппаратуры","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2004","group":"device","name":"firmware_version","label_en":"Firmware version","label_ru":"Версия прошивки","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2005","group":"device","name":"firmware_commit_date","label_en":"Firmware commit date","label_ru":"Дата коммита прошивки","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2006","group":"device","name":"firmware_branch","label_en":"Firmware branch","label_ru":"Ветка прошивки","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2007","group":"device","name":"build_type","label_en":"Build type","label_ru":"Тип сборки","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"array","index":"0x2008","group":"device","name":"settings_storage","label_en":"Settings storage","label_ru":"Носитель настроек","class":"about","datatype":"uint8","access":"const","text":true}
+{"type":"object","index":"0x2100","sub":"0x01","group":"settings","name":"apply_all","label_en":"Apply all","label_ru":"Применить все","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2100","sub":"0x02","group":"settings","name":"discard_all","label_en":"Discard all","label_ru":"Отбросить все","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2100","sub":"0x03","group":"settings","name":"last_refusal","label_en":"Last refusal","label_ru":"Последний отказ","class":"control","datatype":"uint32","access":"ro","value_table":2}
+{"type":"object","index":"0x2101","sub":"0x01","group":"settings","name":"save_all_parameters","label_en":"Save all parameters","label_ru":"Сохранить все параметры","class":"control","datatype":"uint32","access":"wo","command":true,"signature":"0x65766173"}
+{"type":"object","index":"0x2101","sub":"0x02","group":"settings","name":"save_all_parameters_and_reset","label_en":"Save all parameters and reset","label_ru":"Сохранить все параметры и перезапустить","class":"control","datatype":"uint32","access":"wo","command":true,"signature":"0x65766173"}
+{"type":"object","index":"0x2102","sub":"0x01","group":"settings","name":"restore_all_default_parameters","label_en":"Restore all default parameters","label_ru":"Восстановить умолчания всех параметров","class":"control","datatype":"uint32","access":"wo","command":true,"signature":"0x64616F6C"}
+{"type":"object","index":"0x2102","sub":"0x02","group":"settings","name":"erase_all_parameters","label_en":"Erase all parameters","label_ru":"Стереть все параметры","class":"control","datatype":"uint32","access":"wo","command":true,"signature":"0x64616F6C"}
+{"type":"object","index":"0x2200","sub":"0x00","group":"system","name":"reset_device","label_en":"Reset device","label_ru":"Перезапустить устройство","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2201","sub":"0x00","group":"system","name":"clear_errors","label_en":"Clear errors","label_ru":"Сбросить ошибки","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x2202","sub":"0x00","group":"system","name":"emergency","label_en":"Emergency stop","label_ru":"Аварийный останов","class":"control","datatype":"uint32","access":"wo","command":true}
+{"type":"object","index":"0x3000","sub":"0x01","group":"nvm","name":"magic","label_en":"Magic number","label_ru":"Сигнатура","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x02","group":"nvm","name":"slot_count","label_en":"Slot count","label_ru":"Число слотов","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x03","group":"nvm","name":"slot_capacity","label_en":"Slot capacity","label_ru":"Ёмкость слота","class":"parameters","datatype":"uint32","access":"ro","unit_en":"B","unit_ru":"Б"}
+{"type":"object","index":"0x3000","sub":"0x04","group":"nvm","name":"slots_per_block","label_en":"Slots per block","label_ru":"Слотов в блоке","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x05","group":"nvm","name":"sequence","label_en":"Sequence number","label_ru":"Порядковый номер","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x06","group":"nvm","name":"erase_cycles","label_en":"Erase cycles","label_ru":"Циклы стирания","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x07","group":"nvm","name":"loaded_slot","label_en":"Loaded slot","label_ru":"Загруженный слот","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x08","group":"nvm","name":"loaded_sequence","label_en":"Loaded sequence number","label_ru":"Порядковый номер загруженной записи","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x09","group":"nvm","name":"valid","label_en":"Record valid","label_ru":"Запись действительна","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0A","group":"nvm","name":"schema_matched","label_en":"Schema matched","label_ru":"Схема совпала","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0B","group":"nvm","name":"read_failed","label_en":"Read failed","label_ru":"Ошибка чтения","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0C","group":"nvm","name":"stored","label_en":"Values stored","label_ru":"Значений в записи","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0D","group":"nvm","name":"loaded","label_en":"Values loaded","label_ru":"Значений загружено","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0E","group":"nvm","name":"unknown","label_en":"Unknown values","label_ru":"Неизвестных значений","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x0F","group":"nvm","name":"rejected","label_en":"Values rejected","label_ru":"Значений отвергнуто","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x10","group":"nvm","name":"missing","label_en":"Parameters missing","label_ru":"Параметров без значения","class":"parameters","datatype":"uint32","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x11","group":"nvm","name":"restart_required","label_en":"Restart required","label_ru":"Требуется перезапуск","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x12","group":"nvm","name":"unapplied","label_en":"Unapplied changes","label_ru":"Неприменённые изменения","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3000","sub":"0x13","group":"nvm","name":"unsaved","label_en":"Unsaved changes","label_ru":"Несохранённые изменения","class":"parameters","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x3008","sub":"0x01","group":"current_sensor","name":"gain","label_en":"Gain","label_ru":"Коэффициент передачи","class":"parameters","datatype":"float32","access":"const","unit_en":"A/V","unit_ru":"А/В"}
+{"type":"object","index":"0x3009","sub":"0x01","group":"hv_voltage_sensor","name":"gain","label_en":"Gain","label_ru":"Коэффициент передачи","class":"parameters","datatype":"float32","access":"const","unit_en":"V/V","unit_ru":"В/В"}
+{"type":"object","index":"0x3009","sub":"0x02","group":"hv_voltage_sensor","name":"offset","label_en":"Offset","label_ru":"Смещение","class":"parameters","datatype":"float32","access":"const","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x300A","sub":"0x01","group":"lv_voltage_sensor","name":"gain","label_en":"Gain","label_ru":"Коэффициент передачи","class":"parameters","datatype":"float32","access":"const","unit_en":"V/V","unit_ru":"В/В"}
+{"type":"object","index":"0x300A","sub":"0x02","group":"lv_voltage_sensor","name":"offset","label_en":"Offset","label_ru":"Смещение","class":"parameters","datatype":"float32","access":"const","unit_en":"V","unit_ru":"В"}
+{"type":"record","index":"0x3100","group":"canopen","name":"node_id","label_en":"Node ID","label_ru":"Номер узла","class":"parameters","datatype":"uint32","layout":0}
+{"type":"record","index":"0x3120","group":"protection","name":"otp_mcu","label_en":"MCU overtemperature threshold","label_ru":"Порог перегрева MCU","class":"parameters","datatype":"float32","unit_en":"°C","unit_ru":"°C","layout":0}
+{"type":"record","index":"0x3121","group":"protection","name":"ot_warning_margin","label_en":"Overtemperature warning margin","label_ru":"Запас предупреждения о перегреве","class":"parameters","datatype":"float32","unit_en":"°C","unit_ru":"°C","layout":0}
+{"type":"record","index":"0x3122","group":"protection","name":"ot_reset_margin","label_en":"Overtemperature reset margin","label_ru":"Запас сброса перегрева","class":"parameters","datatype":"float32","unit_en":"°C","unit_ru":"°C","layout":0}
+{"type":"record","index":"0x3140","group":"temperature_sensor","name":"mcu_time_constant","label_en":"MCU temperature filter time constant","label_ru":"Постоянная времени фильтра температуры MCU","class":"parameters","datatype":"float32","unit_en":"s","unit_ru":"с","layout":0}
+{"type":"record","index":"0x4000","group":"trouble","name":"statuses","label_en":"Trouble statuses","label_ru":"Статусы неисправностей","class":"status","layout":1}
+{"type":"object","index":"0x5000","sub":"0x01","group":"system","name":"uptime","label_en":"Uptime","label_ru":"Время работы","class":"watch","datatype":"float32","access":"ro","unit_en":"s","unit_ru":"с"}
+{"type":"object","index":"0x5010","sub":"0x01","group":"electrical","name":"Vhv","label_en":"HV DC voltage","label_ru":"Напряжение DC стороны ВН","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x5010","sub":"0x02","group":"electrical","name":"Vlv","label_en":"LV DC voltage","label_ru":"Напряжение DC стороны НН","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x5010","sub":"0x03","group":"electrical","name":"I1","label_en":"Channel 1 output current","label_ru":"Выходной ток канала 1","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5010","sub":"0x04","group":"electrical","name":"I2","label_en":"Channel 2 output current","label_ru":"Выходной ток канала 2","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
+{"type":"object","index":"0x5020","sub":"0x01","group":"temperature","name":"Tmcu","label_en":"MCU temperature","label_ru":"Температура MCU","class":"watch","datatype":"float32","access":"ro","unit_en":"°C","unit_ru":"°C"}
+{"type":"object","index":"0x5030","sub":"0x01","group":"converter","name":"state","label_en":"Converter state","label_ru":"Состояние конвертера","class":"watch","datatype":"uint32","access":"ro","value_table":3}
+{"type":"object","index":"0x5030","sub":"0x02","group":"converter","name":"ch1_active","label_en":"Channel 1 bridge on","label_ru":"Мост канала 1 включён","class":"watch","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x5030","sub":"0x03","group":"converter","name":"ch2_active","label_en":"Channel 2 bridge on","label_ru":"Мост канала 2 включён","class":"watch","datatype":"boolean","access":"ro"}
+{"type":"object","index":"0x5030","sub":"0x04","group":"converter","name":"ch1_overlap","label_en":"Channel 1 overlap","label_ru":"Перекрытие канала 1","class":"watch","datatype":"float32","access":"ro","unit_en":"pu","unit_ru":"о. е."}
+{"type":"object","index":"0x5030","sub":"0x05","group":"converter","name":"ch2_overlap","label_en":"Channel 2 overlap","label_ru":"Перекрытие канала 2","class":"watch","datatype":"float32","access":"ro","unit_en":"pu","unit_ru":"о. е."}
+{"type":"object","index":"0x5030","sub":"0x06","group":"converter","name":"ch1_overlap_ref","label_en":"Channel 1 overlap reference","label_ru":"Задание перекрытия канала 1","class":"watch","datatype":"float32","access":"ro","unit_en":"pu","unit_ru":"о. е."}
+{"type":"object","index":"0x5030","sub":"0x07","group":"converter","name":"ch2_overlap_ref","label_en":"Channel 2 overlap reference","label_ru":"Задание перекрытия канала 2","class":"watch","datatype":"float32","access":"ro","unit_en":"pu","unit_ru":"о. е."}
+{"type":"array","index":"0x5090","group":"probe","name":"channels","label_en":"Probe channel levels","label_ru":"Уровни каналов пробника","class":"watch","datatype":"float32","access":"ro"}
+{"type":"pdo","name":"statuses","label_en":"Trouble statuses","label_ru":"Статусы неисправностей","direction":"tx","number":1,"mapping":"sam","cob_base":"0x180","period_ms":10}
+{"type":"pdo","name":"converter_status","label_en":"Converter status","label_ru":"Статус конвертера","direction":"tx","number":2,"mapping":"signals","cob_base":"0x280","period_ms":10}
+{"type":"signal","pdo":"converter_status","start":0,"width":8,"role":"value","name":"state","label_en":"Converter state","label_ru":"Состояние конвертера","encoding":"unsigned","value_table":3}
+{"type":"signal","pdo":"converter_status","start":8,"width":1,"role":"value","name":"pwm1_on","label_en":"Channel 1 bridge on","label_ru":"Мост канала 1 включён","encoding":"unsigned"}
+{"type":"signal","pdo":"converter_status","start":9,"width":1,"role":"value","name":"pwm2_on","label_en":"Channel 2 bridge on","label_ru":"Мост канала 2 включён","encoding":"unsigned"}
+{"type":"signal","pdo":"converter_status","start":10,"width":1,"role":"value","name":"warning","label_en":"Warning","label_ru":"Предупреждение","encoding":"unsigned"}
+{"type":"signal","pdo":"converter_status","start":11,"width":1,"role":"value","name":"error","label_en":"Error","label_ru":"Ошибка","encoding":"unsigned"}
+{"type":"signal","pdo":"converter_status","start":12,"width":1,"role":"value","name":"critical","label_en":"Critical fault","label_ru":"Критическая неисправность","encoding":"unsigned"}
+{"type":"signal","pdo":"converter_status","start":13,"width":1,"role":"value","name":"emergency","label_en":"Emergency","label_ru":"Аварийный останов","encoding":"unsigned"}
+{"type":"signal","pdo":"converter_status","start":16,"width":16,"role":"value","name":"overlap1","label_en":"Channel 1 overlap","label_ru":"Перекрытие канала 1","encoding":"unsigned","scale":"1/10000","unit_en":"pu","unit_ru":"о. е."}
+{"type":"signal","pdo":"converter_status","start":32,"width":16,"role":"value","name":"overlap2","label_en":"Channel 2 overlap","label_ru":"Перекрытие канала 2","encoding":"unsigned","scale":"1/10000","unit_en":"pu","unit_ru":"о. е."}
+{"type":"signal","pdo":"converter_status","start":56,"width":2,"role":"counter","encoding":"unsigned"}
+{"type":"pdo","name":"dc_voltages","label_en":"DC voltages","label_ru":"Напряжения DC","direction":"tx","number":3,"mapping":"signals","cob_base":"0x380","period_ms":10}
+{"type":"signal","pdo":"dc_voltages","start":0,"width":16,"role":"value","name":"hv_voltage","label_en":"HV DC voltage","label_ru":"Напряжение DC стороны ВН","encoding":"signed","scale":"1/10","unit_en":"V","unit_ru":"В"}
+{"type":"signal","pdo":"dc_voltages","start":16,"width":16,"role":"value","name":"lv_voltage","label_en":"LV DC voltage","label_ru":"Напряжение DC стороны НН","encoding":"signed","scale":"1/10","unit_en":"V","unit_ru":"В"}
+{"type":"signal","pdo":"dc_voltages","start":56,"width":2,"role":"counter","encoding":"unsigned"}
+{"type":"pdo","name":"output_currents","label_en":"Output currents","label_ru":"Выходные токи","direction":"tx","number":4,"mapping":"signals","cob_base":"0x480","period_ms":100}
+{"type":"signal","pdo":"output_currents","start":0,"width":16,"role":"value","name":"current1","label_en":"Channel 1 output current","label_ru":"Выходной ток канала 1","encoding":"signed","scale":"1/10","unit_en":"A","unit_ru":"А"}
+{"type":"signal","pdo":"output_currents","start":16,"width":16,"role":"value","name":"current2","label_en":"Channel 2 output current","label_ru":"Выходной ток канала 2","encoding":"signed","scale":"1/10","unit_en":"A","unit_ru":"А"}
+{"type":"signal","pdo":"output_currents","start":56,"width":2,"role":"counter","encoding":"unsigned"}
+{"type":"pdo","name":"converter_command","label_en":"Converter command","label_ru":"Команда конвертеру","direction":"rx","number":1,"mapping":"signals","cob_base":"0x200","timeout_ms":350}
+{"type":"signal","pdo":"converter_command","start":0,"width":1,"role":"value","name":"emergency","label_en":"Emergency stop","label_ru":"Аварийный останов","encoding":"unsigned"}
+{"type":"signal","pdo":"converter_command","start":1,"width":1,"role":"value","name":"power","label_en":"Power","label_ru":"Питание","encoding":"unsigned"}
+{"type":"signal","pdo":"converter_command","start":2,"width":1,"role":"value","name":"start","label_en":"Start","label_ru":"Пуск","encoding":"unsigned"}
+{"type":"signal","pdo":"converter_command","start":16,"width":16,"role":"value","name":"overlap1","label_en":"Channel 1 overlap reference","label_ru":"Задание перекрытия канала 1","encoding":"unsigned","scale":"1/10000","unit_en":"pu","unit_ru":"о. е."}
+{"type":"signal","pdo":"converter_command","start":32,"width":16,"role":"value","name":"overlap2","label_en":"Channel 2 overlap reference","label_ru":"Задание перекрытия канала 2","encoding":"unsigned","scale":"1/10000","unit_en":"pu","unit_ru":"о. е."}
+{"type":"signal","pdo":"converter_command","start":56,"width":2,"role":"counter","encoding":"unsigned"}

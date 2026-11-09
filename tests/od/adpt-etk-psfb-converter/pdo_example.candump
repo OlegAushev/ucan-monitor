@@ -1,0 +1,44 @@
+# Frames of the PDOs of the converter at node 1, in the form of candump -L,
+# which the build decodes by the description and compares with
+# pdo_example.expected.
+#
+# TPDO1, the statuses in an MPDO, a status a frame, as this firmware sends
+# them by the rule of its source while params_defaulted stands at warning and
+# can_host_connection_lost, gate_driver_fault_ch1 and gate_driver_fault_ch2
+# at critical. The first frame is of the round, from 01h, the standing
+# statuses follow as changes, and every fourth frame is of the round again.
+can0 181#0100400100000000
+can0 181#0100400401000000
+can0 181#0100400F03000000
+can0 181#0100401303000000
+can0 181#0100400200000000
+can0 181#0100401403000000
+# The emergency, status 6, raised through 2202h, at severity 4, and cleared
+# through 2201h.
+can0 181#0100400704000000
+can0 181#0100400700000000
+# An object that the description does not name: 4000h:16, past the statuses.
+can0 181#0100401600000000
+# TPDO1 to TPDO3 as firmware 450d986 lays them out, on the COB-IDs of TPDO2
+# to TPDO4, on which this firmware sends them since the statuses took TPDO1:
+# running with both bridges on, the warning and overlaps of 0.4 pu; ready
+# with the warning; 700 and 80.4 V; 120.5 and -0.3 A. Its TPDO4, the status
+# flags of a level, is gone.
+can0 281#0507A00FA00F0001
+can0 281#0404000000000002
+can0 381#581B240300000001
+can0 481#B504FDFF00000003
+# RPDO1 as ucan-monitor's psfb client encodes it: power on, started, overlaps
+# of 0.4 pu; then the emergency bit alone.
+can0 201#0600A00FA00F0001
+can0 201#0100000000000002
+# RPDO1s that the converter refuses, for a reserved bit of byte 0, 1, 6 or 7.
+can0 201#0800000000000000
+can0 201#0001000000000000
+can0 201#0000000000000100
+can0 201#0000000000000004
+# A TPDO2 of a newer firmware, whose state 9 no label of the description
+# names.
+can0 281#0900000000000000
+# An RPDO1 of 2 bytes, which the converter refuses, answering with EMCY 8210h.
+can0 201#0100
