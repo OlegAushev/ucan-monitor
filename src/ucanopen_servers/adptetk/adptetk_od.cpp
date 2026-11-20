@@ -203,10 +203,12 @@ extern const ucanopen::ObjectDictionary object_dictionary = {
 {{0x300A, 0x0E}, {"config", "hall_anglesensor", "rev_c",              "°", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300A, 0x0F}, {"config", "hall_anglesensor", "rev_ca",             "°", OD_ACCESS_RW, OD_FLOAT32}},
 //##########################################################################################################################################################################################################################################################################################################
-{{0x300B, 0x01}, {"config", "hall_calibrator", "phase_current",       "pu",  OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300B, 0x02}, {"config", "hall_calibrator", "phase_current_slope", "pu",  OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300B, 0x03}, {"config", "hall_calibrator", "speed",               "rpm", OD_ACCESS_RW, OD_FLOAT32}},
-{{0x300B, 0x04}, {"config", "hall_calibrator", "elrevolution_num",    "",    OD_ACCESS_RW, OD_INT32}},
+{{0x300B, 0x01}, {"config", "hall_calibrator", "phase_current",           "pu",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300B, 0x02}, {"config", "hall_calibrator", "phase_current_slope",     "pu",  OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300B, 0x03}, {"config", "hall_calibrator", "speed",                   "rpm", OD_ACCESS_RW, OD_FLOAT32}},
+{{0x300B, 0x04}, {"config", "hall_calibrator", "elrevolution_num",        "",    OD_ACCESS_RW, OD_INT32}},
+{{0x300B, 0x05}, {"config", "hall_calibrator", "settling_time",           "ms",  OD_ACCESS_RW, OD_UINT32}},
+{{0x300B, 0x06}, {"config", "hall_calibrator", "preliminary_revolutions", "",    OD_ACCESS_RW, OD_INT32}},
 //##########################################################################################################################################################################################################################################################################################################
 {{0x300C, 0x01}, {"config", "temperature_sensors", "motor_timeconstant", "s", OD_ACCESS_RW, OD_FLOAT32}},
 {{0x300C, 0x02}, {"config", "temperature_sensors", "power_timeconstant", "s", OD_ACCESS_RW, OD_FLOAT32}},
