@@ -31,9 +31,14 @@ firmware=$(cd "$1" && pwd)
 preset=${2:-rev-a-release}
 root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 
-# The application of a firmware is its one directory in src/app: inverter or
-# converter.
-build=$firmware/build/$preset/src/app
+# Follow the source tree so a build left over from a directory rename
+# cannot supply a stale dictionary.
+app_dir=src/apps
+if [[ ! -d $firmware/$app_dir ]]; then
+  app_dir=src/app
+fi
+
+build=$firmware/build/$preset/$app_dir
 descriptions=("$build"/*/*.od.jsonl)
 ((${#descriptions[@]} == 1)) && [[ -f ${descriptions[0]} ]] ||
   die "$build/*/*.od.jsonl: no such file, or more than one; build the preset $preset first"
@@ -41,7 +46,7 @@ description=${descriptions[0]}
 server=$(basename "$description" .od.jsonl)
 app=$(basename "$(dirname "$description")")
 tool=$firmware/external/emblib/tools/od_decode.py
-examples=$firmware/src/app/$app/comm/can/canopen
+examples=$firmware/$app_dir/$app/comm/can/canopen
 [[ -f $tool ]] || die "$tool: no such file"
 for name in pdo_example.candump pdo_example.expected; do
   [[ -f $examples/$name ]] || die "$examples/$name: no such file"
