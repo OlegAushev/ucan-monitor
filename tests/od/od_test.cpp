@@ -10,6 +10,7 @@
 #include <ucanopen/od/description.h>
 #include <ucanopen/od/pdo_codec.h>
 #include <ucanopen/od/value.h>
+#include <ui/util/watch_label.h>
 
 #include <algorithm>
 #include <charconv>
@@ -265,6 +266,11 @@ void check_resolve(const std::filesystem::path& path, const std::filesystem::pat
         check(item->datatype == od::DataType::float32, "a temperature is a float32");
         check_equal(item->element, 3u, "the element of temperature.Tpwr_sensors[3]");
         check_equal(item->unit.ru, "°C", "the unit of a temperature");
+        check_equal(ui::watch_label(*item), "Температуры силовой части 3 [°C]",
+                    "the watch label of a named temperature sensor");
+        item->label.ru.clear();
+        check_equal(ui::watch_label(*item), "temperature.Tpwr_sensors[3] [°C]",
+                    "the fallback watch label includes the element index once");
     }
 
     if (auto item = expect({0x3000, 0x00}, "", od::Item::Kind::highest_subindex)) {

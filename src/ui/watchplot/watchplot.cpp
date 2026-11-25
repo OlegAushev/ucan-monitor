@@ -100,7 +100,7 @@ void WatchPlot::_draw_menubar() {
                     continue;
                 }
 
-                ImGui::Selectable(_charts[i].label.c_str(),
+                ImGui::Selectable(_charts[i].label_id.c_str(),
                                   false,
                                   0,
                                   ImVec2(200, 0));
@@ -251,7 +251,7 @@ void WatchPlot::_draw_plot_yt() {
                 ImPlot::SetAxis(chart.y_axis);
                 //ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
                 ImPlot::PlotLine(
-                        chart.label.c_str(),
+                        chart.label_id.c_str(),
                         p_time,
                         p_value,
                         size,
@@ -259,7 +259,7 @@ void WatchPlot::_draw_plot_yt() {
                         offset,
                         sizeof(boost::geometry::model::d2::point_xy<float>));
                 // // allow legend item labels to be DND sources
-                if (ImPlot::BeginDragDropSourceItem(chart.label.c_str())) {
+                if (ImPlot::BeginDragDropSourceItem(chart.label_id.c_str())) {
                     ImGui::SetDragDropPayload(_dnd_id.c_str(), &i, sizeof(int));
                     ImGui::TextUnformatted(chart.label.c_str());
                     ImPlot::EndDragDropSource();

@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 #include <implot.h>
+#include <ui/util/watch_label.h>
 #include <ui/view/view.h>
 #include <ucanopen/server/server.h>
 #include <algorithm>
@@ -51,6 +52,7 @@ private:
     struct Chart {
         std::string path; // of the object, the key of its history
         std::string label;
+        std::string label_id; // visible label with a stable ImGui/ImPlot ID
         bool on_plot;
         ImAxis y_axis;
         int idx;
@@ -80,15 +82,9 @@ private:
             }
             Chart chart;
             chart.path = obj.path;
-            chart.label = obj.label.ru.empty() ? obj.path : obj.label.ru;
-            if (obj.kind == ucanopen::od::Item::Kind::element) {
-                chart.label += " " + std::to_string(obj.element);
-            }
-            const auto& unit = obj.unit.ru.empty() ? obj.unit.en : obj.unit.ru;
-            if (!unit.empty()) {
-                chart.label += " [" + unit + "]";
-            }
-            chart.on_plot = false;            
+            chart.label = watch_label(obj);
+            chart.label_id = chart.label + "###" + chart.path;
+            chart.on_plot = false;
             chart.y_axis = ImAxis_Y1;
             chart.idx = _chart_idx++;
             _charts.push_back(chart);

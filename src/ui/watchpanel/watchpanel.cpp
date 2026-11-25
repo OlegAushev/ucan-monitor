@@ -1,5 +1,6 @@
 #include "watchpanel.h"
 #include <ui/util/checkbox_tristate.h>
+#include <ui/util/watch_label.h>
 
 
 namespace ui {
@@ -51,11 +52,12 @@ void WatchPanel::draw() {
         }
 
         for (size_t row = 0; row < _watch_objects.size(); ++row) {
+            const auto& object = _watch_objects[row];
             ImGui::TableNextRow();
 
             ImGui::TableSetColumnIndex(0);
             bool acq_enabled = _server->watch_service.daq_enabled(row);
-            ImGui::PushID(row);
+            ImGui::PushID(object.path.c_str());
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
             if (ImGui::Checkbox("##", &acq_enabled)) {
                 _server->watch_service.toggle_daq(row, acq_enabled);
@@ -64,18 +66,9 @@ void WatchPanel::draw() {
             ImGui::PopStyleVar();
             ImGui::PopID();
 
-            const auto& object = _watch_objects[row];
             ImGui::TableSetColumnIndex(1);
-            auto label = object.label.ru.empty() ? object.path : object.label.ru;
-            if (object.kind == ucanopen::od::Item::Kind::element) {
-                label += " " + std::to_string(object.element);
-            }
-            const auto& unit = object.unit.ru.empty() ? object.unit.en : object.unit.ru;
-            if (unit.empty()) {
-                ImGui::TextUnformatted(label.c_str());
-            } else {
-                ImGui::Text("%s [%s]", label.c_str(), unit.c_str());
-            }
+            const auto label = watch_label(object);
+            ImGui::TextUnformatted(label.c_str());
             if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
                 ImGui::SetTooltip("%s", object.path.c_str());
             }
