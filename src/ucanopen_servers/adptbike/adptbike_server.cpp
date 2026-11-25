@@ -239,6 +239,8 @@ void Server::_handle_drive_status(ucanopen::can_payload const& payload) {
     auto const& name = value.signal->name;
     if (name == "state") {
       _drive_status.state.store(value.raw);
+      hall_calibration.observe(static_cast<DriveState>(value.raw),
+                               node_id().get(), timeout_of(*_drive_status_pdo));
     } else if (name == "pwm_on") {
       _drive_status.pwm_on.store(value.raw != 0);
     } else if (name == "warning") {

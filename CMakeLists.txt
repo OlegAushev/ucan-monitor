@@ -202,6 +202,11 @@ foreach(od_case resolve find refusals)
     )
 endforeach()
 
+add_executable(hall-calibration-test tests/hall_calibration_test.cpp)
+target_include_directories(hall-calibration-test PRIVATE ${PROJECT_SOURCE_DIR}/src)
+target_compile_features(hall-calibration-test PRIVATE cxx_std_23)
+add_test(NAME inverter.hall_calibration COMMAND hall-calibration-test)
+
 ################################################################################
 # Misc Options
 set(CMAKE_VERBOSE_MAKEFILE OFF)

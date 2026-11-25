@@ -12,6 +12,7 @@
 #include <string_view>
 #include <ucanopen/od/description.h>
 #include <ucanopen/server/server.h>
+#include <ucanopen_servers/hall_calibration.hpp>
 #include <utility>
 
 namespace adptetk {
@@ -106,6 +107,8 @@ public:
   void set_voltage_ref(float pu) { _model_command.voltage_ref.store(pu); }
 
   // TPDO
+  inverter::HallCalibration hall_calibration;
+
   bool drive_status_good() const {
     return _drive_status_tpdo.has_value() &&
            tpdo_service.good(*_drive_status_tpdo);

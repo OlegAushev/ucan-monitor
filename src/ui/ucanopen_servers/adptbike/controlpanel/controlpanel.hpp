@@ -33,11 +33,6 @@ private:
     int _control_mode_v{std::to_underlying(::adptbike::ControlMode::torque)};
 
     ::adptbike::ModelMode _model_mode{::adptbike::ModelMode::closed_loop};
-
-    // A calibration of the Hall sensor only requests its twelve angles: the
-    // panel offers to apply them once the drive leaves calibrating.
-    std::optional<::adptbike::DriveState> _last_state;
-    bool _calibration_done{false};
     int _model_mode_v{std::to_underlying(::adptbike::ModelMode::closed_loop)};
 public:
     ControlPanel(std::shared_ptr<::adptbike::Server> server,
@@ -47,7 +42,6 @@ public:
     virtual void draw() override;
 private:
     void _draw_dash();
-    void _draw_calibration();
     void _draw_controls();
     void _draw_actions();
 

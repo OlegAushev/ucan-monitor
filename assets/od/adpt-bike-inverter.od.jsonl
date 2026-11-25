@@ -1,4 +1,4 @@
-{"type":"header","format":"emb-canopen-od","version":1,"device":"ADPT-BIKE Inverter","fingerprint":"0x42437879"}
+{"type":"header","format":"emb-canopen-od","version":1,"device":"ADPT-BIKE Inverter","fingerprint":"0x2ABD2494"}
 {"type":"group","name":"dictionary","label_en":"Object dictionary","label_ru":"Словарь объектов"}
 {"type":"group","name":"device","label_en":"Device","label_ru":"Устройство"}
 {"type":"group","name":"settings","label_en":"Settings","label_ru":"Настройки"}
@@ -237,6 +237,8 @@
 {"type":"record","index":"0x3221","group":"hall_calibration","name":"phase_current_slope","label_en":"Calibration current slope","label_ru":"Темп нарастания тока калибровки","class":"parameters","datatype":"float32","unit_en":"pu/s","unit_ru":"о. е./с","layout":0}
 {"type":"record","index":"0x3222","group":"hall_calibration","name":"speed","label_en":"Calibration speed","label_ru":"Скорость калибровки","class":"parameters","datatype":"float32","unit_en":"rpm","unit_ru":"об/мин","layout":0}
 {"type":"record","index":"0x3223","group":"hall_calibration","name":"electrical_revolutions","label_en":"Calibration electrical revolutions","label_ru":"Число электрических оборотов калибровки","class":"parameters","datatype":"int32","layout":0}
+{"type":"record","index":"0x3224","group":"hall_calibration","name":"settling_time","label_en":"Settling time","label_ru":"Время выдержки","class":"parameters","datatype":"uint32","unit_en":"ms","unit_ru":"мс","layout":0}
+{"type":"record","index":"0x3225","group":"hall_calibration","name":"preliminary_revolutions","label_en":"Preliminary electrical revolutions","label_ru":"Число предварительных электрических оборотов","class":"parameters","datatype":"int32","layout":0}
 {"type":"record","index":"0x3241","group":"temperature_sensor","name":"power_time_constant","label_en":"Power stage temperature filter time constant","label_ru":"Постоянная времени фильтра температуры силовой части","class":"parameters","datatype":"float32","unit_en":"s","unit_ru":"с","layout":0}
 {"type":"record","index":"0x3242","group":"temperature_sensor","name":"mcu_time_constant","label_en":"MCU temperature filter time constant","label_ru":"Постоянная времени фильтра температуры MCU","class":"parameters","datatype":"float32","unit_en":"s","unit_ru":"с","layout":0}
 {"type":"record","index":"0x4000","group":"trouble","name":"statuses","label_en":"Trouble statuses","label_ru":"Статусы неисправностей","class":"status","layout":2}
@@ -253,8 +255,8 @@
 {"type":"object","index":"0x5010","sub":"0x0A","group":"electrical","name":"Iq_ref","label_en":"q-axis current reference","label_ru":"Задание тока по оси q","class":"watch","datatype":"float32","access":"ro","unit_en":"A","unit_ru":"А"}
 {"type":"object","index":"0x5010","sub":"0x0B","group":"electrical","name":"Vd","label_en":"d-axis voltage","label_ru":"Напряжение по оси d","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
 {"type":"object","index":"0x5010","sub":"0x0C","group":"electrical","name":"Vq","label_en":"q-axis voltage","label_ru":"Напряжение по оси q","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
-{"type":"object","index":"0x5010","sub":"0x0D","group":"electrical","name":"Vd_comp","label_en":"d-axis compensation voltage","label_ru":"Напряжение компенсации по оси d","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
-{"type":"object","index":"0x5010","sub":"0x0E","group":"electrical","name":"Vq_comp","label_en":"q-axis compensation voltage","label_ru":"Напряжение компенсации по оси q","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x5010","sub":"0x0D","group":"electrical","name":"Vd_comp","label_en":"d-axis feedforward voltage","label_ru":"Напряжение компенсации по оси d","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
+{"type":"object","index":"0x5010","sub":"0x0E","group":"electrical","name":"Vq_comp","label_en":"q-axis feedforward voltage","label_ru":"Напряжение компенсации по оси q","class":"watch","datatype":"float32","access":"ro","unit_en":"V","unit_ru":"В"}
 {"type":"object","index":"0x5020","sub":"0x01","group":"temperature","name":"Tmcu","label_en":"MCU temperature","label_ru":"Температура MCU","class":"watch","datatype":"float32","access":"ro","unit_en":"°C","unit_ru":"°C"}
 {"type":"object","index":"0x5020","sub":"0x02","group":"temperature","name":"Tpwr","label_en":"Highest power stage temperature","label_ru":"Наибольшая температура силовой части","class":"watch","datatype":"float32","access":"ro","unit_en":"°C","unit_ru":"°C"}
 {"type":"array","index":"0x5021","group":"temperature","name":"Tpwr_sensors","label_en":"Power stage temperatures","label_ru":"Температуры силовой части","class":"watch","datatype":"float32","access":"ro","unit_en":"°C","unit_ru":"°C"}
