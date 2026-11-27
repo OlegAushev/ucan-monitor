@@ -6,6 +6,7 @@
 #   scripts/update_od.sh ~/dev/adpt-etk-inverter [rev-a-release]
 #   scripts/update_od.sh ~/dev/adpt-bike-inverter [rev-a-release]
 #   scripts/update_od.sh ~/dev/adpt-etk-psfb-converter [rev-a-release]
+#   scripts/update_od.sh ~/dev/svprs-inverter rev-a-small-debug
 #
 # The build names the description after the firmware's project, which is the
 # name of its server in ucan-monitor: adpt-etk-inverter.od.jsonl. The

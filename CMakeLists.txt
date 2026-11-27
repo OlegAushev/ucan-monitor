@@ -12,7 +12,7 @@ project(ucan-monitor VERSION 1.0)
 ################################################################################
 # Options
 option(MULTI_SERVER "Multi-server build" ON)
-set(servers adpt-etk-inverter adpt-etk-psfb-converter adpt-bike-inverter)
+set(servers adpt-etk-inverter adpt-etk-psfb-converter adpt-bike-inverter svprs-inverter)
 set(SERVER "" CACHE STRING "Selected single server")
 
 if (NOT MULTI_SERVER)
@@ -180,7 +180,7 @@ foreach(server ${servers})
     endforeach()
 endforeach()
 
-foreach(server adpt-etk-inverter adpt-bike-inverter)
+foreach(server adpt-etk-inverter adpt-bike-inverter svprs-inverter)
     add_test(NAME od.${server}.drive_command
         COMMAND od-test drive_command
                 ${PROJECT_SOURCE_DIR}/assets/od/${server}.od.jsonl

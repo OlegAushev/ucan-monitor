@@ -1,6 +1,7 @@
 #include <ucanopen_servers/adptbike/adptbike_def.hpp>
 #include <ucanopen_servers/adptetk/adptetk_def.hpp>
 #include <ucanopen_servers/hall_calibration.hpp>
+#include <ucanopen_servers/svprs/svprs_def.hpp>
 
 #include <cstdlib>
 #include <iostream>
@@ -74,4 +75,5 @@ void check_calibration() {
 int main() {
     check_calibration<adptetk::DriveState>();
     check_calibration<adptbike::DriveState>();
+    check_calibration<svprs::DriveState>();
 }

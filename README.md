@@ -1,9 +1,9 @@
 # ImGUI version of uCAN Monitor
 
-On the branch develop the program serves the adpt-etk-inverter, the
-adpt-bike-inverter and the adpt-etk-psfb-converter, on their firmware after
-the CANopen rework (`docs/canopen-rework-plan.ru.md`); the other devices stay
-on master.
+On the branch develop the program serves adpt-etk-inverter, adpt-bike-inverter
+and adpt-etk-psfb-converter on their firmware after the CANopen rework
+(`docs/canopen-rework-plan.ru.md`), and svprs-inverter on its `adpt-port`
+firmware. The other devices stay on master.
 
 ## Prerequisites to build
 
@@ -46,6 +46,7 @@ one in when the firmware's dictionary changes:
 scripts/update_od.sh ~/dev/adpt-etk-inverter rev-a-release
 scripts/update_od.sh ~/dev/adpt-bike-inverter rev-a-release
 scripts/update_od.sh ~/dev/adpt-etk-psfb-converter rev-a-release
+scripts/update_od.sh ~/dev/svprs-inverter rev-a-small-debug
 ```
 
 The script checks the description with `od_decode.py --check` of the
@@ -54,6 +55,10 @@ the program reads it and decodes the firmware's example of frames as
 `od_decode.py` does; the script takes that example into
 `tests/od/<device>/`. At each connection the program compares the device's
 fingerprint, 2000h:00, with the description's and warns when they differ.
+
+For the SevPress Drive Controller, select `svprs-inverter` for all three
+boards (MINIBOARD, Rev.A(S), Rev.A(L)). The firmware defaults to node ID 1;
+select 500000 bit/s in the SocketCAN options.
 
 
 ## Prerequisites to run
